@@ -567,10 +567,16 @@ optimized for use with Tibetan script.
         <jarbundler dir="${webapp.dir}" name="QuillDriver"
                     mainclass="fieldling.quilldriver.QDShell"
                     aboutmenuname="QuillDriver"
-                    jvmversion="1.3*"
                     infostring="QuillDriver, (c) 2004, licensed under GNU GPL"
                     jars="${webstart.lib}/quilldriver.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
                     />
+            <!-- ORIGINAL SOURCE: FORCE 1.3 TO LOAD <jarbundler dir="${webapp.dir}" name="QuillDriver"
+                    mainclass="fieldling.quilldriver.QDShell"
+                    aboutmenuname="QuillDriver"
+                    jvmversion="1.3*"
+                    infostring="QuillDriver, (c) 2004, licensed under GNU GPL"
+                    jars="${webstart.lib}/quilldriver.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
+                    />-->
             <!-- Tibetan version --> 
         <jarbundler dir="${webapp.dir}" name="QuillDriver-TIB"
                     mainclass="fieldling.quilldriver.QDShell"
