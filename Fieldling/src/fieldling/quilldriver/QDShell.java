@@ -199,7 +199,7 @@ public class QDShell extends JFrame {
 						cl.getResource("new.xsl").toString(),
 						null);
 				*/
-				qd = new QD();
+				qd = new QD(prefmngr);
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
 			/*} catch (SecurityException se) {
@@ -474,7 +474,7 @@ public class QDShell extends JFrame {
 			}
 		}
 
-		JMenuItem fontItem = new JMenuItem("Fonts and styles...");
+		JMenuItem fontItem = new JMenuItem("Display...");
 		fontItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getFontPreferences();
@@ -564,24 +564,8 @@ public class QDShell extends JFrame {
             ioe.printStackTrace();
         }
         
-        //changelog
-        JMenuItem changeItem = new JMenuItem("Read changelog");
-        try {
-            final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "changelog.txt");
-            changeItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    JFrame f = new JFrame();
-                    f.setSize(500,400);
-                    f.getContentPane().add(sp);
-                    f.setVisible(true);
-                }
-            }); 
-        } catch (IOException ioe ) {
-            ioe.printStackTrace();
-        }
 		JMenu betaMenu =  new JMenu("Help");
         betaMenu.add(aboutItem);
-        betaMenu.add(changeItem);
 		betaMenu.add(feedbackItem);
 
 		JMenuBar bar = new JMenuBar();
@@ -706,15 +690,17 @@ public class QDShell extends JFrame {
 		romanPanel.add(romanFontSizes);
 
         JPanel highlightPanel;
-        JLabel highlightLabel;
+        JComboBox highlightPosition;
         JTextField highlightField;
         highlightPanel = new JPanel();
-        highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight Color"));
-        highlightLabel = new JLabel("Enter the hex code of the highlight color (see http://www.hypersolutions.org/pages/rgbhex.html):");
+        highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight Color (in hex: see http://www.hypersolutions.org/pages/rgbhex.html) and Position"));
         highlightField = new JTextField(prefmngr.highlight_color);
-        highlightPanel.setLayout(new BorderLayout());
-        highlightPanel.add(highlightLabel, BorderLayout.NORTH);
-        highlightPanel.add(highlightField, BorderLayout.CENTER);
+        highlightPosition = new JComboBox(new String[] {"Middle", "Bottom"});
+        highlightPosition.setSelectedItem(prefmngr.highlight_position);
+        highlightPosition.setEditable(true);
+        highlightPanel.setLayout(new GridLayout(1,2));
+        highlightPanel.add(highlightField);
+        highlightPanel.add(highlightPosition);
         
 		JPanel preferencesPanel = new JPanel();
 		preferencesPanel.setLayout(new GridLayout(0,1));
@@ -759,6 +745,11 @@ public class QDShell extends JFrame {
 				qd.getEditor().render();
 			}
 		}
+        
+        String highlightPosVal = (String)highlightPosition.getSelectedItem();
+        prefmngr.setValue(prefmngr.HIGHLIGHT_POSITION_KEY, highlightPosVal);
+        if (qd.getEditor() != null)
+            qd.hp.setHighlightPosition(highlightPosVal);
         
         String hexColor = highlightField.getText();
         try {

@@ -40,9 +40,13 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	protected JViewport viewport;
 	protected JScrollPane scrollPane;
 	protected TranscriptView view;
+    protected boolean isHighlightInMiddle = true;
 
-	public TextHighlightPlayer(TranscriptView tView, Color highlightColor)
+	public TextHighlightPlayer(TranscriptView tView, Color highlightColor, String highlightPosition)
 	{
+        if (!highlightPosition.equals("Middle"))
+            isHighlightInMiddle = false;
+        
 		view = tView;
 		text = view.getTextComponent();
 /*		text.setEditable(false);
@@ -76,6 +80,12 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	}
     public void setHighlightColor(Color highlightColor) {
         highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightColor);
+    }
+    public void setHighlightPosition(String highlightPosition) {
+        if (highlightPosition.equals("Middle"))
+            isHighlightInMiddle = true;
+        else
+            isHighlightInMiddle = false;
     }
 	public void refresh() {
 		//FIXME FIXME FIXME!!!
@@ -138,8 +148,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 				Object tag = highlighter.addHighlight(start, end, highlightPainter);
 				highlights.put(id, tag);
 	
-	/*			
-	// scrolls highlighted text to middle of viewport
+                if (isHighlightInMiddle) {
 					JViewport viewport = (JViewport)SwingUtilities.getAncestorOfClass(JViewport.class, text);
 					int halfViewHeight = viewport.getExtentSize().height / 2;
 					Rectangle textRectangle = text.modelToView(end);
@@ -148,13 +157,11 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 						viewport.setViewPosition(new Point(0, yFactor));
 						text.repaint();
 					}
-	This often seems disconcerting to the user - so I am removing it. */
-	
-	// this does scrolling at the bottom of the text window
+                } else { //highlighting should be at bottom
 					Rectangle rect = text.modelToView(end);
 					text.scrollRectToVisible(rect);
 					text.repaint();
-	
+                }
 			}
 			catch (BadLocationException ble)
 			{

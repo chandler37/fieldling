@@ -41,9 +41,9 @@ public class TwoWayTextPlayer extends TextHighlightPlayer
 	protected long lastClickTime;
 	protected Point lastClickPoint = null;
 
-	public TwoWayTextPlayer(PanelPlayer sp, TranscriptView view, Color highlightColor)
+	public TwoWayTextPlayer(PanelPlayer sp, TranscriptView view, Color highlightColor, String highlightPosition)
 	{
-		super(view, highlightColor);
+		super(view, highlightColor, highlightPosition);
 		sound = sp;
 
 		orderedOffsets = new TreeMap();

@@ -117,13 +117,16 @@ public class QD extends JDesktopPane {
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
 	public Timer checkTimeTimer = null;
 	protected Transformer transformer = null; //this has no place here
+    protected PreferenceManager prefmngr;
 
-	public QD(Configuration configuration) {
+	public QD(Configuration configuration, PreferenceManager prefs) {
+        prefmngr = prefs;
 		setupGlobals();
 		setupGUI();
 		configure(configuration);
 	}
-	public QD() {
+	public QD(PreferenceManager prefs) {
+        prefmngr = prefs;
 		setupGlobals();
 		setupGUI();
 	}
@@ -564,7 +567,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
                 }
-				hp = new TextHighlightPlayer(view, hColor);
+				hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
                 
                 for (int ok=0; ok<namespaces.length; ok++)
                     System.out.println(namespaces[ok].toString());
