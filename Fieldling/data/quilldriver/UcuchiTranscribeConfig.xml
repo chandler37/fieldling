@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
+<qd-configuration>
+	<parameters>
+        <parameter name="qd.namespaces" val="ucuchi http://altiplano.emich.edu/ucuchi"/>
+		<parameter name="qd.root.element" val="ucuchi:TEXT"/>
+		<parameter name="speaker1" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=1]/@id"/>
+		<parameter name="speaker2" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=2]/@id"/>
+		<parameter name="speaker3" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=3]/@id"/>
+		<parameter name="speaker4" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=4]/@id"/>
+        <parameter name="speaker5" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=5]/@id"/>
+		<parameter name="speaker6" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=6]/@id"/>
+		<parameter name="speaker7" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=7]/@id"/>
+		<parameter name="speaker8" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=8]/@id"/>
+	</parameters>
+	<actions>
+		<action-set name="Navigate">
+            <action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="Play Next Line" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
+			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" qd-command="playNode"/>
+			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" qd-command="playEdge"/>
+			<action name="Play Previous Line" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
+			<action name="Go to Next Line" keystroke="control DOWN" node="following::ucuchi:C"/>
+			<action name="Go to Previous Line" keystroke="control UP" node="preceding::ucuchi:C"/>
+		</action-set>
+		<action-set name="Metadata">
+			<action name="Add Speaker" keystroke="control J" node="ancestor-or-self::ucuchi:TEXT/ucuchi:META" xsl-task="addSpeaker"/>
+			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" xsl-task="removeNode"/>
+			<action name="Set Speaker to s1" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker1"/>
+			<action name="Set Speaker to s2" keystroke="control 2" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker2"/>
+			<action name="Set Speaker to s3" keystroke="control 3" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker3"/>
+			<action name="Set Speaker to s4" keystroke="control 4" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker4"/>
+            <action name="Set Speaker to s5" keystroke="control 5" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker5"/>
+			<action name="Set Speaker to s6" keystroke="control 6" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker6"/>
+			<action name="Set Speaker to s7" keystroke="control 7" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker7"/>
+			<action name="Set Speaker to s8" keystroke="control 8" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker8"/>
+		</action-set>
+		<action-set name="Time Code">
+			<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::ucuchi:C" xsl-task="markStart"/>
+			<action name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::ucuchi:C" xsl-task="markStop" qd-command="stopMedia"/>
+			<action name="Mark Start and Stop" keystroke="control shift QUOTE" node="ancestor-or-self::ucuchi:C" xsl-task="qd.insertTimes"/>
+			<action name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="zapTimes"/>
+			<action name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStart"/>
+			<action name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStart"/>
+			<action name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStart"/>
+			<action name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStart"/>
+			<action name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStop"/>
+			<action name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStop"/>
+			<action name="Maximize Stop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="maximizeStop"/>
+			<action name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStop"/>
+			<action name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStop"/>
+		</action-set>
+		<action-set name="Edit">
+			<action name="New Clause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause"/>
+			<action name="New Sentence" keystroke="control B" node="ancestor-or-self::ucuchi:S" xsl-task="newSentence"/>
+			<action name="Delete Clause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode"/>
+            <action name="Delete Sentence" keystroke="control alt R" node="ancestor-or-self::ucuchi:S" xsl-task="removeNode"/>
+		</action-set>
+	</actions>
+		<rendering-instructions>
+			<tag name="ucuchi:TEXT" visible="false"/>
+            <tag name="ucuchi:META" visible="false"/>
+            <tag name="ucuchi:S" visible="true" displayas="S"/>
+            <tag name="ucuchi:W" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:TRANS" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:SPEAKER" visible="true" displayas="SPEAKER"/>
+            <tag name="ucuchi:C" visible="true" displayas="XPATH:@spid">
+                <attribute name="qd:t1" visible="false"/>
+                <attribute name="qd:t2" visible="false"/>
+                <attribute name="spid" visible="false"/>
+                <attribute name="id" visible="false"/>
+            </tag>
+            <tagview name="Quechua Only" keystroke="F1">
+                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
+            </tagview>
+            <tagview name="Quechua and English" keystroke="F2">
+                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="true" displayas="ENG"/>
+            </tagview>
+		</rendering-instructions>
+</qd-configuration>

@@ -1087,12 +1087,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									Element transformedRoot = jdomResult.getDocument().getRootElement();
 									List replaceNodeWith = transformedRoot.getContent();
 
-									XMLOutputter xmlOut = new XMLOutputter();
+									/*XMLOutputter xmlOut = new XMLOutputter();
 									try {
 										Element ee = (Element)cloneOwner;
 										xmlOut.output(ee, System.out);
 										xmlOut.output(jdomResult.getDocument(), System.out);
-									} catch (IOException ioe) {ioe.printStackTrace();}
+									} catch (IOException ioe) {ioe.printStackTrace();}*/
 
 									int start = editor.getStartOffsetForNode(transformNode);
 									int end = editor.getEndOffsetForNode(transformNode);

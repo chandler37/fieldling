@@ -7,6 +7,13 @@
             <config href="UcuchiViewConfig.xml"/>
         </configuration>
         
+        <!-- For transcribing Quechua transcripts -->
+        <configuration menu-name="Transcribe Quechua">
+            <config href="UcuchiTranscribeConfig.xml"/>
+            <edit href="UcuchiTranscribeEdit.xsl"/>
+            <new href="UcuchiTranscribeNew.xsl"/>
+        </configuration>
+        
 		<configuration menu-name="THDL Read-only">
 			<config href="SavantConfig.xml"/>
 		</configuration>

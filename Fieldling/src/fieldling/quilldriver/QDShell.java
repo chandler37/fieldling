@@ -257,8 +257,8 @@ public class QDShell extends JFrame {
 						JFileChooser fc2 = new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
 						fc2.addChoosableFileFilter(new QDFileFilter());
 
-						Font ipaFont = new Font("SILDoulosUnicodeIPA",Font.PLAIN,10);
-						fc2.setFont(ipaFont);
+						//Font ipaFont = new Font("SILDoulosUnicodeIPA",Font.PLAIN,10);
+						//fc2.setFont(ipaFont);
 						fc2.updateUI();
 
 
@@ -267,7 +267,6 @@ public class QDShell extends JFrame {
 							if (transcriptFile.exists()) { //error message: cannot make new file from existing file
 								JOptionPane.showMessageDialog(QDShell.this, NEW_FILE_ERROR_MESSAGE, "No can do!", JOptionPane.WARNING_MESSAGE);
 							} else {
-
 								String transcriptString = transcriptFile.getAbsolutePath();
 								int i = transcriptString.lastIndexOf('.');
 								if (i<0) transcriptString += dotQuillDriver;
