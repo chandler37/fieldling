@@ -46,7 +46,7 @@ public abstract class PanelPlayer extends Panel {
 	private Set startedAnnotations;
 	
 /*-----------------------------------------------------------------------*/
-	public PanelPlayer(GridLayout layout) {
+	public PanelPlayer(LayoutManager layout) {
 		super(layout);
 	}
 /*-----------------------------------------------------------------------*/

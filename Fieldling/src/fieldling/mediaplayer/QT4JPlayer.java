@@ -45,7 +45,8 @@ public class QT4JPlayer extends PanelPlayer {
 	
 //constructor
 	public QT4JPlayer(Container cont, URL mediaURL) {
-		super( new GridLayout() );
+		super(new BorderLayout());
+		//super( new GridLayout() );
 		parent = cont;
 		try {
 			loadMovie(mediaURL);
@@ -54,7 +55,8 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 	}
 	public QT4JPlayer() {
-		super( new GridLayout() );
+		super(new BorderLayout());
+		//super( new GridLayout() );
 	}
 //destructor
 	public void destroy() {
@@ -148,10 +150,10 @@ public class QT4JPlayer extends PanelPlayer {
 		try {
 			//LOGGINGSystem.out.println("Removing canvas, etc.");
 
-			canvas = new QTCanvas(QTCanvas.kInitialSize, 0.5F, 0.5F);
+			canvas = new QTCanvas(QTCanvas.kAspectResize, 0.5F, 0.5F);
 			setPlayer(QTFactory.makeDrawable(mediaURL.toString()));
 			canvas.setClient(getPlayer(), true);
-			this.add(canvas);
+			this.add("Center", canvas);
 			mediaUrl = mediaURL;
 			
 			/*

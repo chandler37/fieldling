@@ -54,7 +54,6 @@ public class QD extends JDesktopPane {
 	protected XMLEditor editor = null;
 	protected JInternalFrame videoFrame = null;
 	protected JInternalFrame textFrame = null;
-	protected JInternalFrame actionFrame = null;
 	protected Map keyActions = null, taskActions = null;
 	protected ResourceBundle messages;
 	protected TimeCodeModel tcp = null;
@@ -106,18 +105,16 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 	private void setupGUI() {
  		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-
 		//(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable)
-		videoFrame = new JInternalFrame(null, false, false, false, false);
+		videoFrame = new JInternalFrame(null, true, false, true);
 		videoFrame.setVisible(true);
 		videoFrame.setLocation(0,0);
 		videoFrame.setSize(0,0);
-		add(videoFrame, JLayeredPane.POPUP_LAYER);
+		add(videoFrame, JLayeredPane.PALETTE_LAYER);
 		invalidate();
 		validate();
 		repaint();
-
-		textFrame = new JInternalFrame(null, false, false, false, true);
+		textFrame = new JInternalFrame(null, true, false, true, true);
 		textFrame.setVisible(true);
 		textFrame.setLocation(0,0);
 		textFrame.setSize(0,0);
@@ -125,16 +122,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 		invalidate();
 		validate();
 		repaint();
-
-		actionFrame = new JInternalFrame(null, false, false, false, true);
-		actionFrame.setVisible(true);
-		actionFrame.setLocation(0,0);
-		actionFrame.setSize(0,0);
-		add(actionFrame, JLayeredPane.DEFAULT_LAYER);
-		invalidate();
-		validate();
-		repaint();
-
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
 				Dimension d = videoFrame.getSize();
@@ -143,8 +130,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 				textFrame.setLocation(0,0);
 				textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
 				videoFrame.setLocation(textFrame.getSize().width, 0);
-				actionFrame.setLocation(textFrame.getSize().width, videoFrame.getSize().height);
-				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 			}
 		});
 	}
@@ -157,21 +142,9 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 				if (player.isInitialized())
 				{
 					timer.cancel();
-					final TimeCodeView tcv = new TimeCodeView(player, tcp);
-					actionFrame.setContentPane(tcv);
-					checkTimeTimer = new Timer(true);
-					checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
-						public void run() {
-							tcv.setCurrentTime(player.getCurrentTime());
-						}
-					}, 0, 50);
-					actionFrame.pack();
-					invalidate();
-					validate();
-					repaint();
-					videoFrame.setContentPane(player);
+					videoFrame.getContentPane().setLayout(new BorderLayout());
+					videoFrame.getContentPane().add("Center", player);
 					videoFrame.pack();
-					videoFrame.setMaximumSize(videoFrame.getSize());
 					videoFrame.setLocation(getSize().width - videoFrame.getSize().width, 0);
 					invalidate();
 					validate();
@@ -181,12 +154,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					invalidate();
 					validate();
 					repaint();
-					actionFrame.setLocation(textFrame.getSize().width, videoFrame.getSize().height);
-					actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
-					invalidate();
-					validate();
-					repaint();
-//LOGGING//LOGGING//LOGGINGSystem.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 			}}, 0, 50);
 	}
@@ -204,7 +171,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 	    return (Action)(actions.get(name));
 	}
 
-
 	class TimeCodeView extends JPanel implements TimeCodeModelListener, SimpleSpinnerListener {
 		TimeCodeModel tcm;
 		JTextField currentTimeField;
@@ -215,16 +181,16 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
 			tcm = time_model;
 
-			JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
+			//JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
 			JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.jpg")));
 			JButton outButton = new JButton(new ImageIcon(QD.class.getResource("left-arrow.jpg")));
-			JButton playButton = new JButton(new ImageIcon(QD.class.getResource("play.gif")));
+			//JButton playButton = new JButton(new ImageIcon(QD.class.getResource("play.gif")));
 			inButton.setBorder(null);
 			outButton.setBorder(null);
-			playButton.setBorder(null);
+			//playButton.setBorder(null);
 			inButton.setPreferredSize(new Dimension(inButton.getIcon().getIconWidth(), inButton.getIcon().getIconHeight()));
 			outButton.setPreferredSize(new Dimension(outButton.getIcon().getIconWidth(), outButton.getIcon().getIconHeight()));
-			playButton.setPreferredSize(new Dimension(playButton.getIcon().getIconWidth(), playButton.getIcon().getIconHeight()));
+			//playButton.setPreferredSize(new Dimension(playButton.getIcon().getIconWidth(), playButton.getIcon().getIconHeight()));
 
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -249,7 +215,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					}
 				}
 			});
-			playButton.addActionListener(new ActionListener() {
+			/*playButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (stopTime > startTime && startTime > -1) {
 						try {
@@ -262,7 +228,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 						}
 					}
 				}
-			});
+			});*/
 			TEXT_WIDTH = 60;
 			TEXT_HEIGHT = inButton.getPreferredSize().height / 2;
 
@@ -280,16 +246,17 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 			setStartTime(0);
 			setStopTime(0);
 			setLayout(new BorderLayout());
-			JPanel jp_top = new JPanel(new FlowLayout());
+			//JPanel jp_top = new JPanel(new FlowLayout());
 			JPanel jp_center = new JPanel(new FlowLayout());
-			jp_top.add(clockLabel);
-			jp_top.add(currentTimeField);
+			//jp_top.add(clockLabel);
+			//jp_top.add(currentTimeField);
 			jp_center.add(inButton);
 			jp_center.add(startSpinner);
-			jp_center.add(playButton);
+			//jp_center.add(playButton);
+			jp_center.add(currentTimeField); //added
 			jp_center.add(stopSpinner);
 			jp_center.add(outButton);
-			add("North", jp_top);
+			//add("North", jp_top);
 			add("Center", jp_center);
 			tcm.addTimeCodeModelListener(this);
 		}
@@ -545,8 +512,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					videoFrame.getContentPane().validate();
 					videoFrame.getContentPane().repaint();
 					videoFrame.setSize(new Dimension(QD.this.getSize().width / 2, 0));
-					actionFrame.setLocation(0,0);
-					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));
 				}
 
 				String value;
@@ -610,7 +575,13 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					Object obj = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument().getDocumentElement(), config.getProperty("qd.title"), namespaces);
 					textFrame.setTitle(XMLUtilities.getTextForDOMNode(obj));
 				}
-
+					final TimeCodeView tcv = new TimeCodeView(player, tcp);
+					checkTimeTimer = new Timer(true);
+					checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
+						public void run() {
+							tcv.setCurrentTime(player.getCurrentTime());
+						}
+					}, 0, 50);
                 JRadioButton viewButton = new JRadioButton("View", true);
                 JRadioButton editButton = new JRadioButton("Edit");
                 viewButton.setActionCommand("View");
@@ -621,9 +592,12 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
                 JPanel buttonPanel = new JPanel(new BorderLayout());
                 JPanel subPanel = new JPanel();
                 subPanel.add(new JLabel("Select Mode: "));
-                subPanel.add(viewButton);
-                subPanel.add(editButton);
+		JPanel vePanel = new JPanel(new GridLayout(0,1));
+		vePanel.add(viewButton);
+                vePanel.add(editButton);
+		subPanel.add(vePanel);
                 buttonPanel.add("West", subPanel);
+		buttonPanel.add("East", tcv); //added
                 ActionListener acList = new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String s = e.getActionCommand();
