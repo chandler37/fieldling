@@ -626,14 +626,14 @@ public class QDShell extends JFrame {
 		String[] fontNames = genv.getAvailableFontFamilyNames();
 
 		JPanel tibetanPanel;
-		JComboBox tibetanFontSizes;
+		@TIBETAN@JComboBox tibetanFontSizes;
 		tibetanPanel = new JPanel();
-		tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
-		tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
-		tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
-		tibetanFontSizes.setEditable(true);
-		tibetanPanel.add(tibetanFontSizes);
+		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
+		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
+		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
+		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
+		@TIBETAN@tibetanFontSizes.setEditable(true);
+		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
 
 		JPanel romanPanel;
 		JComboBox romanFontFamilies;
@@ -666,9 +666,9 @@ public class QDShell extends JFrame {
 
 		int old_tibetan_font_size = tibetan_font_size;
 		try {
-			tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
+			@TIBETAN@tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
 		} catch (NumberFormatException ne) {
-			tibetan_font_size = old_tibetan_font_size;
+			@TIBETAN@tibetan_font_size = old_tibetan_font_size;
 		}
 
 		String old_font_face = new String(font_face);
@@ -683,7 +683,7 @@ public class QDShell extends JFrame {
 
 		myPrefs.put(FONT_FACE_KEY, font_face);
 		myPrefs.putInt(FONT_SIZE_KEY, font_size);
-		myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
+		@TIBETAN@myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
 
 		if (qd.getEditor() != null) {
 			//NON-TIBETAN if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
