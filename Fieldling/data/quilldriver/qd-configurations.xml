@@ -7,13 +7,15 @@
             <config href="UcuchiViewConfig.xml"/>
         </configuration>
         
-		<configuration menu-name="THDL Savant">
+		<configuration menu-name="THDL Read-only">
 			<config href="SavantConfig.xml"/>
 		</configuration>
         
+        <!--
         <configuration menu-name="Monguor Sample">
             <config href="MonguorConfig.xml"/>
         </configuration>
+        -->
         
 		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
 		<configuration menu-name="THDL Transcription">
@@ -22,7 +24,8 @@
 			<new href="TranscriptionNew.xsl"/>
 		</configuration>
 		
-	<!--	<configuration menu-name="THDL Logging">
+        <!--	
+        <configuration menu-name="THDL Logging">
 			<config href="LoggingConfig.xml"/>
 			<edit href="LoggingEdit.xsl"/>
 			<new href="LoggingNew.xsl"/>
@@ -30,15 +33,20 @@
 		
 		
 		<!-- You cannot create new files with this configuration -->
-		<configuration menu-name="THDL Text Markup">
+		<!--
+        <configuration menu-name="THDL Text Markup">
 			<config href="TextMarkupConfig.xml"/>
 			<edit href="TextMarkupEdit.xsl"/>
 		</configuration> 
-		
+		-->
+        
 		<!-- For time-coding word-lists, e.g. the MST chapter vocabulary --> 
-		<configuration menu-name="THDL Word List">
+		<!--
+        <configuration menu-name="THDL Word List">
 			<config href="WordListConfig.xml"/>
 			<edit href="WordListEdit.xsl"/>
 			<new href="WordListNew.xsl"/>
 		</configuration>
+        -->
+        
 </qd-configurations>
