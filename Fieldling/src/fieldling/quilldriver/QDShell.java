@@ -67,16 +67,16 @@ public class QDShell extends JFrame {
 			}
 			catch (Exception e) {
 			}
+                        try {
+	                        PrintStream ps =  new PrintStream(new FileOutputStream(System.getProperty("user.home") + "/qd.log"));
+                                System.setOut(ps);
+                                System.setErr(ps);
+                        } catch (FileNotFoundException fnfe) {}
 			new QDShell();
 		} catch (NoClassDefFoundError err) {
 		}            
 	}
-/*			try {
-	                        PrintStream ps =  new PrintStream(new FileOutputStream("qd.log"));
-                                System.setOut(ps);
-                                System.setErr(ps);
-                        } catch (FileNotFoundException fnfe) {}
-*/    
+
         public File selectTranscriptFile(String message) {
             JFileChooser fc = new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
             fc.addChoosableFileFilter(new QDFileFilter());
