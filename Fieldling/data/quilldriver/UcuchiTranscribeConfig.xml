@@ -40,15 +40,12 @@
 		</action-set>
 		<action-set name="Edit">
 			<action name="New Clause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause"/>
-			<action name="New Sentence" keystroke="control B" node="ancestor-or-self::ucuchi:S" xsl-task="newSentence"/>
 			<action name="Delete Clause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode"/>
-            <action name="Delete Sentence" keystroke="control alt R" node="ancestor-or-self::ucuchi:S" xsl-task="removeNode"/>
 		</action-set>
 	</actions>
 		<rendering-instructions>
 			<tag name="ucuchi:TEXT" visible="false"/>
             <tag name="ucuchi:META" visible="false"/>
-            <tag name="ucuchi:S" visible="false" visiblecontents="true"/>
             <tag name="ucuchi:W" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:TRANS" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>

@@ -87,15 +87,6 @@
 						<ucuchi:S-F><xsl:text> </xsl:text></ucuchi:S-F>
 					</ucuchi:C>
 				</xsl:when>
-                <xsl:when test="$qd.task='newSentence'">
-                    <xsl:copy-of select="."/>
-                    <xsl:variable name="lastclause" select="ucuchi:C[position()=last()]"/>
-					<ucuchi:S>
-                        <ucuchi:C id="{generate-id()}" spid="{$lastclause/@spid}" qd:t1="{$lastclause/@qd:t2}" qd:t2="{$qd.mediaduration}">
-                            <ucuchi:S-F><xsl:text> </xsl:text></ucuchi:S-F>
-                        </ucuchi:C>
-                    </ucuchi:S>
-                </xsl:when>
                 
                 <!-- time-coding tasks -->
 				<xsl:when test="$qd.task='markStart'">
