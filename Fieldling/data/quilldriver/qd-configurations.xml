@@ -3,7 +3,7 @@
 
 <qd-configurations>
         <!-- These are view-only configurations -->
-        <configuration menu-name="Ucuchi Live">
+        <configuration menu-name="UcuchiLive">
             <config href="UcuchiViewConfig.xml"/>
         </configuration>
         
@@ -14,7 +14,7 @@
             <new href="UcuchiTranscribeNew.xsl"/>
         </configuration>
         
-		<configuration menu-name="THDL Read-only">
+		<configuration menu-name="THDLReadonly">
 			<config href="SavantConfig.xml"/>
 		</configuration>
         
@@ -25,7 +25,7 @@
         -->
         
 		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
-		<configuration menu-name="THDL Transcription">
+		<configuration menu-name="THDLTranscription">
 			<config href="TranscriptionConfig.xml"/>
 			<edit href="TranscriptionEdit.xsl"/>
 			<new href="TranscriptionNew.xsl"/>
