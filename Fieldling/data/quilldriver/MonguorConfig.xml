@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
+<qd-configuration>
+	<parameters>
+		<parameter name="qd.root.element" val="tasx" type="text"/>
+		<parameter name="qd.timealignednodes" val="//event[@start]"/>
+		<parameter name="qd.nodebegins" val="@start"/>
+		<parameter name="qd.nodeends" val="@end"/>
+		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::event"/>
+	</parameters>
+	<actions>
+		<action-set name="Navigate">
+			<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="Play Next" keystroke="control shift DOWN" node="following::event" qd-command="playNode"/>
+			<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::event" qd-command="playNode"/>
+			<action name="Play End of Current" keystroke="control RIGHT" node="ancestor-or-self::event" qd-command="playEdge"/>
+			<action name="Play Previous" keystroke="control shift UP" node="preceding::event" qd-command="playNode"/>
+			<action name="Goto Start" keystroke="control L" node="ancestor-or-self::event" qd-command="seekStart"/>
+			<action name="Goto End" keystroke="control SEMICOLON" node="ancestor-or-self::event" qd-command="seekEnd"/>
+			<action name="Next Sentence" keystroke="control DOWN" node="following::event"/>
+			<action name="Previous Sentence" keystroke="control UP" node="preceding::event"/>
+		</action-set>
+	</actions>
+		<rendering-instructions>
+			<tag name="meta" visible="false" visiblecontents="false"/>
+			<tag name="session" visible="false"/>
+			<tag name="layer" visible="false"/>
+			<tag name="event" visible="true">
+				<attribute name="start" visible="false"/>
+				<attribute name="end" visible="false"/>
+			</tag>
+		</rendering-instructions>
+</qd-configuration>

@@ -11,6 +11,9 @@
 			<config href="SavantConfig.xml"/>
 		</configuration>
         
+        <configuration menu-name="Monguor Sample">
+            <config href="MonguorConfig.xml"/>
+        </configuration>
         
 		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
 		<configuration menu-name="THDL Transcription">
