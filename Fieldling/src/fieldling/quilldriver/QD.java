@@ -27,7 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.plaf.*;
 import java.awt.*;
-import java.awt.event.*;  
+import java.awt.event.*;
 import java.lang.reflect.*;
 
 import fieldling.mediaplayer.PanelPlayer;
@@ -113,7 +113,7 @@ public class QD extends JDesktopPane {
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
 	public Timer checkTimeTimer = null;
 	protected Transformer transformer = null; //this has no place here
-	
+
 	public QD(Configuration configuration) {
 		setupGlobals();
 		setupGUI();
@@ -132,11 +132,11 @@ public class QD extends JDesktopPane {
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		}
-	}	
+	}
 	private void setupGUI() {
  		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-	
+
 		//(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable)
 		videoFrame = new JInternalFrame(null, false, false, false, false);
 		videoFrame.setVisible(true);
@@ -146,7 +146,7 @@ public class QD extends JDesktopPane {
 		invalidate();
 		validate();
 		repaint();
-	
+
 		textFrame = new JInternalFrame(null, false, false, false, true);
 		textFrame.setVisible(true);
 		textFrame.setLocation(0,0);
@@ -155,8 +155,8 @@ public class QD extends JDesktopPane {
 		invalidate();
 		validate();
 		repaint();
-	
-	
+
+
 		actionFrame = new JInternalFrame(null, false, false, false, true);
 		actionFrame.setVisible(true);
 		actionFrame.setLocation(0,0);
@@ -165,7 +165,7 @@ public class QD extends JDesktopPane {
 		invalidate();
 		validate();
 		repaint();
-		
+
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
 				Dimension d = videoFrame.getSize();
@@ -179,7 +179,7 @@ public class QD extends JDesktopPane {
 			}
 		});
 	}
-	
+
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
 		timer.schedule(new TimerTask() {
@@ -217,8 +217,8 @@ public class QD extends JDesktopPane {
 					invalidate();
 					validate();
 					repaint();
-					
-					
+
+
 System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 			}}, 0, 50);
@@ -231,13 +231,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		Action a = actionsArray[i];
 		actions.put(a.getValue(Action.NAME), a);
 	    }
-	}    
-	
+	}
+
 	private Action getActionByName(String name) {
 	    return (Action)(actions.get(name));
 	}
 
-	
+
 	class TimeCodeView extends JPanel implements TimeCodeModelListener, SimpleSpinnerListener {
 		TimeCodeModel tcm;
 		JTextField currentTimeField;
@@ -245,7 +245,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		long currentTime=-1, startTime=-1, stopTime=-1;
 		//int currentTime=-1, startTime=-1, stopTime=-1;
 		final int TEXT_WIDTH, TEXT_HEIGHT;
-		
+
 		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
 			tcm = time_model;
 
@@ -259,12 +259,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			inButton.setPreferredSize(new Dimension(inButton.getIcon().getIconWidth(), inButton.getIcon().getIconHeight()));
 			outButton.setPreferredSize(new Dimension(outButton.getIcon().getIconWidth(), outButton.getIcon().getIconHeight()));
 			playButton.setPreferredSize(new Dimension(playButton.getIcon().getIconWidth(), playButton.getIcon().getIconHeight()));
-			
+
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					long t = player.getCurrentTime();
 					//int t = player.getCurrentTime();
-					if (t != -1) { 
+					if (t != -1) {
 						setStartTime(t);
 						tcm.setTimeCodes(t, stopTime, tcm.getCurrentNode());
 					}
@@ -302,11 +302,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			});
 			TEXT_WIDTH = 60;
 			TEXT_HEIGHT = inButton.getPreferredSize().height / 2;
-			
+
 			currentTimeField = new JTextField();
 			currentTimeField.setEditable(false);
 			currentTimeField.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
-			
+
 			startSpinner = new fieldling.util.SimpleSpinner();
 			stopSpinner = new fieldling.util.SimpleSpinner();
 			startSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
@@ -369,13 +369,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		//int t1, t2; //start and stop times in milliseconds
 		private TextHighlightPlayer thp;
 		private Object currentNode = null;
-		
+
 		TimeCodeModel(TextHighlightPlayer thp) {
 			listenerList = new EventListenerList();
 			this.thp = thp;
 			t1 = 0;
 			t2 = 0;
-		} 
+		}
 		public void addTimeCodeModelListener(TimeCodeModelListener tcml) {
 			listenerList.add(TimeCodeModelListener.class, tcml);
 		}
@@ -388,12 +388,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		//public Integer getInTime() {
 		//	return new Integer(t1);
 		public Long getInTime() {
-			return new Long(t1);	
+			return new Long(t1);
 		}
 		//public Integer getOutTime() {
 		//	return new Integer(t2);
 		public Long getOutTime() {
-			return new Long(t2);	
+			return new Long(t2);
 		}
 		public Object getCurrentNode() {
 			return currentNode;
@@ -406,7 +406,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 		}
 		//public void setTimeCodes(int t1, int t2, Object node) {
-		public void setTimeCodes(long t1, long t2, Object node) {	
+		public void setTimeCodes(long t1, long t2, Object node) {
 			Object oldNode = currentNode;
 			currentNode = node;
 			if (!(this.t1 == t1 && this.t2 == t2)) {
@@ -468,7 +468,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	public boolean saveTranscript() {
 		if (transcriptFile == null)
 			return true;
-		
+
 		XMLOutputter xmlOut = new XMLOutputter();
 		try {
 			FileOutputStream fous = new FileOutputStream(transcriptFile);
@@ -520,43 +520,43 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 			return false;
 	}
-	
+
 	public boolean loadTranscript(File file) {
 			if (!file.exists())
 				return false;
-		
+
 			if (player == null) {
 				JOptionPane.showConfirmDialog(QD.this, messages.getString("SupportedMediaError"), null, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				return false;
 			}
-				
+
 			try {
 				//FIXME?? don't validate, since user could be offline and dtd online
-				final SAXBuilder builder = new SAXBuilder(false); 
-				
+				final SAXBuilder builder = new SAXBuilder(false);
+
 				@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
 				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-				@TIBETAN@dp.setByUserTibetanFontSize(QDShell.tibetan_font_size);
-				@TIBETAN@dp.setByUserRomanAttributeSet(QDShell.font_face, QDShell.font_size);
-				
+				@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+				@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+
 				@UNICODE@final JTextPane t = new JTextPane();
-				@UNICODE@t.setFont(new Font(QDShell.font_face, java.awt.Font.PLAIN, QDShell.font_size));
-				
+				@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+
 				editor = new XMLEditor(builder.build(file), t, currentTagInfo);
-				
+
 				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
 				Set keys = keyActions.keySet();
 				Iterator keyIter = keys.iterator();
 				while (keyIter.hasNext()) {
-					KeyStroke key = (KeyStroke)keyIter.next(); 
+					KeyStroke key = (KeyStroke)keyIter.next();
 					Action action = (Action)keyActions.get(key);
 					keymap.addActionForKeyStroke(key, action);
 				}
 				editor.getTextPane().setKeymap(keymap);
-				
+
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"));
 				hp = new TextHighlightPlayer(view, Color.cyan);
-				
+
 				//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
 				//Ctrl-Page_Down and so on... surely there is a better way to do this....
 				JScrollBar sb = hp.getScroller().getVerticalScrollBar();
@@ -569,9 +569,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						sb.getActionMap().put(action, action);
 					}
 				}
-		
+
 				tcp = new TimeCodeModel(hp);
-				
+
 				if (player.getMediaURL() != null) {
 					try {
 						player.cmd_stop();
@@ -603,9 +603,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							if (mediaFile.exists()) { //open the actual file
 								player.loadMovie(mediaFile.toURL());
 								nomedia = false;
-							} else if (QDShell.media_directory != null) { //otherwise try default media directory
+							} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
 								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
-								mediaFile = new File(QDShell.media_directory, mediaName);
+								mediaFile = new File(PreferenceManager.media_directory, mediaName);
 								if (mediaFile.exists()) {
 									player.loadMovie(mediaFile.toURL());
 									nomedia = false;
@@ -616,16 +616,16 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							player.loadMovie(new URL(value));
 							nomedia = false;
 						}
-					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing 
+					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
 				}
 				if (nomedia) { //can't find movie: open new movie
-					JFileChooser fc = new JFileChooser(QDShell.media_directory);
+					JFileChooser fc = new JFileChooser(PreferenceManager.media_directory);
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
 							String mediaString = mediaFile.getAbsolutePath();
-							QDShell.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
+							PreferenceManager.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
 							//INSERT VIDEO NAME INTO DATA FILE
 						} catch (MalformedURLException murle) {} //do nothing
@@ -651,7 +651,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					Object obj = XMLUtilities.findSingleNode(editor.getXMLDocument().getRootElement(), config.getProperty("qd.title"));
 					textFrame.setTitle(XMLUtilities.getTextForNode(obj));
 				}
-				
+
 				JComponent c = (JComponent)textFrame.getContentPane();
 				c.setLayout(new BorderLayout());
 				c.add("Center", hp);
@@ -662,7 +662,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 
 				editor.addNodeEditListener(new XMLEditor.NodeEditListener() {
 					public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
-						if (ned instanceof XMLEditor.StartEditEvent) { 
+						if (ned instanceof XMLEditor.StartEditEvent) {
 							//stop the automatic highlighting and scrolling
 							//since it would interfere with editing.
 							//player.cancelAnnotationTimer();
@@ -692,15 +692,15 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						//hp.unhighlightAll();
 					}
 				});
-				
+
 				if (configuration.getEditURL() == null) editor.setEditable(false);
 				else editor.setEditabilityTracker(true);
-				
+
 				transcriptFile = file;
 				textFrame.requestFocus(); //otherwise the first time you press Play you don't get highlights in the text window!!
 
 				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
-				
+
 				return true;
 			} catch (JDOMException jdome) {
 				jdome.printStackTrace();
@@ -720,7 +720,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		if (player.cmd_isID(nodeid)) {
 			/* FIXME: by transferring focus, we don't have to worry about problems caused by
 			the cursor position in the editor being different from the highlight,
-			since users will have to click on the editor to get back into editing 
+			since users will have to click on the editor to get back into editing
 			FIXME here's a problem, though: if there is a scrollbar for the JTextPane, then
 			focus transfers to this scrollbar. if not, then it transfers back to itself, in other
 			words the desired effect is not achieved! */
@@ -757,11 +757,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		}
 		return object;
 	}
-	
+
 	public XMLEditor getEditor() {
 		return editor;
 	}
-	
+
   	public static String convertTimesForPanelPlayer(String s) {
 		StringBuffer sBuff = new StringBuffer();
 		StringTokenizer sTok = new StringTokenizer(s, ",");
@@ -779,7 +779,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			Document cDoc = builder.build(configuration.getConfigURL());
 			Element cRoot = cDoc.getRootElement();
 			Iterator it;
-			
+
 			//tag rendering
 			Element renderingInstructions = cRoot.getChild("rendering-instructions");
 			List sharedInstructions = renderingInstructions.getChildren("tag");
@@ -793,10 +793,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					it = sharedInstructions.iterator();
 					while (it.hasNext()) {
 						Element e = (Element)it.next();
-						@TIBETAN@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@TIBETAN@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
-						@UNICODE@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@UNICODE@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
 						List atts = e.getChildren("attribute");
@@ -817,16 +817,16 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				while (tagViewIter.hasNext()) {
 					Element tagView = (Element)tagViewIter.next();
 					tagInfo[count] = new XMLTagInfo(tagView.getAttributeValue("name"));
-					KeyStroke key = KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke")); 
+					KeyStroke key = KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke"));
 					tagShortcuts.put(tagInfo[count], key);
 					if (sharedInstructions.size() > 0) {
 						it = sharedInstructions.iterator();
 						while (it.hasNext()) {
 							Element e = (Element)it.next();
-							@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 								@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 								@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
-							@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 								@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 								@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
 							List atts = e.getChildren("attribute");
@@ -839,15 +839,15 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 						}
 					}
-					
+
 					List tagOptions = tagView.getChildren("tag");
 					it = tagOptions.iterator();
 					while (it.hasNext()) {
 						Element e = (Element)it.next();
-						@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
-						@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
 						List atts = e.getChildren("attribute");
@@ -862,7 +862,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					count++;
 				}
 			}
-			
+
 			//parameters
 			Element parameterSet = cRoot.getChild("parameters");
 			List parameters = parameterSet.getChildren("parameter");
@@ -878,13 +878,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					textConfig.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
 			}
 			rootElement = textConfig.getProperty("qd.root.element");
-			
+
 			//configuration-defined actions
 			Element allActions = cRoot.getChild("actions");
 			List actionSets = allActions.getChildren("action-set");
 			keyActions = new HashMap(); //maps keys to actions
 			taskActions = new HashMap(); //maps task names to same actions
-			
+
 			int xCount = 0;
 			if (tagInfo.length < 2)
 				configMenus = new JMenu[actionSets.size()]; //no need for extra "Visualizations" menu
@@ -921,7 +921,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				currentTagInfo = tagInfo[0];
 				xCount++;
 			}
-			
+
 			Iterator actionSetIter = actionSets.iterator();
 			try {
 			//stupid: I just made Transformer global for no good reason
@@ -929,7 +929,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
 			final DOMOutputter domOut = new DOMOutputter();
 			final DOMBuilder jdomBuild = new DOMBuilder();
-				
+
 			while (actionSetIter.hasNext()) {
 				Element thisSet = (Element)actionSetIter.next();
 				configMenus[xCount] = new JMenu(thisSet.getAttributeValue("name"));
@@ -1014,7 +1014,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 										transformer.setParameter(key, textConfig.getProperty(key));
 									}
 									transformer.setParameter("qd.task", tasks);
-									
+
 									// THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
 									float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds
 									float outSeconds = tcp.getOutTime().floatValue() / 1000; //convert from milliseconds
@@ -1037,13 +1037,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
 									transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
 									transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
-									float slowInc = (float)QDShell.slow_adjust;
-									float rapidInc = (float)QDShell.rapid_adjust;
+									float slowInc = (float)PreferenceManager.slow_adjust;
+									float rapidInc = (float)PreferenceManager.rapid_adjust;
 									transformer.setParameter("qd.slowincrease", String.valueOf(slowInc/1000));
 									transformer.setParameter("qd.rapidincrease", String.valueOf(rapidInc/1000));
 									//send the name of the current media URL
 									transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
-									
+
 									JDOMResult jdomResult = new JDOMResult();
 									//DOMSource domSource = new DOMSource(docBuilder.newDocument());
 									//domSource.getNode().appendChild(transformElement);
@@ -1055,22 +1055,22 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									transformer.transform(domSource, jdomResult);
 									Element transformedRoot = jdomResult.getDocument().getRootElement();
 									List replaceNodeWith = transformedRoot.getContent();
-									
+
 									XMLOutputter xmlOut = new XMLOutputter();
 									try {
 										Element ee = (Element)cloneOwner;
 										xmlOut.output(ee, System.out);
 										xmlOut.output(jdomResult.getDocument(), System.out);
 									} catch (IOException ioe) {ioe.printStackTrace();}
-									
+
 									int start = editor.getStartOffsetForNode(transformNode);
 									int end = editor.getEndOffsetForNode(transformNode);
-									
+
 									//FIXME: this whole section needs to be sensitive to whether or
 									//not node is visible on screen, and whether or not what replaces
 									//it should be visible or not. right now, the following code won't
 									//work right if the transformed node is not visible
-									
+
 									//boolean redraw = true;
 									//if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
 									//if (redraw) {
@@ -1123,7 +1123,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 												elPos++;
 											}
 										}
-		
+
 										try {
 											tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
 											String s = tDoc.getText(insertPos-1, 2);
@@ -1142,11 +1142,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 											ble.printStackTrace();
 											return;
 										}
-										
+
 										editor.fixOffsets();
 										hp.refresh();
 										player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
-									
+
 									transformer.clearParameters();
 									editor.setEditabilityTracker(true);
 								} catch (TransformerException tre) {
@@ -1200,7 +1200,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("playBack")) {
 								try {
-									long t = player.getCurrentTime() - QDShell.play_minus;
+									long t = player.getCurrentTime() - PreferenceManager.play_minus;
 									if (t < 0) t = 0;
 									if (player.isPlaying()) player.cmd_stop();
 									player.setCurrentTime(t);
@@ -1214,7 +1214,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
 									tcp.setNode(nearestParent);
 									Long t2 = tcp.getOutTime();
-									long t1 = t2.longValue() - QDShell.play_minus;
+									long t1 = t2.longValue() - PreferenceManager.play_minus;
 									if (t1 < 0) t1 = 0;
 									player.cmd_playSegment(new Long(t1), t2);
 								} catch (PanelPlayerException ppe) {
@@ -1254,7 +1254,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	public JMenu[] getConfiguredMenus() {
 		return configMenus;
 	}
-	
+
 	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
 		@TIBETAN@return activeKeyboard;
 	@TIBETAN@}
@@ -1379,7 +1379,7 @@ public void replaceText() {
 		sharedDP2.setDocument(replaceDoc);
 	sharedDP2.setPreferredSize(new Dimension(250,50));
 	p3.add(sharedDP2);
-	
+
 	p0.add(p2);
 	p0.add(p3);
 
