@@ -439,8 +439,7 @@ optimized for use with Tibetan script.
         <copy todir="TEMP/gen/QuillDriver/DONTMOVE">
             <fileset dir="${webstart.lib}"/>
         </copy>
-		<echo file="TEMP/gen/QuillDriver/Run-QD.bat" append="false">java -cp DONTMOVE/quilldriver.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell
-        </echo>
+	<echo file="TEMP/gen/QuillDriver/Run-QD.bat" append="false">javaw -cp DONTMOVE/quilldriver.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell</echo>
         <zip destfile="${webapp.dir}/QD.zip" basedir="TEMP/gen"/>
         
             <!-- Tibetan version -->
@@ -448,8 +447,7 @@ optimized for use with Tibetan script.
         <copy todir="TEMP/tib/QuillDriver/DONTMOVE">
             <fileset dir="${webstart.lib}"/>
         </copy>
-		<echo file="TEMP/tib/QuillDriver/Run-QD-TIB.bat" append="false">java -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/Jskad.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell
-        </echo>
+	<echo file="TEMP/tib/QuillDriver/Run-QD-TIB.bat" append="false">javaw -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/Jskad.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell</echo>
         <zip destfile="${webapp.dir}/QD-TIB.zip" basedir="TEMP/tib"/>
         
         <!-- Step 5.7 make OS X executable -->
