@@ -21,16 +21,21 @@ public class UserFeedback {
 	public static final String USER_NAME = "USER_NAME";
 	public static final String EMAIL_ADDR = "EMAIL_ADDRESS";
 	public static final String SMTP_ADDR = "SMTP_SERVER";
+	public static final String PASSWORD = "PASSWORD";
 	public static final String[] MODULE_NAME = {"QuillDriver"};
 	public static final String[] FEEDBACK_TYPES = {"Bug", "Feature Request", "Inquiry"};
 	public static final String[] PRIORITY_LEVELS = {"High", "Medium", "Low"};
 	public static String name;
 	public static String email;
-	public static String smtp;
-	public String moduleselected,feedbackselected,priorityselected,subject;
+	public static String smtp,subject = null,firstmessage;
+	public String moduleselected,feedbackselected,priorityselected;
 	public JTextField smtpField,emailField,nameField;
 	public JTextArea feedbackText;
 	public JComboBox module,feedbackType,priority;
+	public JPasswordField password;
+	public String passwordvalue ;
+
+	//private static passwordsave;
 
 	public UserFeedback(JFrame f)
 	{
@@ -44,16 +49,21 @@ public class UserFeedback {
 			smtpField = new JTextField((myPrefs.get(SMTP_ADDR,"<Enter Mail Server>")));
 			smtpField.setBorder(BorderFactory.createTitledBorder("Outgoing Mail Server"));
 			smtpField.setSize(150,30);
+			password = new JPasswordField((myPrefs.get(PASSWORD,"")));
+			password.setBorder(BorderFactory.createTitledBorder("Password"));
+			password.setSize(150,30);
+
 			module = new JComboBox(MODULE_NAME);
 			feedbackType = new JComboBox(FEEDBACK_TYPES);
 			priority = new JComboBox(PRIORITY_LEVELS);
 			feedbackText = new JTextArea();
-			feedbackText.setSize(150,100);
+			feedbackText.setSize(150,70);
 			JPanel northPanel = new JPanel(new GridLayout(1,0));
 			JPanel leftPanel = new JPanel(new GridLayout(0,1));
 			leftPanel.add(nameField);
 			leftPanel.add(emailField);
 			leftPanel.add(smtpField);
+			leftPanel.add(password);
 			JPanel rightPanel = new JPanel(new GridLayout(3,3));
 			rightPanel.add(new JLabel("Affected module: "));
 			rightPanel.add(module);
@@ -88,31 +98,41 @@ public class UserFeedback {
 
 	void msgsend()
 	    {
-			String  to, subject = null, from = null;
+			String  to, from = null;
 			String mailhost = null;
 			String mailer = "msgsend";
-			String protocol = null, host = null, user = null, password = null;
+			String protocol = null, host = null, user = null;
+
 			try {
 					moduleselected=(String)module.getSelectedItem();
 					feedbackselected=(String)feedbackType.getSelectedItem();
 					priorityselected=(String)priority.getSelectedItem();
-					to = "egarrett@emich.edu";
-					//to="fieldling-feedback@cvs.sourceforge.net";
+
+					//to = "egarrett@emich.edu";
+
+					to="fieldling-feedback@lists.sourceforge.net";
 					from=emailField.getText();
 					user=nameField.getText();
 					mailhost=smtpField.getText();
-					subject = CreateSubject(user,moduleselected,feedbackselected,priorityselected);
-					//System.out.println("Subject: " + subject);
+
+					passwordvalue=new String(password.getPassword());
+
+					subject = CreateSubjectID(user);
+
 					Properties props = System.getProperties();
+
 					// XXX - could use Session.getTransport() and Transport.connect()
 					// XXX - assume we're using SMTP
-					if (mailhost != null) {
-					props.put("mail.smtp.host", mailhost);
-					props.put("mail.smtp.auth", new Boolean(true));
+					if (mailhost != null)
+					{
+						props.put("mail.smtp.host", mailhost);
+						props.put("mail.smtp.auth", new Boolean(true));
 					}
+
 					// Get a Session object
 					Session session = Session.getInstance(props, null);
 					Transport transport = session.getTransport("smtp");
+
 					// construct the message
 					Message msg = new MimeMessage(session);
 					if (from != null)
@@ -121,14 +141,19 @@ public class UserFeedback {
 					msg.setFrom();
 					msg.setRecipients(Message.RecipientType.TO,
 								InternetAddress.parse(to, false));
-					msg.setSubject(subject);
+					msg.setSubject(moduleselected+" Bug ("+subject+")");
 					msg.setHeader("X-Mailer", mailer);
 					msg.setSentDate(new Date());
-					msg.setText(feedbackText.getText());
+
+					firstmessage = MessageIntroduction(moduleselected,feedbackselected,priorityselected);
+					msg.setText(firstmessage+feedbackText.getText());
+
+
+					//user = "egarrett";
+					//passwordvalue = "*******";
+
 					// send the message
-					user = "egarrett";
-					password = "*******";
-					transport.connect(mailhost, user, password); 
+					transport.connect(mailhost, user, passwordvalue);
 					msg.saveChanges();	// don't forget this
 					transport.sendMessage(msg, msg.getAllRecipients());
 					transport.close();
@@ -140,18 +165,31 @@ public class UserFeedback {
 			}
    }
 
-	String CreateSubject(String user,String module,String feedback,String priority)
+	String CreateSubjectID(String user)
 	   {
-		   Calendar c=Calendar.getInstance();
 		   subject=new String("");
 		   StringBuffer sb=new StringBuffer(subject);
 		   sb.append(user.substring(0,2));
-			Random rn=new Random();
-			sb.append(String.valueOf(rn.nextInt()));
-			sb.append(" ");
-			sb.append((c.getTime()).toString());
-			sb.append(" Feedback of type " + feedback + " requested for module "+ module + " with priority "+priority);
-			return(sb.toString());
+		   Random rn=new Random();
+		   sb.append(String.valueOf(rn.nextInt()));
+		   System.out.println(sb.toString());
+		   return(sb.toString());
+
+
+   }
+
+   String MessageIntroduction(String module,String feedback,String priority)
+   {
+	    Calendar c=Calendar.getInstance();
+		StringBuffer sb=new StringBuffer("");
+	    sb.append("ID: "+subject+"\n");
+		sb.append("Date: "+(c.getTime()).toString()+"\n");
+		sb.append("Module: " + module + "\n");
+		sb.append("Type: "+ feedback + "\n");
+		sb.append("Priority: "+ priority + "\n\n");
+		System.out.println(sb.toString());
+		return(sb.toString());
+
    }
 }
 
