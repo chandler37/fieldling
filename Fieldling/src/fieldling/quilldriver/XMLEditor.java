@@ -1232,8 +1232,8 @@ upAction, writableAction
 			StyleConstants.setForeground(eColor, tagColor);
 			
 			//added for Tibetan version
-			StyleConstants.setFontSize(eColor, 14);
-			StyleConstants.setFontFamily(eColor, "Monospaced");
+			StyleConstants.setFontSize(eColor, QDShell.font_size);
+			StyleConstants.setFontFamily(eColor, QDShell.font_face);
 
 			eColor.addAttribute("xmlnode", e);
 
@@ -1247,8 +1247,8 @@ upAction, writableAction
 					
 					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
-					StyleConstants.setFontSize(sas, 14);
-					StyleConstants.setFontFamily(sas, "Monospaced");
+					StyleConstants.setFontSize(sas, QDShell.font_size);
+					StyleConstants.setFontFamily(sas, QDShell.font_face);
 					
 					doc.insertString(pos.getOffset(), "\n", sas);
 
@@ -1373,16 +1373,16 @@ upAction, writableAction
 			StyleConstants.setForeground(aColor, attColor);
 
 			//added for Tibetan version
-			StyleConstants.setFontSize(aColor, 14);
-			StyleConstants.setFontFamily(aColor, "Monospaced");
+			StyleConstants.setFontSize(aColor, QDShell.font_size);
+			StyleConstants.setFontFamily(aColor, QDShell.font_face);
 			
 			SimpleAttributeSet tColor = new SimpleAttributeSet();
 
 			StyleConstants.setForeground(tColor, textColor);
 
 			//added for Tibetan version
-			StyleConstants.setFontSize(tColor, 14);
-			StyleConstants.setFontFamily(tColor, "Monospaced");
+			StyleConstants.setFontSize(tColor, QDShell.font_size);
+			StyleConstants.setFontFamily(tColor, QDShell.font_face);
 			
 			tColor.addAttribute("xmlnode", att);
 
@@ -1400,8 +1400,8 @@ upAction, writableAction
 
 					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
-					StyleConstants.setFontSize(sas, 14);
-					StyleConstants.setFontFamily(sas, "Monospaced");
+					StyleConstants.setFontSize(sas, QDShell.font_size);
+					StyleConstants.setFontFamily(sas, QDShell.font_face);
 			
 					doc.insertString(pos.getOffset(), " ", sas);
 
@@ -1448,8 +1448,8 @@ upAction, writableAction
 			//StyleConstants.setLeftIndent(tAttributes, indent);
 
 			StyleConstants.setForeground(tAttributes, textColor);
-			StyleConstants.setFontSize(tAttributes, 14);
-			StyleConstants.setFontFamily(tAttributes, "Monospaced");
+			StyleConstants.setFontSize(tAttributes, QDShell.font_size);
+			StyleConstants.setFontFamily(tAttributes, QDShell.font_face);
 			tAttributes.addAttribute("xmlnode", t);
 			doc.insertString(pos.getOffset(), " ", tAttributes); //insert space with text attributes so first character has correct color, xmlnode attribute, etc.
 

@@ -64,7 +64,7 @@ a version optimized for use with Tibetan script.
 	<property name="archive.location" value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver"/>
 	<property name="mail.from"	value="eg3p@virginia.edu"/>
 	<property name="mail.host"	value="e.mail.virginia.edu"/>
-	<property name="mail.to"	value="eg3p@virginia.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,rogerand@humnet.ucla.edu"/>
+	<property name="mail.to"	value="eg3p@virginia.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,rogerand@humnet.ucla.edu,fmg3u@virginia.edu"/>
 	<property name="update.message"	value=""/>
 	
 	<path id="my.classpath">
@@ -316,10 +316,10 @@ a version optimized for use with Tibetan script.
   <vendor>THDL</vendor>
   <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
   <description>
-QuillDriver is a tool for transcribing and annotating digital video files.
-Annotation files can be any well-formed XML, and supported media players include
-Java Media Framework (JMF) and Quicktime for Java. QuillDriver is fully
-customizable to project-specific uses.
+QuillDriver is a fully customizable tool for transcribing and annotating 
+digital video files. Annotation files can be any well-formed XML, 
+and supported media players include Java Media Framework (JMF) 
+and Quicktime for Java.
   </description>
   <offline-allowed/>
 </information>
@@ -366,16 +366,14 @@ customizable to project-specific uses.
 		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
 <![CDATA[      href="]]>${jnlp.file}<![CDATA[">
 <information>
-  <title>QuillDriver</title>
+  <title>QuillDriver-TIBETAN</title>
   <vendor>THDL</vendor>
   <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
   <description>
 QuillDriver is a tool for transcribing and annotating digital video files.
 Annotation files can be any well-formed XML, and supported media players include
-Java Media Framework (JMF) and Quicktime for Java. QuillDriver is fully
-customizable to project-specific uses. This version, however, has been
-optimized for use with Tibetan script. For multilingual use, please consider
-running the Unicode version of QuillDriver.
+Java Media Framework (JMF) and Quicktime for Java. QuillDriver-TIBETAN has been
+optimized for use with Tibetan script.
   </description>
   <offline-allowed/>
 </information>

@@ -465,7 +465,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				d.appendChild(d.createElement("ROOT-ELEMENT"));
 				transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file)); //no args constructor implies default tree with empty root
 				transformer.clearParameters();
-				if (loadTranscript(file)) {	
+				if (loadTranscript(file)) {
 					if (dtdURL != null && rootElement != null) editor.getXMLDocument().setDocType(new DocType(rootElement,dtdURL));
 					return true;
 				}
@@ -492,8 +492,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				final SAXBuilder builder = new SAXBuilder(false); 
 				
 				@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
+				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
+				@TIBETAN@dp.setByUserTibetanFontSize(QDShell.tibetan_font_size);
+				@TIBETAN@dp.setByUserRomanAttributeSet(QDShell.font_face, QDShell.font_size);
+				
 				@UNICODE@final JTextPane t = new JTextPane();
-
+				@UNICODE@t.setFont(new Font(QDShell.font_face, java.awt.Font.PLAIN, QDShell.font_size));
+				
 				editor = new XMLEditor(builder.build(file), t, tagInfo);
 
 				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
@@ -532,16 +537,33 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				boolean nomedia = true;
 				if (value != null) {
 					try {
-						player.loadMovie(new URL(value));
-						nomedia = false;
-					} catch (MalformedURLException murle) {} //do nothing 
+						if (value.startsWith("file:")) { //it's a file, so try to load
+							File mediaFile = new File(value.substring(5));
+							if (mediaFile.exists()) { //open the actual file
+								player.loadMovie(mediaFile.toURL());
+								nomedia = false;
+							} else if (QDShell.media_directory != null) { //otherwise try default media directory
+								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
+								mediaFile = new File(QDShell.media_directory, mediaName);
+								if (mediaFile.exists()) {
+									player.loadMovie(mediaFile.toURL());
+									nomedia = false;
+								}
+							}
+						} else {
+							player.loadMovie(new URL(value));
+							nomedia = false;
+						}
+					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing 
 				}
 				if (nomedia) { //can't find movie: open new movie
-					JFileChooser fc = new JFileChooser();
+					JFileChooser fc = new JFileChooser(QDShell.media_directory);
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
+							String mediaString = mediaFile.getAbsolutePath();
+							QDShell.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
 						} catch (MalformedURLException murle) {} //do nothing
 					}
@@ -659,6 +681,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			//ThdlDebug.noteIffyCode();
 		}
 		return object;
+	}
+	
+	public XMLEditor getEditor() {
+		return editor;
 	}
 	
   	public static String convertTimesForPanelPlayer(String s) {
@@ -991,6 +1017,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		return configMenus;
 	}
 	
+	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
+		@TIBETAN@return activeKeyboard;
+	@TIBETAN@}
 	@TIBETAN@public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
 		@TIBETAN@activeKeyboard = kbd;
 		@TIBETAN@if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
