@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipa4unicode>
+                        <!-- pulmonic consonants -->
+                          <symbol name="LATIN SMALL LETTER P" codepoint="U+0070">
+                                <features>CONSONANT BILABIAL VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER B" codepoint="U+0062">
+                                <features>CONSONANT BILABIAL VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER T" codepoint="U+0074">
+                                <features>CONSONANT CORONAL VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER D" codepoint="U+0064">
+                                <features>CONSONANT CORONAL VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER T WITH RETROFLEX HOOK" codepoint="U+0288">
+                                <features>CONSONANT RETROFLEX VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER D WITH TAIL" codepoint="U+0256">
+                                <features>CONSONANT RETROFLEX VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER C" codepoint="U+0063">
+                                <features>CONSONANT PALATAL VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER DOTLESS J WITH STROKE" codepoint="U+025F">
+                                <features>CONSONANT PALATAL VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER K" codepoint="U+006B">
+                                <features>CONSONANT VELAR VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER G" codepoint="U+0067">
+                                <features>CONSONANT VELAR VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER Q" codepoint="U+0071">
+                                <features>CONSONANT UVULAR VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL G" codepoint="U+0262">
+                                <features>CONSONANT UVULAR VOICED PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER GLOTTAL STOP" codepoint="U+0294">
+                                <features>CONSONANT GLOTTAL VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER M" codepoint="U+006D">
+                                <features>CONSONANT BILABIAL VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER M WITH HOOK" codepoint="U+0271">
+                                <features>CONSONANT LABIODENTAL VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER N" codepoint="U+006E">
+                                <features>CONSONANT CORONAL VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER N WITH RETROFLEX HOOK" codepoint="U+0273">
+                                <features>CONSONANT RETROFLEX VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER N WITH LEFT HOOK" codepoint="U+0272">
+                                <features>CONSONANT PALATAL VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER ENG" codepoint="U+014B">
+                                <features>CONSONANT VELAR VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL N" codepoint="U+0274">
+                                <features>CONSONANT UVULAR VOICED NASAL</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL B" codepoint="U+0299">
+                                <features>CONSONANT BILABIAL VOICED TRILL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER R" codepoint="U+0072">
+                                <features>CONSONANT CORONAL VOICED TRILL</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL R" codepoint="U+0280">
+                                <features>CONSONANT UVULAR VOICED TRILL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER R WITH FISHHOOK" codepoint="U+027E">
+                                <features>CONSONANT CORONAL VOICED FLAP</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER R WITH TAIL" codepoint="U+027D">
+                                <features>CONSONANT RETROFLEX VOICED FLAP</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER PHI" codepoint="U+0278">
+                                <features>CONSONANT BILABIAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="GREEK SMALL LETTER BETA" codepoint="U+03B2">
+                                <features>CONSONANT BILABIAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER F" codepoint="U+0066">
+                                <features>CONSONANT LABIODENTAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER V" codepoint="U+0076">
+                                <features>CONSONANT LABIODENTAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="GREEK SMALL LETTER THETA" codepoint="U+03B8">
+                                <features>CONSONANT DENTAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER ETH" codepoint="U+00F0">
+                                <features>CONSONANT DENTAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER S" codepoint="U+0073">
+                                <features>CONSONANT ALVEOLAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER Z" codepoint="U+007A">
+                                <features>CONSONANT ALVEOLAR VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER ESH" codepoint="U+0283">
+                                <features>CONSONANT POSTALVEOLAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER EZH" codepoint="U+0292">
+                                <features>CONSONANT POSTALVEOLAR VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER S WITH HOOK" codepoint="U+0282">
+                                <features>CONSONANT RETROFLEX VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER Z WITH RETROFLEX HOOK" codepoint="U+0290">
+                                <features>CONSONANT RETROFLEX VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER C WITH CEDILLA" codepoint="U+00E7">
+                                <features>CONSONANT PALATAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER J WITH CROSSED-TAIL" codepoint="U+029D">
+                                <features>CONSONANT PALATAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER X" codepoint="U+0078">
+                                <features>CONSONANT VELAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER GAMMA" codepoint="U+0263">
+                                <features>CONSONANT VELAR VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="GREEK SMALL LETTER CHI" codepoint="U+03C7">
+                                <features>CONSONANT UVULAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL INVERTED R" codepoint="U+0281">
+                                <features>CONSONANT UVULAR VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER H WITH STROKE" codepoint="U+0127">
+                                <features>CONSONANT PHARYNGEAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER PHARYNGEAL VOICED FRICATIVE" codepoint="U+0295">
+                                <features>CONSONANT PHARYNGEAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER H" codepoint="U+0068">
+                                <features>CONSONANT GLOTTAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER H WITH HOOK" codepoint="U+0266">
+                                <features>CONSONANT GLOTTAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER L WITH BELT" codepoint="U+026C">
+                                <features>CONSONANT CORONAL VOICELESS LATERAL-FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER LEZH" codepoint="U+026E">
+                                <features>CONSONANT CORONAL VOICED LATERAL-FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER V WITH HOOK" codepoint="U+028B">
+                                <features>CONSONANT LABIODENTAL VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED R" codepoint="U+0279">
+                                <features>CONSONANT CORONAL VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED R WITH HOOK" codepoint="U+027B">
+                                <features>CONSONANT RETROFLEX VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER J" codepoint="U+006A">
+                                <features>CONSONANT PALATAL VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED M WITH LONG LEG" codepoint="U+0270">
+                                <features>CONSONANT VELAR VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER L" codepoint="U+006C">
+                                <features>CONSONANT CORONAL VOICED LATERAL-APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER L WITH RETROFLEX HOOK" codepoint="U+026D">
+                                <features>CONSONANT RETROFLEX VOICED LATERAL-APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED Y" codepoint="U+028E">
+                                <features>CONSONANT PALATAL VOICED LATERAL-APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL L" codepoint="U+029F">
+                                <features>CONSONANT VELAR VOICED LATERAL-APPROXIMANT</features>
+                          </symbol>  
+                          
+                        <!-- non-pulmonic consonants, excluding the ejective apostrophe -->
+                          <symbol name="LATIN LETTER BILABIAL CLICK" codepoint="U+0298">
+                                <features>CONSONANT BILABIAL CLICK</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER DENTAL CLICK" codepoint="U+01C0">
+                                <features>CONSONANT DENTAL CLICK</features>
+                          </symbol>
+                          <!-- should this really be called "retroflex"? -->
+                          <symbol name="LATIN LETTER RETROFLEX CLICK" codepoint="U+01C3">
+                                <features>CONSONANT RETROFLEX CLICK</features>
+                          </symbol>
+                          <!-- should this really be called "coronal"? -->
+                          <symbol name="LATIN LETTER ALVEOLAR CLICK" codepoint="U+01C2">
+                                <features>CONSONANT CORONAL CLICK</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER LATERAL CLICK" codepoint="U+01C1">
+                                <features>CONSONANT CORONAL LATERAL-CLICK</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER B WITH HOOK" codepoint="U+0253">
+                                <features>CONSONANT BILABIAL VOICED IMPLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER D WITH HOOK" codepoint="U+0257">
+                                <features>CONSONANT CORONAL VOICED IMPLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK" codepoint="U+0284">
+                                <features>CONSONANT PALATAL VOICED IMPLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER G WITH HOOK" codepoint="U+0260">
+                                <features>CONSONANT VELAR VOICED IMPLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL G WITH HOOK" codepoint="U+029B">
+                                <features>CONSONANT UVULAR VOICED IMPLOSIVE</features>
+                          </symbol>
+                          
+                        <!-- other symbols (minus the TIE BAR) -->
+                          <symbol name="LATIN SMALL LETTER TURNED W" codepoint="U+028D">
+                                <features>CONSONANT LABIAL-VELAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER W" codepoint="U+0077">
+                                <features>CONSONANT LABIAL-VELAR VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED H" codepoint="U+0265">
+                                <features>CONSONANT LABIAL-PALATAL VOICED APPROXIMANT</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL H" codepoint="U+029C">
+                                <features>CONSONANT EPIGLOTTAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER REVERSED GLOTTAL STOP WITH STROKE" codepoint="U+02A2">
+                                <features>CONSONANT EPIGLOTTAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER GLOTTAL STOP WITH STROKE" codepoint="U+02A1">
+                                <features>CONSONANT EPIGLOTTAL VOICELESS PLOSIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER C WITH CURL" codepoint="U+0255">
+                                <features>CONSONANT ALVEOLO-PALATAL VOICELESS FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER Z WITH CURL" codepoint="U+0291">
+                                <features>CONSONANT ALVEOLO-PALATAL VOICED FRICATIVE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED R WITH LONG LEG" codepoint="U+027A">
+                                <features>CONSONANT ALVEOLAR VOICED LATERAL-FLAP</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER HENG WITH HOOK" codepoint="U+0267">
+                                <features>CONSONANT POSTALVEOLAR-VELAR VOICELESS FRICATIVE</features>
+                          </symbol>
+                          
+                        <!-- vowels -->
+                          <symbol name="LATIN SMALL LETTER I" codepoint="U+0069">
+                                <features>VOWEL VOICED CLOSE FRONT UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER Y" codepoint="U+0079">
+                                <features>VOWEL VOICED CLOSE FRONT ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER I WITH STROKE" codepoint="U+0268">
+                                <features>VOWEL VOICED CLOSE CENTRAL UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER U BAR" codepoint="U+0289">
+                                <features>VOWEL VOICED CLOSE CENTRAL ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED M" codepoint="U+026F">
+                                <features>VOWEL VOICED CLOSE BACK UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER U" codepoint="U+0075">
+                                <features>VOWEL VOICED CLOSE BACK ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL I" codepoint="U+026A">
+                                <features>VOWEL VOICED CLOSE FRONT UNROUNDED LAX</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL Y" codepoint="U+028F">
+                                <features>VOWEL VOICED CLOSE FRONT ROUNDED LAX</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER UPSILON" codepoint="U+028A">
+                                <features>VOWEL VOICED CLOSE BACK ROUNDED LAX</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER E" codepoint="U+0065">
+                                <features>VOWEL VOICED CLOSE-MID FRONT UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER O WITH STROKE" codepoint="U+00F8">
+                                <features>VOWEL VOICED CLOSE-MID FRONT ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER REVERSED E" codepoint="U+0258">
+                                <features>VOWEL VOICED CLOSE-MID CENTRAL UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER BARRED O" codepoint="U+0275">
+                                <features>VOWEL VOICED CLOSE-MID CENTRAL ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER RAMS HORN" codepoint="U+0264">
+                                <features>VOWEL VOICED CLOSE-MID BACK UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER O" codepoint="U+006F">
+                                <features>VOWEL VOICED CLOSE-MID BACK ROUNDED</features>
+                          </symbol>
+                          <!-- not entirely sure what features to give schwa -->
+                          <symbol name="LATIN SMALL LETTER SCHWA" codepoint="U+0259">
+                                <features>VOWEL VOICED MID CENTRAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER OPEN E" codepoint="U+025B">
+                                <features>VOWEL VOICED OPEN-MID FRONT UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LIGATURE OE" codepoint="U+0153">
+                                <features>VOWEL VOICED OPEN-MID FRONT ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER REVERSED OPEN E" codepoint="U+025C">
+                                <features>VOWEL VOICED OPEN-MID CENTRAL UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER CLOSED REVERSED OPEN E" codepoint="U+025E">
+                                <features>VOWEL VOICED OPEN-MID CENTRAL ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED V" codepoint="U+028C">
+                                <features>VOWEL VOICED OPEN-MID BACK UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER OPEN O" codepoint="U+0254">
+                                <features>VOWEL VOICED OPEN-MID BACK ROUNDED</features>
+                          </symbol>
+                          <!-- not sure what features to give ae -->
+                          <symbol name="LATIN SMALL LETTER AE" codepoint="U+00E6">
+                                <features>VOWEL VOICED OPEN-MID-OPEN FRONT UNROUNDED</features>
+                          </symbol>
+                          <!-- randomly gave height feature of open -->
+                          <symbol name="LATIN SMALL LETTER TURNED A" codepoint="U+0250">
+                                <features>VOWEL VOICED OPEN CENTRAL UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER A" codepoint="U+0061">
+                                <features>VOWEL VOICED OPEN FRONT UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN LETTER SMALL CAPITAL OE" codepoint="U+0276">
+                                <features>VOWEL VOICED OPEN FRONT ROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER ALPHA" codepoint="U+0251">
+                                <features>VOWEL VOICED OPEN BACK UNROUNDED</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TURNED ALPHA" codepoint="U+0252">
+                                <features>VOWEL VOICED OPEN BACK ROUNDED</features>
+                          </symbol>
+  
+                          <!-- Diacritics -->
+                          <symbol name="MODIFIER LETTER APOSTROPHE" codepoint="U+02BC"> <!-- Ejective -->
+                                <profile>
+                                        <expects>VOICELESS</expects>
+                                        <adds>EJECTIVE</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING RING BELOW" codepoint="U+0325"> <!-- Voiceless -->
+                                <profile>
+                                        <expects>VOICED</expects>
+                                        <adds>VOICELESS</adds>
+                                        <removes>VOICED</removes>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING DIAERESIS BELOW" codepoint="U+0324"> <!-- Breathy voiced -->
+                                <profile>
+                                        <adds>BREATHY-VOICED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING BRIDGE BELOW" codepoint="U+032A"> <!-- Dental -->
+                                <profile>
+                                        <expects>CORONAL</expects>
+                                        <adds>DENTAL</adds>
+                                        <removes>CORONAL</removes>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING CARON BELOW" codepoint="U+032C"> <!-- Voiced -->
+                                <profile>
+                                        <expects>VOICELESS</expects>
+                                        <adds>VOICED</adds>
+                                        <removes>VOICELESS</removes>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING TILDE BELOW" codepoint="U+0330"> <!-- Creaky voiced -->
+                                <profile>
+                                        <adds>CREAKY-VOICED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING INVERTED BRIDGE BELOW" codepoint="U+033A"> <!-- Apical -->
+                                <profile>
+                                        <adds>APICAL</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL H" codepoint="U+02B0"> <!-- Aspirated -->
+                                <profile>
+                                        <adds>ASPIRATED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING SEAGULL BELOW" codepoint="U+033C"> <!-- Linguolabial -->
+                                <profile>
+                                        <adds>LINGUOLABIAL</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING SQUARE BELOW" codepoint="U+033B"> <!-- Laminal -->
+                                <profile>
+                                        <adds>LAMINAL</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING RIGHT HALF RING BELOW" codepoint="U+0339"> <!-- More rounded -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>MORE-ROUNDED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL W" codepoint="U+02B7"> <!-- Labialized -->
+                                <profile>
+                                        <adds>LABIALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING TILDE" codepoint="U+0303"> <!-- Nasalized -->
+                                <profile>
+                                        <adds>NASALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING LEFT HALF RING BELOW" codepoint="U+031C"> <!-- Less rounded -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>LESS-ROUNDED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL J" codepoint="U+02B2"> <!-- Palatalized -->
+                                <profile>
+                                        <adds>PALATALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="SUPERSCRIPT LATIN SMALL LETTER N" codepoint="U+207F"> <!-- Nasal release -->
+                                <profile>
+                                        <expects>PLOSIVE</expects>
+                                        <adds>NASAL-RELEASE</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING PLUS SIGN BELOW" codepoint="U+031F"> <!-- Advanced -->
+                                <profile>
+                                        <adds>ADVANCED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL GAMMA" codepoint="U+02E0"> <!-- Velarized -->
+                                <profile>
+                                        <adds>VELARIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL L" codepoint="U+02E1"> <!-- Lateral release -->
+                                <profile>
+                                        <expects>PLOSIVE</expects>
+                                        <adds>LATERAL-RELEASE</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING MINUS SIGN BELOW" codepoint="U+0320"> <!-- Retracted -->
+                                <profile>
+                                        <expects>CORONAL</expects>
+                                        <adds>POSTALVEOLAR</adds>
+                                        <removes>CORONAL</removes>
+                                </profile>
+                                <profile>
+                                        <adds>RETRACTED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL REVERSED GLOTTAL STOP" codepoint="U+02E4"> <!-- Pharyngealized -->
+                                <profile>
+                                        <adds>PHARYNGEALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING LEFT ANGLE ABOVE" codepoint="U+031A"> <!-- No audible release -->
+                                <profile>
+                                        <expects>PLOSIVE</expects>
+                                        <adds>NO-AUDIBLE-RELEASE</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING DIAERESIS" codepoint="U+0308"> <!-- Centralized -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>CENTRALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="TILDE" codepoint="U+007E"> <!-- Velarized or pharyngealized -->
+                                <profile>
+                                        <adds>DORSAL</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING X ABOVE" codepoint="U+033D"> <!-- Mid-centralized -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>MID-CENTRALIZED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING UP TACK BELOW" codepoint="U+031D"> <!-- Raised -->
+                                <profile>
+                                        <adds>RAISED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING VERTICAL LINE BELOW" codepoint="U+0329"> <!-- Syllabic -->
+                                <profile>
+                                        <expects>NON-SYLLABIC</expects>
+                                        <adds>SYLLABIC</adds>
+                                        <removes>NON-SYLLABIC</removes>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING DOWN TACK BELOW" codepoint="U+031E"> <!-- Lowered -->
+                                <profile>
+                                        <adds>LOWERED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING INVERTED BREVE BELOW" codepoint="U+032F"> <!-- Non-syllabic -->
+                                <profile>
+                                        <expects>SYLLABIC</expects>
+                                        <adds>NON-SYLLABIC</adds>
+                                        <removes>SYLLABIC</removes>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING LEFT TACK BELOW" codepoint="U+0318"> <!-- Advanced Tongue Root -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>ADVANCED-TONGUE-ROOT</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER RHOTIC HOOK" codepoint="U+02DE"> <!-- Rhoticity -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>RHOTICITY</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="COMBINING RIGHT TACK BELOW" codepoint="U+0319"> <!-- Retracted Tongue Root -->
+                                <profile>
+                                        <expects>VOWEL</expects>
+                                        <adds>RETRACTED-TONGUE-ROOT</adds>
+                                </profile>
+                          </symbol>
+
+                          <!-- Suprasegmentals -->
+  <symbol name="MODIFIER LETTER VERTICAL LINE" codepoint="U+02C8"/> <!-- Primary stress -->
+  <symbol name="MODIFIER LETTER LOW VERTICAL LINE" codepoint="U+02CC"/> <!-- Secondary stress -->
+  <symbol name="MODIFIER LETTER TRIANGULAR COLON" codepoint="U+02D0"> <!-- Long -->
+        <profile>
+                <adds>LONG</adds>
+        </profile>
+  </symbol>
+  <symbol name="MODIFIER LETTER HALF TRIANGULAR COLON" codepoint="U+02D1"> <!-- Half-long -->
+        <profile>
+                <adds>HALF-LONG</adds>
+        </profile>
+  </symbol>
+  <symbol name="COMBINING BREVE" codepoint="U+0306"> <!-- Extra-short -->
+        <profile>
+                <adds>EXTRA-SHORT</adds>
+        </profile>
+  </symbol>
+  <symbol name="VERTICAL LINE" codepoint="U+007C"/> <!-- Minor (foot) group -->
+  <symbol name="DOUBLE VERTICAL LINE" codepoint="U+2016"/> <!-- Major (intonation) group -->
+  <symbol name="FULL STOP" codepoint="U+002E"/> <!-- Syllable break -->
+  <symbol name="UNDERTIE" codepoint="U+203F"/> <!-- Linking (absence of a break) -->
+  
+                <!-- Tones and word accents -->
+  <symbol name="COMBINING DOUBLE ACUTE ACCENT" codepoint="U+030B"> <!-- Extra high -->
+        <profile>
+                <adds>EXTRA-HIGH-TONE</adds>
+        </profile>
+  </symbol>
+  <symbol name="MODIFIER LETTER EXTRA-HIGH TONE BAR" codepoint="U+02E5"/> <!-- Extra high -->
+  <symbol name="COMBINING ACUTE ACCENT" codepoint="U+0301"> <!-- High -->
+        <profile>
+                <adds>HIGH-TONE</adds>
+        </profile>
+  </symbol>
+  <symbol name="MODIFIER LETTER MID TONE BAR" codepoint="U+02E7"/> <!-- Mid -->
+  <symbol name="COMBINING MACRON" codepoint="U+0304"> <!-- Mid -->
+        <profile>
+                <adds>MID-TONE</adds>
+        </profile>
+  </symbol>
+  <symbol name="MODIFIER LETTER LOW TONE BAR" codepoint="U+02E8"/> <!-- Low -->
+  <symbol name="COMBINING GRAVE ACCENT" codepoint="U+0300"> <!-- Low -->
+        <profile>
+                <adds>LOW-TONE</adds>
+        </profile>
+  </symbol>
+  <symbol name="MODIFIER LETTER EXTRA-LOW TONE BAR" codepoint="U+02E9"/> <!-- Extra low -->
+  <symbol name="COMBINING DOUBLE GRAVE ACCENT" codepoint="U+030F"> <!-- Extra low -->
+        <profile>
+                <adds>EXTRA-LOW-TONE</adds>
+        </profile>
+  </symbol>
+  <!-- Missing a few from above tone bars -->
+  <symbol name="DOWNWARDS ARROW" codepoint="U+2193"/> <!-- Downstep -->
+  <symbol name="NORTH EAST ARROW" codepoint="U+2197"/> <!-- Global rise -->
+  <symbol name="UPWARDS ARROW" codepoint="U+2191"/> <!-- Upstep -->
+  <symbol name="SOUTH EAST ARROW" codepoint="U+2198"/> <!-- Global fall -->
+  
+  <!-- Unstated assumption: no character is allowed to occur twice in same segment! -->
+  <exclusive-group id="SecondaryArticulationDiacritics">U+02B7 U+02B2 U+02E0 U+02E4</exclusive-group><!-- Labialized, Palatalized, Velarized, Pharyngealized -->
+  <exclusive-group id="ReleaseDiacritics">U+207F U+02E1 U+031A</exclusive-group><!-- Nasal release, lateral release, No audible release -->
+  <exclusive-group id="PlaceDiacritics">U+032A U+033A U+033C U+033B U+031F U+0320</exclusive-group><!-- Dental, Apical, Linguolabial, Laminal, Advanced, Retracted -->
+  <exclusive-group id="VoicingDiacritics">U+0325 U+0324 U+032C U+0330</exclusive-group><!-- Voiceless, Breathy, Voiced, Creaky voiced diacritic -->
+  <exclusive-group id="MannerDiacritics">U+031D U+031E</exclusive-group><!-- Raised, Lowered -->
+  <exclusive-group id="TongueRootDiacritics">U+0318 U+0319</exclusive-group><!-- ATR, RTR -->
+  <exclusive-group id="RoundingDiacritics">U+0339 U+031C</exclusive-group><!-- More rounded, Less rounded -->
+  <exclusive-group id="SyllabicityDiacritics">U+0329 U+032F</exclusive-group><!-- Syllabic, Non-syllabic diacritic -->
+  <exclusive-group id="ToneDiacritics">U+030B U+0301 U+0304 U+0300 U+030F</exclusive-group><!-- Extra high, High, Mid, Low, Extra low -->
+  <exclusive-group id="CentralizationAndAdvancementDiacritics">U+033D U+0308 U+031F U+0320</exclusive-group><!-- Mid-centralized, Centralized, Advanced, Retracted -->
+  <exclusive-group id="CentralizationAndRaisingDiacritics">U+033D U+0308 U+031D U+031E</exclusive-group><!-- Mid-centralized, Centralized, Raised, Lowered -->
+  <exclusive-group id="LengthDiacritics">U+02D0 U+02D1 U+0306</exclusive-group><!-- Long, Half-long, Extra-short -->
+</ipa4unicode>
+
+<!--
+  <symbol name="LATIN SMALL LETTER L WITH MIDDLE TILDE" codepoint="U+026B"/>
+  -->

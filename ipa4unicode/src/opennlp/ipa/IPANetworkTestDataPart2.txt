@@ -1,0 +1,11 @@
+﻿# IPANetwork Tests
+#
+# This is a two-column file:
+#   - the first column has a disjunction of IPA segments
+#   - the second column has their featural breakdown
+# The first column represents all (non-recursive) IPA
+# segments which can be broken down in the same way.
+
+
+t|d̥;voiceless alveolar-range default-plosive
+t̬|d;voiced alveolar-range default-plosive

@@ -1,0 +1,165 @@
+0362;sliding articulation
+0361;tie bar for affricates and double articulations
+0070;vl bilabial plosive
+0062;vd bilabial plosive
+0074;vl alveolar plosive
+0064;vd alveolar plosive
+0063;vl palatal plosive
+006B;vl velar plosive
+0067;vd velar plosive
+0071;vl uvular plosive
+006D;vd bilabial nasal
+006E;vd alveolar nasal
+0072;alveolar trill
+0066;vl labiodental fricative
+0076;vd labiodental fricative
+0073;vl alveolar fricative
+007A;vd alveolar fricative
+0078;vl velar fricative
+0068;vl glottal fricative
+006A;vd palatal approximant
+006C;alveolar lateral approximant
+0069;close front unrounded
+0079;close front rounded
+0075;close back rounded
+0065;close-mid front unrounded
+006F;close-mid back rounded
+0061;open central unrounded
+0251;open back unrounded
+0250;open-mid schwa
+0252;open back rounded
+00E6;raised open front unrounded
+0253;vd bilabial implosive
+0299;vd bilabial trill
+03B2;vd bilabial fricative
+0254;open-mid back rounded
+0255;vl alveolopalatal fricative
+00E7;vl palatal fricative
+0257;vd alveolar implosive
+0256;vd retroflex plosive
+00F0;vd dental fricative
+02A4;vd postalveolar affricate
+0259;schwa
+0258;close-mid schwa
+025A;rhotacized schwa
+025B;open-mid front unrounded
+025C;open-mid central
+025D;rhotacized open-mid central
+025E;open-mid central rounded
+025F;vd palatal plosive
+0284;vd palatal implosive
+0260;vd velar implosive
+0262;vd uvular plosive
+029B;vd uvular implosive
+0266;vd glottal fricative
+0267;vl multiple-place fricative
+0127;vl pharyngeal fricative
+0265;labial-palatal approximant
+029C;vl epiglottal fricative
+0268;close central unrounded
+026A;lax close front unrounded
+029D;vd palatal fricative
+026D;vd retroflex lateral
+026C;vl alveolar lateral fricative
+026B;velarized vd alveolar lateral
+026E;vd alveolar lateral fricative
+029F;vd velar lateral
+0271;vd labiodental nasal
+026F;close back unrounded
+0270;velar approximant
+014B;vd velar nasal
+0273;vd retroflex nasal
+0272;vd palatal nasal
+0274;vd uvular nasal
+00F8;front close-mid rounded
+0275;rounded schwa
+0278;vl bilabial fricative
+03B8;vl dental fricative
+0153;front open-mid rounded
+0276;front open rounded
+0298;bilabial click
+0279;vd (post)alveolar approximant
+027A;vd alveolar lateral flap
+027E;vd alveolar tap
+027B;vd retroflex approximant
+0280;vd uvular trill
+0281;vd uvular fricative
+027D;vd retroflex flap
+0282;vl retroflex fricative
+0283;vl postalveolar fricative
+0288;vl retroflex plosive
+02A7;vl postalveolar affricate
+0289;close central rounded
+028B;vd labiodental approximant
+028A;lax close back rounded
+028C;open-mid back unrounded
+0263;vd velar fricative
+0264;close-mid back unrounded
+028D;vl labial-velar fricative
+03C7;vl uvular fricative
+028E;vd palatal lateral
+028F;lax close front rounded
+0291;vd alveolopalatal fricative
+0290;vd retroflex fricative
+0292;vd postalveolar fricative
+0294;glottal plosive
+02A1;vd epiglottal plosive
+0295;vd pharyngeal fricative
+02A2;vd epiglottal fricative
+01C0;dental click
+01C1;alveolar lateral click
+01C2;alveolar click
+01C3;retroflex click
+02C8;(primary) stress mark
+02CC;secondary stress
+02D0;length mark
+02D1;half-length
+02BC;ejective
+02B4;rhotacized
+02B0;aspirated
+02B1;breathy-voice-aspirated
+02B2;palatalized
+02B7;labialized
+02E0;velarized
+02E1;lateral-release
+02E4;pharyngealized
+02DE;rhotacized
+0325;vl
+030A;vl (use if character has descender)
+0324;breathy vd
+032A;dental
+032C;vd
+0330;creaky vd
+033A;apical
+033C;linguolabial
+033B;laminal
+031A;not audibly released
+0339;more rounded
+0303;nasalized
+031C;less rounded
+031F;advanced
+0320;retracted
+0308;centralized
+0334;velarized or pharyngealized
+033D;mid-centralized
+031D;raised
+0329;syllabic
+031E;lowered
+032F;non-syllabic
+0318;advanced tongue root
+0319;retracted tongue root
+0306;extra-short
+007C;minor (foot) group
+2016;major (intonation) group
+002E;syllabic break
+203F;linking (absence of a break)
+030B;extra high tone
+0301;high tone
+0304;mid tone
+0300;low tone
+030F;extra low tone
+207F;nasal-release
+2193;downstep
+2191;upstep
+2197;global rise
+2198;global fall

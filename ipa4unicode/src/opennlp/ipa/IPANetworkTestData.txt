@@ -1,0 +1,29 @@
+﻿# IPANetwork Tests
+#
+# This is a two-column file:
+#   - the first column has a potential IPA character
+#   - the second column has its featural breakdown, or ILLEGAL if illegal
+
+
+# underhanging diacritics
+t̪;voiceless dental default-plosive
+t̬;voiced alveolar-range default-plosive
+d̥;voiceless alveolar-range default-plosive
+d̬;ILLEGAL
+t̥;ILLEGAL
+
+# spacing modifiersː aspiration and breathy-voice
+b̤;breathy-voice bilabial default-plosive
+ʒʱ;breathy-voice postalveolar fricative
+pʰ;bilabial aspirated default-plosive
+b̤ʰ;ILLEGAL
+
+# spacing modifiersː release types
+dⁿ;nasal-release alveolar-range voiced
+dˡ;lateral-release alveolar-range voiced
+dˡⁿ;ILLEGAL
+dⁿˡ;ILLEGAL
+
+#spacing modifiersː ejectives
+tʼ;ejective voiceless default-plosive alveolar-range
+dʼ;ILLEGAL
