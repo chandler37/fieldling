@@ -2,6 +2,7 @@
 <!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
 <qd-configuration>
 	<parameters>
+                <parameter name="qd.new.template.file.name" val="TranscriptionNew.xml" type="text"/>
 		<parameter name="qd.root.element" val="TEXT" type="text"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>

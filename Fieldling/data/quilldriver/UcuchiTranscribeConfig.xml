@@ -2,9 +2,10 @@
 <!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
 <qd-configuration>
 	<parameters>
-        <parameter name="qd.namespaces" val="ucuchi http://altiplano.emich.edu/ucuchi"/>
-		<parameter name="qd.root.element" val="ucuchi:TEXT"/>
-        <parameter name="speakers" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META"/>
+            <parameter name="qd.new.template.file.name" val="UcuchiTranscribeNew.xml" type="text"/>
+            <parameter name="qd.namespaces" val="ucuchi http://altiplano.emich.edu/ucuchi"/>
+            <parameter name="qd.root.element" val="ucuchi:TEXT"/>
+            <parameter name="speakers" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META"/>
 	</parameters>
 	<actions>
 		<action-set name="Navigate">

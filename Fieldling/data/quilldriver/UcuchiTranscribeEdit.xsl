@@ -66,17 +66,7 @@
 						<xsl:copy-of select="*" />
 						<xsl:element name="ucuchi:SPEAKER">
 							<xsl:attribute name="id">
-								<xsl:choose>
-									<xsl:when test="$n=0">s1</xsl:when>
-									<xsl:when test="$n=1">s2</xsl:when>
-									<xsl:when test="$n=2">s3</xsl:when>
-									<xsl:when test="$n=3">s4</xsl:when>
-                                    <xsl:when test="$n=4">s5</xsl:when>
-									<xsl:when test="$n=5">s6</xsl:when>
-									<xsl:when test="$n=6">s7</xsl:when>
-									<xsl:when test="$n=7">s8</xsl:when>
-									<xsl:otherwise>X</xsl:otherwise>
-								</xsl:choose>
+                                                                <xsl:text>s</xsl:text><xsl:value-of select="$n"/>
 							</xsl:attribute>
 							<xsl:text> </xsl:text>
 						</xsl:element>
@@ -92,7 +82,7 @@
                 <!-- insertions and deletions -->
 				<xsl:when test="$qd.task='removeNode'"/> <!-- delete current node -->
 				<xsl:when test="$qd.task='newClause'">
-                    <xsl:copy-of select="."/>
+                                        <xsl:copy-of select="."/>
 					<ucuchi:C id="{generate-id()}" spid="{@spid}" qd:t1="{@qd:t2}" qd:t2="{$qd.mediaduration}">
 						<ucuchi:S-F><xsl:text> </xsl:text></ucuchi:S-F>
 					</ucuchi:C>
@@ -136,7 +126,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-                        <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.currentmediatime"/></xsl:attribute>
+                                                <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.currentmediatime"/></xsl:attribute>
 						<xsl:choose>
 							<xsl:when test="@qd:t1">
 								<xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
