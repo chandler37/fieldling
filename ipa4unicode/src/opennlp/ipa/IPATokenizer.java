@@ -185,15 +185,17 @@ public class IPATokenizer implements Enumeration {
         int i=start;
         if (UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER) {
             if (i == data.length-1) return 1;
-            int type;
+            i++;
             do {
+                int type = UCharacter.getType(data[i]);
+                if (!(!isStressMark(data[i]) && !isMinorMajorGroupMark(data[i]) &&
+                        (type ==  UCharacterCategory.NON_SPACING_MARK || //Mn
+                        type == UCharacterCategory.MODIFIER_LETTER || //Lm
+                        type == UCharacterCategory.MODIFIER_SYMBOL || //Sk
+                        data[i] == '\u207F'))) //superscript n
+                                break;
                 i++;
-                type = UCharacter.getType(data[i]);
-            } while (i < data.length && !isStressMark(data[i]) && !isMinorMajorGroupMark(data[i]) &&
-                             (type ==  UCharacterCategory.NON_SPACING_MARK || //Mn
-                              type == UCharacterCategory.MODIFIER_LETTER || //Lm
-                              type == UCharacterCategory.MODIFIER_SYMBOL || //Sk
-                              data[i] == '\u207F')); //superscript n
+            } while (i < data.length);
         } else if (isWhitespace(data[i])) {
             for (i = i+1; isWhitespace(data[i]); i++);
         } else if (isStressMark(data[i]) || isMinorMajorGroupMark(data[i])) i++;

@@ -101,4 +101,18 @@
                 <S audio="IPAHandbook/TURKISH/Narrative/narrative8.wav">oɾtaˈɬɯk ɯsɯˈnɯndʒa joɬˈdʒu ˈpaɬtosunu heˈmen tʃɯkaɾˈdɯ.</S>
                 <S audio="IPAHandbook/TURKISH/Narrative/narrative9.wav">ˈbɶjledʒe pojˈɾaz ɟɣneˈʃin ˌkendisinˈden daˈha kuvvetˈli olduɣuˈnu kaˈbuːl etmiˈje medʒˈbuɾ kaɬˈdɯ.</S>
         </narrative>
+        <narrative lang="TEST">
+                <S>n̠̥ ẽ̹ t̼̬ e̝̙</S>
+                <S>k̠ t̠</S>
+                <S>tʲ tˠ tʷˠ tʲʷˠ</S>
+                <S>dˡ dⁿ dˡⁿ</S>
+                <S>t̠ t̼ t̼̠</S>
+                <S>v̥ v̰ v̰̥</S>
+                <S>e̝ e̞ e̞̝ e̝̞</S>
+                <S>e̘ e̙ e̘̙ e̙̘</S>
+                <S>ɔ̹ ɔ̜ ɔ̹̜ ɔ̜̹</S>
+                <S>u̟ ü ü̟</S>
+                <S>e̝ e̽ e̝̽</S>
+                <S>ĕ eː ĕː</S>
+        </narrative>
 </ipa-handbook>
