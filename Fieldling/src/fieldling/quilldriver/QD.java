@@ -856,7 +856,7 @@ public class QD extends JDesktopPane {
 								}
 							}
 						};
-						JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(tagInfo[z].getIdentifyingName());
+						JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(messages.getString(tagInfo[z].getIdentifyingName()));
 						tagItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								changeViewAction.actionPerformed(e);
@@ -889,7 +889,7 @@ public class QD extends JDesktopPane {
 				it = actions.iterator();
 				while (it.hasNext()) {
 					org.jdom.Element e = (org.jdom.Element)it.next();
-					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
+					final JMenuItem mItem = new JMenuItem(messages.getString(e.getAttributeValue("name")));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
 					final String nodeSelector = e.getAttributeValue("node");
                                         final boolean move = Boolean.valueOf(e.getAttributeValue("move")).booleanValue();

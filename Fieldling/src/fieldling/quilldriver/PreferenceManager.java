@@ -15,12 +15,12 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * ***** END LICENSE BLOCK ***** */
-/****
-*
-*	PreferenceManager.java :   This program has all preference related code so that Preferences API
-*	continues to function even when Java 1.3 is used
-*
-***/
+/*******************************************************************************
+ * 
+ * PreferenceManager.java : This program has all preference related code so that
+ * Preferences API continues to function even when Java 1.3 is used
+ *  
+ ******************************************************************************/
 
 package fieldling.quilldriver;
 
@@ -46,7 +46,7 @@ public class PreferenceManager extends JPanel {
 		public static final String WINDOW_HEIGHT_KEY = "WINDOW_HEIGHT";
 		public static final String WORKING_DIRECTORY_KEY = "WORKING_DIRECTORY";
 		public static final String RECENT_FILES_KEY = "RECENT_FILES";
-                public static final String RECENT_VIDEOS_KEY = "RECENT_VIDEOS";
+		public static final String RECENT_VIDEOS_KEY = "RECENT_VIDEOS";
 		public static final String MEDIA_DIRECTORY_KEY = "MEDIA_DIRECTORY";
 		public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
 		public static final String SLOW_ADJUST_KEY = "SLOW_ADJUST";
@@ -58,6 +58,9 @@ public class PreferenceManager extends JPanel {
         public static final String HIGHLIGHT_KEY = "HIGHLIGHT";
         public static final String HIGHLIGHT_POSITION_KEY = "HIGHLIGHT_POSITION";
         public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
+        
+        public static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
+        public static final String DEFAULT_INTERFACE_FONT_KEY = "DEFAULT_INTERFACE_FONT";
         
         @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
         @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
@@ -76,9 +79,12 @@ public class PreferenceManager extends JPanel {
 		public static String working_directory;
 		@TIBETAN@public static String tibetan_keyboard;
 		public static String recent_files;
-                public static String recent_videos;
+		public static String recent_videos;
 		public static String configuration_key;
 		public static String media_player;
+		
+		public static int default_language;
+		public static String default_interface_font;
 		
 		ResourceBundle messages = null;
 		Method getMethodvalue, getMethodint,setMethodvalue, setMethodint;
@@ -94,33 +100,26 @@ public class PreferenceManager extends JPanel {
 				Method getUserNodeMethod = prefClass.getMethod("userNodeForPackage", userNodeArgTypes);
 				myPrefs = getUserNodeMethod.invoke(null, userNodeArgs);
 
-      		 // All Get Functionalities
-      		 Class[] setParameters = new Class[] {Object.class};
-			 Object[] argument = new Object[] {this};
+				// All Get Functionalities
+				Class[] setParameters = new Class[] {Object.class};
+				Object[] argument = new Object[] {this};
 				getMethodvalue = prefClass.getMethod("get", new Class[]{String.class,String.class});
 				getMethodint = prefClass.getMethod("getInt", new Class[]{String.class,int.class});
 				setMethodint = prefClass.getMethod("putInt", new Class[]{String.class,int.class});
 				setMethodvalue = prefClass.getMethod("put", new Class[]{String.class,String.class});
 
 			 } catch (NoSuchMethodException nsme)
-
 			 {
-
-							nsme.printStackTrace();
+			 	nsme.printStackTrace();
 			 } catch (InvocationTargetException ite)
-
 			 {
-
-							ite.printStackTrace();
+			 	ite.printStackTrace();
 			} catch (IllegalAccessException e) {
 				//LOGGINGSystem.out.println(e);
 			 } catch (ClassNotFoundException e)
 			 {
-
-				          //LOGGINGSystem.out.println(e);
-
+			 	//LOGGINGSystem.out.println(e);
       		 }
-
 			
 			media_directory=getValue(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
 			slow_adjust = getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
@@ -131,6 +130,8 @@ public class PreferenceManager extends JPanel {
             highlight_color = getValue(HIGHLIGHT_KEY, "FFCCFF");
             highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
             multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
+            default_language = getInt(DEFAULT_LANGUAGE_KEY, -1);
+            default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
             
 			@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		}
