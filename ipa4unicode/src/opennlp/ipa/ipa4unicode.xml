@@ -336,16 +336,16 @@
                           </symbol>
                           
                           <!-- Precomposed characters that do not have official Unicode decompositions -->
-                          <!--<symbol name="LATIN SMALL LETTER SCHWA WITH HOOK" codepoint="U+025A">
+                          <symbol name="LATIN SMALL LETTER SCHWA WITH HOOK" codepoint="U+025A">
                                 <features>RHOTACIZED VOWEL VOICED MID CENTRAL</features>
                           </symbol>
                           <symbol name="LATIN SMALL LETTER REVERSED OPEN E WITH HOOK" codepoint="U+025D">
                                 <features>RHOTACIZED VOWEL VOICED OPEN-MID FRONT UNROUNDED</features>
-                          </symbol>-->
+                          </symbol>
                           
                           
                           <!-- Not in IPA chart, but commonly used, even in supposed examples of IPA -->
-                          <!--<symbol name="LATIN SMALL LETTER DZ DIGRAPH" codepoint="U+02A3">
+                          <symbol name="LATIN SMALL LETTER DZ DIGRAPH" codepoint="U+02A3">
                                 <features>CONSONANT ALVEOLAR VOICED AFFRICATE</features>
                           </symbol>
                           <symbol name="LATIN SMALL LETTER DEZH DIGRAPH" codepoint="U+02A4">
@@ -373,7 +373,7 @@
                                         <expects>CONSONANT</expects>
                                         <adds>RHOTACIZED</adds>
                                 </profile>
-                          </symbol>-->
+                          </symbol>
                        
 
 <!--
