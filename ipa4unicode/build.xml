@@ -98,7 +98,7 @@
             classpathref="run.classpath"/>
 	</target>
         
-        <target name="ipa4uni-jar" depends="ipa4uni-compile, ipa4uni-test" description="jars IPA4Unicode">
+        <target name="ipa4uni-jar" depends="ipa4uni-compile" description="jars IPA4Unicode">
                 <!-- first build IPA and Unicode tables from data files -->
 		<java classname="opennlp.ipa.IPACharacterDatabase" classpath="${build.bin.dir}">
 			<arg value="init"/>
