@@ -84,36 +84,6 @@ public class QDShell extends JFrame {
 	public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
 
 
-	//Variables for user Info
-		public JTextField fname,lname;
-		public JButton okbtn,cancelbtn;
-		public JLabel fnamelbl, lnamelbl;
-		public JPanel name;
-		public static String FirstName;
-		public static String LastName;
-
-		class okButtonListener implements ActionListener
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				FirstName = fname.getText();
-				LastName = lname.getText();
-				JOptionPane.showMessageDialog(null,"Thank You " + FirstName +" "+LastName + " for entering your information");
-				dispose();
-
-			}
-		}
-
-		class cancelButtonListener implements ActionListener
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					hide();
-				}
-	}
-
-
-
 	public static void main(String[] args) {
 		try {
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
@@ -306,7 +276,7 @@ public class QDShell extends JFrame {
 		JMenuItem UserInfo = new JMenuItem("User Info");
 		UserInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//UserInfo();
+				CreateFrame();
 			}
 		});
 
@@ -515,7 +485,7 @@ public class QDShell extends JFrame {
 			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
 			keyboardItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-				    qd.changeKeyboard(kbd);
+				//    qd.changeKeyboard(kbd);
 				    myPrefs.put(TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
 				}
 			    });
@@ -570,64 +540,6 @@ public class QDShell extends JFrame {
 			se.printStackTrace();
 			return null;
 		}
-	}
-
-	// User Information
-	private void UserInfo()
-	{
-
-		//setTitle("User Information");
-		//setSize(275,225);
-		name = new JPanel(new BorderLayout());
-		name.setLayout(null);
-		setContentPane(name);
-		add(name);
-
-
-		fname=new JTextField("");
-		lname=new JTextField("");
-		fname.setSize(150,30);
-		lname.setSize(150,30);
-		fname.setLocation(100,50);
-		lname.setLocation(100,100);
-		name.add(fname);
-		name.add(lname);
-
-		//labels
-		fnamelbl=new JLabel("First Name");
-		lnamelbl=new JLabel("Last Name");
-		fnamelbl.setSize(100,100);
-		lnamelbl.setSize(100,100);
-		fnamelbl.setLocation(10,25);
-		lnamelbl.setLocation(10,70);
-		name.add(fnamelbl);
-		name.add(lnamelbl);
-
-		// buttons
-		okbtn=new JButton("OK");
-		okbtn.setSize(70,25);
-		okbtn.addActionListener(new okButtonListener());
-
-		cancelbtn=new JButton("Cancel");
-		cancelbtn.setSize(100,25);
-		cancelbtn.addActionListener(new cancelButtonListener());
-
-
-		okbtn.setLocation(75,150);
-		cancelbtn.setLocation(150,150);
-		name.add(okbtn);
-		name.add(cancelbtn);
-
-		JPanel preferencesPanel = new JPanel();
-		preferencesPanel.setLayout(new GridLayout(2,1));
-		preferencesPanel.add(name);
-
-		JOptionPane pane = new JOptionPane(preferencesPanel);
-		JDialog dialog = pane.createDialog(this, "User Information");
-
-		// This returns only when the user has closed the dialog
-		dialog.show();
-
 	}
 
 	private void makeRecentlyOpened(String s) {
@@ -791,5 +703,12 @@ public class QDShell extends JFrame {
 		public String getDescription() {
 			return "QD File Format (" + QDShell.dotQuillDriver + ")";
 		}
+
 	}
+
+	void CreateFrame()
+  {
+	  Userinfo ui= new Userinfo();
+	  ui.show();
+  }
 }
