@@ -27,7 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.plaf.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.*;  
 import java.lang.reflect.*;
 
 import fieldling.mediaplayer.PanelPlayer;
@@ -37,12 +37,9 @@ import fieldling.quilldriver.TextHighlightPlayer;
 import fieldling.quilldriver.XMLView;
 import fieldling.quilldriver.XMLEditor;
 import fieldling.quilldriver.XMLUtilities;
-//import org.thdl.util.ThdlDebug;
-//import org.thdl.util.ActionListener;
-//import org.thdl.util.ThdlAbstractAction;
-//import org.thdl.util.ThdlOptions;
 import fieldling.util.SimpleSpinner;
 import fieldling.util.I18n;
+import fieldling.util.StatusBar;
 
 import org.jdom.DocType;
 import org.jdom.Document;
@@ -73,9 +70,11 @@ import javax.swing.JTextField;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.KeyStroke;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.Keymap;
 import java.util.List;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -91,13 +90,17 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 public class QD extends JDesktopPane {
+	//TIBETAN-SPECIFIC
+	protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected XMLEditor editor = null;
 	protected JInternalFrame videoFrame = null;
 	protected JInternalFrame textFrame = null;
-	protected JInternalFrame actionFrame = null;
+	//protected JInternalFrame actionFrame = null;
+	protected Map keyActions;
 	protected ResourceBundle messages;
 	protected TimeCodeManager tcp = null;
+	protected StatusBar sb = null;
 	protected Hashtable actions;
 	protected Properties config; //xpath based properties
 	protected Properties textConfig; //unchangeable properties
@@ -118,7 +121,6 @@ public class QD extends JDesktopPane {
 		this.dtdURL = dtdURL;
 	
 System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
-	
 		
 		configure(configURL);
 		
@@ -144,6 +146,7 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		validate();
 		repaint();
 	
+		/*
 		actionFrame = new JInternalFrame(null, false, false, false, true);
 		actionFrame.setVisible(true);
 		actionFrame.setLocation(0,0);
@@ -152,6 +155,7 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		invalidate();
 		validate();
 		repaint();
+		*/
 		
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
@@ -160,8 +164,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					videoFrame.setSize(getSize().width / 2, 0);
 				textFrame.setLocation(videoFrame.getSize().width, 0);
 				textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-				actionFrame.setLocation(0, videoFrame.getSize().height);
-				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
+				/*actionFrame.setLocation(0, videoFrame.getSize().height);
+				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);*/
 			}
 		});
 		
@@ -181,12 +185,11 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				if (player.isInitialized())
 				{
 					timer.cancel();
-					tcp = new TimeCodeManager();
-					actionFrame.setContentPane(tcp);
+					/*actionFrame.setContentPane(tcp);
 					actionFrame.pack();
 					invalidate();
 					validate();
-					repaint();
+					repaint();*/
 					videoFrame.setContentPane(player);
 					videoFrame.pack();
 					videoFrame.setMaximumSize(videoFrame.getSize());
@@ -198,11 +201,11 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					invalidate();
 					validate();
 					repaint();
-					actionFrame.setLocation(0, videoFrame.getSize().height);
+					/*actionFrame.setLocation(0, videoFrame.getSize().height);
 					actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 					invalidate();
 					validate();
-					repaint();
+					repaint();*/
 				}
 			}}, 0, 50);
 	}
@@ -220,109 +223,35 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 	    return (Action)(actions.get(name));
 	}
 
-	class TimeCodeManager extends JPanel {
-		SimpleSpinner inSpinner, outSpinner;
+	class TimeCodeManager {
+		int t1, t2; //start and stop times in milliseconds
+		StatusBar statBar;
 	
-		TimeCodeManager() {
-			setLayout(new BorderLayout());
-			JPanel inPanel = new JPanel();
-			JButton inButton = new JButton(messages.getString("In"));
-			inSpinner = new SimpleSpinner();
-			inSpinner.setValue(new Integer(0));
-			inSpinner.setPreferredSize(new Dimension(100, inButton.getPreferredSize().height));
-			inPanel.add(inButton);
-			inPanel.add(inSpinner);
-	
-			inButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int k = player.getCurrentTime();
-					if (k != -1)
-						setInTime(k);
-				}
-			});
-	
-	
-			JPanel outPanel = new JPanel();
-			JButton outButton = new JButton(messages.getString("Out"));
-			outSpinner = new SimpleSpinner();
-			outSpinner.setValue(new Integer(player.getEndTime()));
-			outSpinner.setPreferredSize(new Dimension(100, inButton.getPreferredSize().height));
-			outPanel.add(outButton);
-			outPanel.add(outSpinner);
-	
-			outButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int k = player.getCurrentTime();
-					if (k != -1) {
-						setOutTime(k);
-						try {
-							player.cmd_stop();
-						} catch (PanelPlayerException smpe) {
-							smpe.printStackTrace();
-							//ThdlDebug.noteIffyCode();
-						}
-					}
-				}
-			});
-	
-	
-			JButton playSegButton = new JButton(messages.getString("PlaySegment"));
-			playSegButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					Integer in = getInTime();
-					Integer out = getOutTime();
-					if (out.intValue() > in.intValue()) {
-						try {
-							player.cmd_playSegment(in, out);
-						} catch (PanelPlayerException smpe) {
-							smpe.printStackTrace();
-							//ThdlDebug.noteIffyCode();
-						}
-					}
-				}
-			});
-			JPanel ps = new JPanel();
-			ps.add(playSegButton);
-	
-			JButton playPauseButton = new JButton(messages.getString("PlayPause"));
-			playPauseButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (player != null && player.getMediaURL() != null) {
-						try {
-							if (player.isPlaying())
-								player.cmd_stop();
-							else
-								player.cmd_playOn();
-						} catch (PanelPlayerException smpe) {
-							smpe.printStackTrace();
-							//ThdlDebug.noteIffyCode();
-						}
-					}
-				}
-			});
-	
-			JPanel playPausePanel = new JPanel();
-			playPausePanel.add(playPauseButton);
-	
-			Box box = Box.createVerticalBox();
-			box.add(inPanel);
-			box.add(outPanel);
-			box.add(ps);
-			box.add(playPausePanel);
-	
-			add("North", box);
+		TimeCodeManager(StatusBar sb) {
+			statBar = sb;
+			t1 = 0;
+			t2 = 0;
+		} 
+		public void updateStatus() {	
+			statBar.replaceStatus(
+				"Start="+
+				String.valueOf((new Integer(t1)).floatValue() / 1000)+
+				" & End="+
+				String.valueOf((new Integer(t2)).floatValue() / 1000));
 		}
 		public Integer getInTime() {
-			return inSpinner.getValue();
+			return new Integer(t1);
 		}
 		public Integer getOutTime() {
-			return outSpinner.getValue();
+			return new Integer(t2);
 		}
 		public void setInTime(int k) {
-			inSpinner.setValue(new Integer(k));
+			t1 = k;
+			updateStatus();
 		}
 		public void setOutTime(int k) {
-			outSpinner.setValue(new Integer(k));
+			t2 = k;
+			updateStatus();
 		}
 		public void setTimes(Object node) {
 			Object playableparent = XMLUtilities.findSingleNode(node, config.getProperty("qd.nearestplayableparent"));
@@ -406,13 +335,23 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				final JTextPane t = new org.thdl.tib.input.DuffPane();
 				//IF NOT TIBETAN, THEN USE:
 				//final JTextPane t = new JTextPane();
-				
+
 				editor = new XMLEditor(builder.build(file), t, tagInfo);
 
+				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
+				Set keys = keyActions.keySet();
+				Iterator keyIter = keys.iterator();
+				while (keyIter.hasNext()) {
+					KeyStroke key = (KeyStroke)keyIter.next(); 
+					Action action = (Action)keyActions.get(key);
+					keymap.addActionForKeyStroke(key, action);
+				}
+				editor.getTextPane().setKeymap(keymap);
+				
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"));
 				hp = new TextHighlightPlayer(view, Color.cyan);
-				JPanel p = new JPanel(new BorderLayout());
-				p.add("Center", hp);
+				sb = new StatusBar("Welcome to QuillDriver!");
+				tcp = new TimeCodeManager(sb);
 
 				if (player.getMediaURL() != null) {
 					try {
@@ -427,8 +366,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					videoFrame.getContentPane().validate();
 					videoFrame.getContentPane().repaint();
 					videoFrame.setSize(new Dimension(QD.this.getSize().width / 2, 0));
-					actionFrame.setLocation(0,0);
-					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));
+					/*actionFrame.setLocation(0,0);
+					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));*/
 				}
 
 				Object mediaURL = XMLUtilities.findSingleNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"));
@@ -447,7 +386,10 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				});
 				startTimer();
 				
-				textFrame.setContentPane(p);
+				JComponent c = (JComponent)textFrame.getContentPane();
+				c.setLayout(new BorderLayout());
+				c.add("Center", hp);
+				c.add("South", sb);
 				textFrame.setSize(textFrame.getSize().width, getSize().height);
 				textFrame.invalidate();
 				textFrame.validate();
@@ -482,8 +424,11 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					}
 				});
 				editor.setEditabilityTracker(true);
-	
 				transcriptFile = file;
+				
+				//TIBETAN-SPECIFIC!!
+				if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
+				
 				return true;
 			} catch (JDOMException jdome) {
 				jdome.printStackTrace();
@@ -592,6 +537,7 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 			final String[] navigXPath = new String[navigations.size()];
 			configMenus = new JMenu[2];
 			configMenus[1] = new JMenu(messages.getString("View"));
+			keyActions = new HashMap();
 			it = navigations.iterator();
 			while (it.hasNext()) {
 				Element e = (Element)it.next();
@@ -599,8 +545,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				final String xpathExpression = e.getAttributeValue("val");
 				final String command = e.getAttributeValue("command");
 				mItem.setToolTipText(e.getChildTextNormalize("desc"));
-				mItem.setAccelerator(KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")));
-				mItem.addActionListener(new ActionListener() {
+				KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
+				final Action keyAction = new AbstractAction() {
 					public void actionPerformed(ActionEvent e) {
 						if (xpathExpression != null) {
 							editor.fireEndEditEvent();
@@ -628,6 +574,13 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 								playNode(nearestParent);
 							}
 						}
+					}				
+				};
+				keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
+				mItem.setAccelerator(key);
+				mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
+					public void actionPerformed(ActionEvent e) {
+						keyAction.actionPerformed(e);
 					}
 				});
 				configMenus[1].add(mItem);
@@ -645,8 +598,9 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					final DOMOutputter domOut = new DOMOutputter();
 					final DOMBuilder jdomBuild = new DOMBuilder();
 					mItem.setToolTipText(e.getChildTextNormalize("desc"));
-					mItem.setAccelerator(KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")));
-					mItem.addActionListener(new ActionListener() {
+					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
+					mItem.setAccelerator(key);
+					final Action keyAction = new AbstractAction() {
 						public void actionPerformed(ActionEvent e) {
 							try {
 								editor.fireEndEditEvent();
@@ -679,6 +633,9 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 									String key = (String)enum.nextElement();
 									transformer.setParameter(key, textConfig.getProperty(key));
 								}
+								transformer.setParameter("qd.task", tasks);
+								
+								/* THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
 								float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds
 								float outSeconds = tcp.getOutTime().floatValue() / 1000; //convert from milliseconds
 								if (outSeconds >= inSeconds) { //time parameters will not be passed if out precedes in
@@ -689,7 +646,16 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 									transformer.setParameter("qd.start", "");
 									transformer.setParameter("qd.end", "");
 								}
-								transformer.setParameter("qd.task", tasks);
+								*/
+								
+								float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
+								float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
+								String cS = String.valueOf(currentSeconds);
+								String eT = String.valueOf(endTime);
+								System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
+								transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
+								transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
+								
 								
 								JDOMResult jdomResult = new JDOMResult();
 								//DOMSource domSource = new DOMSource(docBuilder.newDocument());
@@ -795,8 +761,16 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 							} catch (JDOMException jdome) {
 								jdome.printStackTrace();
 							}
+						}						
+					};
+
+					keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
+					mItem.setAccelerator(key);
+					mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
+						public void actionPerformed(ActionEvent e) {
+							keyAction.actionPerformed(e);
 						}
-					});
+					});					
 					configMenus[0].add(mItem);
 				}
 			} catch (TransformerException tre) {
@@ -812,28 +786,19 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 	public JMenu[] getConfiguredMenus() {
 		return configMenus;
 	}
+	
+	//TIBETAN-SPECIFIC!!
+	public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
+		activeKeyboard = kbd;
+		if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
+		org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
+		kbd.activate(dp);
+	}
 }
+
+
 
 /*
-	private final static JskadKeyboardManager keybdMgr
-		= new JskadKeyboardManager(JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-	protected JskadKeyboard activeKeyboard = null;
-	protected JskadKeyboard wylieKeyboard;
-
-import org.jdom.output.XMLOutputter;
-import org.jdom.transform.JDOMSource;
-import javax.xml.transform.stream.*;
-import javax.xml.transform.*;
-
-
-public void changeKeyboard(JskadKeyboard kbd) {
-	activeKeyboard = kbd;
-	DuffPane dp = (DuffPane)pane;
-	activeKeyboard.activate(dp);
-	activeKeyboard.activate(sharedDP);
-	activeKeyboard.activate(sharedDP2);
-}
-
 public int findNextText(int startPos, StyledDocument sourceDoc, StyledDocument findDoc) {
 	if (startPos<0 || startPos>sourceDoc.getLength()-1)
 		return -1;

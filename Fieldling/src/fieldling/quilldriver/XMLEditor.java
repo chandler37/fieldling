@@ -640,6 +640,10 @@ public class XMLEditor {
 		KeyStroke backSpace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
 		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
 		pane.addKeyListener(new java.awt.event.KeyAdapter() {
+			/* NOT ACTUALLY NEEDED, AT LEAST FOR WINDOWS
+			public void keyReleased(KeyEvent kev) {
+				if (kev.getKeyCode() == KeyEvent.VK_DELETE) {System.out.println("delete released"); kev.consume();}
+			}*/
 			public void keyTyped(KeyEvent kev) {
 				if (kev.getKeyChar() == 8) kev.consume();
 				/* Above is equivalent to:
@@ -796,8 +800,10 @@ public class XMLEditor {
 			public void actionPerformed(ActionEvent e) {
 				if (((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) || 
 				((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) ||
-				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK))
+				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK)) {
+					System.out.println("yo yo yo yo");
 					return;
+				}
 				if (e.getActionCommand() != null) { 				
 					Object xmlNode = pane.getCharacterAttributes().getAttribute("xmlnode");
 					SimpleAttributeSet sas = new SimpleAttributeSet();
@@ -807,9 +813,9 @@ public class XMLEditor {
 				}
 			}
 		};
-		keymap.setDefaultAction(thisDefault);
-		pane.setKeymap(keymap);			
 
+		keymap.setDefaultAction(thisDefault);
+		pane.setKeymap(keymap);
 /*
 
 Actions that still need to be defined:
@@ -924,6 +930,7 @@ upAction, writableAction
 					org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 					val = duff.getTibDoc().getWylie(p1, p2);
 				} else val = pane.getDocument().getText(p1, p2-p1).trim();
+				if (val.length()==0) val=new String(" ");
 				Text text = (Text)node;
 				text.setText(val);
 			} else if (node instanceof Attribute) {

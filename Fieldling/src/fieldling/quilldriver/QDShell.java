@@ -28,16 +28,8 @@ import javax.swing.text.*;
 import javax.swing.text.rtf.*;
 
 import fieldling.mediaplayer.*;
-//import org.thdl.util.ThdlDebug;
-//import org.thdl.util.ActionListener;
-//import org.thdl.util.ThdlOptions;
-//import org.thdl.tib.input.JskadKeyboardManager;
-//import org.thdl.tib.input.JskadKeyboardFactory;
-//import org.thdl.tib.input.JskadKeyboard;
 import fieldling.util.I18n;
-
 import fieldling.util.JdkVersionHacks;
-
 
 public class QDShell extends JFrame {
 	
@@ -147,6 +139,7 @@ try {
 		JMenu projectMenu = new JMenu(messages.getString("File"));
 
 		JMenuItem newItem = new JMenuItem(messages.getString("New"));
+		newItem.setAccelerator(KeyStroke.getKeyStroke("control N"));
 		newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				qd.saveTranscript();
@@ -185,6 +178,12 @@ try {
 			}
 		});
 
+		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
+		closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));
+		closeItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -205,52 +204,71 @@ try {
 		projectMenu.add(newItem);
 		projectMenu.addSeparator(); 
 		projectMenu.add(openItem);
+		projectMenu.add(closeItem);
+		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
 		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
 
-	/*
-	JMenu keyboardMenu = new JMenu(messages.getString("Keyboard"));
-
-        for (int i = 0; i < keybdMgr.size(); i++) {
-            final JskadKeyboard kbd = keybdMgr.elementAt(i);
-            if (kbd.hasQuickRefFile()) {
-                JMenuItem keybdItem = new JMenuItem(kbd.getIdentifyingString());
-                keybdItem.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            qd.changeKeyboard(kbd);
-                        }
-                    });
-                keyboardMenu.add(keybdItem);
-            }
-        }*/
-
-		JMenu mediaPlayerMenu = new JMenu(messages.getString("MediaPlayer"));
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
+		ButtonGroup mediaGroup = new ButtonGroup();
+		JMenuItem[] mediaItems = new JRadioButtonMenuItem[moviePlayers.size()];		
 		for (int i=0; i<moviePlayers.size(); i++) {
 			final PanelPlayer mPlayer = (PanelPlayer)moviePlayers.get(i);
-			JMenuItem mItem = new JMenuItem(mPlayer.getIdentifyingName());
-			mItem.addActionListener(new ActionListener() {
+			mediaItems[i] = new JRadioButtonMenuItem(mPlayer.getIdentifyingName());
+			mediaItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					qd.setMediaPlayer(mPlayer);
 				}
 			});
-			mediaPlayerMenu.add(mItem);
+			mediaGroup.add(mediaItems[i]);
+		}
+
+		if (mediaItems.length > 0) {
+			mediaItems[0].setSelected(true);
+			qd.setMediaPlayer((PanelPlayer)moviePlayers.get(0)); //set qd media player to default
+		}
+
+		//TIBETAN-SPECIFIC!!
+		org.thdl.tib.input.JskadKeyboardManager keybdMgr = 
+			new org.thdl.tib.input.JskadKeyboardManager(
+				org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+		ButtonGroup keyboardGroup = new ButtonGroup();
+		JMenuItem[] keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+		for (int i=0; i<keybdMgr.size(); i++) {
+		    final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+		    //if (kbd.hasQuickRefFile()) {
+			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+			keyboardItems[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				    qd.changeKeyboard(kbd);
+				}
+			    });
+			keyboardGroup.add(keyboardItems[i]);
 		}
 
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
-	//	preferencesMenu.add(keyboardMenu);
-		if (moviePlayers.size() > 0) {
-			PanelPlayer defaultPlayer = (PanelPlayer)moviePlayers.get(0);
-			qd.setMediaPlayer(defaultPlayer); //set qd media player to default
-			if (moviePlayers.size() > 1)
-				preferencesMenu.add(mediaPlayerMenu);
+		if (mediaItems.length > 0) {
+			for (int i=0; i<mediaItems.length; i++) 
+				preferencesMenu.add(mediaItems[i]);
+			preferencesMenu.addSeparator();
 		}
-
+		
+		//TIBETAN-SPECIFIC!!
+		keyboardItems[0].setSelected(true); //set keyboard to Wylie
+		for (int i=0; i<keyboardItems.length; i++)
+			preferencesMenu.add(keyboardItems[i]);
+		//preferencesMenu.addSeparator();
+		
 		JMenu[] configMenus = qd.getConfiguredMenus();
 		JMenuBar bar = new JMenuBar();
+		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
-		for (int i=0; i<configMenus.length; i++) bar.add(configMenus[i]);
+		for (int i=0; i<configMenus.length; i++) {
+			configMenus[i].getPopupMenu().setLightWeightPopupEnabled(false);
+			bar.add(configMenus[i]);
+		}
+		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(preferencesMenu);
 		return bar;
 	}
