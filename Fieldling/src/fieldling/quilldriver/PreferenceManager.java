@@ -171,7 +171,7 @@ public class PreferenceManager extends JPanel {
 				Class[] userNodeArgTypes = new Class[] {Class.class};
 				Object[] userNodeArgs = new Object[] {qdClass};
 				Method getUserNodeMethod = prefClass.getMethod("userNodeForPackage", userNodeArgTypes);
-				Object myPrefs = getUserNodeMethod.invoke(null, userNodeArgs);
+				myPrefs = getUserNodeMethod.invoke(null, userNodeArgs);
 
       		 // All Get Functionalities
       		 Class[] setParameters = new Class[] {Object.class};
@@ -389,7 +389,7 @@ public String getValue(String key,String defvalue)
 	{
 
 		try {
-
+            System.out.println("hi");
 
 
 			// do nothing
@@ -414,7 +414,7 @@ public String getValue(String key,String defvalue)
 
 		{
 
-			Object[] argument = new Object[] {key};
+			Object[] argument = new Object[] {key, defvalue};
 
 
 
@@ -488,7 +488,7 @@ public int getInt(String key,int defvalue)
 
 
 
-			Object[] argument = new Object[] {key};
+			Object[] argument = new Object[] {key, new Integer(defvalue)};
 
 
 
@@ -544,7 +544,7 @@ public int getInt(String key,int defvalue)
 
 		{
 
-			Object[] argument = new Object[] {key};
+			Object[] argument = new Object[] {key, new Integer(setvalue)};
 
 			try
 
@@ -588,7 +588,7 @@ public int getInt(String key,int defvalue)
 
 			{
 
-				Object[] argument = new Object[] {key};
+				Object[] argument = new Object[] {key, setvalue};
 
 				try {
 
