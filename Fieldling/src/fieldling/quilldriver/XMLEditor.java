@@ -641,18 +641,25 @@ public class XMLEditor {
 		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
 		pane.addKeyListener(new java.awt.event.KeyAdapter() {
 			public void keyTyped(KeyEvent kev) {
-				if (kev.getKeyChar() == 8) {
-					System.out.println("backspace typed");
-					kev.consume();
-				}
+				if (kev.getKeyChar() == 8) kev.consume();
 				/* Above is equivalent to:
-					if(kev.paramString().indexOf("Backspace") != -1) {
-						System.out.println("backspace typed");
-						kev.consume();
-					}
-				*/
+					if(kev.paramString().indexOf("Backspace") != -1) kev.consume();	*/
+				else if (kev.getKeyCode() == KeyEvent.VK_TAB) kev.consume();
 			}
 		});
+
+		//delete
+		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+		keymap.addActionForKeyStroke(delete, deleteNextAction);
+		/*
+		KeyStroke[] delNextKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
+
+		if (delNextKeys != null)
+
+			for (int i=0; i<delNextKeys.length; i++)
+
+				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
+		*/
 		
 		KeyStroke[] selectAllKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectAllAction));
 
@@ -743,13 +750,17 @@ public class XMLEditor {
 
 				keymap.addActionForKeyStroke(begParaKeys[i], begNodeAction);
 
-		KeyStroke[] backwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.backwardAction));
+		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+		keymap.addActionForKeyStroke(back, backwardAction);
+		
+		/*KeyStroke[] backwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.backwardAction));
 
 		if (backwardKeys != null)
 
 			for (int i=0; i<backwardKeys.length; i++)
 
 				keymap.addActionForKeyStroke(backwardKeys[i], backwardAction);
+		*/
 
 		KeyStroke[] forwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.forwardAction));
 
@@ -759,13 +770,6 @@ public class XMLEditor {
 
 				keymap.addActionForKeyStroke(forwardKeys[i], forwardAction);
 
-		KeyStroke[] delNextKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
-
-		if (delNextKeys != null)
-
-			for (int i=0; i<delNextKeys.length; i++)
-
-				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
 		
 		KeyStroke[] selForwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionForwardAction));
 
@@ -787,6 +791,23 @@ public class XMLEditor {
 
 		if (escapeKey != null) keymap.addActionForKeyStroke(escapeKey, loseFocusAction);
 
+		final Action parentDefault = keymap.getDefaultAction();
+		Action thisDefault = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) || 
+				((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) ||
+				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK))
+					return;
+				if (e.getActionCommand() != null) { 				
+					Object xmlNode = pane.getCharacterAttributes().getAttribute("xmlnode");
+					SimpleAttributeSet sas = new SimpleAttributeSet();
+					sas.addAttribute("xmlnode", xmlNode);
+					parentDefault.actionPerformed(e);
+					pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);
+				}
+			}
+		};
+		keymap.setDefaultAction(thisDefault);
 		pane.setKeymap(keymap);			
 
 /*

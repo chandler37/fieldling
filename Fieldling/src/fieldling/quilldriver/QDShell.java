@@ -172,6 +172,7 @@ try {
 		});
 
 		JMenuItem openItem = new JMenuItem(messages.getString("Open"));
+		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				qd.saveTranscript();
@@ -185,6 +186,7 @@ try {
 		});
 
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
+		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				qd.saveTranscript();
@@ -192,6 +194,7 @@ try {
 		});
 
 		JMenuItem quitItem = new JMenuItem(messages.getString("Quit"));
+		quitItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				qd.saveTranscript();
