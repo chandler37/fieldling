@@ -24,7 +24,7 @@ for Tibetan-only QuillDriver
 
 
 
-<project name="fieldlingtools" default="qd-create-webapp" basedir=".">
+<project name="fieldlingtools" default="qd-distrib" basedir=".">
 
 	<description>
 This project includes assorted tools for field linguistics.
@@ -54,17 +54,14 @@ a version optimized for use with Tibetan script.
 	<property name="tibetan.classes"  value="${build.classes}/tibetan"/>
 	<property name="build.doc"      value="${build.dir}/doc"/>
 	<property name="build.eg"       value="${build.doc}/eg"/>
-    <property name="webapp.dir"     value="${build.dir}/webapp"/>
-    <property name="webapp.doc.dir" value="${webapp.dir}/doc"/>
-    <property name="webapp.dtddoc.dir" value="${webapp.doc.dir}/dtddoc"/>
-    <property name="webapp.api.dir" value="${webapp.doc.dir}/api"/>
-    <property name="webapp.code.dir" value="${webapp.doc.dir}/code"/>
-	<property name="webstart.lib" value="${webapp.dir}/lib_webstart"/>
-    
+    <property name="distrib.dir"     value="${build.dir}/distrib"/>
+    <property name="distrib.doc.dir" value="${distrib.dir}/doc"/>
+    <property name="distrib.dtddoc.dir" value="${distrib.doc.dir}/dtddoc"/>
+    <property name="distrib.api.dir" value="${distrib.doc.dir}/api"/>
+    <property name="distrib.code.dir" value="${distrib.doc.dir}/code"/>
+	<property name="webstart.lib" value="${distrib.dir}/lib_webstart"/>
 	<property name="distrib.source"	value="distribSrc"/>
-    
 	<property name="jnlp.codebase"	value="http://altiplano.emich.edu/quilldriver"/>
-    <property name="tomcat.home" value="/usr/local/jakarta-tomcat-4.1.29"/>
 
 	<!-- Tell ant where to find the code of the DTDDoc task -->
 	<!--<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
@@ -108,11 +105,11 @@ a version optimized for use with Tibetan script.
 		<mkdir dir="${build.classes}"/>
 		<mkdir dir="${unicode.classes}"/>
 		<mkdir dir="${tibetan.classes}"/>
-		<mkdir dir="${webapp.dir}"/>
-		<mkdir dir="${webapp.doc.dir}"/>
-        <mkdir dir="${webapp.dtddoc.dir}"/>
-		<mkdir dir="${webapp.api.dir}"/>
-		<mkdir dir="${webapp.code.dir}"/>
+		<mkdir dir="${distrib.dir}"/>
+		<mkdir dir="${distrib.doc.dir}"/>
+        <mkdir dir="${distrib.dtddoc.dir}"/>
+		<mkdir dir="${distrib.api.dir}"/>
+		<mkdir dir="${distrib.code.dir}"/>
 		<mkdir dir="${webstart.lib}"/>
 		<tstamp>
 			<format property="qd.date" pattern="dd.MM.yy-h.mma"/>
@@ -327,14 +324,14 @@ developer.</echo>
 	<target name="qd-unicode-jnlp">
 		<!-- Step 2: Create the jnlp file -->
 		<!-- Write the head of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="false">
+		<echo file="${distrib.dir}/${jnlp.file}" append="false">
 <![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+"]]></echo>
 		<!-- Write the middle of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<echo file="${distrib.dir}/${jnlp.file}" append="true">
 		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
 		<!-- Write the tail of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<echo file="${distrib.dir}/${jnlp.file}" append="true">
 <![CDATA[      href="]]>${jnlp.file}<![CDATA[">
 <information>
   <title>QuillDriver]]>${jnlp.app.suffix}<![CDATA[</title>
@@ -385,14 +382,14 @@ and Quicktime for Java.
 	<target name="qd-tibetan-jnlp">
 		<!-- Step 2: Create the jnlp file -->
 		<!-- Write the head of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="false">
+		<echo file="${distrib.dir}/${jnlp.file}" append="false">
 <![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+"]]></echo>
 		<!-- Write the middle of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<echo file="${distrib.dir}/${jnlp.file}" append="true">
 		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
 		<!-- Write the tail of the .jnlp file: -->
-		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<echo file="${distrib.dir}/${jnlp.file}" append="true">
 <![CDATA[      href="]]>${jnlp.file}<![CDATA[">
 <information>
   <title>QuillDriver-TIBETAN]]>${jnlp.app.suffix}<![CDATA[</title>
@@ -442,7 +439,7 @@ optimized for use with Tibetan script.
 		</echo>
 	</target>
     
-    <target name="qd-create-webapp" depends="qd-compile" description="creates fieldling webapp">
+    <target name="qd-distrib" depends="qd-compile" description="creates distribution version of fieldling">
         
         <!-- Step 1: create jar files needed for qd -->
         <jar jarfile="${webstart.lib}/mediaplayer.jar" basedir="${unicode.classes}" />
@@ -483,7 +480,7 @@ optimized for use with Tibetan script.
 		<DTDDoc showHiddenTags="true"
             showFixmeTags="false"
 			sourceDir="${data.dir}/quilldriver"
-			destDir="${webapp.dtddoc.dir}"
+			destDir="${distrib.dtddoc.dir}"
 			docTitle = "QD DTDs">
 			<include name="*.dtd"/>
 		</DTDDoc>
@@ -498,7 +495,7 @@ optimized for use with Tibetan script.
             <fileset dir="${webstart.lib}"/>
         </copy>
 	<echo file="TEMP/gen/QuillDriver/Run-QD.bat" append="false">javaw -cp DONTMOVE/quilldriver.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell</echo>
-        <zip destfile="${webapp.dir}/QD.zip" basedir="TEMP/gen"/>
+        <zip destfile="${distrib.dir}/QD.zip" basedir="TEMP/gen"/>
         
             <!-- Tibetan version -->
         <mkdir dir="TEMP/tib/QuillDriver"/>
@@ -506,7 +503,7 @@ optimized for use with Tibetan script.
             <fileset dir="${webstart.lib}"/>
         </copy>
 	<echo file="TEMP/tib/QuillDriver/Run-QD-TIB.bat" append="false">javaw -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/Jskad.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell</echo>
-        <zip destfile="${webapp.dir}/QD-TIB.zip" basedir="TEMP/tib"/>
+        <zip destfile="${distrib.dir}/QD-TIB.zip" basedir="TEMP/tib"/>
         
         <!-- Step 5.7 make OS X executable -->
         
@@ -517,7 +514,7 @@ optimized for use with Tibetan script.
         <!-- for some reason calling this within Ant doesn't work!
             but if we call it using the OS X console outside of Ant
             then it does work.
-        <tar destfile="QD.tar" basedir="${webapp.dir}">
+        <tar destfile="QD.tar" basedir="${distrib.dir}">
             <include name="QuillDriver.app"/>
             <include name="QuillDriver.app/**"/>
         </tar> -->
@@ -530,7 +527,7 @@ optimized for use with Tibetan script.
                 author="true"
                 version="true"
                 classpathref="my.classpath"
-                destdir="${webapp.api.dir}">
+                destdir="${distrib.api.dir}">
                 <fileset dir="${unicode.source}">
                     <include name="**/*.java"/>
                     <exclude name="signstream/**/*.java"/> <!-- remove this to get SignStream API too -->
@@ -541,15 +538,12 @@ optimized for use with Tibetan script.
                 <link href="http://xml.apache.org/xalan-j/apidocs"/> <!-- Xalan API -->
         </javadoc>
 
-        <zip destfile="${webapp.dir}/fieldling_src.zip" basedir="." excludes="${build.dir}/**/* ${build.dir}" update="true"/>
-        <zip destfile="${webapp.dir}/fieldling_api.zip" basedir="${webapp.api.dir}" update="true"/>
+        <zip destfile="${distrib.dir}/fieldling_src.zip" basedir="." excludes="${build.dir}/**/* ${build.dir}" update="true"/>
+        <zip destfile="${distrib.dir}/fieldling_api.zip" basedir="${distrib.api.dir}" update="true"/>
         
-        <copy todir="${webapp.dir}">
+        <copy todir="${distrib.dir}">
             <fileset dir="${doc.dir}" includes="**/*"/>
         </copy>
-        
-        <!-- Step 6: zip entire webapp into war file -->
-        <zip destfile="${build.dir}/quilldriver.war" basedir="${webapp.dir}"/>
     </target>
     
     <target name="MayWeRunJarbundler">
@@ -562,7 +556,7 @@ optimized for use with Tibetan script.
             if="use.jarbundler"
             description="On Mac OS X, run jarbundler task"
             depends="MayWeRunJarbundler">
-        <jarbundler dir="${webapp.dir}" name="QuillDriver"
+        <jarbundler dir="${distrib.dir}" name="QuillDriver"
                     mainclass="fieldling.quilldriver.QDShell"
                     aboutmenuname="QuillDriver"
                     jvmversion="1.3*"
@@ -570,19 +564,13 @@ optimized for use with Tibetan script.
                     jars="${webstart.lib}/quilldriver.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
                     />
             <!-- Tibetan version --> 
-        <jarbundler dir="${webapp.dir}" name="QuillDriver-TIB"
+        <jarbundler dir="${distrib.dir}" name="QuillDriver-TIB"
                     mainclass="fieldling.quilldriver.QDShell"
                     aboutmenuname="QuillDriver-TIB"
                     jvmversion="1.3*"
                     infostring="QuillDriver-TIB, (c) 2004, licensed under GNU GPL"
                     jars="${webstart.lib}/quilldriver-TIB.jar ${webstart.lib}/Jskad.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
                     />
-    </target>
-
-    <target name="qd-deploy-webapp" depends="qd-create-webapp"
-        description="unwar into servlet container's deployment directory">
-          <unwar src="${build.dir}/quilldriver.war"
-            dest="${tomcat.home}/webapps/quilldriver"/>
     </target>
 	
     <!--
