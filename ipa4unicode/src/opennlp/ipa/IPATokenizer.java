@@ -180,6 +180,7 @@ public class IPATokenizer implements Enumeration {
             return -1;
         int i=start;
         if (UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER) {
+            if (i == data.length) return 1;
             int type;
             do {
                 i++;
