@@ -8,7 +8,7 @@
         </configuration>
         
         <!-- For transcribing Quechua transcripts -->
-        <configuration menu-name="Transcribe Quechua">
+        <configuration menu-name="TranscribeQuechua">
             <config href="UcuchiTranscribeConfig.xml"/>
             <edit href="UcuchiTranscribeEdit.xsl"/>
             <new href="UcuchiTranscribeNew.xsl"/>

@@ -884,7 +884,7 @@ public class QD extends JDesktopPane {
 			
 			while (actionSetIter.hasNext()) {
 				org.jdom.Element thisSet = (org.jdom.Element)actionSetIter.next();
-				configMenus[xCount] = new JMenu(thisSet.getAttributeValue("name"));
+				configMenus[xCount] = new JMenu(messages.getString(thisSet.getAttributeValue("name")));
 				List actions = thisSet.getChildren("action");
 				it = actions.iterator();
 				while (it.hasNext()) {

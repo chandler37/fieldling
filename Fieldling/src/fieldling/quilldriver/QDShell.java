@@ -97,7 +97,7 @@ public class QDShell extends JFrame {
                         final ButtonGroup configGroup = new ButtonGroup();
                         final JRadioButton[] configItems = new JRadioButton[configurations.length];
                         for (int i=0; i<configurations.length; i++) {
-                                configItems[i] = new JRadioButton(configurations[i].getName());
+                                configItems[i] = new JRadioButton(messages.getString(configurations[i].getName()));
                                 configItems[i].setActionCommand(String.valueOf(i));
                                 configGroup.add(configItems[i]);
                         }
