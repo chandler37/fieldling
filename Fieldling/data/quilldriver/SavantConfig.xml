@@ -43,12 +43,12 @@
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="English Only" keystroke="F2">
-				<tag name="S" visible="true" icon="play.gif">
+				<tag name="S" visible="true" displayas="XPATH:@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
 				<tag name="FORM" visible="false" visiblecontents="false"/>
-				<tag name="TRANSL" visible="false">
+				<tag name="TRANSL" visible="true" icon="play.gif">
 					<attribute name="xml:lang" visible="false"/>
 				</tag>
 			</tagview>
@@ -63,32 +63,32 @@
 				<tag name="TRANSL" visible="false"/>
 			</tagview>
 			<tagview name="Wylie and English" keystroke="F4">
-				<tag name="S" visible="false">
+				<tag name="S" visible="true" displayas="XPATH:@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
-				<tag name="FORM" visible="false">
+				<tag name="FORM" visible="true" icon="play.gif">
 					<attribute name="type" visible="false"/>
 				</tag>
 				<tag name="TRANSL" visible="false"/>
 			</tagview>
 			<tagview name="Notes Only" keystroke="F5">
-				<tag name="S" visible="false">
+				<tag name="S" visible="true" displayas="XPATH:@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
-				<tag name="NOTE" visible="false">
+				<tag name="NOTE" visible="true" icon="play.gif">
 					<attribute name="type" visible="false"/>
 				</tag>
 				<tag name="FORM" visible="false" visiblecontents="false"/>
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="Show Everything" keystroke="F6">
-				<tag name="S" visible="false">
+				<tag name="S" visible="true" displayas="XPATH:@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
-				<tag name="FORM" visible="false" tibetan="true">
+				<tag name="FORM" visible="true" tibetan="true" icon="play.gif">
 					<attribute name="type" visible="false"/>
 				</tag>
 				<tag name="TRANSL" visible="false">
