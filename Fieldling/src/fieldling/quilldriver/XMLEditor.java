@@ -23,6 +23,7 @@ import org.jdom.Element;
 import org.jdom.Attribute;
 import org.jdom.Text;
 import org.jdom.DocType;
+//import org.jdom.Parent; //for jdom-b10
 import java.io.IOException;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -334,7 +335,7 @@ public class XMLEditor {
 					@TIBETAN@boolean isTibetan = false;
 					@TIBETAN@if (node instanceof Text) {
 						@TIBETAN@Text nodeText = (Text)node;
-						@TIBETAN@isTibetan = XMLEditor.this.tagInfo.isTagTextTibetan(nodeText.getParent().getQualifiedName());
+						@TIBETAN@isTibetan = XMLEditor.this.tagInfo.isTagTextTibetan(((Element)nodeText.getParent()).getQualifiedName());
 					@TIBETAN@}
 
 					//if Tibetan, then use DuffPane's build-in RTF copy and paste support, which means
@@ -671,7 +672,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				String val;
 
 				@TIBETAN@Text t = (Text)node;
-				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(((Element)t.getParent()).getQualifiedName())) {
 					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2);
 				@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
@@ -733,7 +734,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && node instanceof Text) {
 			@TIBETAN@Text t = (Text)node;
 			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-			@TIBETAN@if (tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+			@TIBETAN@if (tagInfo.isTagTextTibetan(((Element)t.getParent()).getQualifiedName())) {
 				@TIBETAN@if (duff.isRomanMode()) duff.toggleLanguage();
 			@TIBETAN@} else if (!duff.isRomanMode()) duff.toggleLanguage();
 		@TIBETAN@}
@@ -767,8 +768,8 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		if (hasChanged) { //FIXME allows text on screen to be changed even when node itself cannot be changed!
 			if (editingNode instanceof Text) {
 				Text t = (Text)editingNode;
-				if (tagInfo.isTagEditable(t.getParent().getQualifiedName()))
-					updateNode(editingNode);
+                if (tagInfo.isTagEditable(((Element)t.getParent()).getQualifiedName()))
+                        updateNode(editingNode);
 			} else if (editingNode instanceof Attribute) {
 				Attribute a = (Attribute)editingNode;
 				if (tagInfo.isTagEditable(a.getParent().getQualifiedName()))
@@ -1000,7 +1001,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			int start = pos.getOffset();
 			startOffsets.put(t, new Integer(start));
 
-			@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+			@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(((Element)t.getParent()).getQualifiedName())) {
 				@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 				@TIBETAN@duff.toTibetanMachineWeb(s, pos.getOffset());
 				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();

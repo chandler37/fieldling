@@ -4,7 +4,7 @@
 package fieldling.quilldriver;
 import java.util.Iterator;
 import java.util.List;
-
+import java.io.IOException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -16,8 +16,7 @@ public class ConfigurationFactory
 	Configuration[] configurations;
 	try {
 	    SAXBuilder builder = new SAXBuilder();
-	    Document doc
-		= builder.build(loader.getResource("qd-configurations.xml"));
+	    Document doc = builder.build(loader.getResource("qd-configurations.xml"));
 	    Element root = doc.getRootElement();
 	    List tagOptions = root.getChildren("configuration");
 	    Configuration[] config = new Configuration[tagOptions.size()];
@@ -34,7 +33,10 @@ public class ConfigurationFactory
 	} catch (JDOMException jdome) {
 	    jdome.printStackTrace();
 	    return null;
-	}
+	} catch (IOException ioe) {
+        ioe.printStackTrace();
+        return null;
+    }
 	return configurations;
     }
 }

@@ -755,6 +755,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				jdome.printStackTrace();
 				transcriptFile = null;
 				return false;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                transcriptFile = null;
+                return false;
 			} catch (PanelPlayerException smpe) {
 				smpe.printStackTrace();
 				transcriptFile = null;
@@ -1069,9 +1073,14 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									if (!(transformNode instanceof Element)) return;
 									Element jdomEl = (Element)transformNode;
 									Element clone = (Element)jdomEl.clone();
-									Element cloneOwner = new Element("CloneOwner");
-									cloneOwner.addContent(clone);
-									org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
+									//Element cloneOwner = new Element("CloneOwner");
+									//cloneOwner.addContent(clone);
+                                    //jdom-b10 eliminated DOMOutputter.output(Element)
+									//org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
+                                    Document jDoc = new Document(new Element("CloneOwner"));
+                                    //jDoc.addContent(clone); //only works for jdom-b10
+                                    jDoc.getRootElement().addContent(clone); //use for jdom-b9
+                                    org.w3c.dom.Document transformDocument = domOut.output(jDoc);
 									//String refreshID = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(context, config.getProperty("qd.refreshid"), namespaces));
 									Enumeration enum = config.propertyNames();
 									while (enum.hasMoreElements()) {
@@ -1127,7 +1136,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									//domSource.getNode().appendChild(transformElement);
 									//if (transformElement.getParentNode() == null)
 									//	System.out.println("null parent");
-									DOMSource domSource = new DOMSource(transformElement);
+									DOMSource domSource = new DOMSource(transformDocument);
 									//if (domSource == null)
 									//	System.out.println("dom source is null");
 									transformer.transform(domSource, jdomResult);
@@ -1249,12 +1258,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 				} catch (TransformerException tre) {
 					tre.printStackTrace();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
+				} 
 		} catch (JDOMException jdome) {
 			jdome.printStackTrace();
-		}
+		}catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 		return true;
 	}
 

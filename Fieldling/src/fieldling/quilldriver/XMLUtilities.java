@@ -4,9 +4,8 @@ import org.jdom.Text;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jaxen.XPath;
-import org.jaxen.JaxenException;
-import org.jaxen.jdom.JDOMXPath;
+import org.jdom.JDOMException;
+import org.jdom.xpath.XPath;
 import java.util.List;
 
 public class XMLUtilities {
@@ -28,11 +27,11 @@ public class XMLUtilities {
 		if (jdomNode == null)
 			return null;
 		try {
-			XPath path = new JDOMXPath(xpathExpression);
+			XPath path = XPath.newInstance(xpathExpression);
 			for (int i=0; i<namespaces.length; i++)
 				path.addNamespace(namespaces[i].getPrefix(), namespaces[i].getURI());
 			return path.selectNodes(jdomNode);
-		} catch (JaxenException je) {
+		} catch (JDOMException je) {
 			je.printStackTrace();
 			return null;
 		}
