@@ -2,6 +2,16 @@
 <!DOCTYPE qd-configurations SYSTEM "qd-configuration-set.dtd">
 
 <qd-configurations>
+        <!-- These are view-only configurations -->
+        <configuration menu-name="Ucuchi Live">
+            <config href="UcuchiViewConfig.xml"/>
+        </configuration>
+        
+		<configuration menu-name="THDL Savant">
+			<config href="SavantConfig.xml"/>
+		</configuration>
+        
+        
 		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
 		<configuration menu-name="THDL Transcription">
 			<config href="TranscriptionConfig.xml"/>
@@ -15,10 +25,6 @@
 			<new href="LoggingNew.xsl"/>
 		</configuration> -->
 		
-		<!-- This is a view-only configuration -->
-		<configuration menu-name="THDL Savant">
-			<config href="SavantConfig.xml"/>
-		</configuration>
 		
 		<!-- You cannot create new files with this configuration -->
 		<configuration menu-name="THDL Text Markup">

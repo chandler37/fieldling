@@ -13,7 +13,7 @@
 		</parameters>
 		
 		<actions>
-			<action-set name="View">
+			<action-set name="Navigate">
 				<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
 				<action name="Play Next" keystroke="control shift DOWN" node="following::*[@t1]" qd-command="playNode"/>
 				<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[@t1]" qd-command="playNode"/>

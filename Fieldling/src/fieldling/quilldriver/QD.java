@@ -45,6 +45,7 @@ import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Text;
+import org.jdom.Namespace;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.input.DOMBuilder;
@@ -103,6 +104,7 @@ public class QD extends JDesktopPane {
 	protected Hashtable actions;
 	protected Properties config; //xpath based properties
 	protected Properties textConfig; //unchangeable properties
+    protected Namespace[] namespaces;
 	protected JMenu[] configMenus;
 	protected XMLView view;
 	protected TextHighlightPlayer hp;
@@ -426,14 +428,14 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 		}
 		public void setNode(Object node) {
-			Object playableparent = XMLUtilities.findSingleNode(node, config.getProperty("qd.nearestplayableparent"));
+			Object playableparent = XMLUtilities.selectSingleJDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
 			if (playableparent == null) {
 				setTimeCodes(-1, -1, node);
 				thp.unhighlightAll();
 				return;
 			} else {
-				String t1 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodebegins")));
-				String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
+				String t1 = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(playableparent, config.getProperty("qd.nodebegins"), namespaces));
+				String t2 = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(playableparent, config.getProperty("qd.nodeends"), namespaces));
 				float f1, f2;
 				if (t1 == null) f1 = -1;
 				else f1 = new Float(t1).floatValue()*1000;
@@ -554,8 +556,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 				editor.getTextPane().setKeymap(keymap);
 
-				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"));
+                
+				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
 				hp = new TextHighlightPlayer(view, Color.cyan);
+                
+                for (int ok=0; ok<namespaces.length; ok++)
+                    System.out.println(namespaces[ok].toString());
 
 				//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
 				//Ctrl-Page_Down and so on... surely there is a better way to do this....
@@ -592,8 +598,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				String value;
 				if (config.getProperty("qd.mediaurl") == null) value = null;
 				else {
-					Object mediaURL = XMLUtilities.findSingleNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"));
-					value = XMLUtilities.getTextForNode(mediaURL);
+					Object mediaURL = XMLUtilities.selectSingleJDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
+					value = XMLUtilities.getTextForJDOMNode(mediaURL);
 				}
 				boolean nomedia = true;
 				if (value != null) {
@@ -648,8 +654,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 
 				//give text frame title of video/transcript
 				if (config.getProperty("qd.title") != null) {
-					Object obj = XMLUtilities.findSingleNode(editor.getXMLDocument().getRootElement(), config.getProperty("qd.title"));
-					textFrame.setTitle(XMLUtilities.getTextForNode(obj));
+					Object obj = XMLUtilities.selectSingleJDOMNode(editor.getXMLDocument().getRootElement(), config.getProperty("qd.title"), namespaces);
+					textFrame.setTitle(XMLUtilities.getTextForJDOMNode(obj));
 				}
 
 				JComponent c = (JComponent)textFrame.getContentPane();
@@ -714,7 +720,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	}
 
 	public void playNode(Object node) {
-		Object playableparent = XMLUtilities.findSingleNode(node, config.getProperty("qd.nearestplayableparent"));
+		Object playableparent = XMLUtilities.selectSingleJDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
 		if (playableparent == null) return;
 		String nodeid = String.valueOf(playableparent.hashCode());
 		if (player.cmd_isID(nodeid)) {
@@ -878,7 +884,24 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					textConfig.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
 			}
 			rootElement = textConfig.getProperty("qd.root.element");
-
+            List allNamespaces = new ArrayList();
+            if (config.getProperty("qd.namespaces") != null) {
+                String nsList = config.getProperty("qd.namespaces");
+                StringTokenizer tok = new StringTokenizer(nsList, ",");
+                while (tok.hasMoreTokens()) {
+                    String nextNs = tok.nextToken();
+                    allNamespaces.add(Namespace.getNamespace(nextNs.substring(0, nextNs.indexOf(' ')), nextNs.substring(nextNs.indexOf(' ')+1)));
+                }
+            }
+            if (config.getProperty("qd.timealignednodes") == null) {
+                allNamespaces.add(Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver"));
+                config.setProperty("qd.timealignednodes", "//*[@qd:*]");
+                config.setProperty("qd.nodebegins", "@qd:t1");
+                config.setProperty("qd.nodeends", "@qd:t2");
+                config.setProperty("qd.nearestplayableparent", "ancestor-or-self::*[@qd:*]");
+            }
+            namespaces = (Namespace[])allNamespaces.toArray(new Namespace[0]);
+            
 			//configuration-defined actions
 			Element allActions = cRoot.getChild("actions");
 			List actionSets = allActions.getChildren("action-set");
@@ -887,10 +910,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 
 			int xCount = 0;
 			if (tagInfo.length < 2)
-				configMenus = new JMenu[actionSets.size()]; //no need for extra "Visualizations" menu
+				configMenus = new JMenu[actionSets.size()]; //no need for extra "View" menu
 			else {
-				configMenus = new JMenu[actionSets.size()+1]; //need extra "Visualizations" menu
-				configMenus[xCount] = new JMenu("Visualizations");
+				configMenus = new JMenu[actionSets.size()+1]; //need extra "View" menu
+				configMenus[xCount] = new JMenu("View");
 					ButtonGroup tagGroup = new ButtonGroup();
 					for (int z=0; z<tagInfo.length; z++) {
 						final XMLTagInfo zTagInfo = tagInfo[z];
@@ -955,7 +978,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									do {
 										keepSearching = false;
 										if (context != null) {
-											Object moveTo = XMLUtilities.findSingleNode(context, nodeSelector);
+											Object moveTo = XMLUtilities.selectSingleJDOMNode(context, nodeSelector, namespaces);
 											int newStartOffset = editor.getStartOffsetForNode(moveTo);
 											if (newStartOffset > -1) {
 												t.requestFocus();
@@ -987,22 +1010,22 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									editor.setEditabilityTracker(false);
 									int offset = editor.getTextPane().getCaret().getMark();
 									Object context = editor.getNodeForOffset(offset);
-									Object transformNode = XMLUtilities.findSingleNode(context, nodeSelector);
+									Object transformNode = XMLUtilities.selectSingleJDOMNode(context, nodeSelector, namespaces);
 									if (!(transformNode instanceof Element)) return;
 									Element jdomEl = (Element)transformNode;
 									Element clone = (Element)jdomEl.clone();
 									Element cloneOwner = new Element("CloneOwner");
 									cloneOwner.addContent(clone);
 									org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
-									//String refreshID = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(context, config.getProperty("qd.refreshid")));
+									//String refreshID = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(context, config.getProperty("qd.refreshid"), namespaces));
 									Enumeration enum = config.propertyNames();
 									while (enum.hasMoreElements()) {
 										String key = (String)enum.nextElement();
 										String val = config.getProperty(key);
 										if (!key.startsWith("qd.")) {
-											Object obj = XMLUtilities.findSingleNode(context, val);
+											Object obj = XMLUtilities.selectSingleJDOMNode(context, val, namespaces);
 											if (obj != null) {
-												String id = XMLUtilities.getTextForNode(obj);
+												String id = XMLUtilities.getTextForJDOMNode(obj);
 												transformer.setParameter(key, id);
 												System.out.println("key="+key+" & id="+id);
 											}
@@ -1183,7 +1206,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	public void executeCommand(String command) {
 		//FIXME: These commands should be defined elsewhere, in programmatically extensible classes
 							if (command.equals("playNode")) {
-								Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+								Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 								playNode(nearestParent);
 							}
 							else if (command.equals("playPause")) {
@@ -1211,7 +1234,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("playEdge")) {
 								try {
-									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t2 = tcp.getOutTime();
 									long t1 = t2.longValue() - PreferenceManager.play_minus;
@@ -1223,7 +1246,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("seekStart")) {
 								try {
-									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t = tcp.getInTime();
 									if (player.isPlaying()) player.cmd_stop();
@@ -1234,7 +1257,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("seekEnd")) {
 								try {
-									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t = tcp.getOutTime();
 									if (player.isPlaying()) player.cmd_stop();

@@ -97,8 +97,9 @@ public class XMLEditor {
 		this.tagInfo = tagInfo;
 		startOffsets = new HashMap();
 		endOffsets = new HashMap();
-		pane.setSelectionColor(Color.CYAN);
-		pane.setSelectedTextColor(Color.RED);
+        //For some reason Color.CYAN and Color.RED are not recognized on Mac OS X!!
+		//pane.setSelectionColor(Color.CYAN);
+		//pane.setSelectedTextColor(Color.RED);
 		doc = pane.getStyledDocument();
 		textCursor = new Cursor(Cursor.TEXT_CURSOR);
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);

@@ -147,8 +147,8 @@ public class QDShell extends JFrame {
 			case 1: configURL = new String(args[0]);
 		}
 		*/
-		//NON-TIBETAN setTitle("QuillDriver");
-		setTitle("QuillDriver-TIBETAN");
+		@UNICODE@setTitle("QuillDriver");
+		@TIBETAN@setTitle("QuillDriver-TIBETAN");
 		messages = I18n.getResourceBundle();
 
 		/*myPrefs = Preferences.userNodeForPackage(QDShell.class);
@@ -484,27 +484,27 @@ public class QDShell extends JFrame {
 			}
 		});
 
-		org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
-		JMenuItem[] keyboardItems = null;
-		try {
-		keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-		}catch (Exception e) {}
-		if (keybdMgr != null) {
-		ButtonGroup keyboardGroup = new ButtonGroup();
-		keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-		for (int i=0; i<keybdMgr.size(); i++) {
-		    final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+		@TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
+		@TIBETAN@JMenuItem[] keyboardItems = null;
+		@TIBETAN@try {
+		@TIBETAN@keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+		@TIBETAN@}catch (Exception e) {}
+		@TIBETAN@if (keybdMgr != null) {
+		@TIBETAN@ButtonGroup keyboardGroup = new ButtonGroup();
+		@TIBETAN@keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+		@TIBETAN@for (int i=0; i<keybdMgr.size(); i++) {
+		    @TIBETAN@final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
 		    //if (kbd.hasQuickRefFile()) {
-			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-			keyboardItems[i].addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				//    qd.changeKeyboard(kbd);
-				    prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
-				}
-			    });
-			keyboardGroup.add(keyboardItems[i]);
-		}
-		}
+			@TIBETAN@keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+			@TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
+				@TIBETAN@public void actionPerformed(ActionEvent e) {
+				    @TIBETAN@qd.changeKeyboard(kbd);
+				    @TIBETAN@prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
+				@TIBETAN@}
+			    @TIBETAN@});
+			@TIBETAN@keyboardGroup.add(keyboardItems[i]);
+		@TIBETAN@}
+		@TIBETAN@}
 
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		preferencesMenu.add(fontItem);
@@ -521,20 +521,20 @@ public class QDShell extends JFrame {
 			preferencesMenu.addSeparator();
 		}
 
-		if (keybdMgr != null) {
-		String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
-		int i;
-		for (i=0; i<keybdMgr.size(); i++)
-			if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
-		if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
-			keyboardItems[0].setSelected(true);
-		else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
-			keyboardItems[i].setSelected(true);
-			//qd.changeKeyboard(keybdMgr.elementAt(i));
-		}
-		for (int k=0; k<keyboardItems.length; k++)
-			preferencesMenu.add(keyboardItems[k]);
-		}
+		@TIBETAN@if (keybdMgr != null) {
+		@TIBETAN@String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
+		@TIBETAN@int i;
+		@TIBETAN@for (i=0; i<keybdMgr.size(); i++)
+			@TIBETAN@if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
+		@TIBETAN@if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
+			@TIBETAN@keyboardItems[0].setSelected(true);
+		@TIBETAN@else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
+			@TIBETAN@keyboardItems[i].setSelected(true);
+			@TIBETAN@qd.changeKeyboard(keybdMgr.elementAt(i));
+		@TIBETAN@}
+		@TIBETAN@for (int k=0; k<keyboardItems.length; k++)
+			@TIBETAN@preferencesMenu.add(keyboardItems[k]);
+		@TIBETAN@}
 
 		//Beta menu for beta-only menu-options:
 		JMenuItem feedbackItem = new JMenuItem("Feedback");
@@ -642,15 +642,15 @@ public class QDShell extends JFrame {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames = genv.getAvailableFontFamilyNames();
 
-		JPanel tibetanPanel;
-		JComboBox tibetanFontSizes;
-		tibetanPanel = new JPanel();
-		tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
-		tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
-		tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		tibetanFontSizes.setSelectedItem(String.valueOf(prefmngr.tibetan_font_size));
-		tibetanFontSizes.setEditable(true);
-		tibetanPanel.add(tibetanFontSizes);
+		@TIBETAN@JPanel tibetanPanel;
+		@TIBETAN@JComboBox tibetanFontSizes;
+		@TIBETAN@tibetanPanel = new JPanel();
+		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
+		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
+		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
+		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(prefmngr.tibetan_font_size));
+		@TIBETAN@tibetanFontSizes.setEditable(true);
+		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
 
 		JPanel romanPanel;
 		JComboBox romanFontFamilies;
@@ -670,9 +670,9 @@ public class QDShell extends JFrame {
 		romanPanel.add(romanFontSizes);
 
 		JPanel preferencesPanel = new JPanel();
-		//NON-TIBETAN preferencesPanel.setLayout(new BorderLayout());
-		preferencesPanel.setLayout(new GridLayout(2,1));
-		preferencesPanel.add(tibetanPanel);
+		@UNICODE@preferencesPanel.setLayout(new BorderLayout());
+		@TIBETAN@preferencesPanel.setLayout(new GridLayout(2,1));
+		@TIBETAN@preferencesPanel.add(tibetanPanel);
 		preferencesPanel.add(romanPanel);
 
 		JOptionPane pane = new JOptionPane(preferencesPanel);
@@ -681,12 +681,12 @@ public class QDShell extends JFrame {
         // This returns only when the user has closed the dialog
 		dialog.show();
 
-		int old_tibetan_font_size = prefmngr.tibetan_font_size;
-		try {
-			prefmngr.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
-		} catch (NumberFormatException ne) {
-			prefmngr.tibetan_font_size = old_tibetan_font_size;
-		}
+        @TIBETAN@int old_tibetan_font_size = prefmngr.tibetan_font_size;
+		@TIBETAN@try {
+			@TIBETAN@prefmngr.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
+		@TIBETAN@} catch (NumberFormatException ne) {
+			@TIBETAN@prefmngr.tibetan_font_size = old_tibetan_font_size;
+		@TIBETAN@}
 
 		String old_font_face = new String(prefmngr.font_face);
 		prefmngr.font_face = romanFontFamilies.getSelectedItem().toString();
@@ -700,15 +700,15 @@ public class QDShell extends JFrame {
 
 		prefmngr.setValue(prefmngr.FONT_FACE_KEY, prefmngr.font_face);
 		prefmngr.setInt(prefmngr.FONT_SIZE_KEY, prefmngr.font_size);
-		prefmngr.setInt(prefmngr.TIBETAN_FONT_SIZE_KEY, prefmngr.tibetan_font_size);
+		@TIBETAN@prefmngr.setInt(prefmngr.TIBETAN_FONT_SIZE_KEY, prefmngr.tibetan_font_size);
 
 		if (qd.getEditor() != null) {
-			//NON-TIBETAN if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
-			if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face) && old_tibetan_font_size == prefmngr.tibetan_font_size)) {
-				org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
-				dp.setByUserTibetanFontSize(prefmngr.tibetan_font_size);
-				dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
-				//NON-TIBETAN qd.getEditor().getTextPane().setFont(new Font(font_face, Font.PLAIN, font_size));
+			@UNICODE@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face))) {
+			@TIBETAN@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face) && old_tibetan_font_size == prefmngr.tibetan_font_size)) {
+				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+				@TIBETAN@dp.setByUserTibetanFontSize(prefmngr.tibetan_font_size);
+				@TIBETAN@dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
+				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(prefmngr.font_face, Font.PLAIN, prefmngr.font_size));
 				qd.getEditor().render();
 			}
 		}

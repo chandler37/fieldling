@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.Collection;
 import javax.swing.text.JTextComponent;
 import org.jdom.Document;
+import org.jdom.Namespace;
 import fieldling.quilldriver.TranscriptView;
 import fieldling.quilldriver.XMLEditor;
 import fieldling.quilldriver.XMLUtilities;
@@ -41,13 +42,15 @@ public class XMLView implements TranscriptView {
 	private String getNodesXPath;
 	private String getStartXPath;
 	private String getEndXPath;
+    private Namespace[] namespaces;
 	
-	public XMLView(XMLEditor editor, Object jdomContextNode, String getNodesXPath, String getStartXPath, String getEndXPath) {
+	public XMLView(XMLEditor editor, Object jdomContextNode, String getNodesXPath, String getStartXPath, String getEndXPath, Namespace[] namespaces) {
 		this.editor = editor;
 		this.jdomContextNode = jdomContextNode;
 		this.getNodesXPath = getNodesXPath;
 		this.getStartXPath = getStartXPath;
 		this.getEndXPath = getEndXPath;
+        this.namespaces = namespaces;
 		startTimeMap = new HashMap();
 		endTimeMap = new HashMap();
 		startOffsetMap = new HashMap();
@@ -63,19 +66,19 @@ public class XMLView implements TranscriptView {
 		endTimeMap.clear();
 		startOffsetMap.clear();
 		endOffsetMap.clear();
-		List audioNodes = XMLUtilities.findNodeSet(jdomContextNode, getNodesXPath);
+		List audioNodes = XMLUtilities.selectJDOMNodes(jdomContextNode, getNodesXPath, namespaces);
 		Iterator iter = audioNodes.iterator();
 		while (iter.hasNext()) {
 			Object node = iter.next();
 			String id = String.valueOf(node.hashCode());
-			Object start = XMLUtilities.findSingleNode(node, getStartXPath);
-			String startVal = XMLUtilities.getTextForNode(start);
-			Object end = XMLUtilities.findSingleNode(node, getEndXPath);
-			String endVal = XMLUtilities.getTextForNode(end);
+			Object start = XMLUtilities.selectSingleJDOMNode(node, getStartXPath, namespaces);
+			String startVal = XMLUtilities.getTextForJDOMNode(start);
+			Object end = XMLUtilities.selectSingleJDOMNode(node, getEndXPath, namespaces);
+			String endVal = XMLUtilities.getTextForJDOMNode(end);
 			int startOffset = editor.getStartOffsetForNode(node);
 			int endOffset = editor.getEndOffsetForNode(node);
 			//if (!(startVal == null || endVal == null || startOffset == -1 || endOffset == -1)) {
-			if (!(startVal == null || startOffset == -1 || endOffset == -1)) {	
+			if (!(startVal == null || startOffset == -1 || endOffset == -1)) {
 				startTimeMap.put(id, startVal);
 				if (endVal == null) //for single time-point (no end time), treat as if end time = start time
 					endTimeMap.put(id, startVal);

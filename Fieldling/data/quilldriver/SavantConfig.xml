@@ -11,7 +11,7 @@
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
 	</parameters>
 	<actions>
-		<action-set name="View">
+		<action-set name="Navigate">
 			<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
 			<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
 			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>

@@ -23,6 +23,10 @@
 <xsl:param name="speaker2" select="''"/>
 <xsl:param name="speaker3" select="''"/>
 <xsl:param name="speaker4" select="''"/>
+<xsl:param name="speaker5" select="''"/>
+<xsl:param name="speaker6" select="''"/>
+<xsl:param name="speaker7" select="''"/>
+<xsl:param name="speaker8" select="''"/>
 
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
@@ -47,6 +51,26 @@
 				</xsl:when>
 				<xsl:when test="$qd.task='setSpeaker4'">
 					<S who="{$speaker4}">
+						<xsl:apply-templates />
+					</S>
+				</xsl:when>
+                <xsl:when test="$qd.task='setSpeaker5'">
+					<S who="{$speaker5}">
+						<xsl:apply-templates />
+					</S>
+				</xsl:when>
+                <xsl:when test="$qd.task='setSpeaker6'">
+					<S who="{$speaker6}">
+						<xsl:apply-templates />
+					</S>
+				</xsl:when>
+                <xsl:when test="$qd.task='setSpeaker7'">
+					<S who="{$speaker7}">
+						<xsl:apply-templates />
+					</S>
+				</xsl:when>
+                <xsl:when test="$qd.task='setSpeaker8'">
+					<S who="{$speaker8}">
 						<xsl:apply-templates />
 					</S>
 				</xsl:when>
@@ -357,6 +381,10 @@
 									<xsl:when test="$n=1">kha</xsl:when>
 									<xsl:when test="$n=2">ga</xsl:when>
 									<xsl:when test="$n=3">nga</xsl:when>
+                                    <xsl:when test="$n=4">ca</xsl:when>
+									<xsl:when test="$n=5">cha</xsl:when>
+									<xsl:when test="$n=6">ja</xsl:when>
+									<xsl:when test="$n=7">nya</xsl:when>
 									<xsl:otherwise>X</xsl:otherwise>
 								</xsl:choose>
 							</xsl:attribute>

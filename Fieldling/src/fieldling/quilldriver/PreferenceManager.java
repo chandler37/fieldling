@@ -122,9 +122,8 @@ public class PreferenceManager extends JPanel {
 
 		public static final String CONFIGURATION_KEY = "CONFIGURATION";
 
-		public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
-
-		public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
+        @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
+        @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 
 
 
@@ -140,13 +139,13 @@ public class PreferenceManager extends JPanel {
 
 		public static int font_size;
 
-		public static int tibetan_font_size;
+		@TIBETAN@public static int tibetan_font_size;
 
 
 
 		public static String working_directory;
 
-		public static String tibetan_keyboard;
+		@TIBETAN@public static String tibetan_keyboard;
 
 		public static String recent_files;
 
@@ -209,7 +208,7 @@ public class PreferenceManager extends JPanel {
 
 			font_size = getInt(FONT_SIZE_KEY, 14);
 
-			tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
+			@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 
 
 
