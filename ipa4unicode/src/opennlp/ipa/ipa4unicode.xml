@@ -335,6 +335,46 @@
                                 <features>VOWEL VOICED OPEN BACK ROUNDED</features>
                           </symbol>
                           
+                          <!-- Precomposed characters that do not have official Unicode decompositions -->
+                          <symbol name="LATIN SMALL LETTER SCHWA WITH HOOK" codepoint="U+025A">
+                                <features>RHOTACIZED VOWEL VOICED MID CENTRAL</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER REVERSED OPEN E WITH HOOK" codepoint="U+025D">
+                                <features>RHOTACIZED VOWEL VOICED OPEN-MID FRONT UNROUNDED</features>
+                          </symbol>
+                          
+                          
+                          <!-- Not in IPA chart, but commonly used, even in supposed examples of IPA -->
+                          <symbol name="LATIN SMALL LETTER DZ DIGRAPH" codepoint="U+02A3">
+                                <features>CONSONANT ALVEOLAR VOICED AFFRICATE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER DEZH DIGRAPH" codepoint="U+02A4">
+                                <features>CONSONANT POSTALVEOLAR VOICED AFFRICATE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER DZ DIGRAPH WITH CURL" codepoint="U+02A5">
+                                <features>CONSONANT ALVEOLOPALATAL VOICED AFFRICATE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TS DIGRAPH" codepoint="U+02A6">
+                                <features>CONSONANT ALVEOLAR VOICELESS AFFRICATE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TESH DIGRAPH" codepoint="U+02A7">
+                                <features>CONSONANT POSTALVEOLAR VOICELESS AFFRICATE</features>
+                          </symbol>
+                          <symbol name="LATIN SMALL LETTER TC DIGRAPH WITH CURL" codepoint="U+02A8">
+                                <features>CONSONANT ALVEOLOPALATAL VOICELESS AFFRICATE</features>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL H WITH HOOK" codepoint="U+02B1"> <!-- Breathy voice aspiration -->
+                                <profile>
+                                        <adds>BREATHY-VOICED</adds>
+                                </profile>
+                          </symbol>
+                          <symbol name="MODIFIER LETTER SMALL TURNED R" codepoint="U+02B4"> <!-- Rhotacized -->
+                                <profile>
+                                        <expects>CONSONANT</expects>
+                                        <adds>RHOTACIZED</adds>
+                                </profile>
+                          </symbol>
+                          
                           <!-- Non-IPA diacritics that are part of base IPA symbols when they are decomposed into Normalized Form NF-D -->
                           <symbol name="COMBINING CEDILLA" codepoint="U+0327"> <!-- Cedilla -->
                                 <profile>
@@ -522,7 +562,7 @@
                           <symbol name="MODIFIER LETTER RHOTIC HOOK" codepoint="U+02DE"> <!-- Rhoticity -->
                                 <profile>
                                         <expects>VOWEL</expects>
-                                        <adds>RHOTICITY</adds>
+                                        <adds>RHOTACIZED</adds>
                                 </profile>
                           </symbol>
                           <symbol name="COMBINING RIGHT TACK BELOW" codepoint="U+0319"> <!-- Retracted Tongue Root -->
@@ -603,7 +643,8 @@
   <exclusive-group id="SecondaryArticulationDiacritics">U+02B7 U+02B2 U+02E0 U+02E4</exclusive-group><!-- Labialized, Palatalized, Velarized, Pharyngealized -->
   <exclusive-group id="ReleaseDiacritics">U+207F U+02E1 U+031A</exclusive-group><!-- Nasal release, lateral release, No audible release -->
   <exclusive-group id="PlaceDiacritics">U+032A U+033A U+033C U+033B U+031F U+0320</exclusive-group><!-- Dental, Apical, Linguolabial, Laminal, Advanced, Retracted -->
-  <exclusive-group id="VoicingDiacritics">U+0325 U+0324 U+032C U+0330</exclusive-group><!-- Voiceless, Breathy, Voiced, Creaky voiced diacritic -->
+  <exclusive-group id="VoicingDiacritics">U+0325 U+0324 U+032C U+0330</exclusive-group><!-- Voiceless, Breathy diacritic, Voiced, Creaky voiced diacritic -->
+  <exclusive-group id="AspirationDiacritics">U+02B0 U+02B1</exclusive-group><!-- Aspirated, Breathy-voice aspirated -->
   <exclusive-group id="MannerDiacritics">U+031D U+031E</exclusive-group><!-- Raised, Lowered -->
   <exclusive-group id="TongueRootDiacritics">U+0318 U+0319</exclusive-group><!-- ATR, RTR -->
   <exclusive-group id="RoundingDiacritics">U+0339 U+031C</exclusive-group><!-- More rounded, Less rounded -->
