@@ -90,6 +90,9 @@ public class XMLTagInfo {
 		if (obj == null) return true; 
 		else return ((Boolean)obj).booleanValue();
 	}
+    public Object getTagDisplay(org.w3c.dom.Element tag) {
+        return "DOMTAG";
+    }
 	public Object getTagDisplay(Element tag) {
 		String name = tag.getQualifiedName();
 		Object icon = displayIcon.get(name);
