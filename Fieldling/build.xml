@@ -281,7 +281,7 @@ and Quicktime for Java.
 </security>
 <resources os="Windows" arch="x86">
   <j2se version="1.4+"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/xml-apis.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
   <jar href="lib_webstart/xalan.jar"/>
@@ -293,8 +293,8 @@ and Quicktime for Java.
   <jar href="lib_webstart/activation.jar"/>
 </resources>
 <resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3.1"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
+  <j2se version="1.3"/>
+  <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/xml-apis.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
   <jar href="lib_webstart/xalan.jar"/>
@@ -339,7 +339,7 @@ optimized for use with Tibetan script.
 </security>
 <resources os="Windows" arch="x86">
   <j2se version="1.4+"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/Jskad.jar"/>
   <jar href="lib_webstart/xml-apis.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
@@ -352,8 +352,8 @@ optimized for use with Tibetan script.
   <jar href="lib_webstart/activation.jar"/>
 </resources>
 <resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3.1"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
+  <j2se version="1.3"/>
+  <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/Jskad.jar"/>
   <jar href="lib_webstart/xml-apis.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
