@@ -81,7 +81,7 @@ a version optimized for use with Tibetan script.
             <include name="*.zip"/>
         </fileset>
     </path>
-    
+        
     <!-- Uses the Apache Ant Jarbundler Task, written
     by Seth J. Morabito and available under GNU GPL at
     http://www.loomcom.com/jarbundler/ -->
@@ -326,9 +326,7 @@ developer.</echo>
 			</classpath>
 		</java>
 	</target>
-    
-
-
+        
 	<target name="qd-unicode-jnlp">
 		<!-- Step 2: Create the jnlp file -->
 		<!-- Write the head of the .jnlp file: -->
@@ -352,6 +350,9 @@ and supported media players include Java Media Framework (JMF)
 and Quicktime for Java.
   </description>
   <offline-allowed/>
+  <shortcut online="false">
+    <desktop/> <menu submenu="Field Linguistics"/>
+  </shortcut>			
 </information>
 <security>
   <all-permissions/>
@@ -410,6 +411,9 @@ Java Media Framework (JMF) and Quicktime for Java. QuillDriver-TIBETAN has been
 optimized for use with Tibetan script.
   </description>
   <offline-allowed/>
+  <shortcut online="false">
+    <desktop/> <menu submenu="THDL Tools"/>
+  </shortcut>		
 </information>
 <security>
   <all-permissions/>
