@@ -1077,9 +1077,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									//cloneOwner.addContent(clone);
                                     //jdom-b10 eliminated DOMOutputter.output(Element)
 									//org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
-                                    Document jDoc = new Document(new Element("CloneOwner"));
+                                    //Document jDoc = new Document(new Element("CloneOwner"));
                                     //jDoc.addContent(clone); //only works for jdom-b10
-                                    jDoc.getRootElement().addContent(clone); //use for jdom-b9
+                                    Document jDoc = new Document(clone);
+                                    //jDoc.getRootElement().addContent(clone); //use for jdom-b9
                                     org.w3c.dom.Document transformDocument = domOut.output(jDoc);
 									//String refreshID = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(context, config.getProperty("qd.refreshid"), namespaces));
 									Enumeration enum = config.propertyNames();
@@ -1136,12 +1137,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									//domSource.getNode().appendChild(transformElement);
 									//if (transformElement.getParentNode() == null)
 									//	System.out.println("null parent");
-									DOMSource domSource = new DOMSource(transformDocument);
+									DOMSource domSource = new DOMSource(transformDocument.getDocumentElement());
 									//if (domSource == null)
 									//	System.out.println("dom source is null");
 									transformer.transform(domSource, jdomResult);
-									Element transformedRoot = jdomResult.getDocument().getRootElement();
-									List replaceNodeWith = transformedRoot.getContent();
+									List replaceNodeWith = jdomResult.getResult();
 
 									/*XMLOutputter xmlOut = new XMLOutputter();
 									try {

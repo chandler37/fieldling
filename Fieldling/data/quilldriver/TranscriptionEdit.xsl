@@ -30,63 +30,77 @@
 
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
-<xsl:template match="CloneOwner">
-	<CloneOwner>
-		<xsl:for-each select="*[position()=1]">
+<xsl:template match="S">
 			<xsl:choose>
 				<xsl:when test="$qd.task='setSpeaker1'">
-					<S who="{$speaker1}">
-						<xsl:apply-templates />
-					</S>
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker1"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
 				<xsl:when test="$qd.task='setSpeaker2'">
-					<S who="{$speaker2}">
-						<xsl:apply-templates />
-					</S>
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker2"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
 				<xsl:when test="$qd.task='setSpeaker3'">
-					<S who="{$speaker3}">
-						<xsl:apply-templates />
-					</S>
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker3"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
 				<xsl:when test="$qd.task='setSpeaker4'">
-					<S who="{$speaker4}">
-						<xsl:apply-templates />
-					</S>
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker4"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
-                <xsl:when test="$qd.task='setSpeaker5'">
-					<S who="{$speaker5}">
-						<xsl:apply-templates />
-					</S>
+				<xsl:when test="$qd.task='setSpeaker5'">
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker5"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
-                <xsl:when test="$qd.task='setSpeaker6'">
-					<S who="{$speaker6}">
-						<xsl:apply-templates />
-					</S>
+				<xsl:when test="$qd.task='setSpeaker6'">
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker6"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
-                <xsl:when test="$qd.task='setSpeaker7'">
-					<S who="{$speaker7}">
-						<xsl:apply-templates />
-					</S>
+				<xsl:when test="$qd.task='setSpeaker7'">
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker7"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
-                <xsl:when test="$qd.task='setSpeaker8'">
-					<S who="{$speaker8}">
-						<xsl:apply-templates />
-					</S>
+				<xsl:when test="$qd.task='setSpeaker8'">
+                    <xsl:copy>
+                        <xsl:attribute name="who">
+                            <xsl:value-of select="$speaker8"/>
+                        </xsl:attribute>
+                        <xsl:copy-of select="child::*"/>
+                    </xsl:copy>
 				</xsl:when>
 				<xsl:when test="$qd.task='computeIDs'">
-					<xsl:call-template name="copyTag" />
+					<xsl:copy-of select="."/>
 				</xsl:when>
 				<xsl:when test="$qd.task='insertAfter'">
-					<xsl:element name="S">
-						<xsl:if test="@who">
-							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-						<xsl:apply-templates />
-					</xsl:element>
+                    <xsl:copy-of select="."/>
 					<S who="{@who}">
 						<FORM type="transliteration"><xsl:text> </xsl:text></FORM>
 						<xsl:if test="$isTranslating">
@@ -115,15 +129,7 @@
 							</TRANSL>
 						</xsl:if>
 					</S>
-					<xsl:element name="S">
-						<xsl:if test="@who">
-							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-						<xsl:apply-templates />
-					</xsl:element>
+					<xsl:copy-of select="."/>
 				</xsl:when>
 				<xsl:when test="$qd.task='markStart'">
 					<xsl:element name="S">
@@ -133,7 +139,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{$qd.currentmediatime}" end="{AUDIO/@end}" />
@@ -152,7 +158,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{AUDIO/@start}" end="{$qd.currentmediatime}" />
@@ -171,7 +177,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{AUDIO/@start}" end="{$qd.mediaduration}" />
@@ -187,7 +193,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start + $qd.slowincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -201,7 +207,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start + $qd.rapidincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -215,7 +221,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.slowincrease}" />
 						</xsl:if>
@@ -229,7 +235,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.rapidincrease}" />
 						</xsl:if>
@@ -243,7 +249,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start - $qd.slowincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -257,7 +263,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start - $qd.rapidincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -271,7 +277,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.slowincrease}" />
 						</xsl:if>
@@ -285,7 +291,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.rapidincrease}" />
 						</xsl:if>
@@ -299,7 +305,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 						<AUDIO start="{$qd.start}" end="{$qd.end}" />
 					</xsl:element>
 				</xsl:when>
@@ -311,7 +317,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
 					</xsl:element>
 				</xsl:when>
 				<!--
@@ -350,7 +356,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*"/>
+						<xsl:copy-of select="*"/>
 						<xsl:if test="not(TRANSL)">
 							<xsl:if test="not(TRANSL[@xml:lang=$translationLanguage])">	
 								<TRANSL>
@@ -373,7 +379,7 @@
 				<xsl:when test="$qd.task='addSpeaker'">
 					<xsl:variable name="n" select="count(SPEAKER)"/>
 					<HEADER>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<xsl:element name="SPEAKER">
 							<xsl:attribute name="personId">
 								<xsl:choose>
@@ -400,7 +406,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="general"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -412,7 +418,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="lexical"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -424,7 +430,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="grammatical"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -436,7 +442,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="pronunciation"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -448,7 +454,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="interpretive"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -460,7 +466,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="sociolinguistic"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -472,7 +478,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="*" />
+						<xsl:copy-of select="*" />
 						<NOTE type="cultural"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -483,37 +489,9 @@
 				</xsl:when>
 				<xsl:when test="$qd.task='removeNode'"/>
 				<xsl:otherwise>
-					<xsl:call-template name="copyTag"/>
+					<xsl:copy-of select="."/>
 				</xsl:otherwise>
 			</xsl:choose>
-		</xsl:for-each>
-	</CloneOwner>
 </xsl:template>
 
-<xsl:template name="copyTag">
-	<xsl:variable name="tag" select="local-name()"/>
-	<xsl:variable name="elem" select="."/>
-	<xsl:element name="{$tag}">
-		<xsl:for-each select="@*">
-			<xsl:if test="not(.='')"><xsl:copy-of select="."/></xsl:if>
-		</xsl:for-each>
-		<xsl:apply-templates/>
-	</xsl:element>	
-</xsl:template>
-
-<xsl:template match="*">
-	<xsl:call-template name="copyTag" />
-</xsl:template>
-
-<xsl:template match="text()">
-	<xsl:copy-of select="."/>
-</xsl:template>
-
-<xsl:template match="processing-instruction()">
-</xsl:template>
-
-<xsl:template match="comment()">
-	<xsl:copy-of select="."/>
-</xsl:template>
-	
 </xsl:stylesheet>
