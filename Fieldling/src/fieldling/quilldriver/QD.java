@@ -1,5 +1,5 @@
 /*
-The contents of this file are subject to the THDL Open Community License
+The contents of this file are subject to the THDL Open Community License.
 Version 1.0 (the "License"); you may not use this file except in compliance
 with the License. You may obtain a copy of the License on the THDL web site 
 (http://www.thdl.org/).
@@ -38,6 +38,7 @@ import fieldling.quilldriver.XMLView;
 import fieldling.quilldriver.XMLEditor;
 import fieldling.quilldriver.XMLUtilities;
 import fieldling.util.SimpleSpinner;
+import fieldling.util.SimpleSpinnerListener;
 import fieldling.util.I18n;
 import fieldling.util.StatusBar;
 
@@ -232,15 +233,15 @@ public class QD extends JDesktopPane {
 	}
 
 	
-	class TimeCodeView extends JPanel implements TimeCodeModelListener {
+	class TimeCodeView extends JPanel implements TimeCodeModelListener, SimpleSpinnerListener {
 		TimeCodeModel tcm;
 		JTextField currentTimeField;
 		SimpleSpinner startSpinner, stopSpinner;
 		int currentTime=-1, startTime=-1, stopTime=-1;
 		final int TEXT_WIDTH, TEXT_HEIGHT;
 		
-		TimeCodeView(final PanelPlayer player, TimeCodeModel tcm) {
-			this.tcm = tcm;
+		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
+			tcm = time_model;
 			
 			JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
 			JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.jpg")));
@@ -250,7 +251,10 @@ public class QD extends JDesktopPane {
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int t = player.getCurrentTime();
-					if (t != -1) setStartTime(t);
+					if (t != -1) { 
+						setStartTime(t);
+						tcm.setTimeCodes(t, stopTime, tcm.getCurrentNode());
+					}
 				}
 			});
 			outButton.addActionListener(new ActionListener() {
@@ -258,6 +262,7 @@ public class QD extends JDesktopPane {
 					int t = player.getCurrentTime();
 					if (t != -1) {
 						setStopTime(t);
+						tcm.setTimeCodes(startTime, t, tcm.getCurrentNode());
 						try {
 							player.cmd_stop();
 						} catch (PanelPlayerException smpe) {
@@ -291,9 +296,8 @@ public class QD extends JDesktopPane {
 			stopSpinner = new fieldling.util.SimpleSpinner();
 			startSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
 			stopSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
-			
-			
-			
+			startSpinner.addSimpleSpinnerListener(this);
+			stopSpinner.addSimpleSpinnerListener(this);
 			setCurrentTime(0);
 			setStartTime(0);
 			setStopTime(0);
@@ -311,37 +315,28 @@ public class QD extends JDesktopPane {
 			add("Center", jp_center);
 			tcm.addTimeCodeModelListener(this);
 		}
-		void changeTimeCodesInXML() {
-			if (taskActions != null) {
-				AbstractAction action = (AbstractAction)taskActions.get("qd.insertTimes");
-				if (action != null && tcm.getCurrentNode() != null)
-					action.actionPerformed(new ActionEvent(TimeCodeView.this, 0, "no.command"));
-			}
-		}
-		String getTimeAsString(int t) {
-			return String.valueOf((new Integer(t)).floatValue() / 1000);
+		public void valueChanged(ChangeEvent e) {
+			Object obj = e.getSource();
+			if (obj == startSpinner) startTime = startSpinner.getValue().intValue();
+			else if (obj == stopSpinner) stopTime = stopSpinner.getValue().intValue();
+			tcm.setTimeCodes(startTime, stopTime, tcm.getCurrentNode());
 		}
 		void setCurrentTime(int t) {
 			if (t != currentTime) {
 				currentTime = t;
 				currentTimeField.setText(String.valueOf(new Integer(t)));
-				//currentTimeLabel.setText(getTimeAsString(currentTime));
 			}
 		}
 		public void setStartTime(int t) {
 			if (t != startTime) {
 				startTime = t;
 				startSpinner.setValue(new Integer(t));
-				changeTimeCodesInXML();
-				//startTimeLabel.setText(getTimeAsString(startTime));
 			}
 		}
 		public void setStopTime(int t) {
 			if (t != stopTime) {
 				stopTime = t;
 				stopSpinner.setValue(new Integer(t));
-				changeTimeCodesInXML();
-				//stopTimeLabel.setText(getTimeAsString(stopTime));
 			}
 		}
 	}
@@ -375,30 +370,34 @@ public class QD extends JDesktopPane {
 		public Object getCurrentNode() {
 			return currentNode;
 		}
-		public void setInTime(int k) {
-			t1 = k;
-			//see javadocs on EventListenerList for how following array is structured
-			Object[] listeners = listenerList.getListenerList();
-			for (int i = listeners.length-2; i>=0; i-=2) {
-				if (listeners[i]==TimeCodeModelListener.class)
-					((TimeCodeModelListener)listeners[i+1]).setStartTime(t1);
+		private void changeTimeCodesInXML() {
+			if (taskActions != null) {
+				AbstractAction action = (AbstractAction)taskActions.get("qd.insertTimes");
+				if (action != null && getCurrentNode() != null)
+					action.actionPerformed(new ActionEvent(TimeCodeModel.this, 0, "no.command"));
 			}
 		}
-		public void setOutTime(int k) {
-			t2 = k;
-			//see javadocs on EventListenerList for how following array is structured
-			Object[] listeners = listenerList.getListenerList();
-			for (int i = listeners.length-2; i>=0; i-=2) {
-				if (listeners[i]==TimeCodeModelListener.class)
-					((TimeCodeModelListener)listeners[i+1]).setStopTime(t2);
-			}
-		}
-		public void setTimes(Object node) {
+		public void setTimeCodes(int t1, int t2, Object node) {
+			Object oldNode = currentNode;
 			currentNode = node;
+			if (!(this.t1 == t1 && this.t2 == t2)) {
+				this.t1 = t1;
+				this.t2 = t2;
+				//see javadocs on EventListenerList for how following array is structured
+				Object[] listeners = listenerList.getListenerList();
+				for (int i = listeners.length-2; i>=0; i-=2) {
+					if (listeners[i]==TimeCodeModelListener.class) {
+						((TimeCodeModelListener)listeners[i+1]).setStartTime(t1);
+						((TimeCodeModelListener)listeners[i+1]).setStopTime(t2);
+					}
+				}
+				if (currentNode == oldNode) changeTimeCodesInXML(); //update the XML file
+			}
+		}
+		public void setNode(Object node) {
 			Object playableparent = XMLUtilities.findSingleNode(node, config.getProperty("qd.nearestplayableparent"));
 			if (playableparent == null) {
-				setInTime(-1);
-				setOutTime(-1);
+				setTimeCodes(-1, -1, node);
 				thp.unhighlightAll();
 				return;
 			} else {
@@ -406,8 +405,7 @@ public class QD extends JDesktopPane {
 				String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
 				float f1 = new Float(t1).floatValue()*1000;
 				float f2 = new Float(t2).floatValue()*1000;
-				setInTime(new Float(f1).intValue());
-				setOutTime(new Float(f2).intValue());
+				setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
 				thp.unhighlightAll();
 				thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
 			}
@@ -570,23 +568,20 @@ public class QD extends JDesktopPane {
 							//since it would interfere with editing.
 							//player.cancelAnnotationTimer();
 							player.setAutoScrolling(false);
-							if (tcp != null) tcp.setTimes(ned.getNode());
+							if (tcp != null) tcp.setNode(ned.getNode());
 						} else if (ned instanceof XMLEditor.EndEditEvent) {
 							//turn auto-scrolling and highlighting back on
 							XMLEditor.EndEditEvent eee = (XMLEditor.EndEditEvent)ned;
-							if (eee.hasBeenEdited()) {
-								view.refresh();
-								hp.refresh();
-							}
+							if (eee.hasBeenEdited()) hp.refresh();
 							player.setAutoScrolling(true);
 						} else if (ned instanceof XMLEditor.CantEditEvent) {
 							//if this node can't be edited, maybe it can be played!
-							System.out.println(ned.getNode().toString());
 							Object node = ned.getNode();
 							if (node != null) {
 								editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(node));
+								if (tcp != null) tcp.setNode(node);
+								player.setAutoScrolling(true);
 								playNode(node);
-								if (tcp != null) tcp.setTimes(node);
 							}
 						}
 					}
@@ -914,7 +909,6 @@ public class QD extends JDesktopPane {
 								}
 								
 								editor.fixOffsets();
-								view.refresh();
 								hp.refresh();
 								player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
 								

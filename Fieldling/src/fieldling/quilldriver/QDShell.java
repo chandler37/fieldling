@@ -51,11 +51,13 @@ public class QDShell extends JFrame {
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
 
 			Locale locale;
-try {
+/*
+			try {
 	PrintStream ps =  new PrintStream(new FileOutputStream("qd.log"));
 			System.setOut(ps);
 			System.setErr(ps);
 } catch (FileNotFoundException fnfe) {}
+*/
 /*
 			if (args.length == 3) {
 				locale = new Locale(new String(args[1]), new String(args[2]));

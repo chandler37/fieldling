@@ -73,6 +73,11 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		add(new JScrollPane(text));
 	}
 	public void refresh() {
+		//FIXME FIXME FIXME!!!
+		if (view instanceof XMLView) {
+			XMLView xmlView = (XMLView)view;
+			xmlView.refresh(); //start by refreshing the TranscriptView
+		}
 		hashStart.clear();
 		hashEnd.clear();	
 		StringTokenizer	stIDS    = new StringTokenizer(view.getIDs(), ",");
@@ -95,7 +100,10 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 				hashEnd.put(sID, new Integer(0));
 			}
 		}
-	}		
+	}
+	public TranscriptView getView() {
+		return view;
+	}
 	public boolean isPlayableAnnotation(String id)
 	{
 		return hashStart.containsKey(id);

@@ -181,11 +181,13 @@ public class XMLEditor {
 				JTextPane p = (JTextPane)e.getSource();
 				int offset = p.viewToModel(e.getPoint());
 				if (isEditable(offset)) {
+System.out.println("clicked on editable " + String.valueOf(offset));
 					p.requestFocus();
 					if (isEditing) fireEndEditEvent();
 					fireStartEditEvent(getNodeForOffset(offset));
 					p.setCaretPosition(offset);
 				} else {
+System.out.println("clicked on uneditable " + String.valueOf(offset));					
 					Object node = getNodeForOffset(offset);
 					if (isEditing) fireEndEditEvent();
 					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
@@ -801,35 +803,20 @@ upAction, writableAction
 
 
 	public void setEditabilityTracker(boolean bool) {
-
 		if (bool) {
-
 			int p = pane.getCaretPosition();
-
 			int q;
-
 			if (pane.getDocument().getLength() == 0)
-
 				q=0;
-
 			else {
-
 				if (p>0) q=p-1;
-
 				else q=p+1;
-
 			}
-
 			pane.setCaretPosition(q);
-
 			pane.addCaretListener(editabilityTracker); //shouldn't do if already installed
-
 			pane.setCaretPosition(p);
-
 		}
-
 		else pane.removeCaretListener(editabilityTracker);
-
 	}
 
 	public void updateNode(Object node) {
