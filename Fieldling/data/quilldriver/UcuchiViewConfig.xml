@@ -18,16 +18,30 @@
 		</action-set>
 	</actions>
 		<rendering-instructions>
+			<tag name="ucuchi:TEXT" visible="false"/>
+            <tag name="ucuchi:META" visible="false"/>
+            <tag name="ucuchi:S" visible="false"/>
             <tag name="ucuchi:W" visible="false" visiblecontents="false"/>
-			<tag name="ucuchi:TEXT" visible="false" visiblecontents="true"/>
-            <!--
-            <tag name="ucuchi:S" visible="false" visiblecontents="true"/>
-			<tag name="ucuchi:C" visible="false" visiblecontents="true">
+            <tag name="ucuchi:TRANS" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
+            <tag name="ucuchi:C" visible="true" displayas="XPATH:@spid">
                 <attribute name="qd:t1" visible="false"/>
                 <attribute name="qd:t2" visible="false"/>
+                <attribute name="spid" visible="false"/>
             </tag>
-            <tag name="ucuchi:TRANSL" visible="true" displayas="ENGLISH"/>
-            <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
-            -->
+            <tagview name="Quechua Only" keystroke="F1">
+                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
+            </tagview>
+            <tagview name="English Only" keystroke="F2">
+                <tag name="ucuchi:S-F" visible="false" visiblecontents="false"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
+            </tagview>
+            <tagview name="Quechua and English" keystroke="F3">
+                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
+            </tagview>
 		</rendering-instructions>
 </qd-configuration>

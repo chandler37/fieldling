@@ -879,6 +879,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			}
 			int start = pos.getOffset();
 			startOffsets.put(e, new Integer(start));
+            //should check to make sure tagInfo isn't null!
 			if (tagInfo.isTagForDisplay(e.getQualifiedName())) { //then display tag and its attributes
 				Object tagDisplay;
 				if (tagInfo == null) tagDisplay = new String(e.getQualifiedName());

@@ -941,9 +941,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						if (z == 0) tagItem.setSelected(true);
 						configMenus[xCount].add(tagItem);
 					}
-				currentTagInfo = tagInfo[0];
 				xCount++;
 			}
+            currentTagInfo = tagInfo[0];
 
 			Iterator actionSetIter = actionSets.iterator();
 			try {
