@@ -39,7 +39,7 @@ import java.lang.reflect.*;
 import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
-import fieldling.quilldriver.*;
+import fieldling.quilldriver.QDShell;
 
 public class PreferenceManager extends JPanel {
 
@@ -63,22 +63,31 @@ public class PreferenceManager extends JPanel {
 		public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
 		public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 
-		public static Field md,sa,ra,pm,ff,fs,tfs,wxk,wyk,wwk,whk,wd,rfk,ck,tkk,mpk;
-/*
-		public static final String media_directory;
-		public static final int slow_adjust;
-		public static final int rapid_adjust;
-		public static final int play_minus;
-		public static final String font_face;
-		public static final int font_size;
-		public static final int tibetan_font_size;
-*/
+		//public static Field md,sa,ra,pm,ff,fs,tfs,wxk,wyk,wwk,whk,wd,rfk,ck,tkk,mpk;
+
+		public static String media_directory;
+		public static int slow_adjust;
+		public static int rapid_adjust;
+		public static int play_minus;
+		public static String font_face;
+		public static int font_size;
+		public static int tibetan_font_size;
+
+		public static String working_directory;
+		public static String tibetan_keyboard;
+		public static String recent_files;
+		public static String configuration_key;
+		public static String media_player;
+
 		ResourceBundle messages = null;
 				QD qd = null;
 
 
-				QDShell qdshellclass = new QDShell();
+				QDShell qdshellclass;   // = new QDShell();
 
+				Object object = null;
+
+				Method getMethodvalue, getMethodint,setMethodvalue, setMethodint;
 
 
 		public static Class myPrefs;
@@ -86,6 +95,16 @@ public class PreferenceManager extends JPanel {
 
 		public PreferenceManager()
 		{
+
+
+			media_directory=getValue(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
+			slow_adjust = getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
+			rapid_adjust =getInt(RAPID_ADJUST_KEY, 250); //in milliseconds
+			play_minus = getInt(PLAY_MINUS_KEY, 1000); // milliseconds
+			font_face = getValue(FONT_FACE_KEY, "Courier");
+			font_size = getInt(FONT_SIZE_KEY, 14);
+			tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
+
 
 			//preference defaults and values
 	/***		private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
@@ -98,6 +117,8 @@ public class PreferenceManager extends JPanel {
 			public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
 
 ****/
+
+
 			PrefManagerMethod(qdshellclass);
 
 
@@ -106,15 +127,52 @@ public class PreferenceManager extends JPanel {
 
 		void PrefManagerMethod(Object o)
 		{
+
 			myPrefs = o.getClass();
 
 			//Field f[]=myPrefs.getFields();
 
-
-
 			 try
 			 {
-				// All Get Functionalities
+				object = myPrefs.newInstance();
+			 } catch (InstantiationException e)
+			 {
+				          System.out.println(e);
+			 } catch (IllegalAccessException e)
+			 {
+				          System.out.println(e);
+			 } catch (ClassNotFoundException e)
+			 {
+				          System.out.println(e);
+      		 }
+
+      		 // All Get Functionalities
+
+      		 Class[] setParameters = new Class[] {Object.class};
+			 Object[] argument = new Object[] {this};
+
+      		 try
+      		 {
+
+				getMethodvalue = object.getClass().getMethod("getValue", new Class[]{String.class,String.class});
+				getMethodint = object.getClass().getMethod("getInt", new Class[]{String.class,int.class});
+
+				setMethodint = object.getClass().getMethod("setInt", new Class[]{String.class,int.class});
+				setMethodvalue = object.getClass().getMethod("setValue", new Class[]{String.class,String.class});
+
+			 } catch (NoSuchMethodException nsme)
+			 {
+							nsme.printStackTrace();
+			 } catch (IllegalAccessException illae)
+			 {
+							illae.printStackTrace();
+			 } catch (InvocationTargetException ite)
+			 {
+							ite.printStackTrace();
+			 }
+}
+
+/***
 
 				md= myPrefs.getField(MEDIA_DIRECTORY_KEY);
 				qdshellclass.media_directory = (md.get(o)).toString();
@@ -177,19 +235,126 @@ public class PreferenceManager extends JPanel {
 			 {
 			 	 System.out.println(e);
 			 }
+***/
 
 
 
-		}
 
-		// All Set Functionalities
+public String getValue(String key,String defvalue)
+{
+	if (object == null)
+	{
+		try {
 
-		void SetPreferenceInt(Object o,Field f,int value)
+			// do nothing
+
+		} catch (NumberFormatException nfe)
 		{
-			myPrefs = o.getClass();
-
-
-
+			nfe.printStackTrace();
 		}
+	}
+	else
+	{
+		try
+		{
+			Object[] argument = new Object[] {key};
+
+			if((String)getMethodvalue.invoke(object, argument) == null)
+				return defvalue;
+			else
+				return (String)getMethodvalue.invoke(object, argument);
+
+
+		} catch (IllegalAccessException illae)
+		{
+			illae.printStackTrace();
+		} catch (InvocationTargetException ite)
+		{
+			ite.printStackTrace();
+		}
+	}
+	return null;
 
 }
+
+
+public int getInt(String key,int defvalue)
+{
+	if (object == null)
+	{
+		try {
+
+			// do nothing
+
+		} catch (NumberFormatException nfe)
+		{
+			nfe.printStackTrace();
+		}
+	} else
+	{
+		try {
+
+			Object[] argument = new Object[] {key};
+
+			if((int)getMethodint.invoke(object, argument) == 0)
+				return defvalue;
+			else
+				return (int)getMethodint.invoke(object, argument);
+
+		} catch (IllegalAccessException illae)
+		{
+			illae.printStackTrace();
+		} catch (InvocationTargetException ite)
+		{
+			ite.printStackTrace();
+		}
+	}
+	return 0;
+}
+
+
+
+// function to set integer value
+	public void setInt(String key, int setvalue)
+	{
+		if (object == null)
+		{
+			// do nothing
+		} else
+		{
+			Object[] argument = new Object[] {key};
+			try
+			{
+				setMethodint.invoke(object, argument);
+			} catch (IllegalAccessException illae)
+			{
+				illae.printStackTrace();
+			} catch (InvocationTargetException ite)
+			{
+				ite.printStackTrace();
+			}
+		}
+	}
+
+
+	// function to set String value
+		public void setValue(String key, String setvalue) {
+			if (object == null)
+			{
+				// do nothing
+			} else
+			{
+				Object[] argument = new Object[] {key};
+				try {
+					setMethodvalue.invoke(object, argument);
+				} catch (IllegalAccessException illae)
+				{
+					illae.printStackTrace();
+				} catch (InvocationTargetException ite)
+				{
+					ite.printStackTrace();
+				}
+			}
+		}
+
+	}
