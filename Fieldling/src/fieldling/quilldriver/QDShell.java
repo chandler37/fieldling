@@ -127,9 +127,7 @@ try {
 				String home = System.getProperty("user.home");
 				String sep = System.getProperty("file.separator");
 				String path = "file:" + home + sep + "put-in-home-directory" + sep;
-	System.out.println("before qd init");
 				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");
-	System.out.println("after qd init");
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
 			} catch (SecurityException se) {

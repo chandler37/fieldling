@@ -554,8 +554,6 @@ public class XMLEditor {
 
 		};
 
-		
-
 		Action deleteNextAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -571,8 +569,6 @@ public class XMLEditor {
 				}
 			}
 		};
-
-		
 
 		Action deletePrevAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -619,6 +615,45 @@ public class XMLEditor {
 		createActionTable(pane);
 		Keymap keymap = pane.addKeymap("QDBindings", pane.getKeymap());
 
+/*		KeyStroke[] tabKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.insertTabAction));
+
+		if (tabKeys != null)
+
+			for (int i=0; i<tabKeys.length; i++)
+
+				keymap.addActionForKeyStroke(tabKeys[i], nextNodeAction);
+*/
+		//tab
+		KeyStroke tabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
+		if (tabKey != null) keymap.addActionForKeyStroke(tabKey, nextNodeAction);
+		
+		//enter
+		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);			
+
+		//backspace
+		/* The Java bug database has several related bugs concerning the treatment
+		of backspace. Here I adopt solution based on fix of bug 4402080:
+		Evaluation  The text components now key off of KEY_TYPED with a keyChar == 8 to do the
+		deletion. The motivation for this can be found in bug 4256901.
+		xxxxx@xxxxx 2001-01-05 */
+		KeyStroke backSpace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
+		pane.addKeyListener(new java.awt.event.KeyAdapter() {
+			public void keyTyped(KeyEvent kev) {
+				if (kev.getKeyChar() == 8) {
+					System.out.println("backspace typed");
+					kev.consume();
+				}
+				/* Above is equivalent to:
+					if(kev.paramString().indexOf("Backspace") != -1) {
+						System.out.println("backspace typed");
+						kev.consume();
+					}
+				*/
+			}
+		});
+		
 		KeyStroke[] selectAllKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectAllAction));
 
 		if (selectAllKeys != null)
@@ -674,17 +709,7 @@ public class XMLEditor {
 
 				keymap.addActionForKeyStroke(selBegParaKeys[i], selectToNodeStartAction);
 
-		KeyStroke[] tabKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.insertTabAction));
 
-		if (tabKeys != null)
-
-			for (int i=0; i<tabKeys.length; i++)
-
-				keymap.addActionForKeyStroke(tabKeys[i], nextNodeAction);
-
-		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-
-		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);			
 
 		KeyStroke[] endLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.endLineAction));
 
@@ -741,15 +766,7 @@ public class XMLEditor {
 			for (int i=0; i<delNextKeys.length; i++)
 
 				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
-
-		KeyStroke[] delPrevKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.deletePrevCharAction));
-
-		if (delPrevKeys != null)
-
-			for (int i=0; i<delPrevKeys.length; i++)
-
-				keymap.addActionForKeyStroke(delPrevKeys[i], deletePrevAction);
-
+		
 		KeyStroke[] selForwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionForwardAction));
 
 		if (selForwardKeys != null)
@@ -770,7 +787,7 @@ public class XMLEditor {
 
 		if (escapeKey != null) keymap.addActionForKeyStroke(escapeKey, loseFocusAction);
 
-			
+		pane.setKeymap(keymap);			
 
 /*
 
@@ -803,11 +820,6 @@ selectionUpAction, selectWordAction,
 upAction, writableAction
 
 */
-
-
-
-		pane.setKeymap(keymap);
-
 	}
 
 	
