@@ -648,7 +648,7 @@
   <exclusive-group id="ReleaseDiacritics">U+207F U+02E1 U+031A</exclusive-group><!-- Nasal release, lateral release, No audible release -->
   <exclusive-group id="PlaceDiacritics">U+032A U+033A U+033C U+033B U+031F U+0320</exclusive-group><!-- Dental, Apical, Linguolabial, Laminal, Advanced, Retracted -->
   <exclusive-group id="VoicingDiacritics">U+0325 U+0324 U+032C U+0330</exclusive-group><!-- Voiceless, Breathy diacritic, Voiced, Creaky voiced diacritic -->
-  <!--<exclusive-group id="AspirationDiacritics">U+02B0 U+02B1</exclusive-group>Aspirated, Breathy-voice aspirated -->
+  <exclusive-group id="AspirationDiacritics">U+02B0 U+02B1</exclusive-group><!--  Aspirated, Breathy-voice aspirated -->
   <exclusive-group id="MannerDiacritics">U+031D U+031E</exclusive-group><!-- Raised, Lowered -->
   <exclusive-group id="TongueRootDiacritics">U+0318 U+0319</exclusive-group><!-- ATR, RTR -->
   <exclusive-group id="RoundingDiacritics">U+0339 U+031C</exclusive-group><!-- More rounded, Less rounded -->
