@@ -116,10 +116,8 @@ public class QD extends JDesktopPane {
 		this.newURL = newURL;
 		this.editURL = editURL;
 		this.dtdURL = dtdURL;
-
-
 	
-System.out.println(System.getProperty("java.class.path"));
+System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 	
 		
 		configure(configURL);

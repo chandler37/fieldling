@@ -80,6 +80,7 @@ try {
 			QDShell qdsh = new QDShell(args);
 			qdsh.setVisible(true);
 		} catch (NoClassDefFoundError err) {
+			System.out.println(err.toString());
 			//ThdlDebug.handleClasspathError("QuillDriver's CLASSPATH", err);
 		}
 	}
@@ -126,7 +127,9 @@ try {
 				String home = System.getProperty("user.home");
 				String sep = System.getProperty("file.separator");
 				String path = "file:" + home + sep + "put-in-home-directory" + sep;
+	System.out.println("before qd init");
 				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");
+	System.out.println("after qd init");
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
 			} catch (SecurityException se) {
