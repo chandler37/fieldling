@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
+import fieldling.util.*;
 
 public class UserFeedback {
 	private static Preferences myPrefs;
@@ -23,8 +24,8 @@ public class UserFeedback {
 	public static final String SMTP_ADDR = "SMTP_SERVER";
 	public static final String PASSWORD = "PASSWORD";
 	public static final String[] MODULE_NAME = {"QuillDriver"};
-	public static final String[] FEEDBACK_TYPES = {"Bug", "Feature Request", "Inquiry"};
-	public static final String[] PRIORITY_LEVELS = {"High", "Medium", "Low"};
+	public static String[] FEEDBACK_TYPES;
+	public static String[] PRIORITY_LEVELS;
 	public static String name;
 	public static String email;
 	public static String smtp,subject = null,firstmessage;
@@ -39,18 +40,29 @@ public class UserFeedback {
 
 	public UserFeedback(JFrame f)
 	{
+			ResourceBundle messages = I18n.getResourceBundle();
+			FEEDBACK_TYPES = new String[3];
+			FEEDBACK_TYPES[0] = messages.getString("Bug");
+			FEEDBACK_TYPES[1] = messages.getString("FeatureRequest");
+			FEEDBACK_TYPES[2] = messages.getString("Inquiry");
+			
+			PRIORITY_LEVELS = new String[3];
+			PRIORITY_LEVELS[0] = messages.getString("High");
+			PRIORITY_LEVELS[1] = messages.getString("Medium");
+			PRIORITY_LEVELS[2] = messages.getString("Low");
+
 			myPrefs = Preferences.userNodeForPackage(UserFeedback.class);
-			nameField=new JTextField((myPrefs.get(USER_NAME,"<Enter name>")));
-			nameField.setBorder(BorderFactory.createTitledBorder("Name"));
+			nameField=new JTextField((myPrefs.get(USER_NAME, messages.getString("EnterName"))));
+			nameField.setBorder(BorderFactory.createTitledBorder(messages.getString("Name")));
 			nameField.setSize(150,30);
-			emailField = new JTextField((myPrefs.get(EMAIL_ADDR,"<Enter Email>")));
-			emailField.setBorder(BorderFactory.createTitledBorder("Email Address"));
+			emailField = new JTextField((myPrefs.get(EMAIL_ADDR, messages.getString("EnterEmail"))));
+			emailField.setBorder(BorderFactory.createTitledBorder(messages.getString("EmailAddress")));
 			emailField.setSize(150,30);
-			smtpField = new JTextField((myPrefs.get(SMTP_ADDR,"<Enter Mail Server>")));
-			smtpField.setBorder(BorderFactory.createTitledBorder("Outgoing Mail Server"));
+			smtpField = new JTextField((myPrefs.get(SMTP_ADDR, messages.getString("EnterMailServer"))));
+			smtpField.setBorder(BorderFactory.createTitledBorder(messages.getString("OutgoingMailServer")));
 			smtpField.setSize(150,30);
 			password = new JPasswordField((myPrefs.get(PASSWORD,"")));
-			password.setBorder(BorderFactory.createTitledBorder("Password"));
+			password.setBorder(BorderFactory.createTitledBorder(messages.getString("Password")));
 			password.setSize(150,30);
 
 			module = new JComboBox(MODULE_NAME);
@@ -65,24 +77,24 @@ public class UserFeedback {
 			leftPanel.add(smtpField);
 			leftPanel.add(password);
 			JPanel rightPanel = new JPanel(new GridLayout(3,3));
-			rightPanel.add(new JLabel("Affected module: "));
+			rightPanel.add(new JLabel(messages.getString("AffectedModule")));
 			rightPanel.add(module);
-			rightPanel.add(new JLabel("Type of feedback: "));
+			rightPanel.add(new JLabel(messages.getString("TypeofFeedback")));
 			rightPanel.add(feedbackType);
-			rightPanel.add(new JLabel("Priority: "));
+			rightPanel.add(new JLabel(messages.getString("Priority")));
 			rightPanel.add(priority);
 			northPanel.add(leftPanel);
 			northPanel.add(rightPanel);
 			JPanel centerPanel = new JPanel(new BorderLayout());
 			centerPanel.setPreferredSize(new Dimension(150,150));
 			centerPanel.add(new JScrollPane(feedbackText), BorderLayout.CENTER);
-			centerPanel.setBorder(BorderFactory.createTitledBorder("Type Message Here"));
+			centerPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("TypeMessageHere")));
 			JPanel namePanel = new JPanel();
 			namePanel.setLayout(new BorderLayout());
 			namePanel.add(northPanel, BorderLayout.NORTH);
 			namePanel.add(centerPanel, BorderLayout.CENTER);
 		 JOptionPane pane = new JOptionPane(namePanel);
-		 JDialog dialog = pane.createDialog(f, "Feedback to Developers");
+		 JDialog dialog = pane.createDialog(f, messages.getString("FeedbackToDevelopers"));
 		 // This returns only when the user has closed the dialog
 		 dialog.show();
 		 name = nameField.getText();
