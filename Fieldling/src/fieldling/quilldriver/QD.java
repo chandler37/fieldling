@@ -40,7 +40,6 @@ import fieldling.quilldriver.XMLUtilities;
 import fieldling.util.SimpleSpinner;
 import fieldling.util.SimpleSpinnerListener;
 import fieldling.util.I18n;
-import fieldling.util.StatusBar;
 
 import org.jdom.DocType;
 import org.jdom.Document;
