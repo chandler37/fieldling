@@ -120,7 +120,7 @@ public class IPATokenizer implements Enumeration {
         int i=offset-1;
         
         for (; i > -1 && i < data.length; i--) {
-            if (isStressMark(data[i]))
+            if (isStressMark(data[i]) || isMinorMajorGroupMark(data[i]))
                 break;
             if (data[i] != '\u207F' && UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER)
                 break;
@@ -150,7 +150,7 @@ public class IPATokenizer implements Enumeration {
          //if (!(data[offset] = "\u0361")) { 
              int i=offset;
              for (; i > -1 && i < data.length; i++) {
-                 if (isStressMark(data[i]))
+                 if (isStressMark(data[i]) || isMinorMajorGroupMark(data[i]))
                      break;
                  if (data[i] != '\u207F' && UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER)
                      break;
@@ -189,17 +189,20 @@ public class IPATokenizer implements Enumeration {
             do {
                 i++;
                 type = UCharacter.getType(data[i]);
-            } while (i < data.length && !isStressMark(data[i]) &&
+            } while (i < data.length && !isStressMark(data[i]) && !isMinorMajorGroupMark(data[i]) &&
                              (type ==  UCharacterCategory.NON_SPACING_MARK || //Mn
                               type == UCharacterCategory.MODIFIER_LETTER || //Lm
                               type == UCharacterCategory.MODIFIER_SYMBOL || //Sk
                               data[i] == '\u207F')); //superscript n
         } else if (isWhitespace(data[i])) {
             for (i = i+1; isWhitespace(data[i]); i++);
-        } else if (isStressMark(data[i])) i++;
+        } else if (isStressMark(data[i]) || isMinorMajorGroupMark(data[i])) i++;
         else
             return -1;
         return i-start;
+    }
+    public static boolean isMinorMajorGroupMark(char c) {
+        return (c == '\u007C' || c == '\u2016'); //minor (foot) and major (intonation) group mark
     }
     public static boolean isStressMark(char c) {
         return (c == '\u02C8' || c == '\u02CC'); //primary and secondary stress markers

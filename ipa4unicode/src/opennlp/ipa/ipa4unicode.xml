@@ -115,9 +115,10 @@
                           <symbol name="LATIN SMALL LETTER Z WITH RETROFLEX HOOK" codepoint="U+0290">
                                 <features>CONSONANT RETROFLEX VOICED FRICATIVE</features>
                           </symbol>
+                          <!--  THIS CHARACTER HAS A DECOMPOSED FORM WITH 'C' PLUS 'CEDILLA':
                           <symbol name="LATIN SMALL LETTER C WITH CEDILLA" codepoint="U+00E7">
                                 <features>CONSONANT PALATAL VOICELESS FRICATIVE</features>
-                          </symbol>
+                          </symbol> -->
                           <symbol name="LATIN SMALL LETTER J WITH CROSSED-TAIL" codepoint="U+029D">
                                 <features>CONSONANT PALATAL VOICED FRICATIVE</features>
                           </symbol>
@@ -333,7 +334,16 @@
                           <symbol name="LATIN SMALL LETTER TURNED ALPHA" codepoint="U+0252">
                                 <features>VOWEL VOICED OPEN BACK ROUNDED</features>
                           </symbol>
-  
+                          
+                          <!-- Non-IPA diacritics that are part of base IPA symbols when they are decomposed into Normalized Form NF-D -->
+                          <symbol name="COMBINING CEDILLA" codepoint="U+0327"> <!-- Cedilla -->
+                                <profile>
+                                        <expects>PALATAL VOICELESS PLOSIVE</expects>
+                                        <adds>FRICATIVE</adds>
+                                        <removes>PLOSIVE</removes>
+                                </profile>
+                          </symbol>
+                          
                           <!-- Diacritics -->
                           <symbol name="MODIFIER LETTER APOSTROPHE" codepoint="U+02BC"> <!-- Ejective -->
                                 <profile>
@@ -523,8 +533,12 @@
                           </symbol>
 
                           <!-- Suprasegmentals -->
-  <symbol name="MODIFIER LETTER VERTICAL LINE" codepoint="U+02C8"/> <!-- Primary stress -->
-  <symbol name="MODIFIER LETTER LOW VERTICAL LINE" codepoint="U+02CC"/> <!-- Secondary stress -->
+  <symbol name="MODIFIER LETTER VERTICAL LINE" codepoint="U+02C8"> <!-- Primary stress -->
+        <features>PRIMARY STRESS</features>
+  </symbol>
+  <symbol name="MODIFIER LETTER LOW VERTICAL LINE" codepoint="U+02CC"> <!-- Secondary stress -->
+        <features>SECONDARY STRESS</features>
+  </symbol>
   <symbol name="MODIFIER LETTER TRIANGULAR COLON" codepoint="U+02D0"> <!-- Long -->
         <profile>
                 <adds>LONG</adds>
@@ -540,8 +554,12 @@
                 <adds>EXTRA-SHORT</adds>
         </profile>
   </symbol>
-  <symbol name="VERTICAL LINE" codepoint="U+007C"/> <!-- Minor (foot) group -->
-  <symbol name="DOUBLE VERTICAL LINE" codepoint="U+2016"/> <!-- Major (intonation) group -->
+  <symbol name="VERTICAL LINE" codepoint="U+007C"> <!-- Minor (foot) group -->
+        <features>MINOR GROUP</features>
+  </symbol>
+  <symbol name="DOUBLE VERTICAL LINE" codepoint="U+2016"> <!-- Major (intonation) group -->
+        <features>MAJOR GROUP</features>
+  </symbol>
   <symbol name="FULL STOP" codepoint="U+002E"/> <!-- Syllable break -->
   <symbol name="UNDERTIE" codepoint="U+203F"/> <!-- Linking (absence of a break) -->
   
