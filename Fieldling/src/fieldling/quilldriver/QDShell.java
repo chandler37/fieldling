@@ -208,7 +208,7 @@ public class QDShell extends JFrame {
                     dataSourceButtons[0].setSelected(true); //if no recent files, assume new transcript
                 
                 //cancel button: quit QuillDriver
-                JButton cancelButton = new JButton("Cancel");
+                JButton cancelButton = new JButton(messages.getString("Cancel"));
                 cancelButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         Wizard.this.hide();
@@ -380,7 +380,7 @@ public class QDShell extends JFrame {
 				getDisplayPreferences();
 			}
 		});
-		JMenuItem timeCodeItem = new JMenuItem("Time coding...");
+		JMenuItem timeCodeItem = new JMenuItem(messages.getString("TimeCoding"));
 		timeCodeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getTimeCodePreferences();
@@ -389,7 +389,7 @@ public class QDShell extends JFrame {
                 JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		preferencesMenu.add(fontItem);
 		preferencesMenu.add(timeCodeItem);
-                
+               
                 //Help menu
 		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
@@ -411,7 +411,7 @@ public class QDShell extends JFrame {
                 } catch (IOException ioe ) {
                     ioe.printStackTrace();
                 }
-		JMenu betaMenu =  new JMenu("Help");
+		JMenu betaMenu =  new JMenu(messages.getString("Help"));
                 betaMenu.add(aboutItem);
 		betaMenu.add(feedbackItem);
                 
@@ -547,7 +547,6 @@ public class QDShell extends JFrame {
 		 playMinusPanel.add(playMinusField);
 
 
-
 		 JPanel preferencesPanel = new JPanel();
 
 		preferencesPanel.setLayout(new GridLayout(3,1));
@@ -557,8 +556,6 @@ public class QDShell extends JFrame {
 		preferencesPanel.add(rapidAdjustPanel);
 
 		preferencesPanel.add(playMinusPanel);
-
-
 
 		 JOptionPane pane = new JOptionPane(preferencesPanel);
 
@@ -577,7 +574,6 @@ public class QDShell extends JFrame {
 		} catch (NumberFormatException ne) {
 
 		}
-
 
 
 		 int old_rapid_adjust = prefmngr.rapid_adjust;
@@ -734,7 +730,6 @@ public class QDShell extends JFrame {
 		// accepts all directories and all savant files
 
 
-
 		public boolean accept(File f) {
 
 			if (f.isDirectory()) {
@@ -748,7 +743,6 @@ public class QDShell extends JFrame {
 		}
 
 
-
 		//the description of this filter
 
 		public String getDescription() {
@@ -757,10 +751,7 @@ public class QDShell extends JFrame {
 
 		}
 
-
-
 	}
-
   
 
     private JScrollPane getScrollPaneForTextFile(ClassLoader resourceLoader, String textFileName) 
@@ -776,7 +767,6 @@ public class QDShell extends JFrame {
             throw new FileNotFoundException(textFileName);
 
         }
-
 
 
         try {

@@ -569,10 +569,10 @@ public class QD extends JDesktopPane {
 							tcv.setCurrentTime(player.getCurrentTime());
 						}
 					}, 0, 50);
-                JRadioButton viewButton = new JRadioButton("View", true);
-                JRadioButton editButton = new JRadioButton("Edit");
-                viewButton.setActionCommand("View");
-                editButton.setActionCommand("Edit");
+                JRadioButton viewButton = new JRadioButton(messages.getString("View"), true);
+                JRadioButton editButton = new JRadioButton(messages.getString("Edit"));
+                viewButton.setActionCommand(messages.getString("View"));
+                editButton.setActionCommand(messages.getString("Edit"));
                 ButtonGroup buttons = new ButtonGroup();
                 buttons.add(viewButton);
                 buttons.add(editButton);
@@ -843,7 +843,7 @@ public class QD extends JDesktopPane {
 				configMenus = new JMenu[actionSets.size()]; //no need for extra "View" menu
 			else {
 				configMenus = new JMenu[actionSets.size()+1]; //need extra "View" menu
-				configMenus[xCount] = new JMenu("View");
+				configMenus[xCount] = new JMenu(messages.getString("View"));
 					ButtonGroup tagGroup = new ButtonGroup();
 					for (int z=0; z<tagInfo.length; z++) {
 						final XMLTagInfo zTagInfo = tagInfo[z];
