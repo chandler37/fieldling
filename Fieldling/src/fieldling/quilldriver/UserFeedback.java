@@ -10,6 +10,14 @@ import javax.swing.text.*;
 import javax.swing.text.rtf.*;
 import java.util.prefs.*;
 
+import java.net.InetAddress;
+import java.util.Properties;
+import java.util.Date;
+import java.util.*;
+
+import javax.mail.*;
+import javax.mail.internet.*;
+
 
 public class UserFeedback {
 
@@ -25,22 +33,26 @@ public class UserFeedback {
 	public static String name;
 	public static String email;
 	public static String smtp;
+	public String moduleselected,feedbackselected,priorityselected,subject;
+	public JTextField smtpField,emailField,nameField;
+	public JComboBox module,feedbackType,priority;
 
 	public UserFeedback(JFrame f)
 	{
 			myPrefs = Preferences.userNodeForPackage(UserFeedback.class);
-			JTextField nameField=new JTextField((myPrefs.get(USER_NAME,"<Enter name>")));
+			nameField=new JTextField((myPrefs.get(USER_NAME,"<Enter name>")));
 			nameField.setBorder(BorderFactory.createTitledBorder("Name"));
 			nameField.setSize(150,30);
-			JTextField emailField = new JTextField((myPrefs.get(EMAIL_ADDR,"<Enter Email>")));
+			emailField = new JTextField((myPrefs.get(EMAIL_ADDR,"<Enter Email>")));
 			emailField.setBorder(BorderFactory.createTitledBorder("Email Address"));
 			emailField.setSize(150,30);
-			JTextField smtpField = new JTextField((myPrefs.get(SMTP_ADDR,"<Enter Mail Server>")));
+			smtpField = new JTextField((myPrefs.get(SMTP_ADDR,"<Enter Mail Server>")));
 			smtpField.setBorder(BorderFactory.createTitledBorder("Outgoing Mail Server"));
 			smtpField.setSize(150,30);
-			JComboBox module = new JComboBox(MODULE_NAME);
-			JComboBox feedbackType = new JComboBox(FEEDBACK_TYPES);
-			JComboBox priority = new JComboBox(PRIORITY_LEVELS);
+			module = new JComboBox(MODULE_NAME);
+			feedbackType = new JComboBox(FEEDBACK_TYPES);
+			priority = new JComboBox(PRIORITY_LEVELS);
+
 
 			JTextArea feedbackText = new JTextArea();
 			feedbackText.setSize(150,100);
@@ -88,5 +100,89 @@ public class UserFeedback {
 		 myPrefs.put(EMAIL_ADDR, email);
 		 myPrefs.put(SMTP_ADDR, smtp);
 
+		 msgsend();
+
 	}
+
+	void msgsend()
+	    {
+
+			String  to, subject = null, from = null;
+			String mailhost = null;
+			String mailer = "msgsend";
+			String protocol = null, host = null, user = null, password = null;
+
+
+			try {
+
+					moduleselected=(String)module.getSelectedItem();
+					feedbackselected=(String)feedbackType.getSelectedItem();
+					priorityselected=(String)priority.getSelectedItem();
+
+					to="fieldling-feedback@cvs.sourceforge.net";
+					from=emailField.getText();
+					user=nameField.getText();
+					mailhost=smtpField.getText();
+
+
+					subject = CreateSubject(user,moduleselected,feedbackselected,priorityselected);
+					//System.out.println("Subject: " + subject);
+
+
+					Properties props = System.getProperties();
+					// XXX - could use Session.getTransport() and Transport.connect()
+					// XXX - assume we're using SMTP
+					if (mailhost != null)
+					props.put("mail.smtp.host", mailhost);
+
+					// Get a Session object
+					Session session = Session.getInstance(props, null);
+
+
+					// construct the message
+					Message msg = new MimeMessage(session);
+					if (from != null)
+					msg.setFrom(new InternetAddress(from));
+					else
+					msg.setFrom();
+
+					msg.setRecipients(Message.RecipientType.TO,
+								InternetAddress.parse(to, false));
+
+					msg.setSubject(subject);
+
+
+					msg.setHeader("X-Mailer", mailer);
+					msg.setSentDate(new Date());
+
+					// send the message
+					Transport.send(msg);
+
+					System.out.println("\nMail was sent successfully.");
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+   }
+
+	String CreateSubject(String user,String module,String feedback,String priority)
+	   {
+		   Calendar c=Calendar.getInstance();
+		   subject=new String("");
+		   StringBuffer sb=new StringBuffer(subject);
+		   sb.append(user.substring(0,2));
+
+			Random rn=new Random();
+			sb.append(String.valueOf(rn.nextInt()));
+
+			sb.append(" ");
+			sb.append((c.getTime()).toString());
+
+			sb.append(" Feedback of type " + feedback + " requested for module "+ module + " with priority "+priority);
+			return(sb.toString());
+
+
+   }
 }
