@@ -89,6 +89,7 @@ public class QD extends JDesktopPane {
 	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
 		try {
+System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             dbf.setValidating(true);
