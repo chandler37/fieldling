@@ -43,6 +43,7 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 		myPlayer.setParentContainer(this);
 		myPlayer.initForSavant(convertTimesForPanelPlayer(TAB_STARTS), convertTimesForPanelPlayer(TAB_ENDS), TAB_IDS);
 		myPlayer.addAnnotationPlayer(this);
+		myPlayer.setAutoScrolling(true);
 		setLayout(new BorderLayout());
 		add("Center", myPlayer);
 	}
