@@ -562,7 +562,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
                 
                 try {
-                    hColor = Color.decode(PreferenceManager.highlight_color);
+                    hColor = Color.decode("0x"+PreferenceManager.highlight_color);
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
                 }

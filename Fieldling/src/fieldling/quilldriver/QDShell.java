@@ -424,13 +424,18 @@ public class QDShell extends JFrame {
 		}
 		if (configItems.length > 0) {
 			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY, configurations[0].getName());
-			for (int j=0; j<configItems.length; j++) {
+            int j=0;
+			for (j=0; j<configItems.length; j++) {
 				if (configName.equals(configurations[j].getName())) {
 					configItems[j].setSelected(true);
 					qd.configure(configurations[j]);
 					break;
 				}
 			}
+            if (j == configItems.length) { // in case the saved configuration doesn't actually exist (e.g. has been renamed)
+                configItems[0].setSelected(true);
+                qd.configure(configurations[0]);
+            }
 		}
 
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
