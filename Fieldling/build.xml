@@ -62,7 +62,7 @@ a version optimized for use with Tibetan script.
     
 	<property name="distrib.source"	value="distribSrc"/>
     
-	<property name="jnlp.codebase"	value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/"/>
+	<property name="jnlp.codebase"	value="http://altiplano.emich.edu/quilldriver"/>
     <property name="tomcat.home" value="/usr/local/jakarta-tomcat-4.1.29"/>
 
 	<!-- Tell ant where to find the code of the DTDDoc task -->
