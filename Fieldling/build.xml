@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!-- 
-@author Michel Jacobson, jacobson@idf.ext.jussieu.fr
+@author Michel Jacobson (jacobson@idf.ext.jussieu.fr) and Edward Garrett (eg3p@virginia.edu)
 
 This buildfile needs the following jar files:
 for mediaplayer:
@@ -16,6 +16,8 @@ for QuillDriver:
 	extensions/jaxen-full.jar
 	extensions/jaxen-jdom.jar
 	extensions/saxpath.jar
+for Tibetan-only QuillDriver
+	extensions/Jskad.jar
 -->
 
 <project name="fieldlingtools" default="compile" basedir=".">
@@ -27,6 +29,7 @@ for QuillDriver:
 	<property name="src.dir"        value="src"/>
 	<property name="ext"            value="extensions"/>
 	<property name="doc"            value="documentation"/>
+	<property name="jvm" value="java"/>
 
 	<property name="build.dir"      value="build"/>
 	<property name="build.classes"  value="${build.dir}/classes"/>
@@ -43,6 +46,20 @@ for QuillDriver:
 			<include name="*.zip"/>
 		</fileset>
 	</path>
+
+<!--
+	<path id="my.classpath">
+		<path refid="my.classpath"/>
+		<pathelement location="${ext}/xml-apis.jar"/>
+		<pathelement location="${ext}/xercesImpl.jar"/>
+		<pathelement location="${ext}/xalan.jar"/>
+		<pathelement location="${ext}/jdom.jar"/>
+		<pathelement location="${ext}/jaxen-full.jar"/>
+		<pathelement location="${ext}/jaxen-jdom.jar"/>
+		<pathelement location="${ext}/saxpath.jar"/>
+		<pathelement location="${ext}/Jskad.jar"/>
+	</path>
+-->
 
 	<!-- Create the build directory structure used by compile -->
 	<target name="init">
@@ -86,7 +103,7 @@ for QuillDriver:
 		</style>
 	</target>
 		
-	<target name="qd-compile" depends="init" description="Compile QuillDriver source">
+	<target name="qd-compile" depends="init,mp-compile" description="Compile QuillDriver source">
 		<javac srcdir="${src.dir}" destdir="${build.classes}" includes="fieldling/quilldriver/**">
 			<classpath refid="my.classpath"/>
 		</javac>
@@ -98,13 +115,14 @@ for QuillDriver:
 		</copy>
 	</target>
 
+	<!-- I HAVE NOT INCLUDED AN EXPLICIT MANIFEST BECAUSE IF YOU USE ANT TO RUN
+		A JAR FILE (AT LEAST ON MAC OS X), THEN IT FAILS TO LOAD THE EXTENSIONS,
+		EVEN IF THEY ARE SPECIFIED IN THE CLASSPATH. IN ANY CASE THE MANIFEST 
+		IS NOT REQUIRED SINCE OUR DEPLOYMENT METHODS FOR QD (MAC APP; JWS) DO 
+		NOT REQUIRE A DOUBLE-CLICKABLE JAR. -->
+		
 	<target name="qd-jar" depends="qd-compile" description="generates quilldriver.jar in build/dist">
-		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${build.classes}">
-			<manifest>
-				<attribute name="Main-Class" value="fieldling.quilldriver.QDShell"/>
-				<!-- <attribute name="Class-Path" value="lib/Jskad.jar lib/xml-apis.jar lib/xercesImpl.jar lib/xalan.jar lib/jdom.jar lib/jaxen-full.jar lib/jaxen-jdom.jar lib/saxpath.jar" /> -->
-			</manifest>
-	      	</jar>
+		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${build.classes}" />
 		<copy todir="${build.dist.lib}">
 			<fileset dir="${ext}">
 				<exclude name="QTJava.zip"/>
@@ -113,28 +131,18 @@ for QuillDriver:
 		</copy>
 	</target>
 
-  <target name="qd-run" depends="qd-compile" description="runs QuillDriver">
-  	<!-- <java classname="fieldling.quilldriver.QDShell" jvm="/System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java" fork="yes"> -->
-	<java classname="fieldling.quilldriver.QDShell" fork="yes">
-
-	
-      <classpath>
-        <pathelement location="${build.classes}"/>
-        <path refid="my.classpath"/>
-      </classpath>
-            
-     <!-- 
-      <classpath>
-        <pathelement location="${build.classes}"/>
-		<fileset dir="${ext}">
-			<include name="**/*.jar"/>
-			<include name="**/*.zip"/>
-		</fileset>
-	  </classpath>
-		-->
+	<!-- SOMEHOW USING <java jar="quilldriver.jar" etc.> DOES NOT WORK PROPERLY:
+		IF YOU DO THIS THEN THE EXTENSIONS ARE NOT FOUND (AT LEAST ON MAC OS X. 
+		SO INSTEAD I RUN THE CLASS AND PUT THE JAR AT THE HEAD OF THE CLASSPATH. -->
 		
-    </java>
-  </target>
+  <target name="qd-run" depends="qd-jar" description="runs QuillDriver">
+	<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
+		<classpath>
+			<pathelement location="${build.dist}/quilldriver.jar"/>
+			<path refid="my.classpath"/>
+		</classpath>
+	</java>
+</target>
   
 	<target name="doc" depends="mp-compile,qd-compile" description="Build the documentation">
 		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${src.dir}" destdir="${build.doc}/api" bottom="Programme de These">
