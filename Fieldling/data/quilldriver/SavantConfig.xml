@@ -12,15 +12,15 @@
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
-			<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
-			<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
-			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
-			<action name="Play Next Line" keystroke="control shift DOWN" node="following::*[AUDIO]" qd-command="playNode"/>
-			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" qd-command="playNode"/>
-			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" qd-command="playEdge"/>
-			<action name="Play Previous Line" keystroke="control shift UP" node="preceding::*[AUDIO]" qd-command="playNode"/>
-			<action name="Go to Next Line" keystroke="control DOWN" node="following::S"/>
-			<action name="Go to Previous Line" keystroke="control UP" node="preceding::S"/>
+			<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
+			<action name="PlayPause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="PlayBack" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[AUDIO]" qd-command="playNode"/>
+			<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" qd-command="playNode"/>
+			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" qd-command="playEdge"/>
+			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[AUDIO]" qd-command="playNode"/>
+			<action name="GotoNextLine" keystroke="control DOWN" node="following::S"/>
+			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::S"/>
 		</action-set>
 	</actions>
 		<rendering-instructions>
@@ -32,7 +32,7 @@
 				<attribute name="type" visible="false"/>
 			</tag>
 			<tag name="AUDIO" visible="false" visiblecontents="false"/>
-			<tagview name="Tibetan Only" keystroke="F1">
+			<tagview name="TibetanOnly" keystroke="F1">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
@@ -42,7 +42,7 @@
 				</tag>
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			</tagview>
-			<tagview name="English Only" keystroke="F2">
+			<tagview name="EnglishOnly" keystroke="F2">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
@@ -52,7 +52,7 @@
 					<attribute name="xml:lang" visible="false"/>
 				</tag>
 			</tagview>
-			<tagview name="Tibetan and English" keystroke="F3">
+			<tagview name="TibetanAndEnglish" keystroke="F3">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
@@ -62,7 +62,7 @@
 				</tag>
 				<tag name="TRANSL" visible="false"/>
 			</tagview>
-			<tagview name="Wylie and English" keystroke="F4">
+			<tagview name="WylieAndEnglish" keystroke="F4">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
@@ -72,7 +72,7 @@
 				</tag>
 				<tag name="TRANSL" visible="false"/>
 			</tagview>
-			<tagview name="Notes Only" keystroke="F5">
+			<tagview name="NotesOnly" keystroke="F5">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
@@ -83,7 +83,7 @@
 				<tag name="FORM" visible="false" visiblecontents="false"/>
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			</tagview>
-			<tagview name="Show Everything" keystroke="F6">
+			<tagview name="ShowEverything" keystroke="F6">
 				<tag name="S" visible="true" displayas="@who">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>

@@ -35,118 +35,118 @@
 		
 		
 		<!-- navigation possibilities -->
-		<navigation name="Play/Pause" keystroke="control RIGHT" val="." command="playPause">
+		<navigation name="PlayPause" keystroke="control RIGHT" val="." command="playPause">
 			<desc>If the media is stopped, this plays it; and if the media is playing, this pauses it.</desc>
 		</navigation>
-		<navigation name="Next Playable" keystroke="control DOWN" val="following::*[AUDIO]" command="playNode">
+		<navigation name="NextPlayable" keystroke="control DOWN" val="following::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the next part of the log that has time codes associated with it.
 			First, the next playable node is located. Then, it is played because this viewing function is
 			associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
-		<navigation name="Current Playable" keystroke="control LEFT" val="ancestor-or-self::[*AUDIO]" command="playNode">
+		<navigation name="CurrentPlayable" keystroke="control LEFT" val="ancestor-or-self::[*AUDIO]" command="playNode">
 			<desc>This navigation is used to play the current part of the log that has time codes associated with it,
 			for example, the current sentence. First, the current node is located. Then, it is played because this 
 			viewing function is associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
-		<navigation name="Previous Playable" keystroke="control UP" val="preceding::*[AUDIO]" command="playNode">
+		<navigation name="PreviousPlayable" keystroke="control UP" val="preceding::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the last part of the log that has time codes associated with it.
 			First, the next playable node is located. Then, it is played because this viewing function is
 			associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
-		<navigation name="Next Sentence" keystroke="control PAGE_DOWN" val="following::DIV">
+		<navigation name="NextSentence" keystroke="control PAGE_DOWN" val="following::DIV">
 			<desc>Jumps to the next sentence, without playing it.</desc>
 		</navigation>
-		<navigation name="Previous Sentence" keystroke="control PAGE_UP" val="preceding::DIV">
+		<navigation name="PreviousSentence" keystroke="control PAGE_UP" val="preceding::DIV">
 			<desc>Jumps to the previous sentence, without playing it.</desc>
 		</navigation>		
 		
 		
 		<!-- media related -->
-		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::LOG/HEADER/SOUNDFILE" tasks="fixMedia">
+		<transformation name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::LOG/HEADER/SOUNDFILE" tasks="fixMedia">
 			<desc>Takes the currently open media file or URL and copies it into the transcript.</desc>
 		</transformation>
 		
 		<!-- time-coding -->
-		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::DIV" tasks="markStart">
+		<transformation name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::DIV" tasks="markStart">
 			<desc>This assigns the start time of the current sentence to the start time in the time coding window.</desc>
 		</transformation>
-		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::DIV" tasks="markStop" command="stopMedia">
+		<transformation name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::DIV" tasks="markStop" command="stopMedia">
 			<desc>This assigns the stop time of the current sentence to the stop time in the time coding window.</desc>
 		</transformation>
-		<transformation name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::DIV" tasks="qd.insertTimes">
+		<transformation name="MarkStartAndStop" keystroke="control SLASH" node="ancestor-or-self::DIV" tasks="qd.insertTimes">
 			<desc>This editing function is used to copy the time codes found under the video next to the 'Start' and 'Stop' buttons into 
 			your XML file. They will be copied to the current node you are working on. For example, if you are 
 			typing or translating text, they will be assigned to the current 'S' (Sentence) node.</desc>
 		</transformation>
-		<transformation name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::DIV" tasks="increaseStart">
+		<transformation name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::DIV" tasks="increaseStart">
 			<desc>Increases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::DIV" tasks="increaseStart">
+		<transformation name="RapidIncreaseStart" keystroke="alt control EQUALS" node="ancestor-or-self::DIV" tasks="increaseStart">
 			<desc>Increases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::DIV" tasks="decreaseStart">
+		<transformation name="DecreaseStartTime" keystroke="control MINUS" node="ancestor-or-self::DIV" tasks="decreaseStart">
 			<desc>Decreases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::DIV" tasks="decreaseStart">
+		<transformation name="RapidDecreaseStart" keystroke="alt control MINUS" node="ancestor-or-self::DIV" tasks="decreaseStart">
 			<desc>Decreases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::DIV" tasks="increaseStop">
+		<transformation name="IncreaseStopTime" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::DIV" tasks="increaseStop">
 			<desc>Increases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::DIV" tasks="increaseStop">
+		<transformation name="RapidIncreaseStop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::DIV" tasks="increaseStop">
 			<desc>Increases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::DIV" tasks="decreaseStop">
+		<transformation name="DecreaseStopTime" keystroke="control OPEN_BRACKET" node="ancestor-or-self::DIV" tasks="decreaseStop">
 			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::DIV" tasks="decreaseStop">
+		<transformation name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::DIV" tasks="decreaseStop">
 			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
 		
 		<!-- adding content -->
-		<transformation name="Append Division" keystroke="control H" node="ancestor-or-self::DIV" tasks="appendDivision">
+		<transformation name="AppendDivision" keystroke="control H" node="ancestor-or-self::DIV" tasks="appendDivision">
 			<desc>This function appends a Division as the last child of the current Division.</desc>
 		</transformation>
-		<transformation name="Insert Division After" keystroke="control M" node="ancestor-or-self::DIV" tasks="insertAfter">
+		<transformation name="InsertDivisionAfter" keystroke="control M" node="ancestor-or-self::DIV" tasks="insertAfter">
 			<desc>This function inserts a blank Division after the current Division.</desc>
 		</transformation>
-		<transformation name="Insert Division Before" keystroke="control B" node="ancestor-or-self::DIV" tasks="insertBefore">
+		<transformation name="InsertDivisionBefore" keystroke="control B" node="ancestor-or-self::DIV" tasks="insertBefore">
 			<desc>This function inserts a blank Division before the current Division.</desc>
 		</transformation>
-		<transformation name="Delete Division" keystroke="control R" node="ancestor-or-self::DIV" tasks="removeNode">
+		<transformation name="DeleteDivision" keystroke="control R" node="ancestor-or-self::DIV" tasks="removeNode">
 			<desc>Use this to delete the current Division.</desc>
 		</transformation>
 	<!--	<transformation name="Insert Text Anchor" keystroke="control J" node="ancestor-or-self::DIV" tasks="insertTextAnchor">
 			<desc>This allows the user to input a text anchor, i.e. the start and end pages of the text
 			to which this Division corresponds.</desc>
 		</transformation> -->
-		<transformation name="Surround with Page-Line Breaks" keystroke="control J" node="ancestor-or-self::DIV" tasks="surroundWithBreaks">
+		<transformation name="SurroundwithPageLineBreaks" keystroke="control J" node="ancestor-or-self::DIV" tasks="surroundWithBreaks">
 			<desc>Inserts a page-line milestone marker break.</desc>
 		</transformation>
-		<transformation name="Remove Page-Line Break" keystroke="control K" node="ancestor-or-self::PG" tasks="removeNode">
+		<transformation name="RemovePageLineBreak" keystroke="control K" node="ancestor-or-self::PG" tasks="removeNode">
 			<desc>Removes page-line break.</desc>
 		</transformation>
 		
 		<!-- adding notes -->
-		<transformation name="Add Lexical Note" keystroke="alt L" node="ancestor-or-self::DIV" tasks="addLexical">
+		<transformation name="AddLexicalNote" keystroke="alt L" node="ancestor-or-self::DIV" tasks="addLexical">
 			<desc>Use this to add a lexical note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Add Grammatical Note" keystroke="alt G" node="ancestor-or-self::DIV" tasks="addGrammatical">
+		<transformation name="AddGrammaticalNote" keystroke="alt G" node="ancestor-or-self::DIV" tasks="addGrammatical">
 			<desc>Use this to add a grammatical note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Add Pronunciation Note" keystroke="alt P" node="ancestor-or-self::DIV" tasks="addPronunciation">
+		<transformation name="AddPronunciationNote" keystroke="alt P" node="ancestor-or-self::DIV" tasks="addPronunciation">
 			<desc>Use this to add a pronunciation note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Add Interpretive Note" keystroke="alt I" node="ancestor-or-self::DIV" tasks="addInterpretive">
+		<transformation name="AddInterpretiveNote" keystroke="alt I" node="ancestor-or-self::DIV" tasks="addInterpretive">
 			<desc>Use this to add an interpretive note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Add Sociolinguistic Note" keystroke="alt S" node="ancestor-or-self::DIV" tasks="addSociolinguistic">
+		<transformation name="AddSociolinguisticNote" keystroke="alt S" node="ancestor-or-self::DIV" tasks="addSociolinguistic">
 			<desc>Use this to add a sociolinguistic note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Add Cultural Note" keystroke="alt C" node="ancestor-or-self::DIV" tasks="addCultural">
+		<transformation name="AddCulturalNote" keystroke="alt C" node="ancestor-or-self::DIV" tasks="addCultural">
 			<desc>Use this to add a cultural note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" tasks="removeNode">
+		<transformation name="DeleteNote" keystroke="alt D" node="ancestor-or-self::NOTE" tasks="removeNode">
 			<desc>Use this to delete the current note.</desc>
 		</transformation>
 		

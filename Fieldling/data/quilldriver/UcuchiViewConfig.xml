@@ -7,14 +7,14 @@
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
-            <action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
-			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
-			<action name="Play Next Line" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
-			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" qd-command="playNode"/>
-			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" qd-command="playEdge"/>
-			<action name="Play Previous Line" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
-			<action name="Go to Next Line" keystroke="control DOWN" node="following::ucuchi:C"/>
-			<action name="Go to Previous Line" keystroke="control UP" node="preceding::ucuchi:C"/>
+            <action name="PlayPause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="PlayBack" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
+			<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" qd-command="playNode"/>
+			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" qd-command="playEdge"/>
+			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
+			<action name="GotoNextLine" keystroke="control DOWN" node="following::ucuchi:C"/>
+			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C"/>
 		</action-set>
 	</actions>
 		<rendering-instructions>
@@ -31,15 +31,15 @@
                 <attribute name="qd:t2" visible="false"/>
                 <attribute name="spid" visible="false"/>
             </tag>
-            <tagview name="Quechua Only" keystroke="F1">
+            <tagview name="QuechuaOnly" keystroke="F1">
                 <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
                 <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
             </tagview>
-            <tagview name="English Only" keystroke="F2">
+            <tagview name="EnglishOnly" keystroke="F2">
                 <tag name="ucuchi:S-F" visible="false" visiblecontents="false"/>
                 <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
             </tagview>
-            <tagview name="Quechua and English" keystroke="F3">
+            <tagview name="QuechuaAndEnglish" keystroke="F3">
                 <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
                 <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
             </tagview>
