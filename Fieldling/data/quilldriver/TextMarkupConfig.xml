@@ -52,15 +52,33 @@
 		<!-- rendering parameters for tags -->
 		<rendering-instructions>
 			<tag name="body" visible="false"/>
-			<tag name="seg" displayas="XPATH:@n" tibetan="true" editable="false">
-				<attribute name="n" visible="false"/>
-				<attribute name="type" visible="false"/>
-				<attribute name="t1" visible="false"/>
-			</tag>
-			<tag name="NOTE" displayas="XPATH:@type">
-				<attribute name="type" visible="false"/>
-				<attribute name="t1" visible="false"/>
-				<attribute name="t2" visible="false"/>
-			</tag>
+			<tagview name="Text and Notes" keystroke="F1">
+				<tag name="seg" displayas="XPATH:@n" tibetan="true" editable="false">
+					<attribute name="n" visible="false"/>
+					<attribute name="type" visible="false"/>
+					<attribute name="t1" visible="false"/>
+				</tag>
+				<tag name="NOTE" displayas="XPATH:@type">
+					<attribute name="type" visible="false"/>
+					<attribute name="t1" visible="false"/>
+					<attribute name="t2" visible="false"/>
+				</tag>
+			</tagview>
+			<tagview name="Text Only" keystroke="F2">
+				<tag name="seg" displayas="XPATH:@n" tibetan="true" editable="false">
+					<attribute name="n" visible="false"/>
+					<attribute name="type" visible="false"/>
+					<attribute name="t1" visible="false"/>
+				</tag>
+				<tag name="NOTE" visible="false" visiblecontents="false"/>
+			</tagview>
+			<tagview name="Notes Only" keystroke="F3">
+				<tag name="seg" visible="false" visiblecontents="false"/>
+				<tag name="NOTE" displayas="XPATH:@type">
+					<attribute name="type" visible="false"/>
+					<attribute name="t1" visible="false"/>
+					<attribute name="t2" visible="false"/>
+				</tag>
+			</tagview>
 		</rendering-instructions>
 </qd-configuration>
