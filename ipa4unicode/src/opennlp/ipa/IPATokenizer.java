@@ -120,6 +120,8 @@ public class IPATokenizer implements Enumeration {
         int i=offset-1;
         
         for (; i > -1 && i < data.length; i--) {
+            if (isStressMark(data[i]))
+                break;
             if (data[i] != '\u207F' && UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER)
                 break;
             if (isWhitespace(data[i]) && (i == 0 || !isWhitespace(data[i-1])))
@@ -148,6 +150,8 @@ public class IPATokenizer implements Enumeration {
          //if (!(data[offset] = "\u0361")) { 
              int i=offset;
              for (; i > -1 && i < data.length; i++) {
+                 if (isStressMark(data[i]))
+                     break;
                  if (data[i] != '\u207F' && UCharacter.getType(data[i]) == UCharacterCategory.LOWERCASE_LETTER)
                      break;
                  if (isWhitespace(data[i]) && (i == 0 || !isWhitespace(data[i-1])))
@@ -185,16 +189,20 @@ public class IPATokenizer implements Enumeration {
             do {
                 i++;
                 type = UCharacter.getType(data[i]);
-            } while (i < data.length && 
+            } while (i < data.length && !isStressMark(data[i]) &&
                              (type ==  UCharacterCategory.NON_SPACING_MARK || //Mn
                               type == UCharacterCategory.MODIFIER_LETTER || //Lm
                               type == UCharacterCategory.MODIFIER_SYMBOL || //Sk
                               data[i] == '\u207F')); //superscript n
         } else if (isWhitespace(data[i])) {
             for (i = i+1; isWhitespace(data[i]); i++);
+        } else if (isStressMark(data[i])) i++;
         } else
             return -1;
         return i-start;
+    }
+    public static boolean isStressMark(char c) {
+        return (c == '\u02C8' || c == '\u02CC'); //primary and secondary stress markers
     }
     public static boolean isWhitespace(char c) {
         if (UCharacter.getType(c) == UCharacterCategory.SPACE_SEPARATOR ||
