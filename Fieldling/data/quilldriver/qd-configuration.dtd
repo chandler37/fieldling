@@ -63,6 +63,7 @@
 <!ATTLIST action name CDATA #REQUIRED
                  keystroke CDATA #REQUIRED
 		 node CDATA #IMPLIED
+         move CDATA "true"
 		 qd-command CDATA #IMPLIED
 		 xsl-task CDATA #IMPLIED>
 

@@ -92,6 +92,10 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 public class QD extends JDesktopPane {
+    public static final int VIEW_MODE = 0;
+    public static final int EDIT_MODE = 1;
+    protected int mode = VIEW_MODE;
+    
     protected static Color hColor = Color.cyan;
     
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
@@ -296,7 +300,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						try {
 							//automatic highlighting & scrolling interferes with time-coding
 							//player.cancelAnnotationTimer();
-							player.setAutoScrolling(false);
+							//player.setAutoScrolling(false);
 							player.cmd_playSegment(new Long(startTime), new Long(stopTime));
 							//player.cmd_playSegment(new Integer(startTime), new Integer(stopTime));
 						} catch (PanelPlayerException smpe) {
@@ -450,7 +454,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				//FIXME FIXME FIXME should not be making reference to player in this class
 				//need better communication about highlights between PanelPlayer and TextHighlightPlayer
 				//if (!thp.getView().getTextComponent().hasFocus()) //only highlight if line is NOT selected
-				player.fireStartAnnotation(String.valueOf(playableparent.hashCode()));
+				//player.fireStartAnnotation(String.valueOf(playableparent.hashCode()));
 				//thp.highlight(String.valueOf(playableparent.hashCode()));
 				//thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
 			}
@@ -667,8 +671,37 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					textFrame.setTitle(XMLUtilities.getTextForJDOMNode(obj));
 				}
 
+                JRadioButton viewButton = new JRadioButton("View", true);
+                JRadioButton editButton = new JRadioButton("Edit");
+                viewButton.setActionCommand("View");
+                editButton.setActionCommand("Edit");
+                ButtonGroup buttons = new ButtonGroup();
+                buttons.add(viewButton);
+                buttons.add(editButton);
+                JPanel buttonPanel = new JPanel(new BorderLayout());
+                JPanel subPanel = new JPanel();
+                subPanel.add(new JLabel("Select Mode: "));
+                subPanel.add(viewButton);
+                subPanel.add(editButton);
+                buttonPanel.add("West", subPanel);
+                ActionListener acList = new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String s = e.getActionCommand();
+                        if (s.equals("View")) {
+                            mode = VIEW_MODE;
+                            player.setAutoScrolling(true);
+                        } else {
+                            mode = EDIT_MODE;
+                            player.setAutoScrolling(false);
+                        }
+                    }
+                };
+                viewButton.addActionListener(acList);
+                editButton.addActionListener(acList);
+                
 				JComponent c = (JComponent)textFrame.getContentPane();
 				c.setLayout(new BorderLayout());
+                c.add("North", buttonPanel);
 				c.add("Center", hp);
 				textFrame.setSize(textFrame.getSize().width, getSize().height);
 				textFrame.invalidate();
@@ -681,20 +714,20 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							//stop the automatic highlighting and scrolling
 							//since it would interfere with editing.
 							//player.cancelAnnotationTimer();
-							player.setAutoScrolling(false);
+							//player.setAutoScrolling(false);
 							if (tcp != null) tcp.setNode(ned.getNode());
 						} else if (ned instanceof XMLEditor.EndEditEvent) {
 							//turn auto-scrolling and highlighting back on
 							XMLEditor.EndEditEvent eee = (XMLEditor.EndEditEvent)ned;
 							if (eee.hasBeenEdited()) hp.refresh();
-							player.setAutoScrolling(true);
+							//player.setAutoScrolling(true);
 						} else if (ned instanceof XMLEditor.CantEditEvent) {
 							//if this node can't be edited, maybe it can be played!
 							Object node = ned.getNode();
 							if (node != null) {
 								editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(node));
 								if (tcp != null) tcp.setNode(node);
-								player.setAutoScrolling(true);
+								//player.setAutoScrolling(true);
 								playNode(node);
 							}
 						}
@@ -712,7 +745,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				else editor.setEditabilityTracker(true);
 
 				transcriptFile = file;
-				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
+				if (mode == VIEW_MODE)
+                    player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
 
 				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 
@@ -739,7 +773,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			FIXME here's a problem, though: if there is a scrollbar for the JTextPane, then
 			focus transfers to this scrollbar. if not, then it transfers back to itself, in other
 			words the desired effect is not achieved! */
-			editor.getTextPane().transferFocus();
+			if (mode == VIEW_MODE)
+                editor.getTextPane().transferFocus();
+            
 			player.cmd_playS(nodeid);
 		}
 	}
@@ -972,6 +1008,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
 					final String nodeSelector = e.getAttributeValue("node");
+                    final boolean move = Boolean.valueOf(e.getAttributeValue("move")).booleanValue();
 					final String command = e.getAttributeValue("qd-command");
 					final String tasks = e.getAttributeValue("xsl-task");
 					if (tasks == null) { //no need for xsl transform
@@ -991,7 +1028,16 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 											int newStartOffset = editor.getStartOffsetForNode(moveTo);
 											if (newStartOffset > -1) {
 												t.requestFocus();
-												t.setCaretPosition(newStartOffset);
+                                                /*I added the boolean move parameter to actions in the
+                                                configuration files because while for some actions, like 
+                                                "Go to Next", you want the cursor to move (say, to the next
+                                                line), in other cases, like "Play End of Current",
+                                                really you'd rather have the cursor stay where it is so you 
+                                                don't have to reposition it for editing. unfortunately this 
+                                                hack won't work below for those actions involving xsl-
+                                                transforms, since these transforms actually change the data.*/
+                                                if (move)
+                                                    t.setCaretPosition(newStartOffset);
 											} else {
 												keepSearching = true; //search again
 												context = moveTo;
@@ -1223,7 +1269,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									/* by transferring focus, we don't have to worry about problems caused by
 									the cursor position in the editor being different from the highlight,
 									since users will have to click on the editor to get back into editing */
-									editor.getTextPane().transferFocus();
+									if (mode == VIEW_MODE)
+                                        editor.getTextPane().transferFocus();
 									if (player.isPlaying()) player.cmd_stop();
 									else player.cmd_playOn();
 								} catch (PanelPlayerException ppe) {

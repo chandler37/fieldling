@@ -21,11 +21,11 @@
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
-			<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
-			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="Play/Pause" keystroke="control SLASH" node="." move="false" qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." move="false" qd-command="playBack"/>
 			<action name="Play Next" keystroke="control shift DOWN" node="following::*[AUDIO]" qd-command="playNode"/>
-			<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" qd-command="playNode"/>
-			<action name="Play End of Current" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" qd-command="playEdge"/>
+			<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" move="false" qd-command="playNode"/>
+			<action name="Play End of Current" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" move="false" qd-command="playEdge"/>
 			<action name="Play Previous" keystroke="control shift UP" node="preceding::*[AUDIO]" qd-command="playNode"/>
 			<action name="Goto Start" keystroke="control L" node="ancestor-or-self::S" qd-command="seekStart"/>
 			<action name="Goto End" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="seekEnd"/>

@@ -15,11 +15,11 @@
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
-            <action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
-			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+            <action name="Play/Pause" keystroke="control SLASH" node="." move="false" qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." move="false" qd-command="playBack"/>
 			<action name="Play Next Line" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
-			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" qd-command="playNode"/>
-			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" qd-command="playEdge"/>
+			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playNode"/>
+			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playEdge"/>
 			<action name="Play Previous Line" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
 			<action name="Go to Next Line" keystroke="control DOWN" node="following::ucuchi:C"/>
 			<action name="Go to Previous Line" keystroke="control UP" node="preceding::ucuchi:C"/>
