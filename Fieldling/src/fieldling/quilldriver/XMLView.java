@@ -74,9 +74,12 @@ public class XMLView implements TranscriptView {
 			String endVal = XMLUtilities.getTextForNode(end);
 			int startOffset = editor.getStartOffsetForNode(node);
 			int endOffset = editor.getEndOffsetForNode(node);
-			if (!(startVal == null || endVal == null || startOffset == -1 || endOffset == -1)) {
+			//if (!(startVal == null || endVal == null || startOffset == -1 || endOffset == -1)) {
+			if (!(startVal == null || startOffset == -1 || endOffset == -1)) {	
 				startTimeMap.put(id, startVal);
-				endTimeMap.put(id, endVal);
+				if (endVal == null) //for single time-point (no end time), treat as if end time = start time
+					endTimeMap.put(id, startVal);
+				else endTimeMap.put(id, endVal);
 				startOffsetMap.put(id, String.valueOf(startOffset));
 				endOffsetMap.put(id, String.valueOf(endOffset));
 			}

@@ -50,6 +50,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
+import javax.swing.Icon;
 import javax.swing.text.Keymap;
 import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
@@ -105,50 +106,11 @@ public class XMLEditor {
 		render();
 		installKeymap();
 	}
-	
+	public void setTagInfo(XMLTagInfo tagInfo) {
+		this.tagInfo = tagInfo;
+		render();
+	}
 	private void installKeymap() {
-		Action nextNodeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int prePos = p.getCaretPosition();
-				Object node = getNodeForOffset(prePos);
-				int i = prePos+1;
-				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
-				while (i<p.getDocument().getLength() && !isEditable(i)) i++;
-				node = getNodeForOffset(i);
-				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
-				if (isEditing) fireEndEditEvent();
-				i--;
-				fireStartEditEvent(getNodeForOffset(i));					
-				p.setCaretPosition(i);
-			}
-		};
-		Action prevNodeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int prePos = p.getCaretPosition();
-				Object node = getNodeForOffset(prePos);
-				int i = prePos-1;
-				while (i>-1 && isEditable(i) && getNodeForOffset(i) == node) i--;
-				while (i>-1 && !isEditable(i)) i--;
-				node = getNodeForOffset(i);
-				if (isEditing) fireEndEditEvent();
-				fireStartEditEvent(getNodeForOffset(i));					
-				p.setCaretPosition(i);
-			}
-		};
-		Action selectNodeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				Object node = getNodeForOffset(p.getCaretPosition());
-				if (node != null) {
-					p.setSelectionStart(((Position)startOffsets.get(node)).getOffset());
-					int end = ((Position)endOffsets.get(node)).getOffset();
-					if (node instanceof Text) p.setSelectionEnd(end);
-					else if (node instanceof Attribute) p.setSelectionEnd(end-1);
-				}
-			}	
-		};
 		Action selForwardAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -189,80 +151,6 @@ public class XMLEditor {
 				}
 			}
 		};
-		Action backwardAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int prePos = p.getCaretPosition();
-				int newPos = prePos-1;
-				while (newPos>-1 && !isEditable(newPos)) newPos--;
-				if (newPos != -1) {
-					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
-						fireEndEditEvent();
-						fireStartEditEvent(getNodeForOffset(newPos));
-					}
-					p.setCaretPosition(newPos);
-				}
-			}
-		};
-		Action forwardAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int prePos = p.getCaretPosition();
-				int newPos = prePos+1;
-				while (newPos<p.getDocument().getLength() && !isEditable(newPos)) newPos++;
-				if (newPos != p.getDocument().getLength()) {
-					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
-						fireEndEditEvent();
-						fireStartEditEvent(getNodeForOffset(newPos));
-					}
-					p.setCaretPosition(newPos);
-				}
-			}
-		};
-		Action begNodeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				Object node = getNodeForOffset(p.getCaretPosition());
-				p.setCaretPosition(((Position)startOffsets.get(node)).getOffset());
-			}
-		};
-		Action endNodeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				Object node = getNodeForOffset(p.getCaretPosition());
-				p.setCaretPosition(((Position)endOffsets.get(node)).getOffset());
-			}
-		};
-		Action deleteNextAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int offset = p.getCaretPosition();
-				int last = (((Position)endOffsets.get(getNodeForOffset(offset))).getOffset());
-				if (offset < last) {
-					StyledDocument d = p.getStyledDocument();
-					try {
-						d.remove(offset, 1);
-					} catch (BadLocationException ble) {
-						ble.printStackTrace();
-					}
-				}
-			}
-		};
-		Action deletePrevAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int offset = p.getCaretPosition();
-				int first = (((Position)startOffsets.get(getNodeForOffset(offset))).getOffset());
-				if (offset > first) {
-					StyledDocument d = p.getStyledDocument();
-					try {
-						d.remove(offset-1, 1);
-					} catch (BadLocationException ble) {
-						ble.printStackTrace();
-					}
-				}
-			}
-		};
 		Action loseFocusAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -283,20 +171,31 @@ public class XMLEditor {
 			for (int i=0; i<tabKeys.length; i++)
 				keymap.addActionForKeyStroke(tabKeys[i], nextNodeAction);
 */
-		//tab
-		KeyStroke tabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
-		if (tabKey != null) keymap.addActionForKeyStroke(tabKey, nextNodeAction);
-		//enter
-		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);			
+		
 		//backspace
+		Action deletePrevAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.getCaretPosition();
+				int first = (((Position)startOffsets.get(getNodeForOffset(offset))).getOffset());
+				if (offset > first) {
+					StyledDocument d = p.getStyledDocument();
+					try {
+						d.remove(offset-1, 1);
+					} catch (BadLocationException ble) {
+						ble.printStackTrace();
+					}
+				}
+			}
+		};
+		KeyStroke backSpace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
+		
 		/* The Java bug database has several related bugs concerning the treatment
 		of backspace. Here I adopt solution based on fix of bug 4402080:
 		Evaluation  The text components now key off of KEY_TYPED with a keyChar == 8 to do the
 		deletion. The motivation for this can be found in bug 4256901.
 		xxxxx@xxxxx 2001-01-05 */
-		KeyStroke backSpace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
-		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
 		pane.addKeyListener(new java.awt.event.KeyAdapter() {
 			/* NOT ACTUALLY NEEDED, AT LEAST FOR WINDOWS
 			public void keyReleased(KeyEvent kev) {
@@ -309,27 +208,26 @@ public class XMLEditor {
 				else if (kev.getKeyCode() == KeyEvent.VK_TAB) kev.consume();
 			}
 		});
+		
 		//delete
+		Action deleteNextAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.getCaretPosition();
+				int last = (((Position)endOffsets.get(getNodeForOffset(offset))).getOffset());
+				if (offset < last) {
+					StyledDocument d = p.getStyledDocument();
+					try {
+						d.remove(offset, 1);
+					} catch (BadLocationException ble) {
+						ble.printStackTrace();
+					}
+				}
+			}
+		};
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
 		keymap.addActionForKeyStroke(delete, deleteNextAction);
-		/*
-		KeyStroke[] delNextKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
-		if (delNextKeys != null)
-			for (int i=0; i<delNextKeys.length; i++)
-				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
-		*/
-		KeyStroke[] selectAllKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectAllAction));
-		if (selectAllKeys != null)
-			for (int i=0; i<selectAllKeys.length; i++)
-				keymap.addActionForKeyStroke(selectAllKeys[i], selectNodeAction);
-		KeyStroke[] selLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectLineAction));
-		if (selLineKeys != null)
-			for (int i=0; i<selLineKeys.length; i++)
-				keymap.addActionForKeyStroke(selLineKeys[i], selectNodeAction);			
-		KeyStroke[] selParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectParagraphAction));
-		if (selParaKeys != null)
-			for (int i=0; i<selParaKeys.length; i++)
-				keymap.addActionForKeyStroke(selParaKeys[i], selectNodeAction);
+
 		KeyStroke[] selEndLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionEndLineAction));
 		if (selEndLineKeys != null)
 			for (int i=0; i<selEndLineKeys.length; i++)
@@ -346,22 +244,44 @@ public class XMLEditor {
 		if (selBegParaKeys != null)
 			for (int i=0; i<selBegParaKeys.length; i++)
 				keymap.addActionForKeyStroke(selBegParaKeys[i], selectToNodeStartAction);
-		KeyStroke[] endLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.endLineAction));
-		if (endLineKeys != null)
-			for (int i=0; i<endLineKeys.length; i++)
-				keymap.addActionForKeyStroke(endLineKeys[i], endNodeAction);
-		KeyStroke[] endParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.endParagraphAction));
-		if (endParaKeys != null)
-			for (int i=0; i<endParaKeys.length; i++)
-				keymap.addActionForKeyStroke(endParaKeys[i], endNodeAction);
-		KeyStroke[] begLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.beginLineAction));
-		if (begLineKeys != null)
-			for (int i=0; i<begLineKeys.length; i++)
-				keymap.addActionForKeyStroke(begLineKeys[i], begNodeAction);
-		KeyStroke[] begParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.beginParagraphAction));
-		if (begParaKeys != null)
-			for (int i=0; i<begParaKeys.length; i++)
-				keymap.addActionForKeyStroke(begParaKeys[i], begNodeAction);
+
+
+		//home
+		Action begNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				Object node = getNodeForOffset(p.getCaretPosition());
+				p.setCaretPosition(((Position)startOffsets.get(node)).getOffset());
+			}
+		};
+		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), begNodeAction);
+		
+		//end
+		Action endNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				Object node = getNodeForOffset(p.getCaretPosition());
+				p.setCaretPosition(((Position)endOffsets.get(node)).getOffset());
+			}
+		};
+		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), endNodeAction);
+		
+		//select all (Ctrl-A)
+		Action selectNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				Object node = getNodeForOffset(p.getCaretPosition());
+				if (node != null) {
+					p.setSelectionStart(((Position)startOffsets.get(node)).getOffset());
+					int end = ((Position)endOffsets.get(node)).getOffset();
+					if (node instanceof Text) p.setSelectionEnd(end);
+					else if (node instanceof Attribute) p.setSelectionEnd(end-1);
+				}
+			}	
+		};
+		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), selectNodeAction);
+		
+		//cut (Ctrl-X)
 		Action cutAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -378,6 +298,8 @@ public class XMLEditor {
 		};
 		KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(cut, cutAction);
+		
+		//copy (Ctrl-C)
 		Action copyAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -394,6 +316,8 @@ public class XMLEditor {
 		};
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(copy, copyAction);
+		
+		//paste (Ctrl-V)
 		Action pasteAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -437,19 +361,87 @@ public class XMLEditor {
 		};
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(paste, pasteAction);
+		
+		//left arrow key
+		Action backwardAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int prePos = p.getCaretPosition();
+				int newPos = prePos-1;
+				while (newPos>-1 && !isEditable(newPos)) newPos--;
+				if (newPos != -1) {
+					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
+						fireEndEditEvent();
+						fireStartEditEvent(getNodeForOffset(newPos));
+					}
+					p.setCaretPosition(newPos);
+				}
+			}
+		};
 		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 		keymap.addActionForKeyStroke(back, backwardAction);
+		
+		//right arrow key
+		Action forwardAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int prePos = p.getCaretPosition();
+				int newPos = prePos+1;
+				while (newPos<p.getDocument().getLength() && !isEditable(newPos)) newPos++;
+				if (newPos != p.getDocument().getLength()) {
+					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
+						fireEndEditEvent();
+						fireStartEditEvent(getNodeForOffset(newPos));
+					}
+					p.setCaretPosition(newPos);
+				}
+			}
+		};
 		KeyStroke forward = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 		keymap.addActionForKeyStroke(forward, forwardAction);
+
+		//previous node: up arrow
+		Action prevNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int prePos = p.getCaretPosition();
+				Object node = getNodeForOffset(prePos);
+				int i = prePos-1;
+				while (i>-1 && isEditable(i) && getNodeForOffset(i) == node) i--;
+				while (i>-1 && !isEditable(i)) i--;
+				node = getNodeForOffset(i);
+				if (isEditing) fireEndEditEvent();
+				fireStartEditEvent(getNodeForOffset(i));					
+				p.setCaretPosition(i);
+			}
+		};
 		KeyStroke up = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
 		keymap.addActionForKeyStroke(up, prevNodeAction);
+		
+		//next node: down arrow, TAB, and ENTER
+		Action nextNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int prePos = p.getCaretPosition();
+				Object node = getNodeForOffset(prePos);
+				int i = prePos+1;
+				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
+				while (i<p.getDocument().getLength() && !isEditable(i)) i++;
+				node = getNodeForOffset(i);
+				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
+				if (isEditing) fireEndEditEvent();
+				i--;
+				fireStartEditEvent(getNodeForOffset(i));					
+				p.setCaretPosition(i);
+			}
+		};
 		KeyStroke down = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
 		keymap.addActionForKeyStroke(down, nextNodeAction);
-		/*KeyStroke[] backwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.backwardAction));
-		if (backwardKeys != null)
-			for (int i=0; i<backwardKeys.length; i++)
-				keymap.addActionForKeyStroke(backwardKeys[i], backwardAction);
-		*/
+		KeyStroke tabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
+		if (tabKey != null) keymap.addActionForKeyStroke(tabKey, nextNodeAction);
+		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);	
+		
 		KeyStroke[] forwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.forwardAction));
 		if (forwardKeys != null)
 			for (int i=0; i<forwardKeys.length; i++)
@@ -462,8 +454,12 @@ public class XMLEditor {
 		if (selBackKeys != null)
 			for (int i=0; i<selBackKeys.length; i++)
 				keymap.addActionForKeyStroke(selBackKeys[i], selBackwardAction);
+		
+		//escape
 		KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		if (escapeKey != null) keymap.addActionForKeyStroke(escapeKey, loseFocusAction);
+		
+		//default keypress
 		final Action parentDefault = keymap.getDefaultAction();
 		Action thisDefault = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -570,7 +566,7 @@ upAction, writableAction
 				int offset = p.viewToModel(e.getPoint());
 				if (isEditable(offset)) p.setCursor(textCursor);
 				else p.setCursor(defaultCursor);
-			}		
+			}
 		};
 		mouseListener = new MouseAdapter() {
 			/* Here's when these methods get called:
@@ -591,7 +587,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 					p.setCaretPosition(offset);
 				} else*/
 				if (!isEditable(offset)) {
-System.out.println("clicked on uneditable " + String.valueOf(offset));					
+//System.out.println("clicked on uneditable " + String.valueOf(offset));					
 					Object node = getNodeForOffset(offset);
 					if (isEditing) fireEndEditEvent();
 					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
@@ -601,7 +597,7 @@ System.out.println("clicked on uneditable " + String.valueOf(offset));
 				JTextPane p = (JTextPane)e.getSource();
 				int offset = p.viewToModel(e.getPoint());
 				if (isEditable(offset)) {
-System.out.println("clicked on editable " + String.valueOf(offset));
+//System.out.println("clicked on editable " + String.valueOf(offset));
 					p.requestFocus();
 					if (isEditing) fireEndEditEvent();
 					fireStartEditEvent(getNodeForOffset(offset));
@@ -767,7 +763,17 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			if (listeners[i]==NodeEditListener.class)
 				((NodeEditListener)listeners[i+1]).nodeEditPerformed(new EndEditEvent(editingNode));
 		}
-		if (hasChanged) updateNode(editingNode);
+		if (hasChanged) { //FIXME allows text on screen to be changed even when node itself cannot be changed!
+			if (editingNode instanceof Text) {
+				Text t = (Text)editingNode;
+				if (tagInfo.isTagEditable(t.getParent().getQualifiedName()))
+					updateNode(editingNode);
+			} else if (editingNode instanceof Attribute) {
+				Attribute a = (Attribute)editingNode;
+				if (tagInfo.isTagEditable(a.getParent().getQualifiedName()))
+					updateNode(editingNode);
+			}
+		}
 		isEditing = false;
 		editingNode = null;
 		hasChanged = false;
@@ -787,6 +793,11 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 	}
 	public void render() {
 		System.out.println("rendering xml");
+		boolean makeUneditable = false;
+		if (!isEditable()) { //if you don't make the pane editable while rendering, then icons cannot be inserted
+			makeUneditable = true;
+			setEditable(true);
+		}
 		int len = doc.getLength();
 		try {
 			if (len > 0) {
@@ -808,6 +819,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		activateListeners();
 		pane.setCaretPosition(0);
 		setEditabilityTracker(true);
+		if (makeUneditable) setEditable(false);
 	}
 	public void fixOffsets() {
 		//replace Integer values in startOffsets and endOffsets with Positions
@@ -850,9 +862,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			SimpleAttributeSet eAttributes = new SimpleAttributeSet();
 			StyleConstants.setLeftIndent(eAttributes, indent);
 			SimpleAttributeSet eColor = new SimpleAttributeSet();
-			//StyleConstants.setLeftIndent(eColor, indent);
 			StyleConstants.setForeground(eColor, tagColor);
-			//added for Tibetan version
 			StyleConstants.setFontSize(eColor, QDShell.font_size);
 			StyleConstants.setFontFamily(eColor, QDShell.font_face);
 			eColor.addAttribute("xmlnode", e);
@@ -860,7 +870,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				String s = doc.getText(pos.getOffset()-1, 1);
 				if (s.charAt(0)!='\n') {
 					AttributeSet attSet = doc.getCharacterElement(pos.getOffset()-1).getAttributes();
-					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
 					StyleConstants.setFontSize(sas, QDShell.font_size);
 					StyleConstants.setFontFamily(sas, QDShell.font_face);
@@ -869,50 +878,58 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			}
 			int start = pos.getOffset();
 			startOffsets.put(e, new Integer(start));
-			String tagDisplay;
-			if (tagInfo == null) tagDisplay = e.getQualifiedName();
-			else tagDisplay = tagInfo.getTagDisplay(e);
-			doc.insertString(pos.getOffset(), tagDisplay, eColor); //insert element begin tag
-			if (tagInfo == null || tagInfo.areTagContentsForDisplay(e.getQualifiedName())) {
-			List attributes = e.getAttributes();
-			Iterator iter = attributes.iterator();
-			while (iter.hasNext()) {
-				Attribute att = (Attribute)iter.next();
-				if (tagInfo == null || tagInfo.isAttributeForDisplay(att.getQualifiedName(), e.getQualifiedName()))
-					renderAttribute(att, pos.getOffset());
-			}
-			doc.insertString(pos.getOffset(), ":", eColor);
-			doc.setParagraphAttributes(start, pos.getOffset()-start, eAttributes, false);
-			//doc.insertString(pos.getOffset(), "\n", null);
-			List list = e.getContent();
-			iter = list.iterator();
-			while (iter.hasNext()) {
-				Object next = iter.next();
-				if (next instanceof Element) {
-					Element ne = (Element)next;
-					if (tagInfo == null || tagInfo.isTagForDisplay(ne.getQualifiedName()))
-						renderElement(ne, indent + indentIncrement, pos.getOffset());
-				} else if (next instanceof Text) {
-					Text t = (Text)next;
-					if (t.getParent().getContent().size() == 1 || t.getTextTrim().length() > 0)
-						renderText(t, indent + indentIncrement, pos.getOffset());
+			if (tagInfo.isTagForDisplay(e.getQualifiedName())) { //then display tag and its attributes
+				Object tagDisplay;
+				if (tagInfo == null) tagDisplay = new String(e.getQualifiedName());
+				else tagDisplay = tagInfo.getTagDisplay(e);
+				if (tagDisplay instanceof String)
+					doc.insertString(pos.getOffset(), (String)tagDisplay, eColor); //insert element begin tag
+				else if (tagDisplay instanceof Icon) {
+					pane.setCaretPosition(pos.getOffset());
+					pane.insertIcon((Icon)tagDisplay);
+					doc.setCharacterAttributes(pos.getOffset()-1, 1, eColor, false);
 				}
-				// Also: Comment ProcessingInstruction CDATA EntityRef
+				//need space before attributes
+				//otherwise clicking on right-side of icon won't cause item to play
+				if (tagDisplay instanceof Icon) doc.insertString(pos.getOffset(), " ", eColor); 
+				List attributes = e.getAttributes();
+				Iterator iter = attributes.iterator();
+				while (iter.hasNext()) {
+					Attribute att = (Attribute)iter.next();
+					if (tagInfo == null || tagInfo.isAttributeForDisplay(att.getQualifiedName(), e.getQualifiedName()))
+						renderAttribute(att, pos.getOffset());
+				}
+				if (tagDisplay instanceof String) doc.insertString(pos.getOffset(), ":", eColor);
 			}
+			doc.setParagraphAttributes(start, pos.getOffset()-start, eAttributes, false);
+			if (tagInfo.areTagContentsForDisplay(e.getQualifiedName())) {
+				List list = e.getContent();
+				Iterator iter = list.iterator();
+				while (iter.hasNext()) {
+					Object next = iter.next();
+					if (next instanceof Element) {
+						Element ne = (Element)next;
+						if (tagInfo.isTagForDisplay(ne.getQualifiedName()) || tagInfo.areTagContentsForDisplay(ne.getQualifiedName())) {
+							if (tagInfo.isTagForDisplay(e.getQualifiedName()))
+								renderElement(ne, indent + indentIncrement, pos.getOffset());
+							else //only indent if the current tag is displayed
+								renderElement(ne, indent, pos.getOffset());
+						}
+					} else if (next instanceof Text) {
+						Text t = (Text)next;
+						if (t.getParent().getContent().size() == 1 || t.getTextTrim().length() > 0)
+							renderText(t, pos.getOffset());
+					}
+					// Also: Comment ProcessingInstruction CDATA EntityRef
+				}
 			}
-			//start = pos.getOffset();
-			//doc.insertString(start, "}", eColor); //insert element end tag
-			//doc.setParagraphAttributes(start, pos.getOffset(), eAttributes, false);
 			if (pos.getOffset()>0) {
-				//String s = doc.getText(pos.getOffset()-1, 1);
 				if (doc.getText(pos.getOffset()-1,1).charAt(0)=='\n')
 					endOffsets.put(e, new Integer(pos.getOffset()-1));
 				else
 					endOffsets.put(e, new Integer(pos.getOffset()));
 			}
-			//endOffsets.put(e, new Integer(pos.getOffset()));
 			return pos.getOffset();
-			//doc.insertString(pos.getOffset(), "\n", null);
 		} catch (BadLocationException ble) {
 			ble.printStackTrace();
 			return -1;
@@ -945,10 +962,18 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 					doc.insertString(pos.getOffset(), " ", sas);
 				}
 			}
-			String displayName;
-			if (tagInfo == null) displayName = att.getQualifiedName();
+
+			Object displayName;
+			if (tagInfo == null) displayName = new String(att.getQualifiedName());
 			else displayName = tagInfo.getAttributeDisplay(att.getQualifiedName(), att.getParent().getQualifiedName());
-			doc.insertString(pos.getOffset(), displayName+"=", aColor);
+			if (displayName instanceof String)
+				doc.insertString(pos.getOffset(), displayName+"=", aColor);
+			else if (displayName instanceof Icon) {
+				pane.setCaretPosition(pos.getOffset());
+				pane.insertIcon((Icon)displayName);
+				doc.setCharacterAttributes(pos.getOffset()-1, 1, aColor, false);
+				doc.insertString(pos.getOffset(), "=", aColor);
+			}
 			startOffsets.put(att, new Integer(pos.getOffset()+1)); //add one so that begin quote is not part of attribute value
 			doc.insertString(pos.getOffset(), "\"" + att.getValue()+"\"", tColor);
 			endOffsets.put(att, new Integer(pos.getOffset()));
@@ -958,7 +983,7 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 			return -1;
 		}
 	}
-	public int renderText(Text t, float indent, int insertOffset) {
+	public int renderText(Text t, int insertOffset) {
 		try {
 			Position pos = doc.createPosition(insertOffset);
 			SimpleAttributeSet tAttributes = new SimpleAttributeSet();
@@ -1035,5 +1060,11 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 	}
 	public Document getXMLDocument() {
 		return xml;
+	}
+	public void setEditable(boolean bool) {
+		pane.setEditable(bool);
+	}
+	public boolean isEditable() {
+		return pane.isEditable();
 	}
 }

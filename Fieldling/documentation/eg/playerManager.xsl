@@ -40,7 +40,7 @@
 	<APPLET 	CODEBASE="../../dist" 
 			ARCHIVE="mediaplayer.jar" 
 			CODE="fieldling.mediaplayer.JMFPlayerApplet.class"
-			WIDTH="300" HEIGHT="20" NAME="player" MAYSCRIPT="">
+			WIDTH="300" HEIGHT="20" NAME="player" MAYSCRIPT="true">
 		<PARAM>
 			<xsl:attribute name="NAME">Sound</xsl:attribute>
 			<xsl:attribute name="VALUE"><xsl:value-of select="$mediafile"/></xsl:attribute>
@@ -69,7 +69,7 @@
 	<APPLET 	CODEBASE="../../dist" 
 			ARCHIVE="mediaplayer.jar" 
 			CODE="fieldling.mediaplayer.QT4JPlayerApplet.class"
-			WIDTH="320" HEIGHT="16" NAME="player" MAYSCRIPT="">
+			WIDTH="320" HEIGHT="16" NAME="player" MAYSCRIPT="true">
 		<PARAM>
 			<xsl:attribute name="NAME">Sound</xsl:attribute>
 			<xsl:attribute name="VALUE"><xsl:value-of select="$mediafile"/></xsl:attribute>

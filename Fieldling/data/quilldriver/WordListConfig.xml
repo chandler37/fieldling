@@ -4,6 +4,7 @@
 			<desc>This is a required parameter that tells QuillDriver what the root element of its data
 			files must be. For example, in this case, it must be 'WORDLIST'.</desc>
 		</parameter>
+		<parameter name="qd.title" val="/WORDLIST/HEADER/TITLE"/>
 		<parameter name="qd.mediaurl" val="/WORDLIST/HEADER/SOUNDFILE/@href">
 			<desc>This is a required parameter that tells QuillDriver where to find the audio or video file associated with
 			this XML annotation. Its value is an XPATH expression which is based at the root of the XML tree.</desc>
@@ -125,32 +126,34 @@
 			<desc>This editing function deletes the word you are current working on.</desc>
 		</transformation>
 		
-		<tag name="WORDLIST" visible="true" visiblecontents="true">
-			<attribute name="xml:lang" visible="false"/>
-			<desc>Display WORDLIST tag but not its attributes.</desc>
-		</tag>
-		<tag name="TITLE" visible="true" visiblecontents="true">
-			<attribute name="xml:lang" visible="false"/>
-			<desc>Display TITLE tag but not its attributes.</desc>
-		</tag>
-	<!--	<tag name="AUDIO" visible="false" visiblecontents="false">
-			<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
-			time codes are already marked under the video in the time coding area.</desc>
-		</tag>
-		<tag name="SOUNDFILE" visible="false" visiblecontents="false" displayas="SOUNDFILE">
-			<desc>Tells QuillDriver not to display the SOUNDFILE tag.</desc>
-		</tag> -->
-		<tag name="WORD" visible="true" visiblecontents="true"/>
-		<tag name="TIB" visible="true" visiblecontents="true" tibetan="true">
-			<attribute name="start" visible="false"/>
-			<attribute name="end" visible="false"/>
-			<desc>This tells QuillDriver to display the TIB tag as 'TIB', and to display its contents,
-			but to visually suppress its 'type' attribute.</desc>
-		</tag>
-		<tag name="ENG" visible="true" visiblecontents="true" tibetan="false">
-			<attribute name="start" visible="false"/>
-			<attribute name="end" visible="false"/>
-			<desc>This tells QuillDriver to display the ENG tag as 'ENG', and to display its contents,
-			but to visually suppress its 'xml:lang' attribute.</desc>
-		</tag>
+		<rendering-instructions>
+			<tag name="WORDLIST" visible="true" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+				<desc>Display WORDLIST tag but not its attributes.</desc>
+			</tag>
+			<tag name="TITLE" visible="true" visiblecontents="true" editable="true">
+				<attribute name="xml:lang" visible="false"/>
+				<desc>Display TITLE tag but not its attributes.</desc>
+			</tag>
+		<!--	<tag name="AUDIO" visible="false" visiblecontents="false">
+				<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
+				time codes are already marked under the video in the time coding area.</desc>
+			</tag>
+			<tag name="SOUNDFILE" visible="false" visiblecontents="false" displayas="SOUNDFILE">
+				<desc>Tells QuillDriver not to display the SOUNDFILE tag.</desc>
+			</tag> -->
+			<tag name="WORD" visible="true" visiblecontents="true"/>
+			<tag name="TIB" visible="true" visiblecontents="true" tibetan="true" editable="true">
+				<attribute name="start" visible="false"/>
+				<attribute name="end" visible="false"/>
+				<desc>This tells QuillDriver to display the TIB tag as 'TIB', and to display its contents,
+				but to visually suppress its 'type' attribute.</desc>
+			</tag>
+			<tag name="ENG" visible="true" visiblecontents="true" tibetan="false" editable="true">
+				<attribute name="start" visible="false"/>
+				<attribute name="end" visible="false"/>
+				<desc>This tells QuillDriver to display the ENG tag as 'ENG', and to display its contents,
+				but to visually suppress its 'xml:lang' attribute.</desc>
+			</tag>
+		</rendering-instructions>
 </qd-configuration>

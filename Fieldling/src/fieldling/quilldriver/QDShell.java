@@ -52,7 +52,7 @@ public class QDShell extends JFrame {
 		"This file already exists! Type a new file name\n" + 
 		"instead of selecting an existing file.";
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	public static final int PLAY_MINUS_VALUE = 1000; //1000 milliseconds is default play minus parameter
+	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 	
 	//preference keys
 	public static final String WINDOW_X_KEY = "WINDOW_X";
@@ -60,8 +60,12 @@ public class QDShell extends JFrame {
 	public static final String WINDOW_WIDTH_KEY = "WINDOW_WIDTH";
 	public static final String WINDOW_HEIGHT_KEY = "WINDOW_HEIGHT";
 	public static final String WORKING_DIRECTORY_KEY = "WORKING_DIRECTORY";
+	public static final String RECENT_FILES_KEY = "RECENT_FILES";
 	public static final String MEDIA_DIRECTORY_KEY = "MEDIA_DIRECTORY";
 	public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
+	public static final String SLOW_ADJUST_KEY = "SLOW_ADJUST";
+	public static final String RAPID_ADJUST_KEY = "RAPID_ADJUST";
+	public static final String PLAY_MINUS_KEY = "PLAY_MINUS";
 	public static final String FONT_FACE_KEY = "FONT_FACE";
 	public static final String FONT_SIZE_KEY = "FONT_SIZE";
 	public static final String CONFIGURATION_KEY = "CONFIGURATION";
@@ -72,6 +76,9 @@ public class QDShell extends JFrame {
 	//preference defaults and values
 	private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
 	public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
+	public static int slow_adjust = myPrefs.getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
+	public static int rapid_adjust = myPrefs.getInt(RAPID_ADJUST_KEY, 250); //in milliseconds
+	public static int play_minus = myPrefs.getInt(PLAY_MINUS_KEY, 1000); // milliseconds
 	public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
 	public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
 	@TIBETAN@public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
@@ -123,7 +130,8 @@ public class QDShell extends JFrame {
 			case 1: configURL = new String(args[0]);
 		}
 		*/
-		setTitle("QuillDriver");
+		@UNICODE@setTitle("QuillDriver");
+		@TIBETAN@setTitle("QuillDriver-TIBETAN");
 		messages = I18n.getResourceBundle();
 
 		/*myPrefs = Preferences.userNodeForPackage(QDShell.class);
@@ -207,7 +215,7 @@ public class QDShell extends JFrame {
 			hide();
 			numberOfQDsOpen--;
 		} else { //there's a QD editor: save and close
-			qd.saveTranscript();
+			if (qd.getEditor().isEditable()) qd.saveTranscript();
 			qd.removeContent();
 			hide();
 			numberOfQDsOpen--;
@@ -253,6 +261,7 @@ public class QDShell extends JFrame {
 									QDShell qdsh = new QDShell();
 									qdsh.getQD().newTranscript(transcriptFile, mediaString2);
 								}
+								makeRecentlyOpened(transcriptString);
 							}
 						}
 					} catch (MalformedURLException murle) {
@@ -280,6 +289,7 @@ public class QDShell extends JFrame {
 						QDShell qdsh = new QDShell();
 						qdsh.getQD().loadTranscript(transcriptFile);
 					}
+					makeRecentlyOpened(transcriptString);
 				}
 			}
 		});
@@ -290,7 +300,7 @@ public class QDShell extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (numberOfQDsOpen > 1) closeThisQDFrame();
 				else {
-					qd.saveTranscript();
+					if (qd.getEditor().isEditable()) qd.saveTranscript();
 					qd.removeContent();
 				}
 			}
@@ -300,7 +310,7 @@ public class QDShell extends JFrame {
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				qd.saveTranscript();
+				if (qd.getEditor().isEditable()) qd.saveTranscript();
 			}
 		});
 
@@ -314,7 +324,7 @@ public class QDShell extends JFrame {
 				
 					putPreferences();
 					System.exit(0);
-				}				
+				}
 			}
 		});*/
 		
@@ -324,6 +334,33 @@ public class QDShell extends JFrame {
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
+
+		String r = myPrefs.get(RECENT_FILES_KEY, null);
+		if (r != null) {
+			projectMenu.addSeparator();
+			StringTokenizer tok = new StringTokenizer(r, ",");
+			int count = 1;
+			while (tok.hasMoreTokens()) {
+				final String fileName = (String)tok.nextToken();
+				String menuName = String.valueOf(count) + ") " + fileName;
+				JMenuItem openRecentItem = new JMenuItem(menuName);
+				openRecentItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (qd.getEditor() == null) { //nothing in this QD
+							//qd.saveTranscript();
+							qd.loadTranscript(new File(fileName));
+						} else { //open new QDShell window
+							QDShell qdsh = new QDShell();
+							qdsh.getQD().loadTranscript(new File(fileName));
+						}
+						makeRecentlyOpened(fileName);
+					}
+				});
+				projectMenu.add(openRecentItem);
+				count++;
+			}
+		}
+
 		//projectMenu.addSeparator();
 		//projectMenu.add(quitItem);
 		
@@ -339,17 +376,17 @@ public class QDShell extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					myPrefs.put(CONFIGURATION_KEY, configurations[k].getName());
 					if (qd.configure(configurations[k])) { //cannot re-configure if transcript is already loaded
-						JMenu[] configMenus = qd.getConfiguredMenus();
-						configMenus[0].getPopupMenu().setLightWeightPopupEnabled(false);
-						configMenus[1].getPopupMenu().setLightWeightPopupEnabled(false);
 						JMenuBar bar = QDShell.this.getJMenuBar();
 						JMenu fileMenu = bar.getMenu(0);
-						JMenu prefMenu = bar.getMenu(3);
+						JMenu prefMenu = bar.getMenu(1);
 						JMenuBar newBar = new JMenuBar();
 						newBar.add(fileMenu);
-						newBar.add(configMenus[0]);
-						newBar.add(configMenus[1]);
 						newBar.add(prefMenu);
+						JMenu[] configMenus = qd.getConfiguredMenus();
+						for (int z=0; z<configMenus.length; z++) {
+							configMenus[z].getPopupMenu().setLightWeightPopupEnabled(false);
+							newBar.add(configMenus[z]);
+						}
 						QDShell.this.setJMenuBar(newBar);
 						QDShell.this.invalidate();
 						QDShell.this.validate();
@@ -414,6 +451,13 @@ public class QDShell extends JFrame {
 			}
 		});
 		
+		JMenuItem timeCodeItem = new JMenuItem("Time coding...");
+		timeCodeItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getTimeCodePreferences();
+			}
+		});
+		
 		@TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
 		@TIBETAN@JMenuItem[] keyboardItems = null;
 		@TIBETAN@try {
@@ -436,8 +480,11 @@ public class QDShell extends JFrame {
 		@TIBETAN@}
 		@TIBETAN@}
 
+
+		
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		preferencesMenu.add(fontItem);
+		preferencesMenu.add(timeCodeItem);
 		preferencesMenu.addSeparator();
 		if (configItems.length > 0) {
 			for (int i=0; i<configItems.length; i++)
@@ -468,20 +515,90 @@ public class QDShell extends JFrame {
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
+		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+		bar.add(preferencesMenu);
 		final JMenu[] configMenus = qd.getConfiguredMenus();
 		for (int k=0; k<configMenus.length; k++) {
 			configMenus[k].getPopupMenu().setLightWeightPopupEnabled(false);
 			bar.add(configMenus[k]);
 		}
-		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-		bar.add(preferencesMenu);
 		return bar;
 		} catch (SecurityException se) {
 			se.printStackTrace();
 			return null;
 		}
 	}
-
+	private void makeRecentlyOpened(String s) {
+		String r = myPrefs.get(RECENT_FILES_KEY, null);
+		if (r == null) myPrefs.put(RECENT_FILES_KEY, s);
+		else {
+			LinkedList recents = new LinkedList();
+			recents.add(s);
+			StringTokenizer tok = new StringTokenizer(r, ",");
+			while (tok.hasMoreTokens()) {
+				String s2 = tok.nextToken();
+				if (!s.equals(s2)) recents.add(s2);
+			}
+			int k;
+			if (recents.size() > MAXIMUM_NUMBER_OF_RECENT_FILES) k = MAXIMUM_NUMBER_OF_RECENT_FILES;
+			else k = recents.size();
+			StringBuffer sb = new StringBuffer();
+			for (int i=0; i<k; i++) {
+				sb.append((String)recents.removeFirst());
+				sb.append(',');
+			}
+			myPrefs.put(RECENT_FILES_KEY, sb.toString());
+		}
+	}
+	private void getTimeCodePreferences() {
+		 //allows user to change slow adjust, rapid adjust, and play minus parameters
+		 JPanel slowAdjustPanel = new JPanel(new BorderLayout());
+		 slowAdjustPanel.setBorder(BorderFactory.createTitledBorder("Slow increase/decrease value (in milliseconds)"));
+		 JTextField slowAdjustField = new JTextField(String.valueOf(slow_adjust));
+		 slowAdjustField.setPreferredSize(new Dimension(240,30));
+		 slowAdjustPanel.add(slowAdjustField);
+		 JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
+		 rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder("Rapid increase/decrease value (in milliseconds)"));
+		 JTextField rapidAdjustField = new JTextField(String.valueOf(rapid_adjust));
+		 rapidAdjustField.setPreferredSize(new Dimension(240,30));
+		 rapidAdjustPanel.add(rapidAdjustField);
+		 JPanel playMinusPanel = new JPanel(new BorderLayout());
+		 playMinusPanel.setBorder(BorderFactory.createTitledBorder("Play minus value (in milliseconds)"));
+		 JTextField playMinusField = new JTextField(String.valueOf(play_minus));
+		 playMinusField.setPreferredSize(new Dimension(240,30));
+		 playMinusPanel.add(playMinusField);
+		 
+		 JPanel preferencesPanel = new JPanel();
+		preferencesPanel.setLayout(new GridLayout(3,1));
+		preferencesPanel.add(slowAdjustPanel);
+		preferencesPanel.add(rapidAdjustPanel);
+		preferencesPanel.add(playMinusPanel);
+		
+		 JOptionPane pane = new JOptionPane(preferencesPanel);
+		 JDialog dialog = pane.createDialog(this, "Time Coding Preferences");
+		 // This returns only when the user has closed the dialog
+		 dialog.show();
+		 int old_slow_adjust = slow_adjust;
+		 try {
+			slow_adjust = Integer.parseInt(slowAdjustField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		
+		 int old_rapid_adjust = rapid_adjust;
+		 try {
+			rapid_adjust = Integer.parseInt(rapidAdjustField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		 int old_play_minus = play_minus;
+		 try {
+			play_minus = Integer.parseInt(playMinusField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		// note: if these become negative numbers no error
+		if (old_slow_adjust != slow_adjust) myPrefs.putInt(SLOW_ADJUST_KEY, slow_adjust);
+		if (old_rapid_adjust != rapid_adjust) myPrefs.putInt(RAPID_ADJUST_KEY, rapid_adjust);
+		if (old_play_minus != play_minus) myPrefs.putInt(PLAY_MINUS_KEY, play_minus);
+	}
 	private void getFontPreferences() {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames = genv.getAvailableFontFamilyNames();
@@ -489,7 +606,7 @@ public class QDShell extends JFrame {
 		@TIBETAN@JPanel tibetanPanel;
 		@TIBETAN@JComboBox tibetanFontSizes;
 		@TIBETAN@tibetanPanel = new JPanel();
-		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Set Tibetan Font Size"));
+		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
 		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
 		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
 		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
@@ -500,7 +617,7 @@ public class QDShell extends JFrame {
 		JComboBox romanFontFamilies;
 		JComboBox romanFontSizes;
 		romanPanel = new JPanel();
-		romanPanel.setBorder(BorderFactory.createTitledBorder("Set non-Tibetan Font and Size"));
+		romanPanel.setBorder(BorderFactory.createTitledBorder("Non-Tibetan Font and Size"));
 		romanFontFamilies = new JComboBox(fontNames);
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
 		romanFontFamilies.setSelectedItem(font_face);
@@ -520,7 +637,7 @@ public class QDShell extends JFrame {
 		preferencesPanel.add(romanPanel);
 
 		JOptionPane pane = new JOptionPane(preferencesPanel);
-		JDialog dialog = pane.createDialog(this, "Preferences");
+		JDialog dialog = pane.createDialog(this, "Font and Style Preferences");
 
         // This returns only when the user has closed the dialog
 		dialog.show();

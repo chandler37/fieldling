@@ -64,7 +64,7 @@ a version optimized for use with Tibetan script.
 	<property name="archive.location" value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver"/>
 	<property name="mail.from"	value="eg3p@virginia.edu"/>
 	<property name="mail.host"	value="e.mail.virginia.edu"/>
-	<property name="mail.to"	value="eg3p@virginia.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,ewoelfel@hotmail.com,rogerand@humnet.ucla.edu,fmg3u@virginia.edu,markturin@compuserve.com,twm4g@virginia.edu"/>
+	<property name="mail.to"	value="snw8f@virginia.edu,eg3p@virginia.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,ewoelfel@hotmail.com,rogerand@humnet.ucla.edu,fmg3u@virginia.edu,markturin@compuserve.com,twm4g@virginia.edu"/>
 	<property name="update.message"	value=""/>
 	
 	<path id="my.classpath">
@@ -117,7 +117,7 @@ a version optimized for use with Tibetan script.
 	</target>
 	
 	<target name="mp-compile" depends="init" description="compile mediaplayer source">
-		<javac srcdir="${raw.source}" destdir="${unicode.classes}" includes="fieldling/mediaplayer/**">
+		<javac srcdir="${raw.source}" destdir="${unicode.classes}" includes="fieldling/mediaplayer/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		<copy todir="${tibetan.classes}">
@@ -202,7 +202,7 @@ a version optimized for use with Tibetan script.
 		
 		
 		<!-- compile unicode source -->
-		<javac srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**">
+		<javac srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		
@@ -235,7 +235,7 @@ a version optimized for use with Tibetan script.
 		</copy>
 		
 		<!-- compile Tibetan source -->
-		<javac srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**">
+		<javac srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		

@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <qd-configurations>
+		<!-- For transcribing and annotating videos using the LACITO-THDL DTD -->
 		<configuration menu-name="THDL Transcription">
 			<config href="TranscriptionConfig.xml"/>
 			<edit href="TranscriptionEdit.xsl"/>
 			<new href="TranscriptionNew.xsl"/>
 		</configuration>
+		
 	<!--	<configuration menu-name="THDL Logging">
 			<config href="LoggingConfig.xml"/>
 			<edit href="LoggingEdit.xsl"/>
 			<new href="LoggingNew.xsl"/>
 		</configuration> -->
+		
+		<!-- This is a view-only configuration -->
+		<configuration menu-name="THDL Savant">
+			<config href="SavantConfig.xml"/>
+		</configuration>
+		
+		<!-- You cannot create new files with this configuration -->
+		<configuration menu-name="THDL Text Markup">
+			<config href="TextMarkupConfig.xml"/>
+			<edit href="TextMarkupEdit.xsl"/>
+		</configuration> 
+		
+		<!-- For time-coding word-lists, e.g. the MST chapter vocabulary --> 
 		<configuration menu-name="THDL Word List">
 			<config href="WordListConfig.xml"/>
 			<edit href="WordListEdit.xsl"/>

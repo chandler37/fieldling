@@ -109,7 +109,7 @@ public class QD extends JDesktopPane {
 	protected TextHighlightPlayer hp;
 	protected DocumentBuilder docBuilder;
 	protected File transcriptFile = null;
-	protected XMLTagInfo tagInfo = null;
+	protected XMLTagInfo currentTagInfo = null;
 	protected Configuration configuration = null;
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
 	public Timer checkTimeTimer = null;
@@ -421,7 +421,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					}
 				}
 				if (currentNode == oldNode) {
-					if (t2 >= t1 && t1 > -1) changeTimeCodesInXML(); //update the XML file
+					if ((t2 >= t1 && t1 > -1) || (t1 > -1 && t2 == -1)) changeTimeCodesInXML(); //update the XML file
 				}
 			}
 		}
@@ -434,8 +434,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			} else {
 				String t1 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodebegins")));
 				String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
-				float f1 = new Float(t1).floatValue()*1000;
-				float f2 = new Float(t2).floatValue()*1000;
+				float f1, f2;
+				if (t1 == null) f1 = -1;
+				else f1 = new Float(t1).floatValue()*1000;
+				if (t2 == null) f2 = -1;
+				else f2 = new Float(t2).floatValue()*1000;
 				setTimeCodes(new Float(f1).longValue(), new Float(f2).longValue(), node);
 				//setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
 				thp.unhighlightAll();
@@ -539,8 +542,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				@UNICODE@final JTextPane t = new JTextPane();
 				@UNICODE@t.setFont(new Font(QDShell.font_face, java.awt.Font.PLAIN, QDShell.font_size));
 				
-				editor = new XMLEditor(builder.build(file), t, tagInfo);
-
+				editor = new XMLEditor(builder.build(file), t, currentTagInfo);
+				
 				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
 				Set keys = keyActions.keySet();
 				Iterator keyIter = keys.iterator();
@@ -586,8 +589,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));
 				}
 
-				Object mediaURL = XMLUtilities.findSingleNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"));
-				String value = XMLUtilities.getTextForNode(mediaURL);
+				String value;
+				if (config.getProperty("qd.mediaurl") == null) value = null;
+				else {
+					Object mediaURL = XMLUtilities.findSingleNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"));
+					value = XMLUtilities.getTextForNode(mediaURL);
+				}
 				boolean nomedia = true;
 				if (value != null) {
 					try {
@@ -638,6 +645,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					}
 				});
 				startTimer();
+
+				//give text frame title of video/transcript
+				if (config.getProperty("qd.title") != null) {
+					Object obj = XMLUtilities.findSingleNode(editor.getXMLDocument().getRootElement(), config.getProperty("qd.title"));
+					textFrame.setTitle(XMLUtilities.getTextForNode(obj));
+				}
 				
 				JComponent c = (JComponent)textFrame.getContentPane();
 				c.setLayout(new BorderLayout());
@@ -646,7 +659,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				textFrame.invalidate();
 				textFrame.validate();
 				textFrame.repaint();
-				
+
 				editor.addNodeEditListener(new XMLEditor.NodeEditListener() {
 					public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
 						if (ned instanceof XMLEditor.StartEditEvent) { 
@@ -679,7 +692,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						//hp.unhighlightAll();
 					}
 				});
-				editor.setEditabilityTracker(true);
+				
+				if (configuration.getEditURL() == null) editor.setEditable(false);
+				else editor.setEditabilityTracker(true);
+				
 				transcriptFile = file;
 				textFrame.requestFocus(); //otherwise the first time you press Play you don't get highlights in the text window!!
 
@@ -763,28 +779,91 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			Document cDoc = builder.build(configuration.getConfigURL());
 			Element cRoot = cDoc.getRootElement();
 			Iterator it;
-			List tagOptions = cRoot.getChildren("tag");
-			if (tagOptions.size() > 0) {
-				tagInfo = new XMLTagInfo();
-				it = tagOptions.iterator();
-				while (it.hasNext()) {
-					Element e = (Element)it.next();
-					
-					
-					@TIBETAN@tagInfo.addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
-						@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
-						@TIBETAN@new Boolean(e.getAttributeValue("tibetan")));
-					@UNICODE@tagInfo.addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
-						@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"));
-					List atts = e.getChildren("attribute");
-					Iterator it2 = atts.iterator();
-					while (it2.hasNext()) {
-						Element eAtt = (Element)it2.next();
-						tagInfo.addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
-							new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"));
+			
+			//tag rendering
+			Element renderingInstructions = cRoot.getChild("rendering-instructions");
+			List sharedInstructions = renderingInstructions.getChildren("tag");
+			List tagViews = renderingInstructions.getChildren("tagview");
+			XMLTagInfo[] tagInfo;
+			Map tagShortcuts = null;
+			if (tagViews.size() == 0) { //only one set of rendering instructions
+				tagInfo = new XMLTagInfo[1];
+				tagInfo[0] = new XMLTagInfo();
+				if (sharedInstructions.size() > 0) {
+					it = sharedInstructions.iterator();
+					while (it.hasNext()) {
+						Element e = (Element)it.next();
+						@TIBETAN@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+						@UNICODE@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+						List atts = e.getChildren("attribute");
+						Iterator it2 = atts.iterator();
+						while (it2.hasNext()) {
+							Element eAtt = (Element)it2.next();
+							tagInfo[0].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+						}
 					}
 				}
-			}	
+			} else {
+				tagShortcuts = new HashMap();
+				tagInfo = new XMLTagInfo[tagViews.size()];
+				int count = 0;
+				Iterator tagViewIter = tagViews.iterator();
+				while (tagViewIter.hasNext()) {
+					Element tagView = (Element)tagViewIter.next();
+					tagInfo[count] = new XMLTagInfo(tagView.getAttributeValue("name"));
+					KeyStroke key = KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke")); 
+					tagShortcuts.put(tagInfo[count], key);
+					if (sharedInstructions.size() > 0) {
+						it = sharedInstructions.iterator();
+						while (it.hasNext()) {
+							Element e = (Element)it.next();
+							@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+								@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+								@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+							@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+								@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+								@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+							List atts = e.getChildren("attribute");
+							Iterator it2 = atts.iterator();
+							while (it2.hasNext()) {
+								Element eAtt = (Element)it2.next();
+								tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+									new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+									eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+							}
+						}
+					}
+					
+					List tagOptions = tagView.getChildren("tag");
+					it = tagOptions.iterator();
+					while (it.hasNext()) {
+						Element e = (Element)it.next();
+						@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+						@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+						List atts = e.getChildren("attribute");
+						Iterator it2 = atts.iterator();
+						while (it2.hasNext()) {
+							Element eAtt = (Element)it2.next();
+							tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								e.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+						}
+					}
+					count++;
+				}
+			}
+			
+			//parameters
 			List parameters = cRoot.getChildren("parameter");
 			textConfig = new Properties();
 			config = new Properties();
@@ -798,259 +877,309 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					textConfig.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
 			}
 			rootElement = textConfig.getProperty("qd.root.element");
+			
+			//navigations and transformations
 			List navigations = cRoot.getChildren("navigation");
-			final String[] navigXPath = new String[navigations.size()];
-			configMenus = new JMenu[2];
-			configMenus[1] = new JMenu(messages.getString("View"));
+			List transformations = cRoot.getChildren("transformation");
+			
 			keyActions = new HashMap(); //maps keys to actions
 			taskActions = new HashMap(); //maps task names to same actions
-			it = navigations.iterator();
-			while (it.hasNext()) {
-				Element e = (Element)it.next();
-				final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
-				final String xpathExpression = e.getAttributeValue("val");
-				final String command = e.getAttributeValue("command");
-				mItem.setToolTipText(e.getChildTextNormalize("desc"));
-				KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
-				final Action keyAction = new AbstractAction() {
-					public void actionPerformed(ActionEvent e) {
-						if (xpathExpression != null) {
-							editor.fireEndEditEvent();
-							boolean keepSearching;
-							JTextPane t = editor.getTextPane();
-							int offset = t.getCaret().getMark();
-							Object context = editor.getNodeForOffset(offset);
-							System.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
-							do {
-								keepSearching = false;
-								if (context != null) {
-									Object moveTo = XMLUtilities.findSingleNode(context, xpathExpression);
-									int newStartOffset = editor.getStartOffsetForNode(moveTo);
-									if (newStartOffset > -1) {
-										t.requestFocus();
-										t.setCaretPosition(newStartOffset);
-									} else {
-										keepSearching = true; //search again
-										context = moveTo;
+			
+			int xCount = 0;
+			if (!navigations.isEmpty()) xCount++;
+			if (!(transformations.isEmpty() || configuration.getEditURL() == null)) xCount++;
+			configMenus = new JMenu[xCount];
+			
+			xCount = 0;
+			
+			if (!(transformations.isEmpty() || configuration.getEditURL() == null)) {
+				configMenus[xCount] = new JMenu(messages.getString("Edit"));
+				try {
+					final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
+					it = transformations.iterator();
+					while (it.hasNext()) {
+						Element e = (Element)it.next();
+						final DOMOutputter domOut = new DOMOutputter();
+						final DOMBuilder jdomBuild = new DOMBuilder();
+						final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
+						final String tasks = e.getAttributeValue("tasks");
+						final String command = e.getAttributeValue("command");
+						final String nodeSelector = e.getAttributeValue("node");
+						//mItem.setToolTipText(e.getChildTextNormalize("desc"));
+						KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
+						mItem.setAccelerator(key);
+						final Action keyAction = new AbstractAction() {
+							public void actionPerformed(ActionEvent e) {
+								try {
+									if (command != null) executeCommand(command);
+									editor.fireEndEditEvent();
+									editor.setEditabilityTracker(false);
+									int offset = editor.getTextPane().getCaret().getMark();
+									Object context = editor.getNodeForOffset(offset);
+									Object transformNode = XMLUtilities.findSingleNode(context, nodeSelector);
+									if (!(transformNode instanceof Element)) return;
+									Element jdomEl = (Element)transformNode;
+									Element clone = (Element)jdomEl.clone();
+									Element cloneOwner = new Element("CloneOwner");
+									cloneOwner.addContent(clone);
+									org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
+									//String refreshID = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(context, config.getProperty("qd.refreshid")));
+									Enumeration enum = config.propertyNames();
+									while (enum.hasMoreElements()) {
+										String key = (String)enum.nextElement();
+										String val = config.getProperty(key);
+										if (!key.startsWith("qd.")) {
+											Object obj = XMLUtilities.findSingleNode(context, val);
+											if (obj != null) {
+												String id = XMLUtilities.getTextForNode(obj);
+												transformer.setParameter(key, id);
+												System.out.println("key="+key+" & id="+id);
+											}
+										}
 									}
+									enum = textConfig.propertyNames();
+									while (enum.hasMoreElements()) {
+										String key = (String)enum.nextElement();
+										transformer.setParameter(key, textConfig.getProperty(key));
+									}
+									transformer.setParameter("qd.task", tasks);
+									
+									// THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
+									float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds
+									float outSeconds = tcp.getOutTime().floatValue() / 1000; //convert from milliseconds
+									if (outSeconds >= inSeconds) { //time parameters will not be passed if out precedes in
+										transformer.setParameter("qd.start", String.valueOf(inSeconds));
+										transformer.setParameter("qd.end", String.valueOf(outSeconds));
+										System.out.println("Start="+String.valueOf(inSeconds)+" & End="+String.valueOf(outSeconds));
+									} else {
+										transformer.setParameter("qd.start", "");
+										transformer.setParameter("qd.end", "");
+									}
+									float now = (float)player.getCurrentTime();
+									float endoftime = (float)player.getEndTime();
+									float currentSeconds = now / 1000; //convert from milliseconds
+									float endTime = endoftime / 1000; //convert from milliseconds
+									//float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
+									//float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
+									String cS = String.valueOf(currentSeconds);
+									String eT = String.valueOf(endTime);
+									System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
+									transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
+									transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
+									float slowInc = (float)QDShell.slow_adjust;
+									float rapidInc = (float)QDShell.rapid_adjust;
+									transformer.setParameter("qd.slowincrease", String.valueOf(slowInc/1000));
+									transformer.setParameter("qd.rapidincrease", String.valueOf(rapidInc/1000));
+									//send the name of the current media URL
+									transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
+									
+									JDOMResult jdomResult = new JDOMResult();
+									//DOMSource domSource = new DOMSource(docBuilder.newDocument());
+									//domSource.getNode().appendChild(transformElement);
+									//if (transformElement.getParentNode() == null)
+									//	System.out.println("null parent");
+									DOMSource domSource = new DOMSource(transformElement);
+									//if (domSource == null)
+									//	System.out.println("dom source is null");
+									transformer.transform(domSource, jdomResult);
+									Element transformedRoot = jdomResult.getDocument().getRootElement();
+									List replaceNodeWith = transformedRoot.getContent();
+									
+									XMLOutputter xmlOut = new XMLOutputter();
+									try {
+										Element ee = (Element)cloneOwner;
+										xmlOut.output(ee, System.out);
+										xmlOut.output(jdomResult.getDocument(), System.out);
+									} catch (IOException ioe) {ioe.printStackTrace();}
+									
+									int start = editor.getStartOffsetForNode(transformNode);
+									int end = editor.getEndOffsetForNode(transformNode);
+									
+									//FIXME: this whole section needs to be sensitive to whether or
+									//not node is visible on screen, and whether or not what replaces
+									//it should be visible or not. right now, the following code won't
+									//work right if the transformed node is not visible
+									
+									//boolean redraw = true;
+									//if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
+									//if (redraw) {
+										StyledDocument tDoc = editor.getTextPane().getStyledDocument();
+										AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
+										float indent = StyleConstants.getLeftIndent(attSet);
+										try {
+											tDoc.insertString(end, "\n", null);
+											tDoc.remove(start, end-start);
+											//tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
+										} catch (BadLocationException ble) {
+											ble.printStackTrace();
+											return;
+										}
+										int insertPos = start;
+										Element el = (Element)transformNode;
+										if (el.isRootElement()) {
+											Iterator replaceIter = replaceNodeWith.iterator();
+											while (replaceIter.hasNext()) {
+												Object o = replaceIter.next();
+												if (o instanceof Element) {
+													replaceIter.remove();
+													Document d = el.getDocument();
+													d.detachRootElement();
+													Element er = (Element)o;
+													d.setRootElement(er);
+													editor.removeNode(er);
+													insertPos = editor.renderElement(er, indent, insertPos);
+													break;
+												}
+											}
+										} else {
+											List parentContent = el.getParent().getContent(); //this is a live list
+											int elPos = parentContent.indexOf(el);
+											parentContent.remove(elPos);
+											editor.removeNode(transformNode);
+											Iterator replaceIter = replaceNodeWith.iterator();
+											while (replaceIter.hasNext()) {
+												Object next = replaceIter.next();
+												replaceIter.remove();
+												if (next instanceof Element) {
+													Element elem = (Element)next;
+													insertPos = editor.renderElement(elem, indent, insertPos);
+												} else if (next instanceof Text) {
+													Text text = (Text)next;
+													if (text.getTextTrim().length() > 0)
+														insertPos = editor.renderText(text, insertPos);
+												}
+												parentContent.add(elPos, next);
+												elPos++;
+											}
+										}
+		
+										try {
+											tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
+											String s = tDoc.getText(insertPos-1, 2);
+											if (s.charAt(1)=='\n') {
+												if (s.charAt(0)=='\n') {
+													tDoc.remove(insertPos-1, 1); //if two newlines, delete first
+													AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
+													tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
+												} else {
+													AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
+													tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
+												}
+												System.out.println("carriage return detected");
+											}
+										} catch (BadLocationException ble) {
+											ble.printStackTrace();
+											return;
+										}
+										
+										editor.fixOffsets();
+										hp.refresh();
+										player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
+									
+									transformer.clearParameters();
+									editor.setEditabilityTracker(true);
+								} catch (TransformerException tre) {
+									tre.printStackTrace();
+								} catch (JDOMException jdome) {
+									jdome.printStackTrace();
 								}
-							} while (keepSearching);
-							if (command != null) executeCommand(command);
-						}
+							}
+						};
+						keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
+						taskActions.put(tasks, keyAction); //to be used to call actions by task name rather than by key press
+						mItem.setAccelerator(key);
+						mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
+							public void actionPerformed(ActionEvent e) {
+								keyAction.actionPerformed(e);
+							}
+						});
+						configMenus[xCount].add(mItem);
 					}
-				};
-				keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
-				mItem.setAccelerator(key);
-				mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
-					public void actionPerformed(ActionEvent e) {
-						keyAction.actionPerformed(e);
-					}
-				});
-				configMenus[1].add(mItem);
+				} catch (TransformerException tre) {
+					tre.printStackTrace();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				xCount++;
 			}
-			configMenus[0] = new JMenu(messages.getString("Edit"));
-			/*if (editURL != null)*/ try {
-				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));				
-				List transformations = cRoot.getChildren("transformation");
-				it = transformations.iterator();
+			if (!navigations.isEmpty()) {
+				final String[] navigXPath = new String[navigations.size()];
+				configMenus[xCount] = new JMenu(messages.getString("View"));
+				it = navigations.iterator();
 				while (it.hasNext()) {
 					Element e = (Element)it.next();
-					final DOMOutputter domOut = new DOMOutputter();
-					final DOMBuilder jdomBuild = new DOMBuilder();
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
-					final String tasks = e.getAttributeValue("tasks");
+					final String xpathExpression = e.getAttributeValue("val");
 					final String command = e.getAttributeValue("command");
-					final String nodeSelector = e.getAttributeValue("node");
-					mItem.setToolTipText(e.getChildTextNormalize("desc"));
-					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
-					mItem.setAccelerator(key);
+					//mItem.setToolTipText(e.getChildTextNormalize("desc"));
+					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
 					final Action keyAction = new AbstractAction() {
 						public void actionPerformed(ActionEvent e) {
-							try {
-								if (command != null) executeCommand(command);
+							if (xpathExpression != null) {
 								editor.fireEndEditEvent();
-								editor.setEditabilityTracker(false);
-								int offset = editor.getTextPane().getCaret().getMark();
+								boolean keepSearching;
+								JTextPane t = editor.getTextPane();
+								int offset = t.getCaret().getMark();
 								Object context = editor.getNodeForOffset(offset);
-								Object transformNode = XMLUtilities.findSingleNode(context, nodeSelector);
-								if (!(transformNode instanceof Element)) return;
-								Element jdomEl = (Element)transformNode;
-								Element clone = (Element)jdomEl.clone();
-								Element cloneOwner = new Element("CloneOwner");
-								cloneOwner.addContent(clone);
-								org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
-								//String refreshID = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(context, config.getProperty("qd.refreshid")));
-								Enumeration enum = config.propertyNames();
-								while (enum.hasMoreElements()) {
-									String key = (String)enum.nextElement();
-									String val = config.getProperty(key);
-									if (!key.startsWith("qd.")) {
-										Object obj = XMLUtilities.findSingleNode(context, val);
-										if (obj != null) {
-											String id = XMLUtilities.getTextForNode(obj);
-											transformer.setParameter(key, id);
-											System.out.println("key="+key+" & id="+id);
+								System.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
+								do {
+									keepSearching = false;
+									if (context != null) {
+										Object moveTo = XMLUtilities.findSingleNode(context, xpathExpression);
+										int newStartOffset = editor.getStartOffsetForNode(moveTo);
+										if (newStartOffset > -1) {
+											t.requestFocus();
+											t.setCaretPosition(newStartOffset);
+										} else {
+											keepSearching = true; //search again
+											context = moveTo;
 										}
 									}
-								}
-								enum = textConfig.propertyNames();
-								while (enum.hasMoreElements()) {
-									String key = (String)enum.nextElement();
-									transformer.setParameter(key, textConfig.getProperty(key));
-								}
-								transformer.setParameter("qd.task", tasks);
-								
-								// THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
-								float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds
-								float outSeconds = tcp.getOutTime().floatValue() / 1000; //convert from milliseconds
-								if (outSeconds >= inSeconds) { //time parameters will not be passed if out precedes in
-									transformer.setParameter("qd.start", String.valueOf(inSeconds));
-									transformer.setParameter("qd.end", String.valueOf(outSeconds));
-									System.out.println("Start="+String.valueOf(inSeconds)+" & End="+String.valueOf(outSeconds));
-								} else {
-									transformer.setParameter("qd.start", "");
-									transformer.setParameter("qd.end", "");
-								}
-								float now = (float)player.getCurrentTime();
-								float endoftime = (float)player.getEndTime();
-								float currentSeconds = now / 1000; //convert from milliseconds
-								float endTime = endoftime / 1000; //convert from milliseconds
-								//float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
-								//float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
-								String cS = String.valueOf(currentSeconds);
-								String eT = String.valueOf(endTime);
-								System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
-								transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
-								transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
-								//send the name of the current media URL
-								transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
-								
-								JDOMResult jdomResult = new JDOMResult();
-								//DOMSource domSource = new DOMSource(docBuilder.newDocument());
-								//domSource.getNode().appendChild(transformElement);
-								//if (transformElement.getParentNode() == null)
-								//	System.out.println("null parent");
-								DOMSource domSource = new DOMSource(transformElement);
-								//if (domSource == null)
-								//	System.out.println("dom source is null");
-								transformer.transform(domSource, jdomResult);
-								Element transformedRoot = jdomResult.getDocument().getRootElement();
-								List replaceNodeWith = transformedRoot.getContent();
-								
-								XMLOutputter xmlOut = new XMLOutputter();
-								try {
-									Element ee = (Element)cloneOwner;
-									xmlOut.output(ee, System.out);
-									xmlOut.output(jdomResult.getDocument(), System.out);
-								} catch (IOException ioe) {ioe.printStackTrace();}
-								
-								int start = editor.getStartOffsetForNode(transformNode);
-								int end = editor.getEndOffsetForNode(transformNode);
-								
-								//FIXME: this whole section needs to be sensitive to whether or
-								//not node is visible on screen, and whether or not what replaces
-								//it should be visible or not. right now, the following code won't
-								//work right if the transformed node is not visible
-								
-								//boolean redraw = true;
-								//if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
-								//if (redraw) {
-									StyledDocument tDoc = editor.getTextPane().getStyledDocument();
-									AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
-									float indent = StyleConstants.getLeftIndent(attSet);
-									try {
-										tDoc.insertString(end, "\n", null);
-										tDoc.remove(start, end-start);
-										//tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
-									} catch (BadLocationException ble) {
-										ble.printStackTrace();
-										return;
-									}
-									int insertPos = start;
-									Element el = (Element)transformNode;
-									if (el.isRootElement()) {
-										Iterator replaceIter = replaceNodeWith.iterator();
-										while (replaceIter.hasNext()) {
-											Object o = replaceIter.next();
-											if (o instanceof Element) {
-												replaceIter.remove();
-												Document d = el.getDocument();
-												d.detachRootElement();
-												Element er = (Element)o;
-												d.setRootElement(er);
-												editor.removeNode(er);
-												insertPos = editor.renderElement(er, indent, insertPos);
-												break;
-											}
-										}
-									} else {
-										List parentContent = el.getParent().getContent(); //this is a live list
-										int elPos = parentContent.indexOf(el);
-										parentContent.remove(elPos);
-										editor.removeNode(transformNode);
-										Iterator replaceIter = replaceNodeWith.iterator();
-										while (replaceIter.hasNext()) {
-											Object next = replaceIter.next();
-											replaceIter.remove();
-											if (next instanceof Element) {
-												Element elem = (Element)next;
-												insertPos = editor.renderElement(elem, indent, insertPos);
-											} else if (next instanceof Text) {
-												Text text = (Text)next;
-												if (text.getTextTrim().length() > 0)
-													insertPos = editor.renderText(text, indent, insertPos);
-											}
-											parentContent.add(elPos, next);
-											elPos++;
-										}
-									}
-	
-									try {
-										tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
-										String s = tDoc.getText(insertPos-1, 2);
-										if (s.charAt(1)=='\n') {
-											if (s.charAt(0)=='\n') {
-												tDoc.remove(insertPos-1, 1); //if two newlines, delete first
-												AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
-												tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
-											} else {
-												AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
-												tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
-											}
-											System.out.println("carriage return detected");
-										}
-									} catch (BadLocationException ble) {
-										ble.printStackTrace();
-										return;
-									}
-									
-									editor.fixOffsets();
-									hp.refresh();
-									player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
-								
-								transformer.clearParameters();
-								editor.setEditabilityTracker(true);
-							} catch (TransformerException tre) {
-								tre.printStackTrace();
-							} catch (JDOMException jdome) {
-								jdome.printStackTrace();
+								} while (keepSearching);
+								if (command != null) executeCommand(command);
 							}
 						}
 					};
 					keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
-					taskActions.put(tasks, keyAction); //to be used to call actions by task name rather than by key press
 					mItem.setAccelerator(key);
 					mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
 						public void actionPerformed(ActionEvent e) {
 							keyAction.actionPerformed(e);
 						}
 					});
-					configMenus[0].add(mItem);
+					configMenus[xCount].add(mItem);
 				}
-			} catch (TransformerException tre) {
-				tre.printStackTrace();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+				if (tagInfo.length > 1) {
+					configMenus[xCount].addSeparator();
+					ButtonGroup tagGroup = new ButtonGroup();
+					for (int z=0; z<tagInfo.length; z++) {
+						final XMLTagInfo zTagInfo = tagInfo[z];
+						final Action changeViewAction = new AbstractAction() {
+							public void actionPerformed(ActionEvent e) {
+								currentTagInfo = zTagInfo;
+								if (editor != null) {
+									editor.setTagInfo(currentTagInfo);
+									hp.refresh();
+								}
+							}
+						};
+						JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(tagInfo[z].getIdentifyingName());
+						tagItem.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								changeViewAction.actionPerformed(e);
+							}
+						});
+						KeyStroke k = (KeyStroke)tagShortcuts.get(tagInfo[z]);
+						if (k != null) {
+							tagItem.setAccelerator(k);
+							keyActions.put(k, changeViewAction);
+						}
+						tagGroup.add(tagItem);
+						if (z == 0) tagItem.setSelected(true);
+						configMenus[xCount].add(tagItem);
+					}
+				}
+				currentTagInfo = tagInfo[0];
 			}
 		} catch (JDOMException jdome) {
 			jdome.printStackTrace();
@@ -1078,7 +1207,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("playBack")) {
 								try {
-									long t = player.getCurrentTime() - QDShell.PLAY_MINUS_VALUE;
+									long t = player.getCurrentTime() - QDShell.play_minus;
 									if (t < 0) t = 0;
 									if (player.isPlaying()) player.cmd_stop();
 									player.setCurrentTime(t);
@@ -1092,7 +1221,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
 									tcp.setNode(nearestParent);
 									Long t2 = tcp.getOutTime();
-									long t1 = t2.longValue() - QDShell.PLAY_MINUS_VALUE;
+									long t1 = t2.longValue() - QDShell.play_minus;
 									if (t1 < 0) t1 = 0;
 									player.cmd_playSegment(new Long(t1), t2);
 								} catch (PanelPlayerException ppe) {

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qd-configuration>
+		<parameter name="qd.root.element" val="TEXT" type="text">
+			<desc>This is a required parameter that tells QuillDriver what the root element of its data
+			files must be. For example, in this case, it must be 'TEXT'.</desc>
+		</parameter>
+		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
+		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href">
+			<desc>This is a required parameter that tells QuillDriver where to find the audio or video file associated with
+			this XML annotation. Its value is an XPATH expression which is based at the root of the XML tree.</desc>
+		</parameter>
+		<parameter name="qd.timealignednodes" val="//*[AUDIO]">
+			<desc>Without this parameter, QuillDriver will not know how to find out which nodes are 'associated'
+			with time codes and which are not. The value of this parameter is an XPATH expression which returns
+			all XML nodes that are associated with time codes, again searching from the root of the XML tree.</desc>
+		</parameter>
+		<parameter name="qd.nodebegins" val="AUDIO/@start">
+			<desc>The parameter qd.timealignednodes returns the set of XML nodes associated with time codes. Once this
+			set is established, then we still need to know how get the start and end time for an associated node.
+			This parameter is an XPATH expression which locates the start time for a XML node associated with
+			time codes.</desc>
+		</parameter>
+		<parameter name="qd.nodeends" val="AUDIO/@end">
+			<desc>The parameter qd.timealignednodes returns the set of XML nodes associated with time codes. Once this
+			set is established, then we still need to know how get the start and end time for an associated node.
+			This parameter is an XPATH expression which locates the end time for a XML node associated with
+			time codes.</desc>
+		</parameter>
+		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]">
+			<desc>For any given node, this required parameter locates the nearest 'playable' parent node.
+			When you click on a node in the annotation the default action is to play the nearest playable
+			parent node. For example, if time codes are associated with Sentences and you click on a Word,
+			then setting this parameter correctly ensures that its containing sentence is played.</desc>
+		</parameter>
+		
+		<navigation name="Play/Pause" keystroke="control SLASH" val="." command="playPause">
+			<desc>If the media is stopped, this plays it; and if the media is playing, this pauses it.</desc>
+		</navigation>
+		<navigation name="Play Back" keystroke="control QUOTE" val="." command="playBack">
+			<desc>This plays the media, starting from X second(s) before the current media point.</desc>
+		</navigation>
+		<navigation name="Play Next Line" keystroke="control shift DOWN" val="following::*[AUDIO]" command="playNode">
+			<desc>This navigation is used to play the next part of the text that has time codes associated with it.
+			First, the next playable node is located. Then, it is played because this viewing function is
+			associated with the QuillDriver command 'playNode'.</desc>
+		</navigation>
+		<navigation name="Play Current Line" keystroke="control LEFT" val="ancestor-or-self::*[AUDIO]" command="playNode">
+			<desc>This navigation is used to play the current part of the text that has time codes associated with it,
+			for example, the current sentence. First, the current node is located. Then, it is played because this 
+			viewing function is associated with the QuillDriver command 'playNode'.</desc>
+		</navigation>
+		<navigation name="Play End of Current Line" keystroke="control RIGHT" val="ancestor-or-self::*[AUDIO]" command="playEdge">
+			<desc>Play the last X second(s) of the current sentence.</desc>
+		</navigation>
+		<navigation name="Play Previous Line" keystroke="control shift UP" val="preceding::*[AUDIO]" command="playNode">
+			<desc>This navigation is used to play the last part of the text that has time codes associated with it.
+			First, the next playable node is located. Then, it is played because this viewing function is
+			associated with the QuillDriver command 'playNode'.</desc>
+		</navigation>
+		<navigation name="Go to Next Line" keystroke="control DOWN" val="following::S">
+			<desc>Jumps to the next sentence, without playing it.</desc>
+		</navigation>
+		<navigation name="Go to Previous Line" keystroke="control UP" val="preceding::S">
+			<desc>Jumps to the previous sentence, without playing it.</desc>
+		</navigation>
+		
+		<!-- relating to media -->
+		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" tasks="fixMedia">
+			<desc>Takes the currently open media file or URL and copies it into the transcript.</desc>
+		</transformation>
+
+		<rendering-instructions>
+			<tag name="TEXT" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+				<desc>Display TEXT tag but not its attributes.</desc>
+			</tag>
+			<tag name="HEADER" visible="false" visiblecontents="false"/>
+			<tag name="NOTE" visible="false" visiblecontents="false" displayas="XPATH:@type" tibetan="false">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="AUDIO" visible="false" visiblecontents="false"/>
+			<tagview name="Tibetan Only" keystroke="F1">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+			<!--	<tag name="FORM" visible="true" icon="play.gif" visiblecontents="true" tibetan="true"> -->
+				<tag name="FORM" visible="false" visiblecontents="true" tibetan="true">
+					<attribute name="type" visible="false"/>
+				</tag>
+				<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			</tagview>
+			<tagview name="English Only" keystroke="F2">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+				<tag name="FORM" visible="false" visiblecontents="false"/>
+			<!--	<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true"> -->
+				<tag name="TRANSL" visible="false" visiblecontents="true">
+					<attribute name="xml:lang" visible="false"/>
+				</tag>
+			</tagview>
+			<tagview name="Tibetan and English" keystroke="F3">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+			<!--	<tag name="FORM" visible="true" icon="play.gif" visiblecontents="true" tibetan="true"> -->
+				<tag name="FORM" visible="false" visiblecontents="true" tibetan="true">
+					<attribute name="type" visible="false"/>
+				</tag>
+				<tag name="TRANSL" visible="false" visiblecontents="true"/>
+			</tagview>
+			<tagview name="Wylie and English" keystroke="F4">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+			<!--	<tag name="FORM" visible="true" icon="play.gif" visiblecontents="true" tibetan="true"> -->
+				<tag name="FORM" visible="false" visiblecontents="true">
+					<attribute name="type" visible="false"/>
+				</tag>
+				<tag name="TRANSL" visible="false" visiblecontents="true"/>
+			</tagview>
+			<tagview name="Notes Only" keystroke="F5">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+			<!--	<tag name="NOTE" visible="true" icon="play.gif" visiblecontents="true" tibetan="true"> -->
+				<tag name="NOTE" visible="false" visiblecontents="true">
+					<attribute name="type" visible="false"/>
+				</tag>
+				<tag name="FORM" visible="false" visiblecontents="false"/>
+				<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			</tagview>
+			<tagview name="Show Everything" keystroke="F6">
+				<tag name="S" visible="false" visiblecontents="true">
+					<attribute name="id" visible="false"/>
+					<attribute name="who" visible="false"/>
+				</tag>
+			<!--	<tag name="FORM" visible="true" icon="play.gif" visiblecontents="true" tibetan="true"> -->
+				<tag name="FORM" visible="false" visiblecontents="true" tibetan="true">
+					<attribute name="type" visible="false"/>
+				</tag>
+				<tag name="TRANSL" visible="false" visiblecontents="true">
+					<attribute name="xml:lang" visible="false"/>
+				</tag>
+				<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type">
+					<attribute name="type" visible="false"/>
+				</tag>
+			</tagview>
+		</rendering-instructions>
+</qd-configuration>

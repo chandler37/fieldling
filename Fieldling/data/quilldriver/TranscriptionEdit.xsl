@@ -139,6 +139,22 @@
 						</xsl:choose>
 					</xsl:element>
 				</xsl:when>
+				<xsl:when test="$qd.task='maximizeStop'">
+					<xsl:element name="S">
+						<xsl:if test="@who">
+							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:choose>
+							<xsl:when test="AUDIO">
+								<AUDIO start="{AUDIO/@start}" end="{$qd.mediaduration}" />
+							</xsl:when>
+						</xsl:choose>
+					</xsl:element>
+				</xsl:when>
 				<xsl:when test="$qd.task='increaseStart'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -194,7 +210,7 @@
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.rapidincrease}" />
 						</xsl:if>
 					</xsl:element>
-				</xsl:when>				
+				</xsl:when>
 				<xsl:when test="$qd.task='decreaseStart'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -347,6 +363,18 @@
 							<xsl:text> </xsl:text>
 						</xsl:element>
 					</HEADER>
+				</xsl:when>
+				<xsl:when test="$qd.task='addGeneral'">
+					<xsl:element name="S">
+						<xsl:if test="@who">
+							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:apply-templates select="*" />
+						<NOTE type="general"><xsl:text> </xsl:text></NOTE>
+					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='addLexical'">
 					<xsl:element name="S">
