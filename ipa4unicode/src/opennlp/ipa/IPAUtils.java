@@ -16,8 +16,9 @@ public class IPAUtils {
     static final char FILLER = '\uE000';
     IPANetwork ipaNetwork;
     
-    class Sequence {
-        int start, end;
+    public class Sequence {
+        public int start, end;
+        
         public Sequence(int start, int end) {
             this.start = start;
             this.end = end;
