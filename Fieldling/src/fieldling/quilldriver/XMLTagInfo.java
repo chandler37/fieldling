@@ -91,7 +91,23 @@ public class XMLTagInfo {
 		else return ((Boolean)obj).booleanValue();
 	}
     public Object getTagDisplay(org.w3c.dom.Element tag) {
-        return "DOMTAG";
+		String name = tag.getNodeName();
+		Object icon = displayIcon.get(name);
+		if (icon == null) {
+			Object obj = displayAs.get(name);
+			if (obj == null) return name;
+			String val = (String)obj;
+			//if (val.startsWith("XPATH:")) {
+				
+                //DOM FIX NEEDED HERE!!!!
+                Object node = null;
+                //Object node = XMLUtilities.selectSingleJDOMNode(tag, val.substring(val.indexOf(':')+1));
+				if (node == null) return name;
+				String s = XMLUtilities.getTextForJDOMNode(node);
+				if (s == null) return name;
+				else return s;
+			//} else return val;
+		} else return icon;
     }
 	public Object getTagDisplay(Element tag) {
 		String name = tag.getQualifiedName();
