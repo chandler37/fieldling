@@ -519,7 +519,7 @@ public class QDShell extends JFrame {
 			keyboardItems[0].setSelected(true);
 		else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
 			keyboardItems[i].setSelected(true);
-			qd.changeKeyboard(keybdMgr.elementAt(i));
+			//qd.changeKeyboard(keybdMgr.elementAt(i));
 		}
 		for (int k=0; k<keyboardItems.length; k++)
 			preferencesMenu.add(keyboardItems[k]);
