@@ -57,8 +57,8 @@ public class IPANetwork {
     public IPANetwork(IPASymbol[] ipaSymbols) {
             Map m = getDomainRestrictions(ipaSymbols);
             LinkedList ll = new LinkedList(m.keySet());
-            initialState = new State(INITIAL_COMBINING_CLASS, null);
-            finalXState = new State(FINALX_COMBINING_CLASS, null);
+            initialState = new State(INITIAL_COMBINING_CLASS, null, null);
+            finalXState = new State(FINALX_COMBINING_CLASS, null, null);
             domainRestrictions = (Set)m.get(ll.getLast());
             Integer[] cclass = (Integer[])m.keySet().toArray(new Integer[0]);
             int[] combiningClasses = new int[cclass.length];
@@ -258,7 +258,7 @@ public class IPANetwork {
                     else
                         otherProps.add(prop); //for transducer
                 }
-                State resultState = new State(-1, charProps);
+                State resultState = new State(-1, charProps, new HashSet());
                 if (!resultStates.contains(resultState))
                     resultStates.add(resultState);
                 initialTransitions.add(new StateTransition(initialState, resultState, ipaSymbols[i].getUnicodeCharacter(), otherProps));
@@ -266,6 +266,11 @@ public class IPANetwork {
         }
         return initialTransitions;
     }
+    
+     /*
+     KEY FOR FINDING THOSE TO ADD AS REMAINING TRANSITIONS:
+     if (iT.endState.properties.containsAll(domainSet)) {*/
+    
     private Set[] getRemainingTransitions(IPASymbol[] ipaSymbols, Set initialTransitions, int[] combiningClasses, Set domainRestrictions) {
         Set[] transitionsForClass = new HashSet[combiningClasses.length];
         Set[] modifiersForClass = new HashSet[combiningClasses.length];
@@ -300,11 +305,13 @@ public class IPANetwork {
                         Iterator udder = initialTransitions.iterator();
                         while (udder.hasNext()) {
                             StateTransition iT = (StateTransition)udder.next();
-                            if (iT.endState.properties.containsAll(domainSet)) {
+                            if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
                                 Set outputState = new HashSet(iT.endState.properties);
                                 outputState.removeAll(loseSet);
                                 outputState.addAll(gainSet);
-                                State res = new State(combiningClasses[i], outputState);
+                                Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
+                                incompatibleWith.addAll(symbol.getIncompatibleWith());
+                                State res = new State(combiningClasses[i], outputState, incompatibleWith);
                                 StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
                                 transitionsForClass[i].add(st);
                             }
@@ -313,11 +320,13 @@ public class IPANetwork {
                             Iterator iterX = transitionsForClass[k].iterator();
                             while (iterX.hasNext()) {
                                 StateTransition iT = (StateTransition)iterX.next();
-                                if (iT.endState.properties.containsAll(domainSet)) {
+                                if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
                                     Set outputState = new HashSet(iT.endState.properties);
                                     outputState.removeAll(loseSet);
                                     outputState.addAll(gainSet);
-                                    State res = new State(combiningClasses[i], outputState);
+                                    Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
+                                    incompatibleWith.addAll(symbol.getIncompatibleWith());
+                                    State res = new State(combiningClasses[i], outputState, incompatibleWith);
                                     StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
                                     transitionsForClass[i].add(st);
                                 }
@@ -342,11 +351,13 @@ public class IPANetwork {
                             Iterator iterX = transitionsForClass[i].iterator(); 
                             while (iterX.hasNext()) {
                                         StateTransition iT = (StateTransition)iterX.next();
-                                        if (iT.endState.properties.containsAll(domainSet)) {
+                                        if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
                                             Set outputState = new HashSet(iT.endState.properties);
                                             outputState.removeAll(loseSet);
                                             outputState.addAll(gainSet);
-                                            State res = new State(combiningClasses[i], outputState);
+                                            Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
+                                            incompatibleWith.addAll(symbol.getIncompatibleWith());
+                                            State res = new State(combiningClasses[i], outputState, incompatibleWith);
                                             StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
                                             if (!(transitionsForClass[i].contains(st) || bonus.contains(st)))
                                                 bonus.add(st);
@@ -466,6 +477,7 @@ public class IPANetwork {
     private class State {
         int combiningClass;
         Set properties;
+        Set incompatibleWith;
         private boolean isFinalState;
         
         /**
@@ -481,15 +493,18 @@ public class IPANetwork {
         * </UL>
         * @param properties the set of phonological properties which
         * this state needs to "expel".
+        * @param mutuallyExclusiveWith the set of IPA symbols through which
+        * there may be no path from this state
         * <P>If a finite-transducer is made from this state data, then a final
         * empty pseudo-input is provided, at which point the property
         * set is expelled to the output.</P>
         * <P>If this state is the initial or final pseudo-state, then this
         * value is null.
         */
-        State(int combiningClass, Set properties) {
+        State(int combiningClass, Set properties, Set mutuallyExclusiveWith) {
             this.combiningClass = combiningClass; //INITIAL_COMBINING_CLASS if start state, FINALX_COMBINING_CLASS if final pseudo-state
             this.properties = properties; //null if start state or final pseudo-state
+            incompatibleWith = mutuallyExclusiveWith;
             if (combiningClass == FINALX_COMBINING_CLASS)
                 isFinalState = true;
             else
@@ -510,14 +525,14 @@ public class IPANetwork {
             if (combiningClass == s2.combiningClass) {
                 if (combiningClass == INITIAL_COMBINING_CLASS || combiningClass == FINALX_COMBINING_CLASS)
                     return true;
-                if (properties.equals(s2.properties))
+                if (properties.equals(s2.properties) && incompatibleWith.equals(s2.incompatibleWith))
                     return true;
             }
             return false;
         }
         public int hashCode() {
-            if (properties != null)
-                return combiningClass + properties.hashCode();
+            if (properties != null && incompatibleWith != null)
+                return combiningClass + properties.hashCode() + incompatibleWith.hashCode();
             else
                 return -100;
         }
