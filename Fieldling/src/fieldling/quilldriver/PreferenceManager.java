@@ -46,6 +46,7 @@ public class PreferenceManager extends JPanel {
 		public static final String WINDOW_HEIGHT_KEY = "WINDOW_HEIGHT";
 		public static final String WORKING_DIRECTORY_KEY = "WORKING_DIRECTORY";
 		public static final String RECENT_FILES_KEY = "RECENT_FILES";
+                public static final String RECENT_VIDEOS_KEY = "RECENT_VIDEOS";
 		public static final String MEDIA_DIRECTORY_KEY = "MEDIA_DIRECTORY";
 		public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
 		public static final String SLOW_ADJUST_KEY = "SLOW_ADJUST";
@@ -75,6 +76,7 @@ public class PreferenceManager extends JPanel {
 		public static String working_directory;
 		@TIBETAN@public static String tibetan_keyboard;
 		public static String recent_files;
+                public static String recent_videos;
 		public static String configuration_key;
 		public static String media_player;
 		

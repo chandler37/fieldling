@@ -46,9 +46,7 @@ public class QD extends JDesktopPane {
     public static final int VIEW_MODE = 0;
     public static final int EDIT_MODE = 1;
     protected int mode = VIEW_MODE;
-    
     protected static Color hColor = Color.cyan;
-    
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected XMLEditor editor = null;
@@ -68,19 +66,20 @@ public class QD extends JDesktopPane {
 	protected File transcriptFile = null;
 	protected XMLTagInfo currentTagInfo = null;
 	protected Configuration configuration = null;
-	protected String configURL, newURL, editURL, dtdURL, rootElement;
+	protected String configURL, newURL, editURL, dtdURL;
 	public Timer checkTimeTimer = null;
 	protected Transformer transformer = null; //this has no place here
     protected PreferenceManager prefmngr;
+    protected String newTemplateFileName = null;
 
 	public QD(Configuration configuration, PreferenceManager prefs) {
-        prefmngr = prefs;
+                prefmngr = prefs;
 		setupGlobals();
 		setupGUI();
 		configure(configuration);
 	}
 	public QD(PreferenceManager prefs) {
-        prefmngr = prefs;
+                prefmngr = prefs;
 		setupGlobals();
 		setupGUI();
 	}
@@ -88,16 +87,16 @@ public class QD extends JDesktopPane {
 	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
 		try {
-System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+                        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            dbf.setValidating(true);
-            dbf.setAttribute("http://apache.org/xml/features/validation/schema", Boolean.TRUE);
-	    docBuilder = dbf.newDocumentBuilder();
-            /*handler = new SAXValidator();
-            docBuilder.setErrorHandler(handler);
-        } catch (SAXException saxe) {
-            saxe.printStackTrace();*/
+                        dbf.setNamespaceAware(true);
+                        dbf.setValidating(true);
+                        dbf.setAttribute("http://apache.org/xml/features/validation/schema", Boolean.TRUE);
+                        docBuilder = dbf.newDocumentBuilder();
+                        /*handler = new SAXValidator();
+                        docBuilder.setErrorHandler(handler);
+                } catch (SAXException saxe) {
+                        saxe.printStackTrace();*/
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		}
@@ -180,18 +179,12 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 
 		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
 			tcm = time_model;
-
-			//JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
 			JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.jpg")));
 			JButton outButton = new JButton(new ImageIcon(QD.class.getResource("left-arrow.jpg")));
-			//JButton playButton = new JButton(new ImageIcon(QD.class.getResource("play.gif")));
 			inButton.setBorder(null);
 			outButton.setBorder(null);
-			//playButton.setBorder(null);
 			inButton.setPreferredSize(new Dimension(inButton.getIcon().getIconWidth(), inButton.getIcon().getIconHeight()));
 			outButton.setPreferredSize(new Dimension(outButton.getIcon().getIconWidth(), outButton.getIcon().getIconHeight()));
-			//playButton.setPreferredSize(new Dimension(playButton.getIcon().getIconWidth(), playButton.getIcon().getIconHeight()));
-
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					long t = player.getCurrentTime();
@@ -215,27 +208,11 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					}
 				}
 			});
-			/*playButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (stopTime > startTime && startTime > -1) {
-						try {
-							//automatic highlighting & scrolling interferes with time-coding
-							//player.cancelAnnotationTimer();
-							//player.setAutoScrolling(false);
-							player.cmd_playSegment(new Long(startTime), new Long(stopTime));
-						} catch (PanelPlayerException smpe) {
-							smpe.printStackTrace();
-						}
-					}
-				}
-			});*/
 			TEXT_WIDTH = 60;
 			TEXT_HEIGHT = inButton.getPreferredSize().height / 2;
-
 			currentTimeField = new JTextField();
 			currentTimeField.setEditable(false);
 			currentTimeField.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
-
 			startSpinner = new fieldling.util.SimpleSpinner();
 			stopSpinner = new fieldling.util.SimpleSpinner();
 			startSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
@@ -246,17 +223,12 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 			setStartTime(0);
 			setStopTime(0);
 			setLayout(new BorderLayout());
-			//JPanel jp_top = new JPanel(new FlowLayout());
 			JPanel jp_center = new JPanel(new FlowLayout());
-			//jp_top.add(clockLabel);
-			//jp_top.add(currentTimeField);
 			jp_center.add(inButton);
 			jp_center.add(startSpinner);
-			//jp_center.add(playButton);
-			jp_center.add(currentTimeField); //added
+			jp_center.add(currentTimeField);
 			jp_center.add(stopSpinner);
 			jp_center.add(outButton);
-			//add("North", jp_top);
 			add("Center", jp_center);
 			tcm.addTimeCodeModelListener(this);
 		}
@@ -375,7 +347,12 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 	public PanelPlayer getMediaPlayer() {
 		return player;
 	}
-
+        
+        protected void changeTranscriptFile(File newFile) {
+            if (transcriptFile != null)
+                transcriptFile = newFile;
+        }
+        
     //DOM FIX!!!
 	public boolean saveTranscript() {
 		if (transcriptFile == null)
@@ -431,7 +408,10 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 			return false;
 	}
 
-	public boolean loadTranscript(File file) {
+        public boolean loadTranscript(File file) {
+            return loadTranscript(file, null);
+        }
+	public boolean loadTranscript(File file, String videoUrl) {
 			if (!file.exists())
 				return false;
 			if (player == null) {
@@ -544,6 +524,12 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
 				}
 				if (nomedia) { //can't find movie: open new movie
+                                    if (videoUrl != null) {
+                                        try {
+                                            player.loadMovie(new URL(videoUrl));
+                                            nomedia = false;
+                                        } catch (MalformedURLException murle) {murle.printStackTrace();}
+                                    } else {
 					JFileChooser fc = new JFileChooser(PreferenceManager.media_directory);
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
@@ -555,6 +541,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 							//INSERT VIDEO NAME INTO DATA FILE
 						} catch (MalformedURLException murle) {} //do nothing
 					}
+                                    }
 				}
 				if (nomedia) { //user did not open a valid movie; therefore transcript will not be opened
 					transcriptFile = null;
@@ -826,7 +813,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 				else if (type.equals("text"))
 					textConfig.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
 			}
-			rootElement = textConfig.getProperty("qd.root.element");
+                        newTemplateFileName = textConfig.getProperty("qd.new.template.file.name");
             List allNamespaces = new ArrayList();
             if (config.getProperty("qd.namespaces") != null) {
                 String nsList = config.getProperty("qd.namespaces");
@@ -891,8 +878,9 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 			Iterator actionSetIter = actionSets.iterator();
 			try {
 			//stupid: I just made Transformer global for no good reason
-			if (configuration.getEditURL() != null)
-				transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
+			if (configuration.getEditURL() != null) {
+                                transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
+                        }
 			
 			while (actionSetIter.hasNext()) {
 				org.jdom.Element thisSet = (org.jdom.Element)actionSetIter.next();
@@ -904,7 +892,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
 					final String nodeSelector = e.getAttributeValue("node");
-                    final boolean move = Boolean.valueOf(e.getAttributeValue("move")).booleanValue();
+                                        final boolean move = Boolean.valueOf(e.getAttributeValue("move")).booleanValue();
 					final String command = e.getAttributeValue("qd-command");
 					final String tasks = e.getAttributeValue("xsl-task");
 					if (tasks == null) { //no need for xsl transform
@@ -955,7 +943,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 					} else { //need for xsl transform
 						final Action keyAction = new AbstractAction() {
 							public void actionPerformed(ActionEvent e) {
-								try {
+                                                            try {
 									if (command != null) executeCommand(command);
 									editor.fireEndEditEvent();
 									editor.setEditabilityTracker(false);
@@ -974,9 +962,30 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 										String val = config.getProperty(key);
 										if (!key.startsWith("qd.")) {
 											Object obj = XMLUtilities.selectSingleDOMNode(context, val, namespaces);
-                                            if (obj != null) {
-												transformer.setParameter(key, obj);
-                                            }
+                                                      org.w3c.dom.Node objAsDeepClonedNode = ((org.w3c.dom.Node)obj).cloneNode(true);
+                                                                                      /*The DOM2DTM class serves up a DOM's contents via the DTM API. 
+                                                                                      Note that it doesn't necessarily represent a full Document tree. You can 
+                                                                                      wrap a DOM2DTM around a specific node and its subtree and the right 
+                                                                                      things should happen. (I don't _think_ we currently support DocumentFrgment 
+                                                                                      nodes as roots, though that might be worth considering.) Note too that we 
+                                                                                      do not currently attempt to track document mutation. If you alter the DOM 
+                                                                                      after wrapping DOM2DTM around it, all bets are off.                               
+                                                                                        *///LOGGING
+                                  /* org.w3c.dom.Element nd = (org.w3c.dom.Element)obj;
+                                    try {
+                                        System.out.println("\n------OBJ\n");
+                                    org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));
+                                    ser.setOutputByteStream(System.out);
+                                        org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
+                                    domser.serialize(nd);
+                                    } catch (IOException ioe) {
+                                        ioe.printStackTrace();
+                                    }*/
+                                    //ENDLOGGING
+
+                                                                                        if (obj != null) {
+                                                                                            transformer.setParameter(key, objAsDeepClonedNode);
+                                                                                        }
 										}
 									}
 									enm = textConfig.propertyNames();
@@ -1016,8 +1025,8 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 									org.w3c.dom.DocumentFragment replaceFrag = editor.getXMLDocument().createDocumentFragment();
                                     transformer.transform(new DOMSource(frag), new DOMResult(replaceFrag));
 									
-                                    /*LOGGING
-                                    try {
+                                   //LOGGING
+                                    /*try {
                                         System.out.println("\n------SOURCE\n");
                                     org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));
                                     ser.setOutputByteStream(System.out);
@@ -1028,7 +1037,7 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
                                     } catch (IOException ioe) {
                                         ioe.printStackTrace();
                                     }*/
-                                    
+                                    //ENDLOGGING
 
 									int start = editor.getStartOffsetForNode(transformNode);
 									int end = editor.getEndOffsetForNode(transformNode);
