@@ -80,7 +80,7 @@ public class XMLUtilities {
 		if (domNode == null)
 			return null;
 		try {
-			org.jaxen.Path path = new org.jaxen.dom.DOMXPath(xpathExpression);
+			org.jaxen.XPath path = new org.jaxen.dom.DOMXPath(xpathExpression);
 			for (int i=0; i<namespaces.length; i++)
 				path.addNamespace(namespaces[i].getPrefix(), namespaces[i].getURI());
 			return path.selectNodes(domNode);
