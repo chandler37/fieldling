@@ -128,10 +128,6 @@ public class PreferenceManager extends JPanel {
 
 
 
-		//public static Field md,sa,ra,pm,ff,fs,tfs,wxk,wyk,wwk,whk,wd,rfk,ck,tkk,mpk;
-
-
-
 		public static String media_directory;
 
 		public static int slow_adjust;
@@ -217,316 +213,54 @@ public class PreferenceManager extends JPanel {
 
 
 
-
-
-			//preference defaults and values
-
-	/***		private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
-
-			public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
-
-			public static int slow_adjust = myPrefs.getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
-
-			public static int rapid_adjust = myPrefs.getInt(RAPID_ADJUST_KEY, 250); //in milliseconds
-
-			public static int play_minus = myPrefs.getInt(PLAY_MINUS_KEY, 1000); // milliseconds
-
-			public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
-
-			public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-
-			public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
-
-
-
-****/
 		}
-
-
-
-/***
-
-
-
-				md= myPrefs.getField(MEDIA_DIRECTORY_KEY);
-
-				qdshellclass.media_directory = (md.get(o)).toString();
-
-
-
-				sa= myPrefs.getField(SLOW_ADJUST_KEY);
-
-				qdshellclass.slow_adjust = (int) sa.getInt(o);
-
-
-
-				ra= myPrefs.getField(RAPID_ADJUST_KEY);
-
-				qdshellclass.rapid_adjust = (int) ra.getInt(o);
-
-
-
-				pm= myPrefs.getField(PLAY_MINUS_KEY);
-
-				qdshellclass.play_minus = (int) pm.getInt(o);
-
-
-
-				ff= myPrefs.getField(FONT_FACE_KEY);
-
-				qdshellclass.font_face = (ff.get(o)).toString();
-
-
-
-				fs= myPrefs.getField(FONT_SIZE_KEY);
-
-				qdshellclass.font_size = (int) fs.getInt(o);
-
-
-
-				tfs= myPrefs.getField(TIBETAN_FONT_SIZE_KEY);
-
-				qdshellclass.tibetan_font_size = (int) tfs.getInt(o);
-
-
-
-				wxk= myPrefs.getField(WINDOW_X_KEY);
-
-				qdshellclass.xl = (int) wxk.getInt(o);
-
-
-
-				wyk= myPrefs.getField(WINDOW_Y_KEY);
-
-				qdshellclass.yl = (int) wyk.getInt(o);
-
-
-
-				wwk= myPrefs.getField(WINDOW_WIDTH_KEY);
-
-				qdshellclass.ww = (int) wwk.getInt(o);
-
-
-
-				whk= myPrefs.getField(WINDOW_HEIGHT_KEY);
-
-				qdshellclass.wh = (int) whk.getInt(o);
-
-
-
-				wd= myPrefs.getField(WORKING_DIRECTORY_KEY);
-
-				qdshellclass.working_directory = (wd.get(o)).toString();
-
-
-
-				rfk= myPrefs.getField(RECENT_FILES_KEY);
-
-				qdshellclass.recent_files = (rfk.get(o)).toString();
-
-
-
-				ck= myPrefs.getField(CONFIGURATION_KEY);
-
-				qdshellclass.configuration_key = (ck.get(o)).toString();
-
-
-
-				tkk= myPrefs.getField(TIBETAN_KEYBOARD_KEY);
-
-				qdshellclass.tibetan_keyboard = (tkk.get(o)).toString();
-
-
-
-				mpk= myPrefs.getField(MEDIA_PLAYER_KEY);
-
-				qdshellclass.media_player = (mpk.get(o)).toString();
-
-
-
-
-
-
-
-
-
-			 } catch (NoSuchFieldException e)
-
-			 {
-
-				  System.out.println(e);
-
-			 } catch (SecurityException e)
-
-			 {
-
-				  System.out.println(e);
-
-			 } catch (IllegalAccessException e)
-
-			 {
-
-			 	 System.out.println(e);
-
-			 }
-
-***/
-
-
-
-
-
-
 
 
 
 public String getValue(String key,String defvalue)
-
 {
-
-	if (myPrefs == null)
-
+	if (myPrefs != null)
 	{
-
-		try {
-            System.out.println("hi");
-
-
-			// do nothing
-
-
-
-		} catch (NumberFormatException nfe)
-
-		{
-
-			nfe.printStackTrace();
-
-		}
-
-	}
-
-	else
-
-	{
-
 		try
-
 		{
-
 			Object[] argument = new Object[] {key, defvalue};
 
-
-
 			if((String)getMethodvalue.invoke(myPrefs, argument) == null)
-
 				return defvalue;
-
 			else
-
 				return (String)getMethodvalue.invoke(myPrefs, argument);
-
-
-
-
-
 		} catch (IllegalAccessException illae)
-
 		{
-
 			illae.printStackTrace();
-
 		} catch (InvocationTargetException ite)
-
 		{
-
 			ite.printStackTrace();
-
 		}
-
 	}
-
-	return null;
-
-
-
+	return defvalue;
 }
-
-
-
 
 
 public int getInt(String key,int defvalue)
-
 {
-
-	if (myPrefs == null)
-
+	if (myPrefs != null)
 	{
-
 		try {
-
-
-
-			// do nothing
-
-
-
-		} catch (NumberFormatException nfe)
-
-		{
-
-			nfe.printStackTrace();
-
-		}
-
-	} else
-
-	{
-
-		try {
-
-
-
 			Object[] argument = new Object[] {key, new Integer(defvalue)};
-
-
-
 			if(((Integer)getMethodint.invoke(myPrefs, argument)).intValue() == 0)
-
 				return defvalue;
-
 			else
-
 				return ((Integer)getMethodint.invoke(myPrefs, argument)).intValue();
-
-
-
 		} catch (IllegalAccessException illae)
-
 		{
-
 			illae.printStackTrace();
-
 		} catch (InvocationTargetException ite)
-
 		{
-
 			ite.printStackTrace();
-
 		}
-
 	}
-
-	return 0;
-
+	return defvalue;
 }
-
-
-
-
-
-
 
 // function to set integer value
 
