@@ -1,29 +1,120 @@
+<!-- Specifies what it is to be a customization or configuration of
+     QuillDriver. If you create this file and register it with qd-configurations.xml,
+     then QuillDriver loads this up as a possible configuration.
+     
+     @title QD-configuration
+     @root qd-configuration -->
+
+<!-- The root element for this DTD. -->
 <!ELEMENT qd-configuration (parameters, actions, rendering-instructions?)>
 
+<!-- Parameters are passed to QuillDriver and to the
+     editing stylesheet. -->
 <!ELEMENT parameters (parameter+)>
+
+<!-- A parameter -->
 <!ELEMENT parameter EMPTY>
+
+<!-- @attr name The name of the parameter
+     @attr val The value of the parameter,
+               specified as text or as an
+	       XPath path
+     @attr type 'text' if the parameter is defined
+                as a constant text value, or 'xpath'
+		if it is defined as an XPath path -->
 <!ATTLIST parameter name CDATA #REQUIRED
                     val CDATA #REQUIRED
 		    type CDATA #IMPLIED
 		    >
-		    
+
+<!-- Actions specify the set of allowable functions
+     in QuillDriver -->		    
 <!ELEMENT actions (action-set+)>
+
+<!-- An action set is just a grouping of actions.
+     Each action set gets its own menu in the
+     QuillDriver menu bar. -->
 <!ELEMENT action-set (action+)>
+
+<!-- @attr name becomes the name of the menu on the menu bar -->
 <!ATTLIST action-set name CDATA #REQUIRED>
+
+<!-- An action -->
 <!ELEMENT action EMPTY>
+
+<!-- @attr name the name of this action, to appear
+     as a menu item on its action set's menu
+     
+     @attr keystroke the shortcut key corresponding to this
+     action, following the format in the Java API under 
+     <a href="http://java.sun.com/j2se/1.4.1/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)">KeyStroke.getKeystroke(String s)</a>
+     
+     @attr node an XPath path which identifies the XML node
+     that this action operates on, relative to the currently
+     active node
+     
+     @attr qd-command defines a programmatic QuillDriver 
+     command to be executed after the specified operation
+     is performed (optional)
+     
+     @attr xsl-task specifies a task in the XSL editing file
+     which performs on operation on the selected node -->
+ 	
 <!ATTLIST action name CDATA #REQUIRED
                  keystroke CDATA #REQUIRED
 		 node CDATA #IMPLIED
 		 qd-command CDATA #IMPLIED
 		 xsl-task CDATA #IMPLIED>
 
+<!-- Instructs QuillDriver how to render XML files in
+     this configuration. -->
 <!ELEMENT rendering-instructions (tag | tagview )*>
 
+<!-- A set of rendering instructions which defines a
+     'view' of the XML. Each such view will appear on
+     the QuillDriver 'Visualizations' menu. -->
 <!ELEMENT tagview (tag+)>
+
+<!-- @attr name the name of this view, which
+     appears as an option on the 'Visualizations' menu
+     
+     @attr keystroke a keyboard shortcut to quickly
+     get this view. You'll see how to write this in
+     the Java API under 
+     <a href="http://java.sun.com/j2se/1.4.1/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)">KeyStroke.getKeyStroke(String s)</a> -->
 <!ATTLIST tagview name CDATA #REQUIRED
                   keystroke CDATA #REQUIRED
 		  >
+
+<!-- A tag -->
 <!ELEMENT tag (attribute*, desc?)>
+
+<!-- @attr name the name of this element, including its
+     XML namespace
+     
+     @attr visible true if the tag itself should
+     be displayed, false if not
+     
+     @attr visiblecontents true if the <em>contents</em> of
+     this tag should be displayed, false otherwise
+     
+     @attr displayas if you want to render the tag as
+     something other than its actual value, enter that
+     here
+     
+     @attr editable true if the tag's text is editable,
+     false if not
+     
+     @attr icon if you want to render the tag as an
+     icon, type the name of the icon file here, and
+     put it in the data/quilldriver directory. For example,
+     if you type 'play.gif' here then this tag will be
+     rendered as a play button ('play.gif' is already in
+     data/quilldriver)
+     
+     @attr tibetan only relevant for the Tibetan version
+     of QuillDriver: true if the tag's text is to be rendered
+     in Tibetan, false otherwise -->
 <!ATTLIST tag name CDATA #REQUIRED
               visible CDATA "true"
 	      visiblecontents CDATA "true"
@@ -32,10 +123,23 @@
 	      icon CDATA #IMPLIED
 	      tibetan CDATA "false"
 	      >
+
+<!-- An attribute -->
 <!ELEMENT attribute EMPTY>
+
+<!-- @attr name the name of this attribute
+
+     @attr visible true if the attribute should be
+     displayed, false if not
+     
+     @attr icon if you want to render the attribute as an
+     icon, type the name of the icon file here, and
+     put it in the data/quilldriver directory. -->
 <!ATTLIST attribute name CDATA #REQUIRED
                     visible CDATA "true"
 		    icon CDATA #IMPLIED
 		    >
+		    
+<!-- A description -->
 <!ELEMENT desc (#PCDATA)>
 

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE qd-configurations SYSTEM "qd-configuration-set.dtd">
 
 <qd-configurations>
 		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->

@@ -62,11 +62,15 @@ a version optimized for use with Tibetan script.
 	<property name="ftp.id"	value="eg3p"/>
 	<property name="ftp.password"	value="''"/>
 	<property name="archive.location" value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver"/>
-	<property name="mail.from"	value="eg3p@virginia.edu"/>
-	<property name="mail.host"	value="e.mail.virginia.edu"/>
-	<property name="mail.to"	value="snw8f@virginia.edu,eg3p@virginia.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,epw6y@virginia.edu,rogerand@humnet.ucla.edu,fmg3u@virginia.edu,markturin@compuserve.com,twm4g@virginia.edu"/>
+	<property name="mail.from"	value="egarrett@emich.edu"/>
+	<property name="mail.host"	value="smtp.emich.edu"/>
+	<property name="mail.to"	value="snw8f@virginia.edu,egarrett@emich.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,epw6y@virginia.edu,rogerand@humnet.ucla.edu,fmg3u@virginia.edu,markturin@compuserve.com,twm4g@virginia.edu"/>
 	<property name="update.message"	value=""/>
-	
+
+
+	<!-- Tell ant where to find the code of the DTDDoc task -->
+	<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
+
 	<path id="my.classpath">
 		<fileset id="extensions" dir="${ext}">
 			<include name="*.jar"/>
@@ -545,9 +549,22 @@ optimized for use with Tibetan script.
 	</target>
   
 	<target name="doc" depends="mp-compile,qd-compile" description="Build the documentation">
-		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${raw.source}" destdir="${build.doc}/api" bottom="Programme de These">
+		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${unicode.source}" destdir="${build.doc}/api" bottom="Programme de These">
 			<classpath refid="my.classpath"/>
 		</javadoc>
+		<copy todir="${build.doc}">
+			<fileset dir="${doc}">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+		<!-- Execute DTDDoc -->
+		<DTDDoc showHiddenTags="true"
+                	showFixmeTags="false"
+			sourceDir="${data.dir}/quilldriver"
+			destDir="${build.doc}/DTDDocs"
+			docTitle = "QD DTDs">
+			<include name="*.dtd"/>
+		</DTDDoc>
 	</target>
        
 	<target name="distrib" depends="clean,mp-jar,qd-jar,doc" description="clean, compile, build jars, docs, and zips">
