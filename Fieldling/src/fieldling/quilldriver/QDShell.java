@@ -271,18 +271,7 @@ public class QDShell extends JFrame {
 				}
 			}
 		});
-
-		// Added a few lines - shreya
-		JMenuItem UserInfo = new JMenuItem("User Info");
-		UserInfo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CreateFrame();
-			}
-		});
-
-
-		JMenuItem Feedback = new JMenuItem("Feedback");
-
+	
 		JMenuItem openItem = new JMenuItem(messages.getString("Open"));
 		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
@@ -342,8 +331,6 @@ public class QDShell extends JFrame {
 		projectMenu.add(newItem);
 		projectMenu.addSeparator();
 		projectMenu.add(openItem);
-		projectMenu.add(UserInfo);
-		projectMenu.add(Feedback);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
@@ -392,9 +379,11 @@ public class QDShell extends JFrame {
 						JMenuBar bar = QDShell.this.getJMenuBar();
 						JMenu fileMenu = bar.getMenu(0);
 						JMenu prefMenu = bar.getMenu(1);
+						JMenu betaMenu = bar.getMenu(2);
 						JMenuBar newBar = new JMenuBar();
 						newBar.add(fileMenu);
 						newBar.add(prefMenu);
+						newBar.add(betaMenu);
 						JMenu[] configMenus = qd.getConfiguredMenus();
 						for (int z=0; z<configMenus.length; z++) {
 							configMenus[z].getPopupMenu().setLightWeightPopupEnabled(false);
@@ -493,8 +482,6 @@ public class QDShell extends JFrame {
 		}
 		}
 
-
-
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		preferencesMenu.add(fontItem);
 		preferencesMenu.add(timeCodeItem);
@@ -525,11 +512,25 @@ public class QDShell extends JFrame {
 			preferencesMenu.add(keyboardItems[k]);
 		}
 
+		//Beta menu for beta-only menu-options:
+		JMenuItem feedbackItem = new JMenuItem("Feedback");
+		feedbackItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new UserFeedback(QDShell.this);
+			}
+		});
+		
+		JMenu betaMenu =  new JMenu("Dev-Beta");
+		betaMenu.add(feedbackItem);
+		
+		
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
 		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(preferencesMenu);
+		betaMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+		bar.add(betaMenu);
 		final JMenu[] configMenus = qd.getConfiguredMenus();
 		for (int k=0; k<configMenus.length; k++) {
 			configMenus[k].getPopupMenu().setLightWeightPopupEnabled(false);
@@ -705,10 +706,4 @@ public class QDShell extends JFrame {
 		}
 
 	}
-
-	void CreateFrame()
-  {
-	  Userinfo ui= new Userinfo();
-	  ui.show();
-  }
 }
