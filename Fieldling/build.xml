@@ -437,6 +437,23 @@ optimized for use with Tibetan script.
 			<include name="*.dtd"/>
 		</DTDDoc>
         -->
+        <!--
+        <mkdir dir="${webapp.dir}/QuillDriver.app"/>
+        <mkdir dir="${webapp.dir}/QuillDriver.app/Contents"/>
+        <mkdir dir="${webapp.dir}/MacOS"/>
+        -->
+        
+        <!-- Step 5.5 make Windows executable -->
+        <mkdir dir="TEMP/QuillDriver"/>
+        <copy todir="TEMP/QuillDriver/DONTMOVE">
+            <fileset dir="${webstart.lib}"/>
+        </copy>
+		<echo file="TEMP/QuillDriver/Run-QD.bat" append="false">java -cp DONTMOVE/quilldriver.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell
+        </echo>
+		<echo file="TEMP/QuillDriver/Run-QD-TIB.bat" append="false">java -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/Jskad.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.QDShell
+        </echo>
+        <zip destfile="${webapp.dir}/QD_Windows.zip" basedir="TEMP"/>
+        <delete dir="TEMP"/>
         
         <!-- Step 6: zip entire webapp into war file -->
         <zip destfile="${build.dir}/quilldriver.war" basedir="${webapp.dir}"/>
