@@ -197,7 +197,7 @@ public class IPATokenizer implements Enumeration {
         } else if (isWhitespace(data[i])) {
             for (i = i+1; isWhitespace(data[i]); i++);
         } else if (isStressMark(data[i])) i++;
-        } else
+        else
             return -1;
         return i-start;
     }
