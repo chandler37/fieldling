@@ -162,7 +162,7 @@ public class QDShell extends JFrame {
                 
                 //file choice: new transcript, open existing, or open recent
                 JPanel dataSourceChoice = new JPanel();
-                dataSourceChoice.setBorder(BorderFactory.createTitledBorder("Select data source"));
+                dataSourceChoice.setBorder(BorderFactory.createTitledBorder(messages.getString("SelectDataSource")));
                 java.util.List recentFileList = new ArrayList();
                 java.util.List recentVideoList = new ArrayList();
                 String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
@@ -217,7 +217,7 @@ public class QDShell extends JFrame {
                 });
                 
                 //ok button: make changes
-                JButton okButton = new JButton("Ok");
+                JButton okButton = new JButton(messages.getString("Ok"));
                 okButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         ButtonModel selectedConfiguration = configGroup.getSelection();
@@ -238,7 +238,7 @@ public class QDShell extends JFrame {
                             if (newTemplateFile == null) System.exit(0); //FIX
                             if (!newTemplateFile.exists()) System.exit(0); //FIX
                             qd.loadTranscript(newTemplateFile);
-                            File saveAsFile = selectTranscriptFile("Save Transcript As");
+                            File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
                             if (saveAsFile != null)
                                 qd.changeTranscriptFile(saveAsFile);
                             String transcriptString = saveAsFile.getAbsolutePath();
@@ -246,7 +246,7 @@ public class QDShell extends JFrame {
                             makeRecentlyOpened(transcriptString);
                             makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
                         } else if (command.equals(messages.getString("OpenExisting"))) {
-                            File transcriptFile = selectTranscriptFile("Open Transcript");
+                            File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
                             if (transcriptFile != null) {
                                 qd.loadTranscript(transcriptFile);
                                 String transcriptString = transcriptFile.getAbsolutePath();
@@ -344,7 +344,7 @@ public class QDShell extends JFrame {
 	public JMenuBar getQDShellMenu() {
                 //File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
-                JMenuItem wizardItem = new JMenuItem("New Wizard");
+                JMenuItem wizardItem = new JMenuItem(messages.getString("NewWizard"));
                 wizardItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         new QDShell();
@@ -374,7 +374,7 @@ public class QDShell extends JFrame {
                 projectMenu.add(quitItem);
                 
                 //Preferences menu
-                JMenuItem fontItem = new JMenuItem("Display...");
+                JMenuItem fontItem = new JMenuItem(messages.getString("Display"));
 		fontItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getDisplayPreferences();
@@ -391,13 +391,13 @@ public class QDShell extends JFrame {
 		preferencesMenu.add(timeCodeItem);
                 
                 //Help menu
-		JMenuItem feedbackItem = new JMenuItem("Feedback");
+		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new UserFeedback(QDShell.this);
 			}
 		});
-                JMenuItem aboutItem = new JMenuItem("About QuillDriver");
+                JMenuItem aboutItem = new JMenuItem(messages.getString("About QuillDriver"));
                 try {
                     final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
                     aboutItem.addActionListener(new ActionListener() {
@@ -518,7 +518,7 @@ public class QDShell extends JFrame {
 
 		 JPanel slowAdjustPanel = new JPanel(new BorderLayout());
 
-		 slowAdjustPanel.setBorder(BorderFactory.createTitledBorder("Slow increase/decrease value (in milliseconds)"));
+		 slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("SlowIncreaseDecreaseValue")));
 
 		 JTextField slowAdjustField = new JTextField(String.valueOf(prefmngr.slow_adjust));
 
@@ -528,7 +528,7 @@ public class QDShell extends JFrame {
 
 		 JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
 
-		 rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder("Rapid increase/decrease value (in milliseconds)"));
+		 rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("RapidDncreaseDecreaseValue")));
 
 		 JTextField rapidAdjustField = new JTextField(String.valueOf(prefmngr.rapid_adjust));
 
@@ -538,7 +538,7 @@ public class QDShell extends JFrame {
 
 		 JPanel playMinusPanel = new JPanel(new BorderLayout());
 
-		 playMinusPanel.setBorder(BorderFactory.createTitledBorder("Play minus value (in milliseconds)"));
+		 playMinusPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("PlayVinusValue")));
 
 		 JTextField playMinusField = new JTextField(String.valueOf(prefmngr.play_minus));
 
@@ -562,7 +562,7 @@ public class QDShell extends JFrame {
 
 		 JOptionPane pane = new JOptionPane(preferencesPanel);
 
-		 JDialog dialog = pane.createDialog(this, "Time Coding Preferences");
+		 JDialog dialog = pane.createDialog(this, messages.getString("TimeCodingPreferences"));
 
 		 // This returns only when the user has closed the dialog
 
@@ -616,7 +616,7 @@ public class QDShell extends JFrame {
 		@TIBETAN@JPanel tibetanPanel;
 		@TIBETAN@JComboBox tibetanFontSizes;
 		@TIBETAN@tibetanPanel = new JPanel();
-		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
+		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("TibetanFontSize")));
 		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
 		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
 		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(prefmngr.tibetan_font_size));
@@ -626,7 +626,7 @@ public class QDShell extends JFrame {
 		JComboBox romanFontFamilies;
 		JComboBox romanFontSizes;
 		romanPanel = new JPanel();
-		romanPanel.setBorder(BorderFactory.createTitledBorder("Non-Tibetan Font and Size"));
+		romanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("NonTibetanFontAndSize")));
 		romanFontFamilies = new JComboBox(fontNames);
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
 		romanFontFamilies.setSelectedItem(prefmngr.font_face);
@@ -644,21 +644,21 @@ public class QDShell extends JFrame {
                 JLabel hColorLabel, hPositionLabel, hMultipleLabel;
                 JPanel h1Panel, h2Panel, h3Panel;
                 highlightPanel = new JPanel();
-                highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight-Related Preferences"));
-                hColorLabel = new JLabel("Color in hex [c.f. http://www.hypersolutions.org/pages/rgbhex.html]: ");
+                highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));
+                hColorLabel = new JLabel(messages.getString("ColorInHex"));
                 highlightField = new JTextField(prefmngr.highlight_color);
                 h1Panel = new JPanel();
                 h1Panel.add(hColorLabel);
                 h1Panel.add(highlightField);
-                hPositionLabel = new JLabel("Highlight position: ");
-                highlightPosition = new JComboBox(new String[] {"Middle", "Bottom"});
+                hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
+                highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
                 highlightPosition.setSelectedItem(prefmngr.highlight_position);
                 highlightPosition.setEditable(true);
                 h2Panel = new JPanel();
                 h2Panel.add(hPositionLabel);
                 h2Panel.add(highlightPosition);
-                hMultipleLabel = new JLabel("Multiple highlight policy: ");
-                multipleHighlightPolicy = new JComboBox(new String[] {"Allowed", "Disallowed"});
+                hMultipleLabel = new JLabel(messages.getString("Multiple highlight policy: "));
+                multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
                 multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
                 multipleHighlightPolicy.setEditable(true);
                 h3Panel = new JPanel();
@@ -674,7 +674,7 @@ public class QDShell extends JFrame {
 		preferencesPanel.add(romanPanel);
                 preferencesPanel.add(highlightPanel);
 		JOptionPane pane = new JOptionPane(preferencesPanel);
-		JDialog dialog = pane.createDialog(this, "Font and Style Preferences");
+		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
                 // This returns only when the user has closed the dialog
 		dialog.show();
                 @TIBETAN@int old_tibetan_font_size = prefmngr.tibetan_font_size;
@@ -711,7 +711,7 @@ public class QDShell extends JFrame {
         if (qd.getEditor() != null) {
             qd.hp.setHighlightPosition(highlightPosVal);
         }
-        if (multipleHighlightPolicyVal.equals("Allowed"))
+        if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
             qd.player.setMultipleAnnotationPolicy(true);
         else
             qd.player.setMultipleAnnotationPolicy(false);
