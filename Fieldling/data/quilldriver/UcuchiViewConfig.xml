@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
+<qd-configuration>
+	<parameters>
+        <parameter name="qd.namespaces" val="ucuchi http://altiplano.emich.edu/ucuchi"/>
+		<parameter name="qd.root.element" val="ucuchi:TEXT"/>
+	</parameters>
+	<actions>
+		<action-set name="Navigate">
+            <action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="Play Next Line" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
+			<action name="Play Current Line" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" qd-command="playNode"/>
+			<action name="Play End of Current Line" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" qd-command="playEdge"/>
+			<action name="Play Previous Line" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
+			<action name="Go to Next Line" keystroke="control DOWN" node="following::ucuchi:C"/>
+			<action name="Go to Previous Line" keystroke="control UP" node="preceding::ucuchi:C"/>
+		</action-set>
+	</actions>
+		<rendering-instructions>
+            <tag name="ucuchi:W" visible="false" visiblecontents="false"/>
+			<tag name="ucuchi:TEXT" visible="false" visiblecontents="true"/>
+            <!--
+            <tag name="ucuchi:S" visible="false" visiblecontents="true"/>
+			<tag name="ucuchi:C" visible="false" visiblecontents="true">
+                <attribute name="qd:t1" visible="false"/>
+                <attribute name="qd:t2" visible="false"/>
+            </tag>
+            <tag name="ucuchi:TRANSL" visible="true" displayas="ENGLISH"/>
+            <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
+            -->
+		</rendering-instructions>
+</qd-configuration>
