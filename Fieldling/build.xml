@@ -233,7 +233,59 @@ a version optimized for use with Tibetan script.
 				<include name="*.gif"/>
 				<include name="*.jpg"/>
 			</fileset>
-		</copy>		
+		</copy>
+        
+        <!-- create time-stamped 'About' files -->
+        <tstamp>
+            <format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en"/>
+        </tstamp>
+<echo file="${unicode.classes}/about.txt" 
+append="false">QuillDriver
+
+(c) 2004, Roger Andersen, Edward Garrett and David Germano
+
+Version ${TODAY_UK}
+
+Send feedback, including bug reports (with the
+version date), to
+
+   fieldling-feedback@lists.sourceforge.net
+   
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+any later version.
+    
+The code has been written by Edward Garrett, Michel Jacobson and
+Shreyaswini Ramaswamy. Visit &lt;http://altiplano.emich.edu/quilldriver/index.html&gt;
+to access source code, sample content, instructions and other resources.
+If you would like to contribute, please consider becoming a
+developer.</echo>
+
+<echo file="${tibetan.classes}/about.txt" 
+append="false">QuillDriver-TIB (optimized for Tibetan script)
+
+(c) 2004, Roger Andersen, Edward Garrett and David Germano
+
+Version ${TODAY_UK} (TIB)
+
+Send feedback, including bug reports (with the
+version date), to
+
+   fieldling-feedback@lists.sourceforge.net
+   
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+any later version.
+    
+The code has been written by Edward Garrett, Michel Jacobson and
+Shreyaswini Ramaswamy. Visit &lt;http://altiplano.emich.edu/quilldriver/index.html&gt;
+to access source code, sample content, instructions and other resources.
+If you would like to contribute, please consider becoming a
+developer.</echo>
+   
 	</target>
 
 
@@ -496,7 +548,7 @@ optimized for use with Tibetan script.
                 <link href="http://xml.apache.org/xerces2-j/javadocs/api"/> <!-- Xerces API -->
                 <link href="http://xml.apache.org/xalan-j/apidocs"/> <!-- Xalan API -->
         </javadoc>
-        
+
         <zip destfile="${webapp.dir}/fieldling_src.zip" basedir="." excludes="${build.dir}/**/* ${build.dir}" update="true"/>
         <zip destfile="${webapp.dir}/fieldling_api.zip" basedir="${webapp.api.dir}" update="true"/>
         

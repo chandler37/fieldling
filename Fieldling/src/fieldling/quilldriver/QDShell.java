@@ -546,6 +546,19 @@ public class QDShell extends JFrame {
 
         //about menu item
         JMenuItem aboutItem = new JMenuItem("About QuillDriver");
+        try {
+            final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
+            aboutItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JFrame f = new JFrame();
+                    f.setSize(500,400);
+                    f.getContentPane().add(sp);
+                    f.setVisible(true);
+                }
+            }); 
+        } catch (IOException ioe ) {
+            ioe.printStackTrace();
+        }
         
         //changelog
         JMenuItem changeItem = new JMenuItem("Read changelog");
