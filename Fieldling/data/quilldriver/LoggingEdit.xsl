@@ -5,27 +5,128 @@
 <xsl:output indent="yes"/>
 
 <xsl:param name="qd.task" select="''"/>
+<xsl:param name="qd.currentmediatime" select="''"/>
 <xsl:param name="qd.start" select="''"/>
 <xsl:param name="qd.end" select="''"/>
+<xsl:param name="qd.mediaduration" select="''"/>
+<xsl:param name="qd.slowincrease" select=".025"/>
+<xsl:param name="qd.rapidincrease" select=".250"/>
+<xsl:param name="qd.mediaurlstring" select="''"/>
 
 <xsl:template match="CloneOwner">
 	<CloneOwner>
 		<xsl:for-each select="*[position()=1]">
 			<xsl:choose>
-				<xsl:when test="$qd.task='insertTimes'">
+				<xsl:when test="$qd.task='fixMedia'">
+					<SOUNDFILE href="{$qd.mediaurlstring}"/>
+				</xsl:when>
+				<xsl:when test="$qd.task='markStart'">
 					<DIV>
-						<xsl:apply-templates select="DESC" />
-						<AUDIO start="{$qd.start}" end="{$qd.end}" />
-						<xsl:apply-templates select="*[not(local-name(.)='AUDIO') and not(local-name(.)='DESC')]"/>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:choose>
+							<xsl:when test="AUDIO">
+								<AUDIO start="{$qd.currentmediatime}" end="{AUDIO/@end}" />
+							</xsl:when>
+							<xsl:otherwise>
+								<AUDIO start="{$qd.currentmediatime}" end="{$qd.mediaduration}" />
+							</xsl:otherwise>
+						</xsl:choose>
 					</DIV>
 				</xsl:when>
-				<xsl:when test="$qd.task='insertTextAnchor'">
+				<xsl:when test="$qd.task='markStop'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:choose>
+							<xsl:when test="AUDIO">
+								<AUDIO start="{AUDIO/@start}" end="{$qd.currentmediatime}" />
+							</xsl:when>
+							<xsl:otherwise>
+								<AUDIO start="0" end="{$qd.currentmediatime}" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='increaseStart'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start + $qd.slowincrease}" end="{AUDIO/@end}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='rapidIncreaseStart'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start + $qd.rapidincrease}" end="{AUDIO/@end}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='increaseStop'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.slowincrease}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='rapidIncreaseStop'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.rapidincrease}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>				
+				<xsl:when test="$qd.task='decreaseStart'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start - $qd.slowincrease}" end="{AUDIO/@end}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='rapidDecreaseStart'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start - $qd.rapidincrease}" end="{AUDIO/@end}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>				
+				<xsl:when test="$qd.task='decreaseStop'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.slowincrease}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='rapidDecreaseStop'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:if test="AUDIO">
+							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.rapidincrease}" />
+						</xsl:if>
+					</DIV>
+				</xsl:when>
+				<xsl:when test="$qd.task='qd.insertTimes'">
+					<DIV>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+						<AUDIO start="{$qd.start}" end="{$qd.end}" />
+					</DIV>
+				</xsl:when>
+			<!--	<xsl:when test="$qd.task='insertTextAnchor'">
 					<DIV>
 						<xsl:apply-templates select="DESC" />
-						<xsl:apply-templates select="AUDIO" />
 						<TEXT start="Page" end="Page" />
-						<xsl:apply-templates select="*[not(local-name(.)='DESC') and not(local-name(.)='AUDIO') and not(local-name(.)='TEXT')]"/>
+						<xsl:apply-templates select="*[not(local-name(.)='DESC') and not(local-name(.)='TEXT')]"/>
 					</DIV>
+				</xsl:when> -->
+				<xsl:when test="$qd.task='surroundWithBreaks'">
+					<PG id=" "/>
+					<xsl:call-template name="copyTag"/>
+					<PG id=" "/>
 				</xsl:when>
 				<xsl:when test="$qd.task='appendDivision'">
 					<DIV>
@@ -94,6 +195,9 @@
 					</DIV>
 				</xsl:when>
 				<xsl:when test="$qd.task='removeNode'" />
+				<xsl:otherwise>
+					<xsl:call-template name="copyTag"/>
+				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
 	</CloneOwner>

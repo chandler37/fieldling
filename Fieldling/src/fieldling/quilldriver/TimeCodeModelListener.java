@@ -19,6 +19,8 @@
 package fieldling.quilldriver;
 
 public interface TimeCodeModelListener extends java.util.EventListener {
-	public void setStartTime(int t);
-	public void setStopTime(int t);
+	public void setStartTime(long t);
+	public void setStopTime(long t);
+	//public void setStartTime(int t);
+	//public void setStopTime(int t);
 }

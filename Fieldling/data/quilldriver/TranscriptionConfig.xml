@@ -51,32 +51,54 @@
 		</parameter>
 		
 		
-		<navigation name="Play/Pause" keystroke="control RIGHT" val="." command="playPause">
+		<navigation name="Play/Pause" keystroke="control SPACE" val="." command="playPause">
 			<desc>If the media is stopped, this plays it; and if the media is playing, this pauses it.</desc>
 		</navigation>
-		<navigation name="Next Playable" keystroke="control DOWN" val="following::*[AUDIO]" command="playNode">
+		<navigation name="Play Back" keystroke="control QUOTE" val="." command="playBack">
+			<desc>This plays the media, starting from X second(s) before the current media point.</desc>
+		</navigation>
+		<navigation name="Play Next" keystroke="control shift DOWN" val="following::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the next part of the text that has time codes associated with it.
 			First, the next playable node is located. Then, it is played because this viewing function is
 			associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
-		<navigation name="Current Playable" keystroke="control LEFT" val="ancestor-or-self::[*AUDIO]" command="playNode">
+		<navigation name="Play Current" keystroke="control LEFT" val="ancestor-or-self::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the current part of the text that has time codes associated with it,
 			for example, the current sentence. First, the current node is located. Then, it is played because this 
 			viewing function is associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
-		<navigation name="Previous Playable" keystroke="control UP" val="preceding::*[AUDIO]" command="playNode">
+		<navigation name="Play End of Current" keystroke="control RIGHT" val="ancestor-or-self::*[AUDIO]" command="playEdge">
+			<desc>Play the last X second(s) of the current sentence.</desc>
+		</navigation>
+		<navigation name="Play Previous" keystroke="control shift UP" val="preceding::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the last part of the text that has time codes associated with it.
 			First, the next playable node is located. Then, it is played because this viewing function is
 			associated with the QuillDriver command 'playNode'.</desc>
 		</navigation>
+		<navigation name="Seek Start" keystroke="control L" val="ancestor-or-self::S" command="seekStart">
+			<desc>Jumps to the start time of the current sentence, without playing it.</desc>
+		</navigation>
+		<navigation name="Seek End" keystroke="control SEMICOLON" val="ancestor-or-self::S" command="seekEnd">
+		`	<desc>Jumps to the end time of the current sentence, without playing it.</desc>
+		</navigation>
+		<navigation name="Seek Next" keystroke="control DOWN" val="following::S">
+			<desc>Jumps to the next sentence, without playing it.</desc>
+		</navigation>
+		<navigation name="Seek Previous" keystroke="control UP" val="preceding::S">
+			<desc>Jumps to the previous sentence, without playing it.</desc>
+		</navigation>
 		
+		<!-- relating to media -->
+		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" tasks="fixMedia">
+			<desc>Takes the currently open media file or URL and copies it into the transcript.</desc>
+		</transformation>
 		
-		
+		<!-- relating to speaker names -->
 		<transformation name="Add Speaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" tasks="addSpeaker">
 			<desc>This editing function tells the stylesheet to insert another speaker node so that the
 			user can add a speaker to this transcription.</desc>
 		</transformation>
-		<transformation name="Delete Speaker" keystroke="control L" node="ancestor-or-self::SPEAKER" tasks="removeNode">
+		<transformation name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" tasks="removeNode">
 			<desc>This editing function is used to delete the currently selected speaker.
 			Be careful, there is no turning back!</desc>
 		</transformation>
@@ -92,6 +114,8 @@
 		<transformation name="Set Speaker to nga" keystroke="control 4" node="ancestor-or-self::S" tasks="setSpeaker4">
 			<desc>This sets the speaker of the current sentence to 'nga', (by convention) the fourth speaker.</desc>
 		</transformation>
+		
+		<!-- time-coding transformations -->
 		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" tasks="markStart">
 			<desc>This assigns the start time of the current sentence to the start time in the time coding window.</desc>
 		</transformation>
@@ -103,30 +127,35 @@
 			your XML file. They will be copied to the current node you are working on. For example, if you are 
 			typing or translating text, they will be assigned to the current 'S' (Sentence) node.</desc>
 		</transformation>
+		<transformation name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::S" tasks="zapTimes">
+			<desc>Removes time codes for current sentence.</desc>
+		</transformation>
 		<transformation name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::S" tasks="increaseStart">
 			<desc>Increases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::S" tasks="increaseStart">
+		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::S" tasks="rapidIncreaseStart">
 			<desc>Increases the start time of the current sentence by a specified value.</desc>
 		</transformation>
 		<transformation name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::S" tasks="decreaseStart">
 			<desc>Decreases the start time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::S" tasks="decreaseStart">
+		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::S" tasks="rapidDecreaseStart">
 			<desc>Decreases the start time of the current sentence by a specified value.</desc>
 		</transformation>
 		<transformation name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::S" tasks="increaseStop">
 			<desc>Increases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::S" tasks="increaseStop">
+		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::S" tasks="rapidIncreaseStop">
 			<desc>Increases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
 		<transformation name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::S" tasks="decreaseStop">
 			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
-		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::S" tasks="decreaseStop">
+		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::S" tasks="rapidDecreaseStop">
 			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
 		</transformation>
+		
+		<!-- adding content -->
 		<transformation name="Insert After" keystroke="control M" node="ancestor-or-self::S" tasks="insertAfter">
 			<desc>This function inserts a blank sentence after the current sentence. This new sentence will be assigned the
 			same speaker as the current sentence.</desc>
@@ -142,6 +171,8 @@
 			<desc>This editing function deletes the sentence you are current working on. Be careful, though! Once you do this there
 			is no turning back!</desc>
 		</transformation>
+		
+		<!-- adding notes -->
 		<transformation name="Add Lexical Note" keystroke="alt L" node="ancestor-or-self::S" tasks="addLexical">
 			<desc>Use this to add a lexical note to the end of the current Division.</desc>
 		</transformation>
@@ -160,21 +191,31 @@
 		<transformation name="Add Cultural Note" keystroke="alt C" node="ancestor-or-self::S" tasks="addCultural">
 			<desc>Use this to add a cultural note to the end of the current Division.</desc>
 		</transformation>
-		<transformation name="Delete Note" keystroke="control G" node="ancestor-or-self::NOTE" tasks="removeNode">
+		<transformation name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" tasks="removeNode">
 			<desc>Use this to delete the current note.</desc>
 		</transformation>
 		
 		
-		
+		<tag name="TEXT" visible="true" visiblecontents="true">
+			<attribute name="xml:lang" visible="false"/>
+			<desc>Display TEXT tag but not its attributes.</desc>
+		</tag>
+		<tag name="TITLE" visible="true" visiblecontents="true">
+			<attribute name="xml:lang" visible="false"/>
+			<desc>Display TITLE tag but not its attributes.</desc>
+		</tag>
 		<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type" tibetan="false">
 			<attribute name="type" visible="false"/>
 			<desc>This tells QuillDriver to render the NOTE tag as the value of its
 			'type' attribute.</desc>
 		</tag>
-		<tag name="AUDIO" visible="false" visiblecontents="false" displayas="[time codes]">
+		<tag name="AUDIO" visible="false" visiblecontents="false">
 			<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
 			time codes are already marked under the video in the time coding area.</desc>
 		</tag>
+	<!--	<tag name="SOUNDFILE" visible="false" visiblecontents="false" displayas="SOUNDFILE">
+			<desc>Tells QuillDriver not to display the SOUNDFILE tag.</desc>
+		</tag> -->
 		<tag name="S" visible="true" visiblecontents="true" displayas="XPATH:@who">
 			<attribute name="id" visible="false"/>
 			<attribute name="who" visible="false"/>

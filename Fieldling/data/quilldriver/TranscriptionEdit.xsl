@@ -15,6 +15,7 @@
 <xsl:param name="qd.mediaduration" select="''"/>
 <xsl:param name="qd.slowincrease" select=".025"/>
 <xsl:param name="qd.rapidincrease" select=".250"/>
+<xsl:param name="qd.mediaurlstring" select="''"/>
 
 <xsl:param name="isTranslating" select="''"/>
 <xsl:param name="translationLanguage" select="''"/>
@@ -262,6 +263,17 @@
 						<AUDIO start="{$qd.start}" end="{$qd.end}" />
 					</xsl:element>
 				</xsl:when>
+				<xsl:when test="$qd.task='zapTimes'">
+					<xsl:element name="S">
+						<xsl:if test="@who">
+							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:apply-templates select="*[not(local-name(.)='AUDIO')]"/>
+					</xsl:element>
+				</xsl:when>
 				<!--
 				<xsl:when test="$qd.task='parseSentence'">
 					<xsl:element name="S">
@@ -407,8 +419,13 @@
 						<xsl:apply-templates select="*" />
 						<NOTE type="cultural"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
-				</xsl:when>				
-				<xsl:when test="$qd.task='removeNode'" />
+				</xsl:when>
+				<!-- All I really need to do here is replace SOUNDFILE; however, QD has a bug
+				whereby it doesn't do transformations right on nodes that are not visually present. -->
+				<xsl:when test="$qd.task='fixMedia'">
+					<SOUNDFILE href="{$qd.mediaurlstring}"/>
+				</xsl:when>
+				<xsl:when test="$qd.task='removeNode'"/>
 				<xsl:otherwise>
 					<xsl:call-template name="copyTag"/>
 				</xsl:otherwise>

@@ -34,7 +34,6 @@ import quicktime.std.clocks.*;
 import quicktime.app.QTFactory;
 
 public class QT4JPlayer extends PanelPlayer {
-
 	private myJumpCallBack               theJumper = null;
 	private myRateCallBack               theRater = null;
 	private URL                          mediaUrl = null;
@@ -42,7 +41,8 @@ public class QT4JPlayer extends PanelPlayer {
 	private QTCanvas                     canvas;
 	private QTPlayer                     player;
 	private Container		parent = null;
-
+	private static int	numberOfPlayersOpen = 0;
+	
 //constructor
 	public QT4JPlayer(Container cont, URL mediaURL) {
 		super( new GridLayout() );
@@ -64,10 +64,11 @@ public class QT4JPlayer extends PanelPlayer {
 			theRater.cancelAndCleanup();
 		cancelAnnotationTimer();
 		removeAllAnnotationPlayers();
-		QTSession.close();
+		if (numberOfPlayersOpen == 1) QTSession.close();
 		removeAll();
 		mediaUrl = null;
 		System.out.println("Clean up performed.");
+		numberOfPlayersOpen--;
 	}
 
 //accessors
@@ -151,6 +152,7 @@ public class QT4JPlayer extends PanelPlayer {
 			setPlayer(QTFactory.makeDrawable(mediaURL.toString()));
 			canvas.setClient(getPlayer(), true);
 			this.add(canvas);
+			mediaUrl = mediaURL;
 			
 			/*
 			this.remove( getCanvas() );
@@ -160,7 +162,8 @@ public class QT4JPlayer extends PanelPlayer {
 			*/
 			
 			System.out.println("loadMovie:"+mediaURL.toString());
-
+			numberOfPlayersOpen++;
+			
 			myMoviesTimeBase = getPlayer().getTimeBase();
 			theJumper = new myJumpCallBack(myMoviesTimeBase);
 			theJumper.callMeWhen();
@@ -182,18 +185,23 @@ public class QT4JPlayer extends PanelPlayer {
 			qte.printStackTrace();
 		}
 	}
-	public void cmd_playSegment(Integer startTime, Integer stopTime) throws PanelPlayerException {
+	//public void cmd_playSegment(Integer startTime, Integer stopTime) throws PanelPlayerException {
+	public void cmd_playSegment(Long startTime, Long stopTime) throws PanelPlayerException {
 		try {
 			cmd_stop();
 			
 			int myScale = getPlayer().getScale();
-			getPlayer().setTime( (startTime.intValue() * myScale) / 1000 );
+			long t1 = startTime.longValue() * myScale / 1000;
+			
+			getPlayer().setTime((int)t1);
+			//getPlayer().setTime( (startTime.intValue() * myScale) / 1000 );
 
 			if (stopTime == null) {
-				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime()));
+				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, player.getDuration()));
 				//System.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime: to the End" );
 			} else {
-				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, (stopTime.intValue()*myScale)/1000));
+				long t2 = stopTime.longValue() * myScale / 1000;
+				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, (int)t2));
 				//System.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime:"+(stopTime.intValue()*myScale)/1000 );
 			}
 			cmd_playOn();
@@ -212,7 +220,7 @@ public class QT4JPlayer extends PanelPlayer {
 			theJumper.cancelAndCleanup();
 			getPlayer().setRate(0.0F);
 			int myScale = getPlayer().getScale();
-			myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime())); //default behavior is to play to the end of the video
+			myMoviesTimeBase.setStopTime(new TimeRecord(myScale, player.getDuration())); //default behavior is to play to the end of the video
 			theRater.callMeWhen();
 			theJumper.callMeWhen();
 		} catch(QTException qte) {
@@ -234,11 +242,14 @@ public class QT4JPlayer extends PanelPlayer {
 		return false;
 	}
 	//doit envoyer le temps en sec  fois 1000
-	public int getCurrentTime() {
+	public long getCurrentTime() {
 		try {
-			int myScale = getPlayer().getScale();
+			long myScale = getPlayer().getScale();
+			long now = player.getTime();
+			return (now*1000)/myScale;
+			//int myScale = getPlayer().getScale();
 			//System.out.println("getCurrentTime():"+(player.getTime()*1000)/myScale);
-			return (player.getTime()*1000)/myScale;
+			//return (player.getTime()*1000)/myScale;
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
 			return 0;
@@ -247,19 +258,33 @@ public class QT4JPlayer extends PanelPlayer {
 			return 0;
 		}
 	}
-	public int getEndTime() {
+	public long getEndTime() {
+		try {
+			long myScale = getPlayer().getScale();
+			long duration = player.getDuration();
+			return duration * 1000 / myScale;
+			//int myScale = getPlayer().getScale();
+			//return (player.getDuration()*1000)/myScale; caused problems for really long files: i guess ints can only be so big
+			//return (player.getDuration()/myScale)*1000; //this is therefore an interim solution: should use longs instead!!
+		} catch (StdQTException stqte) {
+			stqte.printStackTrace();
+			return 0;
+		} catch (QTException qte) {
+			System.out.println("getCurrentTimeErr");
+			return 0;
+		}
+	}
+	public void setCurrentTime(long t) {
 		try {
 			int myScale = getPlayer().getScale();
-			return (player.getDuration()*1000)/myScale;
+			long t1 = t * myScale / 1000;
+			getPlayer().setTime((int)t1);
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
-			return 0;
 		} catch (QTException qte) {
 			System.out.println("getCurrentTimeErr");
-			return 0;
 		}
 	}
-
 // inner classes
 
 
@@ -278,7 +303,7 @@ public class QT4JPlayer extends PanelPlayer {
 				else { 
 					int myScale = getPlayer().getScale();
 					//needed to ensure that stop time does not stick (and interfere with behavior of slider)
-					myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime()));
+					myMoviesTimeBase.setStopTime(new TimeRecord(myScale, player.getDuration()));
 					//not needed since launchAnnotationTimer() cancels automatically
 					//cancelAnnotationTimer();
 				}

@@ -38,6 +38,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	protected Highlighter highlighter;
 	protected Highlighter.HighlightPainter highlightPainter;
 	protected JViewport viewport;
+	protected JScrollPane scrollPane;
 	protected TranscriptView view;
 
 	public TextHighlightPlayer(TranscriptView tView, Color highlightcolor)
@@ -68,9 +69,10 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		hashStart = new Hashtable();
 		hashEnd = new Hashtable();
 		refresh();
+		scrollPane = new JScrollPane(text);
 		
 		setLayout(new GridLayout(1,1));
-		add(new JScrollPane(text));
+		add(scrollPane);
 	}
 	public void refresh() {
 		//FIXME FIXME FIXME!!!
@@ -100,6 +102,9 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 				hashEnd.put(sID, new Integer(0));
 			}
 		}
+	}
+	public JScrollPane getScroller() {
+		return scrollPane;
 	}
 	public TranscriptView getView() {
 		return view;

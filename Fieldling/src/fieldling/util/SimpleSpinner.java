@@ -93,7 +93,8 @@ public class SimpleSpinner extends JPanel implements FocusListener { //ChangeLis
 				((SimpleSpinnerListener)listeners[i+1]).valueChanged(e);
 		}
 	}
-	public void setValue(Integer num) {
+	//public void setValue(Integer num) {
+	public void setValue(Long num) {
 		if (jSpinner == null) {
 			textSpinner.setText(num.toString());
 		} else { //must be JSpinner
@@ -107,16 +108,19 @@ public class SimpleSpinner extends JPanel implements FocusListener { //ChangeLis
 			}
 		}
 	}
-	public Integer getValue() {
+	//public Integer getValue() {
+	public Long getValue() {	
 		if (jSpinner == null) {
 			try {
-				return new Integer(textSpinner.getText());
+				return new Long(textSpinner.getText());
+				//return new Integer(textSpinner.getText());
 			} catch (NumberFormatException nfe) {
 				nfe.printStackTrace();
 			}
 		} else { //must be JSpinner
 			try {
-				return (Integer)getMethod.invoke(jSpinner, null);
+				return (Long)getMethod.invoke(jSpinner, null);
+				//return (Integer)getMethod.invoke(jSpinner, null);
 			} catch (IllegalAccessException illae) {
 				illae.printStackTrace();
 			} catch (InvocationTargetException ite) {

@@ -171,14 +171,15 @@ public class QD extends JDesktopPane {
 				Dimension d = videoFrame.getSize();
 				if (d.width == 0 && d.height == 0)
 					videoFrame.setSize(getSize().width / 2, 0);
-				textFrame.setLocation(videoFrame.getSize().width, 0);
+				textFrame.setLocation(0,0);
 				textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-				actionFrame.setLocation(0, videoFrame.getSize().height);
+				videoFrame.setLocation(textFrame.getSize().width, 0);
+				actionFrame.setLocation(textFrame.getSize().width, videoFrame.getSize().height);
 				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 			}
 		});
 	}
-		
+	
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
 		timer.schedule(new TimerTask() {
@@ -202,15 +203,16 @@ public class QD extends JDesktopPane {
 					videoFrame.setContentPane(player);
 					videoFrame.pack();
 					videoFrame.setMaximumSize(videoFrame.getSize());
+					videoFrame.setLocation(getSize().width - videoFrame.getSize().width, 0);
 					invalidate();
 					validate();
 					repaint();
-					textFrame.setLocation(videoFrame.getSize().width, 0);
+					textFrame.setLocation(0, 0);
 					textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
 					invalidate();
 					validate();
 					repaint();
-					actionFrame.setLocation(0, videoFrame.getSize().height);
+					actionFrame.setLocation(textFrame.getSize().width, videoFrame.getSize().height);
 					actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 					invalidate();
 					validate();
@@ -240,20 +242,28 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		TimeCodeModel tcm;
 		JTextField currentTimeField;
 		SimpleSpinner startSpinner, stopSpinner;
-		int currentTime=-1, startTime=-1, stopTime=-1;
+		long currentTime=-1, startTime=-1, stopTime=-1;
+		//int currentTime=-1, startTime=-1, stopTime=-1;
 		final int TEXT_WIDTH, TEXT_HEIGHT;
 		
 		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
 			tcm = time_model;
-			
+
 			JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
 			JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.jpg")));
 			JButton outButton = new JButton(new ImageIcon(QD.class.getResource("left-arrow.jpg")));
 			JButton playButton = new JButton(new ImageIcon(QD.class.getResource("play.gif")));
+			inButton.setBorder(null);
+			outButton.setBorder(null);
+			playButton.setBorder(null);
+			inButton.setPreferredSize(new Dimension(inButton.getIcon().getIconWidth(), inButton.getIcon().getIconHeight()));
+			outButton.setPreferredSize(new Dimension(outButton.getIcon().getIconWidth(), outButton.getIcon().getIconHeight()));
+			playButton.setPreferredSize(new Dimension(playButton.getIcon().getIconWidth(), playButton.getIcon().getIconHeight()));
 			
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int t = player.getCurrentTime();
+					long t = player.getCurrentTime();
+					//int t = player.getCurrentTime();
 					if (t != -1) { 
 						setStartTime(t);
 						tcm.setTimeCodes(t, stopTime, tcm.getCurrentNode());
@@ -262,7 +272,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			});
 			outButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int t = player.getCurrentTime();
+					long t = player.getCurrentTime();
+					//int t = player.getCurrentTime();
 					if (t != -1) {
 						setStopTime(t);
 						tcm.setTimeCodes(startTime, t, tcm.getCurrentNode());
@@ -281,7 +292,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							//automatic highlighting & scrolling interferes with time-coding
 							//player.cancelAnnotationTimer();
 							player.setAutoScrolling(false);
-							player.cmd_playSegment(new Integer(startTime), new Integer(stopTime));
+							player.cmd_playSegment(new Long(startTime), new Long(stopTime));
+							//player.cmd_playSegment(new Integer(startTime), new Integer(stopTime));
 						} catch (PanelPlayerException smpe) {
 							smpe.printStackTrace();
 						}
@@ -320,32 +332,41 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		}
 		public void valueChanged(ChangeEvent e) {
 			Object obj = e.getSource();
-			if (obj == startSpinner) startTime = startSpinner.getValue().intValue();
-			else if (obj == stopSpinner) stopTime = stopSpinner.getValue().intValue();
+			if (obj == startSpinner) startTime = startSpinner.getValue().longValue();
+			else if (obj == stopSpinner) stopTime = stopSpinner.getValue().longValue();
+			//if (obj == startSpinner) startTime = startSpinner.getValue().intValue();
+			//else if (obj == stopSpinner) stopTime = stopSpinner.getValue().intValue();
 			tcm.setTimeCodes(startTime, stopTime, tcm.getCurrentNode());
 		}
-		void setCurrentTime(int t) {
+		//void setCurrentTime(int t) {
+		void setCurrentTime(long t) {
 			if (t != currentTime) {
 				currentTime = t;
-				currentTimeField.setText(String.valueOf(new Integer(t)));
+				currentTimeField.setText(String.valueOf(new Long(t)));
+				//currentTimeField.setText(String.valueOf(new Integer(t)));
 			}
 		}
-		public void setStartTime(int t) {
+		//public void setStartTime(int t) {
+		public void setStartTime(long t) {
 			if (t != startTime) {
 				startTime = t;
-				startSpinner.setValue(new Integer(t));
+				startSpinner.setValue(new Long(t));
+				//startSpinner.setValue(new Integer(t));
 			}
 		}
-		public void setStopTime(int t) {
+		//public void setStopTime(int t) {
+		public void setStopTime(long t) {
 			if (t != stopTime) {
 				stopTime = t;
-				stopSpinner.setValue(new Integer(t));
+				stopSpinner.setValue(new Long(t));
+				//stopSpinner.setValue(new Integer(t));
 			}
 		}
 	}
 	class TimeCodeModel {
-		private EventListenerList listenerList; 
-		int t1, t2; //start and stop times in milliseconds
+		private EventListenerList listenerList;
+		long t1, t2; //start and stop times in milliseconds
+		//int t1, t2; //start and stop times in milliseconds
 		private TextHighlightPlayer thp;
 		private Object currentNode = null;
 		
@@ -364,11 +385,15 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		public void removeAllTimeCodeModelListeners() {
 			listenerList = new EventListenerList();
 		}
-		public Integer getInTime() {
-			return new Integer(t1);
+		//public Integer getInTime() {
+		//	return new Integer(t1);
+		public Long getInTime() {
+			return new Long(t1);	
 		}
-		public Integer getOutTime() {
-			return new Integer(t2);
+		//public Integer getOutTime() {
+		//	return new Integer(t2);
+		public Long getOutTime() {
+			return new Long(t2);	
 		}
 		public Object getCurrentNode() {
 			return currentNode;
@@ -380,7 +405,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					action.actionPerformed(new ActionEvent(TimeCodeModel.this, 0, "no.command"));
 			}
 		}
-		public void setTimeCodes(int t1, int t2, Object node) {
+		//public void setTimeCodes(int t1, int t2, Object node) {
+		public void setTimeCodes(long t1, long t2, Object node) {	
 			Object oldNode = currentNode;
 			currentNode = node;
 			if (!(this.t1 == t1 && this.t2 == t2)) {
@@ -410,7 +436,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
 				float f1 = new Float(t1).floatValue()*1000;
 				float f2 = new Float(t2).floatValue()*1000;
-				setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
+				setTimeCodes(new Float(f1).longValue(), new Float(f2).longValue(), node);
+				//setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
 				thp.unhighlightAll();
 				//FIXME FIXME FIXME should not be making reference to player in this class
 				//need better communication about highlights between PanelPlayer and TextHighlightPlayer
@@ -421,8 +448,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 		}
 	}
-	
 	public void setMediaPlayer(PanelPlayer smp) {
+		if (transcriptFile != null) return;
+
 		if (smp == null)
 			player = null;
 		else if (player == null || !player.equals(smp)) {
@@ -453,7 +481,19 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			return false;
 		}
 	}
-	
+	public void removeContent() {
+		if (transcriptFile == null) return;
+		try { //dispose of media player
+			if (checkTimeTimer != null) checkTimeTimer.cancel();
+			getMediaPlayer().destroy();
+		} catch (PanelPlayerException ppe) {
+			ppe.printStackTrace();
+		}
+		transcriptFile = null;
+		removeAll(); //remove sub-windows
+		editor = null;
+		setupGUI(); //set up GUI for another transcript
+	}
 	public boolean newTranscript(File file, String mediaURL) {
 			try {
 				if (configuration == null) return false;
@@ -513,6 +553,20 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"));
 				hp = new TextHighlightPlayer(view, Color.cyan);
+				
+				//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
+				//Ctrl-Page_Down and so on... surely there is a better way to do this....
+				JScrollBar sb = hp.getScroller().getVerticalScrollBar();
+				if (sb != null) {
+					keyIter = keys.iterator();
+					while (keyIter.hasNext()) {
+						KeyStroke key = (KeyStroke)keyIter.next();
+						Action action = (Action)keyActions.get(key);
+						sb.getInputMap().put(key, action);
+						sb.getActionMap().put(action, action);
+					}
+				}
+		
 				tcp = new TimeCodeModel(hp);
 				
 				if (player.getMediaURL() != null) {
@@ -548,6 +602,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 								if (mediaFile.exists()) {
 									player.loadMovie(mediaFile.toURL());
 									nomedia = false;
+									//INSERT VIDEO NAME INTO DATA FILE
 								}
 							}
 						} else {
@@ -565,6 +620,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							String mediaString = mediaFile.getAbsolutePath();
 							QDShell.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
+							//INSERT VIDEO NAME INTO DATA FILE
 						} catch (MalformedURLException murle) {} //do nothing
 					}
 				}
@@ -646,9 +702,12 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		if (playableparent == null) return;
 		String nodeid = String.valueOf(playableparent.hashCode());
 		if (player.cmd_isID(nodeid)) {
-			/* by transferring focus, we don't have to worry about problems caused by
+			/* FIXME: by transferring focus, we don't have to worry about problems caused by
 			the cursor position in the editor being different from the highlight,
-			since users will have to click on the editor to get back into editing */
+			since users will have to click on the editor to get back into editing 
+			FIXME here's a problem, though: if there is a scrollbar for the JTextPane, then
+			focus transfers to this scrollbar. if not, then it transfers back to itself, in other
+			words the desired effect is not achieved! */
 			editor.getTextPane().transferFocus();
 			player.cmd_playS(nodeid);
 		}
@@ -691,13 +750,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		StringBuffer sBuff = new StringBuffer();
 		StringTokenizer sTok = new StringTokenizer(s, ",");
 		while (sTok.hasMoreTokens()) {
-			sBuff.append(String.valueOf(new Float(Float.parseFloat(sTok.nextToken()) * 1000).intValue()));
+			sBuff.append(String.valueOf(new Float(Float.parseFloat(sTok.nextToken()) * 1000).longValue()));
 			sBuff.append(',');
 		}
 		return sBuff.toString();
 	}
-
-	public void configure(Configuration configuration) {
+	public boolean configure(Configuration configuration) {
+		if (transcriptFile != null) return false;
 		try {
 			this.configuration = configuration;
 			SAXBuilder builder = new SAXBuilder();
@@ -778,7 +837,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							} while (keepSearching);
 							if (command != null) executeCommand(command);
 						}
-					}				
+					}
 				};
 				keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
 				mItem.setAccelerator(key);
@@ -852,15 +911,19 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									transformer.setParameter("qd.start", "");
 									transformer.setParameter("qd.end", "");
 								}
-								
-								float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
-								float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
+								float now = (float)player.getCurrentTime();
+								float endoftime = (float)player.getEndTime();
+								float currentSeconds = now / 1000; //convert from milliseconds
+								float endTime = endoftime / 1000; //convert from milliseconds
+								//float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
+								//float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
 								String cS = String.valueOf(currentSeconds);
 								String eT = String.valueOf(endTime);
 								System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
 								transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
 								transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
-								
+								//send the name of the current media URL
+								transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
 								
 								JDOMResult jdomResult = new JDOMResult();
 								//DOMSource domSource = new DOMSource(docBuilder.newDocument());
@@ -883,82 +946,89 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 								
 								int start = editor.getStartOffsetForNode(transformNode);
 								int end = editor.getEndOffsetForNode(transformNode);
-								StyledDocument tDoc = editor.getTextPane().getStyledDocument();
-								AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
-								float indent = StyleConstants.getLeftIndent(attSet);
-								try {
-									tDoc.insertString(end, "\n", null);
-									tDoc.remove(start, end-start);
-									//tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
-								} catch (BadLocationException ble) {
-									ble.printStackTrace();
-									return;
-								}
 								
-								int insertPos = start;
-								Element el = (Element)transformNode;
-								if (el.isRootElement()) {
-									Iterator replaceIter = replaceNodeWith.iterator();
-									while (replaceIter.hasNext()) {
-										Object o = replaceIter.next();
-										if (o instanceof Element) {
+								//FIXME: this whole section needs to be sensitive to whether or
+								//not node is visible on screen, and whether or not what replaces
+								//it should be visible or not. right now, the following code won't
+								//work right if the transformed node is not visible
+								
+								//boolean redraw = true;
+								//if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
+								//if (redraw) {
+									StyledDocument tDoc = editor.getTextPane().getStyledDocument();
+									AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
+									float indent = StyleConstants.getLeftIndent(attSet);
+									try {
+										tDoc.insertString(end, "\n", null);
+										tDoc.remove(start, end-start);
+										//tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
+									} catch (BadLocationException ble) {
+										ble.printStackTrace();
+										return;
+									}
+									int insertPos = start;
+									Element el = (Element)transformNode;
+									if (el.isRootElement()) {
+										Iterator replaceIter = replaceNodeWith.iterator();
+										while (replaceIter.hasNext()) {
+											Object o = replaceIter.next();
+											if (o instanceof Element) {
+												replaceIter.remove();
+												Document d = el.getDocument();
+												d.detachRootElement();
+												Element er = (Element)o;
+												d.setRootElement(er);
+												editor.removeNode(er);
+												insertPos = editor.renderElement(er, indent, insertPos);
+												break;
+											}
+										}
+									} else {
+										List parentContent = el.getParent().getContent(); //this is a live list
+										int elPos = parentContent.indexOf(el);
+										parentContent.remove(elPos);
+										editor.removeNode(transformNode);
+										Iterator replaceIter = replaceNodeWith.iterator();
+										while (replaceIter.hasNext()) {
+											Object next = replaceIter.next();
 											replaceIter.remove();
-											Document d = el.getDocument();
-											d.detachRootElement();
-											Element er = (Element)o;
-											d.setRootElement(er);
-											editor.removeNode(er);
-											insertPos = editor.renderElement(er, indent, insertPos);
-											break;
+											if (next instanceof Element) {
+												Element elem = (Element)next;
+												insertPos = editor.renderElement(elem, indent, insertPos);
+											} else if (next instanceof Text) {
+												Text text = (Text)next;
+												if (text.getTextTrim().length() > 0)
+													insertPos = editor.renderText(text, indent, insertPos);
+											}
+											parentContent.add(elPos, next);
+											elPos++;
 										}
 									}
-								} else {
-									List parentContent = el.getParent().getContent(); //this is a live list
-									int elPos = parentContent.indexOf(el);
-									parentContent.remove(elPos);
-									editor.removeNode(transformNode);
-									Iterator replaceIter = replaceNodeWith.iterator();
-									while (replaceIter.hasNext()) {
-										Object next = replaceIter.next();
-										replaceIter.remove();
-										if (next instanceof Element) {
-											Element elem = (Element)next;
-											insertPos = editor.renderElement(elem, indent, insertPos);
-										} else if (next instanceof Text) {
-											Text text = (Text)next;
-											if (text.getTextTrim().length() > 0)
-												insertPos = editor.renderText(text, indent, insertPos);
+	
+									try {
+										tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
+										String s = tDoc.getText(insertPos-1, 2);
+										if (s.charAt(1)=='\n') {
+											if (s.charAt(0)=='\n') {
+												tDoc.remove(insertPos-1, 1); //if two newlines, delete first
+												AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
+												tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
+											} else {
+												AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
+												tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
+											}
+											System.out.println("carriage return detected");
 										}
-										parentContent.add(elPos, next);
-										elPos++;
+									} catch (BadLocationException ble) {
+										ble.printStackTrace();
+										return;
 									}
-								}
-
-								try {
-									tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
-									String s = tDoc.getText(insertPos-1, 2);
-									if (s.charAt(1)=='\n') {
-										if (s.charAt(0)=='\n') {
-											tDoc.remove(insertPos-1, 1); //if two newlines, delete first
-											AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
-											tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
-										} else {
-											AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
-											tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
-										}
-										System.out.println("carriage return detected");
-									}
-								} catch (BadLocationException ble) {
-									ble.printStackTrace();
-									return;
-								}
-								
-								editor.fixOffsets();
-								hp.refresh();
-								player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
+									
+									editor.fixOffsets();
+									hp.refresh();
+									player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
 								
 								transformer.clearParameters();
-								
 								editor.setEditabilityTracker(true);
 							} catch (TransformerException tre) {
 								tre.printStackTrace();
@@ -985,6 +1055,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		} catch (JDOMException jdome) {
 			jdome.printStackTrace();
 		}
+		return true;
 	}
 
 	public void executeCommand(String command) {
@@ -1001,6 +1072,51 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									editor.getTextPane().transferFocus();
 									if (player.isPlaying()) player.cmd_stop();
 									else player.cmd_playOn();
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+							else if (command.equals("playBack")) {
+								try {
+									long t = player.getCurrentTime() - QDShell.PLAY_MINUS_VALUE;
+									if (t < 0) t = 0;
+									if (player.isPlaying()) player.cmd_stop();
+									player.setCurrentTime(t);
+									player.cmd_playOn();
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+							else if (command.equals("playEdge")) {
+								try {
+									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									tcp.setNode(nearestParent);
+									Long t2 = tcp.getOutTime();
+									long t1 = t2.longValue() - QDShell.PLAY_MINUS_VALUE;
+									if (t1 < 0) t1 = 0;
+									player.cmd_playSegment(new Long(t1), t2);
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+							else if (command.equals("seekStart")) {
+								try {
+									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									tcp.setNode(nearestParent);
+									Long t = tcp.getInTime();
+									if (player.isPlaying()) player.cmd_stop();
+									player.setCurrentTime(t.longValue());
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+							else if (command.equals("seekEnd")) {
+								try {
+									Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+									tcp.setNode(nearestParent);
+									Long t = tcp.getOutTime();
+									if (player.isPlaying()) player.cmd_stop();
+									player.setCurrentTime(t.longValue());
 								} catch (PanelPlayerException ppe) {
 									ppe.printStackTrace();
 								}

@@ -46,10 +46,13 @@ public class QDShell extends JFrame {
 
 	ResourceBundle messages = null;
 	QD qd = null;
-	Preferences myPrefs = null;
-	Preferences sysPrefs = null;
-
+	
+	private static int numberOfQDsOpen = 0;
+	public static final String NEW_FILE_ERROR_MESSAGE =
+		"This file already exists! Type a new file name\n" + 
+		"instead of selecting an existing file.";
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	public static final int PLAY_MINUS_VALUE = 1000; //1000 milliseconds is default play minus parameter
 	
 	//preference keys
 	public static final String WINDOW_X_KEY = "WINDOW_X";
@@ -61,17 +64,19 @@ public class QDShell extends JFrame {
 	public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
 	public static final String FONT_FACE_KEY = "FONT_FACE";
 	public static final String FONT_SIZE_KEY = "FONT_SIZE";
+	public static final String CONFIGURATION_KEY = "CONFIGURATION";
 	@TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
 	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 	
-	//preference defaults and values
-	public static String working_directory;
-	public static String media_directory;
-	public static String font_face = "Serif";
-	public static int font_size = 14;
-	@TIBETAN@public static int tibetan_font_size = 36;
 	
-
+	//preference defaults and values
+	private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
+	public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
+	public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
+	public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
+	@TIBETAN@public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
+	
+	
 	public static void main(String[] args) {
 		try {
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
@@ -96,43 +101,41 @@ public class QDShell extends JFrame {
 			}
 			catch (Exception e) {
 			}
-
-			QDShell qdsh = new QDShell(args);
-			qdsh.setVisible(true);
+			new QDShell();
 		} catch (NoClassDefFoundError err) {
 			System.out.println(err.toString());
 			//ThdlDebug.handleClasspathError("QuillDriver's CLASSPATH", err);
 		}
 	}
+	public QDShell() {
+		numberOfQDsOpen++;
 
-	public QDShell(String[] args) {	
+		/*
 		String configURL = null;
-		String newURL = null;
-		String editURL = null;
-		String dtdURL = null;
-
+	String newURL = null;
+	String editURL = null;
+	String dtdURL = null;
+		
 		switch (args.length) {
 			case 4:	dtdURL = new String(args[3]);
 			case 3: newURL = new String(args[2]);
 			case 2: editURL = new String(args[1]);
 			case 1: configURL = new String(args[0]);
 		}
-		
+		*/
 		setTitle("QuillDriver");
 		messages = I18n.getResourceBundle();
 
-		myPrefs = Preferences.userNodeForPackage(QDShell.class);
+		/*myPrefs = Preferences.userNodeForPackage(QDShell.class);
 		working_directory = myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"));
 		media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
 		font_face = myPrefs.get(FONT_FACE_KEY, "Serif");
 		font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-		@TIBETAN@tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36); 
+		@TIBETAN@tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);*/ 
 		
 		setLocation(myPrefs.getInt(WINDOW_X_KEY, 0), myPrefs.getInt(WINDOW_Y_KEY, 0));
 		setSize(new Dimension(myPrefs.getInt(WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), 
 			myPrefs.getInt(WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
-		setVisible(true);
-		
 		
 		/*
 		// Code for Merlin
@@ -153,13 +156,13 @@ public class QDShell extends JFrame {
 		}
 		*/
 
-		if (args.length == 4) {
+		/*if (args.length == 4) {
 			qd = new QD();
 			getContentPane().add(qd);
 			setJMenuBar(getQDShellMenu());
-		} else {
-			try {
-				/*String home = System.getProperty("user.home");
+		} else {*/
+			/*try {
+				String home = System.getProperty("user.home");
 				String sep = System.getProperty("file.separator");
 				String path = "file:" + home + sep + "put-in-home-directory" + sep;
 				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");*/
@@ -174,40 +177,44 @@ public class QDShell extends JFrame {
 				qd = new QD();
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
-			} catch (SecurityException se) {
+			/*} catch (SecurityException se) {
 				se.printStackTrace();
-			}
-		}
+			}*/
+		//}
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
-				System.exit(tryToQuit());
+				closeThisQDFrame();
+				if (numberOfQDsOpen == 0) {
+					putPreferences();
+					System.exit(0);
+				} 
 			}
 		});
+		setVisible(true);
 	}
-	private int tryToQuit() {
-		qd.saveTranscript();
+	private void putPreferences() {
 		myPrefs.putInt(WINDOW_X_KEY, getX());
 		myPrefs.putInt(WINDOW_Y_KEY, getY());
 		myPrefs.putInt(WINDOW_WIDTH_KEY, getWidth());
 		myPrefs.putInt(WINDOW_HEIGHT_KEY, getHeight());
-		myPrefs.put(WORKING_DIRECTORY_KEY, working_directory);
 		myPrefs.put(MEDIA_DIRECTORY_KEY, media_directory);
-		myPrefs.put(FONT_FACE_KEY, font_face);
-		myPrefs.putInt(FONT_SIZE_KEY, font_size);
-		if (qd.getMediaPlayer() != null) myPrefs.put(MEDIA_PLAYER_KEY, qd.getMediaPlayer().getIdentifyingName());
-		
-		@TIBETAN@myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
-		@TIBETAN@if (qd.getKeyboard() != null) myPrefs.put(TIBETAN_KEYBOARD_KEY, qd.getKeyboard().getIdentifyingString());
-		
-		try {
-			if (qd.checkTimeTimer != null) qd.checkTimeTimer.cancel();
-			qd.getMediaPlayer().destroy();
-		} catch (PanelPlayerException ppe) {
-			ppe.printStackTrace();
-			return 1;
+	}
+	private void closeThisQDFrame() {
+		/*i first used dispose() instead of hide(), which should clear up memory,
+		but i got an error: can't dispose InputContext while it's active*/
+		if (qd.getEditor() == null) { //no content in this QD window
+			hide();
+			numberOfQDsOpen--;
+		} else { //there's a QD editor: save and close
+			qd.saveTranscript();
+			qd.removeContent();
+			hide();
+			numberOfQDsOpen--;
 		}
-		return 0;
+	}
+	public QD getQD() {
+		return qd;
 	}
 	public JMenuBar getQDShellMenu() {
 		JMenu projectMenu = new JMenu(messages.getString("File"));
@@ -216,28 +223,37 @@ public class QDShell extends JFrame {
 		newItem.setAccelerator(KeyStroke.getKeyStroke("control N"));
 		newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				qd.saveTranscript();
 				String s = "To start a new annotation, first open a video, " +
 							"and then create and save an empty annotation file.";
 				JFileChooser fc = new JFileChooser(new File(media_directory));
 				if (fc.showDialog(QDShell.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 					File mediaFile = fc.getSelectedFile();
 					try {
-						JFileChooser fc2 = new JFileChooser(new File(working_directory));
+						JFileChooser fc2 = new JFileChooser(new File(myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
 						fc2.addChoosableFileFilter(new QDFileFilter());
 						if (fc2.showDialog(QDShell.this, messages.getString("SaveTranscript")) == JFileChooser.APPROVE_OPTION) {
 							File transcriptFile = fc2.getSelectedFile();
-							String transcriptString = transcriptFile.getAbsolutePath();
-							int i = transcriptString.lastIndexOf('.');
-							if (i<0) transcriptString += dotQuillDriver;
-							else transcriptString = transcriptString.substring(0, i) + dotQuillDriver;
-							transcriptFile = new File(transcriptString);
-							fc2.rescanCurrentDirectory();
-							working_directory = transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1);
-							String mediaString = mediaFile.getAbsolutePath();
-							media_directory = mediaString.substring(0, mediaString.lastIndexOf(FILE_SEPARATOR)+1);
-							String mediaString2 = mediaFile.toURL().toString();
-							qd.newTranscript(transcriptFile, mediaString2);
+							if (transcriptFile.exists()) { //error message: cannot make new file from existing file
+								JOptionPane.showMessageDialog(QDShell.this, NEW_FILE_ERROR_MESSAGE, "No can do!", JOptionPane.WARNING_MESSAGE);
+							} else {
+								String transcriptString = transcriptFile.getAbsolutePath();
+								int i = transcriptString.lastIndexOf('.');
+								if (i<0) transcriptString += dotQuillDriver;
+								else transcriptString = transcriptString.substring(0, i) + dotQuillDriver;
+								transcriptFile = new File(transcriptString);
+								fc2.rescanCurrentDirectory();
+								myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
+								String mediaString = mediaFile.getAbsolutePath();
+								media_directory = mediaString.substring(0, mediaString.lastIndexOf(FILE_SEPARATOR)+1);
+								String mediaString2 = mediaFile.toURL().toString();
+								if (qd.getEditor() == null) { //nothing in this QD
+									//qd.saveTranscript();
+									qd.newTranscript(transcriptFile, mediaString2);
+								} else { //open new QDShell window
+									QDShell qdsh = new QDShell();
+									qdsh.getQD().newTranscript(transcriptFile, mediaString2);
+								}
+							}
 						}
 					} catch (MalformedURLException murle) {
 						murle.printStackTrace();
@@ -251,23 +267,35 @@ public class QDShell extends JFrame {
 		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				qd.saveTranscript();
-				JFileChooser fc = new JFileChooser(new File(working_directory));
+				JFileChooser fc = new JFileChooser(new File(myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
 				fc.addChoosableFileFilter(new QDFileFilter());
 				if (fc.showDialog(QDShell.this, messages.getString("OpenTranscript")) == JFileChooser.APPROVE_OPTION) {
 					File transcriptFile = fc.getSelectedFile();
-					qd.loadTranscript(transcriptFile);
+					String transcriptString = transcriptFile.getAbsolutePath();
+					myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));		
+					if (qd.getEditor() == null) { //nothing in this QD
+						//qd.saveTranscript();
+						qd.loadTranscript(transcriptFile);
+					} else { //open new QDShell window
+						QDShell qdsh = new QDShell();
+						qdsh.getQD().loadTranscript(transcriptFile);
+					}
 				}
 			}
 		});
-/*
+
 		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
 		closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));
 		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (numberOfQDsOpen > 1) closeThisQDFrame();
+				else {
+					qd.saveTranscript();
+					qd.removeContent();
+				}
 			}
 		});
-		*/
+
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -276,22 +304,28 @@ public class QDShell extends JFrame {
 			}
 		});
 
+		/*
 		JMenuItem quitItem = new JMenuItem(messages.getString("Quit"));
 		quitItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				System.exit(tryToQuit());
+				
+					putPreferences();
+					System.exit(0);
+				}				
 			}
-		});
+		});*/
 		
 		projectMenu.add(newItem);
 		projectMenu.addSeparator(); 
 		projectMenu.add(openItem);
-		//projectMenu.add(closeItem);
+		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
-		projectMenu.addSeparator();
-		projectMenu.add(quitItem);
+		//projectMenu.addSeparator();
+		//projectMenu.add(quitItem);
 		
 		try {
 		final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(this.getClass().getClassLoader());
@@ -303,29 +337,37 @@ public class QDShell extends JFrame {
 			configItems[i] = new JRadioButtonMenuItem(configurations[i].getName());
 			configItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					qd.configure(configurations[k]);
-					JMenu[] configMenus = qd.getConfiguredMenus();
-					configMenus[0].getPopupMenu().setLightWeightPopupEnabled(false);
-					configMenus[1].getPopupMenu().setLightWeightPopupEnabled(false);
-					JMenuBar bar = QDShell.this.getJMenuBar();
-					JMenu fileMenu = bar.getMenu(0);
-					JMenu prefMenu = bar.getMenu(3);
-					JMenuBar newBar = new JMenuBar();
-					newBar.add(fileMenu);
-					newBar.add(configMenus[0]);
-					newBar.add(configMenus[1]);
-					newBar.add(prefMenu);
-					QDShell.this.setJMenuBar(newBar);
-					QDShell.this.invalidate();
-					QDShell.this.validate();
-					QDShell.this.repaint();
+					myPrefs.put(CONFIGURATION_KEY, configurations[k].getName());
+					if (qd.configure(configurations[k])) { //cannot re-configure if transcript is already loaded
+						JMenu[] configMenus = qd.getConfiguredMenus();
+						configMenus[0].getPopupMenu().setLightWeightPopupEnabled(false);
+						configMenus[1].getPopupMenu().setLightWeightPopupEnabled(false);
+						JMenuBar bar = QDShell.this.getJMenuBar();
+						JMenu fileMenu = bar.getMenu(0);
+						JMenu prefMenu = bar.getMenu(3);
+						JMenuBar newBar = new JMenuBar();
+						newBar.add(fileMenu);
+						newBar.add(configMenus[0]);
+						newBar.add(configMenus[1]);
+						newBar.add(prefMenu);
+						QDShell.this.setJMenuBar(newBar);
+						QDShell.this.invalidate();
+						QDShell.this.validate();
+						QDShell.this.repaint();
+					}
 				}
 			});
 			configGroup.add(configItems[i]);
 		}
 		if (configItems.length > 0) {
-			configItems[0].setSelected(true);
-			qd.configure(configurations[0]);
+			String configName = myPrefs.get(CONFIGURATION_KEY, configurations[0].getName());
+			for (int j=0; j<configItems.length; j++) {
+				if (configName.equals(configurations[j].getName())) {
+					configItems[j].setSelected(true);
+					qd.configure(configurations[j]);
+					break;
+				}
+			}
 		}
 		
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
@@ -337,6 +379,7 @@ public class QDShell extends JFrame {
 			mediaItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					qd.setMediaPlayer(mPlayer);
+					myPrefs.put(MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
 				}
 			});
 			mediaGroup.add(mediaItems[i]);
@@ -386,6 +429,7 @@ public class QDShell extends JFrame {
 			@TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
 				@TIBETAN@public void actionPerformed(ActionEvent e) {
 				    @TIBETAN@qd.changeKeyboard(kbd);
+				    @TIBETAN@myPrefs.put(TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
 				@TIBETAN@}
 			    @TIBETAN@});
 			@TIBETAN@keyboardGroup.add(keyboardItems[i]);
@@ -446,8 +490,9 @@ public class QDShell extends JFrame {
 		@TIBETAN@JComboBox tibetanFontSizes;
 		@TIBETAN@tibetanPanel = new JPanel();
 		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Set Tibetan Font Size"));
-		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
+		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
 		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
+		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
 		@TIBETAN@tibetanFontSizes.setEditable(true);
 		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
 
@@ -458,9 +503,11 @@ public class QDShell extends JFrame {
 		romanPanel.setBorder(BorderFactory.createTitledBorder("Set non-Tibetan Font and Size"));
 		romanFontFamilies = new JComboBox(fontNames);
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
+		romanFontFamilies.setSelectedItem(font_face);
 		romanFontFamilies.setEditable(true);
 		romanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
 		romanFontSizes.setMaximumSize(romanFontSizes.getPreferredSize());
+		romanFontSizes.setSelectedItem(String.valueOf(font_size));
 		romanFontSizes.setEditable(true);
 		romanPanel.setLayout(new GridLayout(1,2));
 		romanPanel.add(romanFontFamilies);
@@ -475,7 +522,7 @@ public class QDShell extends JFrame {
 		JOptionPane pane = new JOptionPane(preferencesPanel);
 		JDialog dialog = pane.createDialog(this, "Preferences");
 
-        // This returns only when the user has closed the dialog:
+        // This returns only when the user has closed the dialog
 		dialog.show();
 		
 		@TIBETAN@int old_tibetan_font_size = tibetan_font_size;
@@ -485,6 +532,7 @@ public class QDShell extends JFrame {
 			@TIBETAN@tibetan_font_size = old_tibetan_font_size;
 		@TIBETAN@}
 
+		String old_font_face = new String(font_face);
 		font_face = romanFontFamilies.getSelectedItem().toString();
 		int old_font_size = font_size;
 		try {
@@ -493,15 +541,23 @@ public class QDShell extends JFrame {
 		catch (NumberFormatException ne) {
 			font_size = old_font_size;
 		}
+
+		myPrefs.put(FONT_FACE_KEY, font_face);
+		myPrefs.putInt(FONT_SIZE_KEY, font_size);
+		@TIBETAN@myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
 		
 		if (qd.getEditor() != null) {
-			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
-			@TIBETAN@dp.setByUserTibetanFontSize(tibetan_font_size);
-			@TIBETAN@dp.setByUserRomanAttributeSet(font_face, font_size);
-			@UNICODE@qd.getEditor().getTextPane().setFont(new Font(font_face, Font.PLAIN, font_size));
+			@UNICODE@if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
+			@TIBETAN@if (!(old_font_size == font_size && old_font_face.equals(font_face) && old_tibetan_font_size == tibetan_font_size)) {
+				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+				@TIBETAN@dp.setByUserTibetanFontSize(tibetan_font_size);
+				@TIBETAN@dp.setByUserRomanAttributeSet(font_face, font_size);
+				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(font_face, Font.PLAIN, font_size));
+				qd.getEditor().render();
+			}
 		}
 	}
-	
+
 	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
 		// accepts all directories and all savant files
 

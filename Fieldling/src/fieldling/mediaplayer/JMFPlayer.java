@@ -272,7 +272,8 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		}
 		player.start();
 	}
-	public void cmd_playSegment(Integer from, Integer to) throws PanelPlayerException {
+	//public void cmd_playSegment(Integer from, Integer to) throws PanelPlayerException {
+	public void cmd_playSegment(Long from, Long to) throws PanelPlayerException {
 		if (from == null || player == null)
 			throw new PanelPlayerException("no player or video still loading");
 
@@ -304,7 +305,7 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 			return true;
 		return false;
 	}
-	public int getCurrentTime() {
+	public long getCurrentTime() {
 		if (player == null)
 			return -1;
 		if (player.getState() < Controller.Realized)
@@ -312,10 +313,26 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		long currTime = player.getMediaNanoseconds();
 		return new Long(currTime / 1000000).intValue();
 	}
-	public int getEndTime() {
+	public long getEndTime() {
 		Time t = player.getDuration();
 		long l = t.getNanoseconds();
 		return new Long(l / 1000000).intValue();
+	}
+	public void setCurrentTime(long t) {
+		Time time = new Time(t * 1000000);
+		try {
+			if (player.getState() == Controller.Started)
+				player.stop();
+			while (player.getState() == Controller.Unrealized)
+				;
+			stopTime = null;
+			player.setStopTime(Clock.RESET);
+			player.setMediaTime(time);
+			pauseTime = player.getMediaTime();
+		} catch(NotRealizedError err) {
+			err.printStackTrace();
+			//throw new PanelPlayerException("JMF player not realized");
+		}		
 	}
 }
 /*-----------------------------------------------------------------------*/

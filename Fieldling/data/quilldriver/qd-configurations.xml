@@ -6,9 +6,14 @@
 			<edit href="TranscriptionEdit.xsl"/>
 			<new href="TranscriptionNew.xsl"/>
 		</configuration>
-		<configuration menu-name="THDL Logging">
+	<!--	<configuration menu-name="THDL Logging">
 			<config href="LoggingConfig.xml"/>
 			<edit href="LoggingEdit.xsl"/>
 			<new href="LoggingNew.xsl"/>
+		</configuration> -->
+		<configuration menu-name="THDL Word List">
+			<config href="WordListConfig.xml"/>
+			<edit href="WordListEdit.xsl"/>
+			<new href="WordListNew.xsl"/>
 		</configuration>
 </qd-configurations>

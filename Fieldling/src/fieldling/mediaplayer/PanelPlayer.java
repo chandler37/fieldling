@@ -105,16 +105,20 @@ public abstract class PanelPlayer extends Panel {
 			String sStart = stSTARTS.nextToken();
 			String sEnd   = stENDS.nextToken();
 			try {
-				Integer start = new Integer(sStart);
+				Long start = new Long(sStart);
+				//Integer start = new Integer(sStart);
 				hashStart.put(sID, start);
 			} catch (NumberFormatException err) {
-				hashStart.put(sID, new Integer(0));
+				hashStart.put(sID, new Long(0));
+				//hashStart.put(sID, new Integer(0));
 			}
 			try {
-				Integer end = new Integer(sEnd);
+				Long end = new Long(sEnd);
+				//Integer end = new Integer(sEnd);
 				hashEnd.put(sID, end);
 			} catch (NumberFormatException err) {
-				hashEnd.put(sID, new Integer(0));
+				hashEnd.put(sID, new Long(0));
+				//hashEnd.put(sID, new Integer(0));
 			}
 		}
 
@@ -147,11 +151,14 @@ public abstract class PanelPlayer extends Panel {
 	private int getMinusStart(Vector v) {
 		int index = 0;
 		String first = (String)v.elementAt(index);
-		Integer minus = (Integer)hashStart.get(first);
+		Long minus = (Long)hashStart.get(first);
+		//Integer minus = (Integer)hashStart.get(first);
 		for (int i=0;i<v.size();i++) {
 			String s = (String)v.elementAt(i);
-			Integer f = (Integer)hashStart.get(s);
-			if (minus.intValue() > f.intValue()) {
+			Long f = (Long)hashStart.get(s);
+			if (minus.longValue() > f.longValue()) {
+			//Integer f = (Integer)hashStart.get(s);
+			//if (minus.intValue() > f.intValue()) {
 				minus = f;
 				index = i;
 			}
@@ -161,11 +168,14 @@ public abstract class PanelPlayer extends Panel {
 	private int getMinusEnd(Vector v) {
 		int index = 0;
 		String first = (String)v.elementAt(index);
-		Integer minus = (Integer)hashEnd.get(first);
+		Long minus = (Long)hashEnd.get(first);
+		//Integer minus = (Integer)hashEnd.get(first);
 		for (int i=0;i<v.size();i++) {
 			String s = (String)v.elementAt(i);
-			Integer f = (Integer)hashEnd.get(s);
-			if (minus.intValue() > f.intValue()) {
+			Long f = (Long)hashEnd.get(s);
+			if (minus.longValue() > f.longValue()) {
+			//Integer f = (Integer)hashEnd.get(s);
+			//if (minus.intValue() > f.intValue()) {
 				minus = f;
 				index = i;
 			}
@@ -177,7 +187,8 @@ public abstract class PanelPlayer extends Panel {
 		return hashStart.containsKey(theID);
 	}
 	public void cmd_playFrom(String fromID) {
-		Integer from  = (Integer)hashStart.get(fromID);
+		Long from = (Long)hashStart.get(fromID);
+		//Integer from  = (Integer)hashStart.get(fromID);
 		try {
 			cmd_playSegment(from, null);
 		} catch (PanelPlayerException smpe) {
@@ -185,8 +196,10 @@ public abstract class PanelPlayer extends Panel {
 		}
 	}
 	public void cmd_playS(String fromID) {
-		Integer from = (Integer)hashStart.get(fromID);
-		Integer to   = (Integer)hashEnd.get(fromID);
+		Long from = (Long)hashStart.get(fromID);
+		Long to = (Long)hashEnd.get(fromID);
+		//Integer from = (Integer)hashStart.get(fromID);
+		//Integer to   = (Integer)hashEnd.get(fromID);
 		try {
 			cmd_playSegment(from, to);
 		} catch (PanelPlayerException smpe) {
@@ -196,9 +209,13 @@ public abstract class PanelPlayer extends Panel {
 	protected void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
 		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
 		cancelAnnotationTimer();
-		int i = getCurrentTime();
-		Integer from = new Integer(i);
-		remplisPileStart(from, new Integer(getEndTime()));
+		
+		long l = getCurrentTime();
+		Long from = new Long(l);
+		remplisPileStart(from, new Long(getEndTime()));
+		//int i = getCurrentTime();
+		//Integer from = new Integer(i);
+		//remplisPileStart(from, new Integer(getEndTime()));
 		annTimer = new Timer(true);
 		annTimer.schedule(new TimerTask() {
 			public void run() {
@@ -217,19 +234,24 @@ public abstract class PanelPlayer extends Panel {
 		while (iter.hasNext()) fireStopAnnotation((String)iter.next());
 	}
 	private void cmd_nextEvent() {
-		Integer when = new Integer(getCurrentTime());
+		Long when = new Long(getCurrentTime());
+		//Integer when = new Integer(getCurrentTime());
 		if (!pileStart.empty()) {
 			String id = (String)pileStart.peek();
-			Integer f   = (Integer)hashStart.get(id);
-			if (when.intValue() >= f.intValue()) {
+			Long f   = (Long)hashStart.get(id);
+			if (when.longValue() >= f.longValue()) {
+			//Integer f   = (Integer)hashStart.get(id);
+			//if (when.intValue() >= f.intValue()) {
 				id = (String)pileStart.pop();
 				if (isAutoScrolling) fireStartAnnotation(id);
 			}
 		}
 		if (!pileEnd.empty()) {
 			String id = (String)pileEnd.peek();
-			Integer f   = (Integer)hashEnd.get(id);
-			if (when.intValue() >= f.intValue()) {
+			Long f   = (Long)hashEnd.get(id);
+			if (when.longValue() >= f.longValue()) {
+			//Integer f   = (Integer)hashEnd.get(id);
+			//if (when.intValue() >= f.intValue()) {
 				id = (String)pileEnd.pop();
 				if (isAutoScrolling) fireStopAnnotation(id);
 			}
@@ -246,14 +268,17 @@ public abstract class PanelPlayer extends Panel {
 /* empties the pile, and then reconstructs it to consist of all ids
    whose start time or end time is included between start and end. */
 
-	private void remplisPileStart(Integer start, Integer end) {
+	//private void remplisPileStart(Integer start, Integer end) {
+	private void remplisPileStart(Long start, Long end) {
 		vide_Pile();
 		pileStart.removeAllElements();
 		pileEnd.removeAllElements();
 		for (int i=orderEndID.size()-1; i!=-1; i--) {
 			String id = (String)orderEndID.elementAt(i);
-			Integer f   = (Integer)hashEnd.get(id);
-			if ((f.intValue() > start.intValue()) && (f.intValue() <= end.intValue())) {
+			Long f = (Long)hashEnd.get(id);
+			if ((f.longValue() > start.longValue()) && (f.longValue() <= end.longValue())) {
+			//Integer f   = (Integer)hashEnd.get(id);
+			//if ((f.intValue() > start.intValue()) && (f.intValue() <= end.intValue())) {
 				pileEnd.push(id);
 			}
 		}
@@ -263,10 +288,14 @@ public abstract class PanelPlayer extends Panel {
 
 		for (int i=orderStartID.size()-1; i!=-1; i--) {
 			String id = (String)orderStartID.elementAt(i);
-			Integer f   = (Integer)hashStart.get(id);
-			Integer f2 = (Integer)hashEnd.get(id);
-			if (  (f.intValue() >= start.intValue() && f.intValue() < end.intValue()) ||
-				(f.intValue() < start.intValue() && f2.intValue() > start.intValue())) {
+			Long f   = (Long)hashStart.get(id);
+			Long f2 = (Long)hashEnd.get(id);
+			if (  (f.longValue() >= start.longValue() && f.longValue() < end.longValue()) ||
+				(f.longValue() < start.longValue() && f2.longValue() > start.longValue())) {
+			//Integer f   = (Integer)hashStart.get(id);
+			//Integer f2 = (Integer)hashEnd.get(id);
+			//if (  (f.intValue() >= start.intValue() && f.intValue() < end.intValue()) ||
+			//	(f.intValue() < start.intValue() && f2.intValue() > start.intValue())) {
 				pileStart.push(id);
 			}
 		}
@@ -286,14 +315,17 @@ public abstract class PanelPlayer extends Panel {
 
 //helper methods - control media
 	public abstract void cmd_playOn() throws PanelPlayerException;
-	public abstract void cmd_playSegment(Integer startTime, Integer stopTime) throws PanelPlayerException;
+	//parameters given in milliseconds
+	public abstract void cmd_playSegment(Long startTime, Long stopTime) throws PanelPlayerException;
 	public abstract void cmd_stop() throws PanelPlayerException;
 
 //helper methods - media status
 	public abstract boolean isInitialized();
 	public abstract boolean isPlaying();
-	public abstract int getCurrentTime();
-	public abstract int getEndTime();
+	//return values are given in milliseconds
+	public abstract long getCurrentTime();
+	public abstract long getEndTime();
+	public abstract void setCurrentTime(long t);
 
 //helper methods - cleanup
 	public abstract void destroy() throws PanelPlayerException;

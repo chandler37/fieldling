@@ -18,267 +18,95 @@
 
 package fieldling.quilldriver;
 
-
-
 import org.jdom.Document;
-
 import org.jdom.Element;
-
 import org.jdom.Attribute;
-
 import org.jdom.Text;
-
 import org.jdom.DocType;
-
 import java.io.IOException;
 import java.awt.Color;
-
 import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.*;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-
 import java.awt.event.MouseListener;
-
 import java.awt.event.MouseMotionAdapter;
-
 import java.awt.event.FocusEvent;
-
 import java.awt.event.FocusListener;
-
 import java.util.List;
-
 import java.util.Set;
-
 import java.util.Iterator;
-
 import java.util.Map;
-
 import java.util.HashMap;
-
 import java.util.Hashtable;
-
 import java.util.EventObject;
-
 import java.util.EventListener;
-
 import javax.swing.JTextPane;
-
 import javax.swing.text.JTextComponent;
-
 import javax.swing.Action;
-
 import javax.swing.AbstractAction;
-
 import javax.swing.KeyStroke;
-
 import javax.swing.text.Keymap;
-
 import javax.swing.text.Position;
-
 import javax.swing.text.StyleConstants;
-
 import javax.swing.text.StyledDocument;
-
 import javax.swing.text.AttributeSet;
-
 import javax.swing.text.SimpleAttributeSet;
-
 import javax.swing.text.BadLocationException;
-
 import javax.swing.text.DefaultEditorKit;
-
 import javax.swing.event.DocumentListener;
-
 import javax.swing.event.DocumentEvent;
-
 import javax.swing.event.CaretListener;
-
 import javax.swing.event.CaretEvent;
-
 import javax.swing.event.EventListenerList;
 
-
-
 public class XMLEditor {
-
 	private EventListenerList listenerList = new EventListenerList();
-
 	private Document xml;
-
 	private JTextPane pane;
-
 	private StyledDocument doc;
 
-	private DocumentListener docListen;
-
-	private Map startOffsets, endOffsets;
-
-	private final float indentIncrement = 15.0F;
-
-	private final Color tagColor = Color.magenta;
-
-	private final Color attColor = Color.pink;
-
-	private final Color textColor = Color.darkGray;
-
-	private Cursor textCursor;
-
-	private Cursor defaultCursor;
-
-	private boolean isEditing = false;
-
-	private Object editingNode = null;
-
-	private boolean hasChanged = false;
-
-	private Hashtable actions;
-
+	//listeners
+	private DocumentListener docListener;
+	private MouseMotionAdapter mouseMotionListener;
+	private MouseAdapter mouseListener;
+	private FocusListener focusListener;
 	private CaretListener editabilityTracker;
 
+	private Map startOffsets, endOffsets;
+	private final float indentIncrement = 15.0F;
+	private final Color tagColor = Color.magenta;
+	private final Color attColor = Color.pink;
+	private final Color textColor = Color.darkGray;
+	private Cursor textCursor;
+	private Cursor defaultCursor;
+	private boolean isEditing = false;
+	private Object editingNode = null;
+	private boolean hasChanged = false;
+	private Hashtable actions;
 	private XMLTagInfo tagInfo;
 
-	
-
 	public XMLEditor(Document xmlDoc, JTextPane textPane, XMLTagInfo tagInfo) {
-
 		xml = xmlDoc;
-
 		pane = textPane;
-
 		this.tagInfo = tagInfo;
-
 		startOffsets = new HashMap();
-
 		endOffsets = new HashMap();
-		
 		pane.setSelectionColor(Color.CYAN);
 		pane.setSelectedTextColor(Color.RED);
-		
-		docListen = new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
-				hasChanged = true;
-			}
-			public void insertUpdate(DocumentEvent e) {
-				hasChanged = true;
-				if (getStartOffsetForNode(editingNode) > e.getOffset()) {
-					javax.swing.text.Document d = e.getDocument();
-					try {
-						startOffsets.put(editingNode, d.createPosition(e.getOffset()));
-					} catch (BadLocationException ble) {
-						ble.printStackTrace();
-					}
-				}
-			}
-			public void removeUpdate(DocumentEvent e) {
-				hasChanged = true;
-			}
-		};
-
-		render();
-
+		doc = pane.getStyledDocument();
 		textCursor = new Cursor(Cursor.TEXT_CURSOR);
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-
-		pane.addMouseMotionListener(new MouseMotionAdapter() {
-			public void mouseMoved(MouseEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int offset = p.viewToModel(e.getPoint());
-				if (isEditable(offset)) p.setCursor(textCursor);
-				else p.setCursor(defaultCursor);
-			}
-		});
-
-		MouseListener[] listeners = (MouseListener[])pane.getListeners(MouseListener.class);
-		for (int i=0; i<listeners.length; i++) pane.removeMouseListener(listeners[i]);
-		pane.addMouseListener(new MouseAdapter() {
-			/* Here's when these methods get called:
-				mousePressed: always
-				mouseClicked: only when you don't move the mouse in between pressing and releasing
-				mouseReleased: always
-			This is crucial info for handling cut, copy and paste, since making a selection
-			involves pressing, moving, and then releasing the mouse. */
-			
-			public void mouseClicked(MouseEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int offset = p.viewToModel(e.getPoint());
-				/*if (isEditable(offset)) {
-System.out.println("clicked on editable " + String.valueOf(offset));
-					p.requestFocus();
-					if (isEditing) fireEndEditEvent();
-					fireStartEditEvent(getNodeForOffset(offset));
-					p.setCaretPosition(offset);
-				} else*/
-				if (!isEditable(offset)) {
-System.out.println("clicked on uneditable " + String.valueOf(offset));					
-					Object node = getNodeForOffset(offset);
-					if (isEditing) fireEndEditEvent();
-					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
-				}
-			}
-			public void mousePressed(MouseEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int offset = p.viewToModel(e.getPoint());
-				if (isEditable(offset)) {
-System.out.println("clicked on editable " + String.valueOf(offset));
-					p.requestFocus();
-					if (isEditing) fireEndEditEvent();
-					fireStartEditEvent(getNodeForOffset(offset));
-					p.getCaret().setDot(offset);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				int j = p.getCaretPosition();
-				if (editingNode != getNodeForOffset(j)) {
-					fireEndEditEvent();
-					fireStartEditEvent(getNodeForOffset(j));
-				}				
-			}
-		});
-
-		pane.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				if (isEditable(p.getCaretPosition()))
-					fireStartEditEvent(getNodeForOffset(p.getCaretPosition()));
-			}
-			public void focusLost(FocusEvent e) {
-				JTextPane p = (JTextPane)e.getSource();
-				if (isEditing) fireEndEditEvent();
-			}
-		});
-
-		editabilityTracker = new CaretListener() {
-			public void caretUpdate(CaretEvent e) {
-				int dot = e.getDot();
-				if (getNodeForOffset(dot) != getNodeForOffset(e.getMark()))
-					pane.getCaret().setDot(dot);
-				if (!isEditable(dot)) {
-					while (!isEditable(dot) && dot<pane.getDocument().getLength()) dot++;
-					if (dot == pane.getDocument().getLength()) {
-						dot = e.getDot();
-						do {
-							dot--;
-						} while (!isEditable(dot) && dot>-1);
-						if (dot == -1) return; //what to do? there's nothing to edit in this pane
-					}
-					if (isEditable(dot)) {
-						pane.getCaret().setDot(dot);
-						if (getNodeForOffset(dot) != null) fireStartEditEvent(getNodeForOffset(dot));
-					}
-				} else if (editingNode == null) //need to start editing because cursor happens to be on an editable node
-					fireStartEditEvent(getNodeForOffset(dot));
-			}
-		};
-
-		
-
+		initializeListeners();
+		render();
+		installKeymap();
+	}
+	
+	private void installKeymap() {
 		Action nextNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -295,7 +123,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				p.setCaretPosition(i);
 			}
 		};
-
 		Action prevNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -310,213 +137,102 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				p.setCaretPosition(i);
 			}
 		};
-
 		Action selectNodeAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				Object node = getNodeForOffset(p.getCaretPosition());
-
 				if (node != null) {
-
 					p.setSelectionStart(((Position)startOffsets.get(node)).getOffset());
-
 					int end = ((Position)endOffsets.get(node)).getOffset();
-
 					if (node instanceof Text) p.setSelectionEnd(end);
-
 					else if (node instanceof Attribute) p.setSelectionEnd(end-1);
-
 				}
-
 			}	
-
 		};
-
-
-
 		Action selForwardAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.getCaretPosition();
-
 				Object node = getNodeForOffset(offset);
-
 				int last = (((Position)endOffsets.get(node)).getOffset());
-
 				if (node instanceof Attribute) last--;
-
 				if (offset < last) p.getCaret().moveDot(offset++);
-
 			}
-
 		};
-
 		Action selBackwardAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.getCaretPosition();
-
 				int first = (((Position)startOffsets.get(getNodeForOffset(offset))).getOffset());
-
 				if (offset > first) p.getCaret().moveDot(offset--);
-
 			}
-
 		};
-
-
-
 		Action selectToNodeEndAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				Object node = getNodeForOffset(p.getCaret().getMark());
-
 				if (node != null) {
-
 					int last = (((Position)endOffsets.get(node)).getOffset());
-
 					if (node instanceof Attribute) last--;
-
 					p.getCaret().moveDot(last);
-
 				}
-
 			}
-
 		};
-
-		
-
 		Action selectToNodeStartAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.getCaretPosition();
-
 				Object node = getNodeForOffset(p.getCaret().getMark());
-
 				if (node != null) {
-
 					int first = (((Position)startOffsets.get(node)).getOffset());
-
 					p.getCaret().moveDot(first);
-
 				}
-
 			}
-
 		};
-
-		
-
 		Action backwardAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int prePos = p.getCaretPosition();
-
 				int newPos = prePos-1;
-
 				while (newPos>-1 && !isEditable(newPos)) newPos--;
-
 				if (newPos != -1) {
-
 					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
-
 						fireEndEditEvent();
-
 						fireStartEditEvent(getNodeForOffset(newPos));
-
 					}
-
 					p.setCaretPosition(newPos);
-
 				}
-
 			}
-
 		};
-
-
-
 		Action forwardAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int prePos = p.getCaretPosition();
-
 				int newPos = prePos+1;
-
 				while (newPos<p.getDocument().getLength() && !isEditable(newPos)) newPos++;
-
 				if (newPos != p.getDocument().getLength()) {
-
 					if (getNodeForOffset(prePos) != getNodeForOffset(newPos)) {
-
 						fireEndEditEvent();
-
 						fireStartEditEvent(getNodeForOffset(newPos));
-
 					}
-
 					p.setCaretPosition(newPos);
-
 				}
-
 			}
-
 		};
-
-		
-
 		Action begNodeAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				Object node = getNodeForOffset(p.getCaretPosition());
-
 				p.setCaretPosition(((Position)startOffsets.get(node)).getOffset());
-
 			}
-
 		};
-
-		
-
 		Action endNodeAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				Object node = getNodeForOffset(p.getCaretPosition());
-
 				p.setCaretPosition(((Position)endOffsets.get(node)).getOffset());
-
 			}
-
 		};
-
 		Action deleteNextAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -532,7 +248,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				}
 			}
 		};
-
 		Action deletePrevAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -548,52 +263,32 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				}
 			}
 		};
-
-		
 		Action loseFocusAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
 				p.transferFocus(); //moves focus to next component
 			}
 		};
-
-
-
 		/* Action selForwardAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.getCaretPosition();
-
-				
-
 			}
-
 		};
-
 		*/
-
 		createActionTable(pane);
 		Keymap keymap = pane.addKeymap("QDBindings", pane.getKeymap());
-
 /*		KeyStroke[] tabKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.insertTabAction));
-
 		if (tabKeys != null)
-
 			for (int i=0; i<tabKeys.length; i++)
-
 				keymap.addActionForKeyStroke(tabKeys[i], nextNodeAction);
 */
 		//tab
 		KeyStroke tabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
 		if (tabKey != null) keymap.addActionForKeyStroke(tabKey, nextNodeAction);
-		
 		//enter
 		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);			
-
 		//backspace
 		/* The Java bug database has several related bugs concerning the treatment
 		of backspace. Here I adopt solution based on fix of bug 4402080:
@@ -614,17 +309,13 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				else if (kev.getKeyCode() == KeyEvent.VK_TAB) kev.consume();
 			}
 		});
-
 		//delete
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
 		keymap.addActionForKeyStroke(delete, deleteNextAction);
 		/*
 		KeyStroke[] delNextKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.deleteNextCharAction));
-
 		if (delNextKeys != null)
-
 			for (int i=0; i<delNextKeys.length; i++)
-
 				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
 		*/
 		KeyStroke[] selectAllKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectAllAction));
@@ -671,7 +362,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		if (begParaKeys != null)
 			for (int i=0; i<begParaKeys.length; i++)
 				keymap.addActionForKeyStroke(begParaKeys[i], begNodeAction);
-
 		Action cutAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -688,7 +378,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		};
 		KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(cut, cutAction);
-
 		Action copyAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -705,7 +394,6 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		};
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(copy, copyAction);
-
 		Action pasteAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
@@ -749,57 +437,33 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 		};
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(paste, pasteAction);
-		
 		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 		keymap.addActionForKeyStroke(back, backwardAction);
-		
 		KeyStroke forward = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 		keymap.addActionForKeyStroke(forward, forwardAction);
-		
 		KeyStroke up = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
 		keymap.addActionForKeyStroke(up, prevNodeAction);
-		
 		KeyStroke down = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
 		keymap.addActionForKeyStroke(down, nextNodeAction);
-		
 		/*KeyStroke[] backwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.backwardAction));
-
 		if (backwardKeys != null)
-
 			for (int i=0; i<backwardKeys.length; i++)
-
 				keymap.addActionForKeyStroke(backwardKeys[i], backwardAction);
 		*/
-
 		KeyStroke[] forwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.forwardAction));
-
 		if (forwardKeys != null)
-
 			for (int i=0; i<forwardKeys.length; i++)
-
 				keymap.addActionForKeyStroke(forwardKeys[i], forwardAction);
-
-		
 		KeyStroke[] selForwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionForwardAction));
-
 		if (selForwardKeys != null)
-
 			for (int i=0; i<selForwardKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selForwardKeys[i], selForwardAction);
-
 		KeyStroke[] selBackKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionBackwardAction));
-
 		if (selBackKeys != null)
-
 			for (int i=0; i<selBackKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selBackKeys[i], selBackwardAction);
-
 		KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-
 		if (escapeKey != null) keymap.addActionForKeyStroke(escapeKey, loseFocusAction);
-
 		final Action parentDefault = keymap.getDefaultAction();
 		Action thisDefault = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -821,97 +485,188 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				}
 			}
 		};
-
 		keymap.setDefaultAction(thisDefault);
 		pane.setKeymap(keymap);
 /*
-
 Actions that still need to be defined:
-
-
-
 Fields inherited from class javax.swing.text.DefaultEditorKit
-
 beepAction, beginAction, beginWordAction, copyAction, cutAction, 
-
 defaultKeyTypedAction,
-
 downAction, endAction, EndOfLineStringProperty, 
-
 endWordAction, insertBreakAction, insertContentAction, 
-
 nextWordAction, pageDownAction, pageUpAction, 
-
 pasteAction, previousWordAction, readOnlyAction
-
 selectionBeginAction, selectionBeginWordAction, 
-
 selectionDownAction, selectionEndAction, selectionEndWordAction, 
-
 selectionNextWordAction, selectionPreviousWordAction, 
-
 selectionUpAction, selectWordAction, 
-
 upAction, writableAction
-
 */
 	}
-
-	
-
-	private void createActionTable(JTextComponent textComponent) {
-
-	    actions = new Hashtable();
-
-	    Action[] actionsArray = textComponent.getActions();
-
-	    for (int i = 0; i < actionsArray.length; i++) {
-
-		Action a = actionsArray[i];
-
-		actions.put(a.getValue(Action.NAME), a);
-
-	    }
-
-	}
-
-	
-
-	private Action getActionByName(String name) {
-
-	    return (Action)(actions.get(name));
-
-	}
-
-
-
 	public void setEditabilityTracker(boolean bool) {
 		if (bool) {
-			int p = pane.getCaretPosition();
-			int q;
-			if (pane.getDocument().getLength() == 0)
-				q=0;
-			else {
-				if (p>0) q=p-1;
-				else q=p+1;
+			CaretListener[] caretListeners = (CaretListener[])pane.getListeners(CaretListener.class);
+			boolean alreadyInstalled = false;
+			for (int i=0; i<caretListeners.length; i++) {
+				if (caretListeners[i] == editabilityTracker) {
+					alreadyInstalled = true;
+					break;
+				}
 			}
-			pane.setCaretPosition(q);
-			pane.addCaretListener(editabilityTracker); //shouldn't do if already installed
-			pane.setCaretPosition(p);
+			if (!alreadyInstalled) {
+				int p = pane.getCaretPosition();
+				int q;
+				if (pane.getDocument().getLength() == 0)
+					q=0;
+				else {
+					if (p>0) q=p-1;
+					else q=p+1;
+				}
+				pane.setCaretPosition(q);
+				pane.addCaretListener(editabilityTracker); //shouldn't do if already installed
+				pane.setCaretPosition(p);
+			}
 		}
 		else pane.removeCaretListener(editabilityTracker);
+	}	
+	private void activateListeners() {
+		doc.addDocumentListener(docListener);
+		pane.addMouseMotionListener(mouseMotionListener);
+		pane.addMouseListener(mouseListener);
+		pane.addFocusListener(focusListener);
 	}
-
+	private void deactivateListeners() {
+		setEditabilityTracker(false);
+		doc.removeDocumentListener(docListener);
+		pane.removeMouseMotionListener(mouseMotionListener);
+		pane.removeMouseListener(mouseListener);
+		pane.removeFocusListener(focusListener);
+	}
+	private void initializeListeners() {
+		MouseListener[] listeners = (MouseListener[])pane.getListeners(MouseListener.class);
+		for (int i=0; i<listeners.length; i++) pane.removeMouseListener(listeners[i]);
+		docListener = new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				hasChanged = true;
+			}
+			public void insertUpdate(DocumentEvent e) {
+				hasChanged = true;
+				if (getStartOffsetForNode(editingNode) > e.getOffset()) {
+					javax.swing.text.Document d = e.getDocument();
+					try {
+						startOffsets.put(editingNode, d.createPosition(e.getOffset()));
+					} catch (BadLocationException ble) {
+						ble.printStackTrace();
+					}
+				}
+			}
+			public void removeUpdate(DocumentEvent e) {
+				hasChanged = true;
+			}
+		};
+		mouseMotionListener = new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.viewToModel(e.getPoint());
+				if (isEditable(offset)) p.setCursor(textCursor);
+				else p.setCursor(defaultCursor);
+			}		
+		};
+		mouseListener = new MouseAdapter() {
+			/* Here's when these methods get called:
+				mousePressed: always
+				mouseClicked: only when you don't move the mouse in between pressing and releasing
+				mouseReleased: always
+			This is crucial info for handling cut, copy and paste, since making a selection
+			involves pressing, moving, and then releasing the mouse. */
+			
+			public void mouseClicked(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.viewToModel(e.getPoint());
+				/*if (isEditable(offset)) {
+System.out.println("clicked on editable " + String.valueOf(offset));
+					p.requestFocus();
+					if (isEditing) fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(offset));
+					p.setCaretPosition(offset);
+				} else*/
+				if (!isEditable(offset)) {
+System.out.println("clicked on uneditable " + String.valueOf(offset));					
+					Object node = getNodeForOffset(offset);
+					if (isEditing) fireEndEditEvent();
+					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
+				}
+			}
+			public void mousePressed(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.viewToModel(e.getPoint());
+				if (isEditable(offset)) {
+System.out.println("clicked on editable " + String.valueOf(offset));
+					p.requestFocus();
+					if (isEditing) fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(offset));
+					p.getCaret().setDot(offset);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int j = p.getCaretPosition();
+				if (editingNode != getNodeForOffset(j)) {
+					fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(j));
+				}				
+			}
+		};
+		focusListener = new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				if (isEditable(p.getCaretPosition()))
+					fireStartEditEvent(getNodeForOffset(p.getCaretPosition()));
+			}
+			public void focusLost(FocusEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				if (isEditing) fireEndEditEvent();
+			}
+		};
+		editabilityTracker = new CaretListener() {
+			public void caretUpdate(CaretEvent e) {
+				int dot = e.getDot();
+				if (getNodeForOffset(dot) != getNodeForOffset(e.getMark()))
+					pane.getCaret().setDot(dot);
+				if (!isEditable(dot)) {
+					while (!isEditable(dot) && dot<pane.getDocument().getLength()) dot++;
+					if (dot == pane.getDocument().getLength()) {
+						dot = e.getDot();
+						do {
+							dot--;
+						} while (!isEditable(dot) && dot>-1);
+						if (dot == -1) return; //what to do? there's nothing to edit in this pane
+					}
+					if (isEditable(dot)) {
+						pane.getCaret().setDot(dot);
+						if (getNodeForOffset(dot) != null) fireStartEditEvent(getNodeForOffset(dot));
+					}
+				} else if (editingNode == null) //need to start editing because cursor happens to be on an editable node
+					fireStartEditEvent(getNodeForOffset(dot));
+			}
+		};
+	}
+	private void createActionTable(JTextComponent textComponent) {
+	    actions = new Hashtable();
+	    Action[] actionsArray = textComponent.getActions();
+	    for (int i = 0; i < actionsArray.length; i++) {
+		Action a = actionsArray[i];
+		actions.put(a.getValue(Action.NAME), a);
+	    }
+	}
+	private Action getActionByName(String name) {
+	    return (Action)(actions.get(name));
+	}
 	public void updateNode(Object node) {
-
 		System.out.println("updating: " + node.toString());
-
 		if (node == null)
-
 			return;
-
 		try {		
-
 			if (node instanceof Text) {
 				int p1 = ((Position)startOffsets.get(node)).getOffset();
 				int p2 = ((Position)endOffsets.get(node)).getOffset();
@@ -934,95 +689,49 @@ upAction, writableAction
 				Attribute att = (Attribute)node;
 				att.setValue(val);
 			}
-
 			System.out.println("updated: " + node.toString());
-
 		} catch (BadLocationException ble) {
-
 			ble.printStackTrace();
-
 		}
-
 	}
-
-	
-
 	interface NodeEditListener extends EventListener {
-
 		public void nodeEditPerformed(NodeEditEvent ned);
-
 	}
-
 	public void addNodeEditListener(NodeEditListener ned) {
-
 		listenerList.add(NodeEditListener.class, ned);
-
 	}
-
 	public void removeNodeEditListener(NodeEditListener ned) {
-
 		listenerList.remove(NodeEditListener.class, ned);
-
 	}
-
 	class NodeEditEvent extends EventObject {
-
 		Object node;
 
-		
-
 		NodeEditEvent(Object node) {
-
 			super(node);
-
 			this.node = node;
-
 		}
-
 		public Object getNode() {
-
 			return node;
-
 		}
-
 	}
-
 	class StartEditEvent extends NodeEditEvent {
-
 		StartEditEvent(Object node) {
-
 			super(node);
-
 		}
-
 	}
-
 	class EndEditEvent extends NodeEditEvent {
-
 		public EndEditEvent(Object node) {
-
 			super(node);
-
 		}
-
 		public boolean hasBeenEdited() {
-
 			return hasChanged;
-
 		}
-
 	}
-
 	class CantEditEvent extends NodeEditEvent {
-
 		public CantEditEvent(Object node) {
-
 			super(node);
-
 		}
-
 	}
-
 	public void fireStartEditEvent(Object node) {
 		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && node instanceof Text) {
 			@TIBETAN@Text t = (Text)node;
@@ -1043,7 +752,6 @@ upAction, writableAction
 		editingNode = node;
 		hasChanged = false;
 	}
-
 	public void fireEndEditEvent() {
 		if (!isEditing) return;
 
@@ -1064,389 +772,197 @@ upAction, writableAction
 		editingNode = null;
 		hasChanged = false;
 	}
-
 	public void fireCantEditEvent(Object node) {
-
 		//see javadocs on EventListenerList for how following array is structured
-
 		Object[] listeners = listenerList.getListenerList();
-
 		for (int i = listeners.length-2; i>=0; i-=2) {
-
 			if (listeners[i]==NodeEditListener.class)
-
 				((NodeEditListener)listeners[i+1]).nodeEditPerformed(new CantEditEvent(node));
-
 		}
-
 	}
-
-
-
 	public void setXMLDocument(Document d, String doctype_elementName, String doctype_systemID) {
-
 		xml = d;
-
 		xml.setDocType(new DocType(doctype_elementName, doctype_systemID));
-
 		render();
-
 	}
-
 	public void render() {
-
-		System.out.println("Rendering the document");
-
-		doc = pane.getStyledDocument();
-
+		System.out.println("rendering xml");
 		int len = doc.getLength();
-
 		try {
-
-			if (len > 0) doc.remove(0, len);
-
+			if (len > 0) {
+				deactivateListeners();
+				doc.remove(0, len);
+			}
 			doc.insertString(0, "\n", null);
-
 		} catch (BadLocationException ble) {
-
 			ble.printStackTrace();
-
 		}
-
 		startOffsets.clear();
-
 		endOffsets.clear();
-
 		Element root = xml.getRootElement();
-
 		renderElement(root, 0.0F, doc.getLength());
-
-
-
 		SimpleAttributeSet eColor = new SimpleAttributeSet();
-
 		eColor.addAttribute("xmlnode", root);
-
 		doc.setParagraphAttributes(doc.getLength(), 1, eColor, false);
-
-
-
 		fixOffsets();
-
-
-
-		doc.addDocumentListener(docListen);
-
+		activateListeners();
 		pane.setCaretPosition(0);
-
 		setEditabilityTracker(true);
-
 	}
-
-
-
 	public void fixOffsets() {
-
 		//replace Integer values in startOffsets and endOffsets with Positions
-
 		Set startKeys = startOffsets.keySet();
-
 		Iterator iter = startKeys.iterator();
-
 		while (iter.hasNext()) {
-
 			Object key = iter.next();
-
 			Object obj = startOffsets.get(key);
-
 			//if (obj instanceof Position)
-
 			//	startOffsets.put(key, obj); 	//actually we don't have to do anything here, do we
-
 								//since the startoffsets are already set!!
-
 			//else
-
 			if (obj instanceof Integer) try {
-
 				Integer val = (Integer)obj; 
-
 				startOffsets.put(key, doc.createPosition(val.intValue()));
-
 			} catch (BadLocationException ble) {
-
 				ble.printStackTrace();
-
 			}
-
 		}
-
 		Set endKeys = endOffsets.keySet();
-
 		iter = endKeys.iterator();
-
 		while (iter.hasNext()) {
-
 			Object key = iter.next();
-
 			Object obj = endOffsets.get(key);
-
 			//if (obj instanceof Position)
-
 			//	endOffsets.put(key, obj);	//actually we don't have to do anything here, do we
-
 								//since the endoffsets are already set!!
-
 			//else 
-
 			if (obj instanceof Integer) try {
-
 				Integer val = (Integer)obj;
-
 				endOffsets.put(key, doc.createPosition(val.intValue()));
-
 			} catch (BadLocationException ble) {
-
 				ble.printStackTrace();
-
 			}
-
 		}
-
 	}
-
 	public int renderElement(Element e, float indent, int insertOffset) {
-
 		try {
-
 			Position pos = doc.createPosition(insertOffset);
-
 			SimpleAttributeSet eAttributes = new SimpleAttributeSet();
-
 			StyleConstants.setLeftIndent(eAttributes, indent);
-
 			SimpleAttributeSet eColor = new SimpleAttributeSet();
-
 			//StyleConstants.setLeftIndent(eColor, indent);
-
 			StyleConstants.setForeground(eColor, tagColor);
-			
 			//added for Tibetan version
 			StyleConstants.setFontSize(eColor, QDShell.font_size);
 			StyleConstants.setFontFamily(eColor, QDShell.font_face);
-
 			eColor.addAttribute("xmlnode", e);
-
 			if (pos.getOffset()>0) {
-
 				String s = doc.getText(pos.getOffset()-1, 1);
-
 				if (s.charAt(0)!='\n') {
-
 					AttributeSet attSet = doc.getCharacterElement(pos.getOffset()-1).getAttributes();
-					
 					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
 					StyleConstants.setFontSize(sas, QDShell.font_size);
 					StyleConstants.setFontFamily(sas, QDShell.font_face);
-					
 					doc.insertString(pos.getOffset(), "\n", sas);
-
 				}
-
 			}
-
 			int start = pos.getOffset();
-
 			startOffsets.put(e, new Integer(start));
-
 			String tagDisplay;
-
 			if (tagInfo == null) tagDisplay = e.getQualifiedName();
-
 			else tagDisplay = tagInfo.getTagDisplay(e);
-			
 			doc.insertString(pos.getOffset(), tagDisplay, eColor); //insert element begin tag
-
 			if (tagInfo == null || tagInfo.areTagContentsForDisplay(e.getQualifiedName())) {
-
 			List attributes = e.getAttributes();
-
 			Iterator iter = attributes.iterator();
-
 			while (iter.hasNext()) {
-
 				Attribute att = (Attribute)iter.next();
-
 				if (tagInfo == null || tagInfo.isAttributeForDisplay(att.getQualifiedName(), e.getQualifiedName()))
-
 					renderAttribute(att, pos.getOffset());
-
 			}
-
 			doc.insertString(pos.getOffset(), ":", eColor);
-
 			doc.setParagraphAttributes(start, pos.getOffset()-start, eAttributes, false);
-
 			//doc.insertString(pos.getOffset(), "\n", null);
-
 			List list = e.getContent();
-
 			iter = list.iterator();
-
 			while (iter.hasNext()) {
-
 				Object next = iter.next();
-
 				if (next instanceof Element) {
-
 					Element ne = (Element)next;
-
 					if (tagInfo == null || tagInfo.isTagForDisplay(ne.getQualifiedName()))
-
 						renderElement(ne, indent + indentIncrement, pos.getOffset());
-
 				} else if (next instanceof Text) {
-
 					Text t = (Text)next;
-
 					if (t.getParent().getContent().size() == 1 || t.getTextTrim().length() > 0)
-
 						renderText(t, indent + indentIncrement, pos.getOffset());
-
 				}
-
 				// Also: Comment ProcessingInstruction CDATA EntityRef
-
 			}
-
 			}
-
 			//start = pos.getOffset();
-
 			//doc.insertString(start, "}", eColor); //insert element end tag
-
 			//doc.setParagraphAttributes(start, pos.getOffset(), eAttributes, false);
-
-			
-
 			if (pos.getOffset()>0) {
-
 				//String s = doc.getText(pos.getOffset()-1, 1);
-
 				if (doc.getText(pos.getOffset()-1,1).charAt(0)=='\n')
-
 					endOffsets.put(e, new Integer(pos.getOffset()-1));
-
 				else
-
 					endOffsets.put(e, new Integer(pos.getOffset()));
-
 			}
-
 			//endOffsets.put(e, new Integer(pos.getOffset()));
-
 			return pos.getOffset();
-
 			//doc.insertString(pos.getOffset(), "\n", null);
-
 		} catch (BadLocationException ble) {
-
 			ble.printStackTrace();
-
 			return -1;
-
 		}
-
 	}
-
-	
-
 	public int renderAttribute(Attribute att, int insertOffset) {
-
 		try {
-
 			Position pos = doc.createPosition(insertOffset);
-
 			SimpleAttributeSet aColor = new SimpleAttributeSet();
-
 			StyleConstants.setForeground(aColor, attColor);
-
 			//added for Tibetan version
 			StyleConstants.setFontSize(aColor, QDShell.font_size);
 			StyleConstants.setFontFamily(aColor, QDShell.font_face);
-			
 			SimpleAttributeSet tColor = new SimpleAttributeSet();
-
 			StyleConstants.setForeground(tColor, textColor);
-
 			//added for Tibetan version
 			StyleConstants.setFontSize(tColor, QDShell.font_size);
 			StyleConstants.setFontFamily(tColor, QDShell.font_face);
-			
 			tColor.addAttribute("xmlnode", att);
-
 			String name = att.getQualifiedName();
-
 			String value = att.getValue();
-
 			if (pos.getOffset()>0) {
-
 				String s = doc.getText(pos.getOffset()-1, 1);
-
 				if (s.charAt(0)!='\n') {
-
 					AttributeSet attSet = doc.getCharacterElement(pos.getOffset()-1).getAttributes();
-
 					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
 					StyleConstants.setFontSize(sas, QDShell.font_size);
 					StyleConstants.setFontFamily(sas, QDShell.font_face);
-			
 					doc.insertString(pos.getOffset(), " ", sas);
-
 				}
-
 			}
-
 			String displayName;
-
 			if (tagInfo == null) displayName = att.getQualifiedName();
-
 			else displayName = tagInfo.getAttributeDisplay(att.getQualifiedName(), att.getParent().getQualifiedName());
-
 			doc.insertString(pos.getOffset(), displayName+"=", aColor);
-
 			startOffsets.put(att, new Integer(pos.getOffset()+1)); //add one so that begin quote is not part of attribute value
-
 			doc.insertString(pos.getOffset(), "\"" + att.getValue()+"\"", tColor);
-
 			endOffsets.put(att, new Integer(pos.getOffset()));
-
 			return pos.getOffset();
-
 		} catch (BadLocationException ble) {
-
 			ble.printStackTrace();
-
 			return -1;
-
 		}
-
 	}
-
-	
-
 	public int renderText(Text t, float indent, int insertOffset) {
-
 		try {
-
 			Position pos = doc.createPosition(insertOffset);
-
 			SimpleAttributeSet tAttributes = new SimpleAttributeSet();
-
 			//StyleConstants.setLeftIndent(tAttributes, indent);
-
 			StyleConstants.setForeground(tAttributes, textColor);
 			StyleConstants.setFontSize(tAttributes, QDShell.font_size);
 			StyleConstants.setFontFamily(tAttributes, QDShell.font_face);
@@ -1476,104 +992,48 @@ upAction, writableAction
 			return -1;
 		}
 	}
-
-	
-
 	public void removeNode(Object node) {
-
 		if (startOffsets.containsKey(node)) { //note: should recursively eliminate all sub-nodes too!!
-
 			startOffsets.remove(node);
-
 			endOffsets.remove(node);
-
 		}
-
 	}
-
-			
-
 	public Object getNodeForOffset(int offset) {
-
 		AttributeSet attSet = doc.getCharacterElement(offset).getAttributes();
-
 		return attSet.getAttribute("xmlnode");
-
 	}
-
-	
-
 	public int getStartOffsetForNode(Object node) {
-
 		Position pos = (Position)startOffsets.get(node);
-
 		if (pos == null) return -1;
-
 		else return pos.getOffset();
-
 	}
-
-	
-
 	public int getEndOffsetForNode(Object node) {
-
 		Position pos = (Position)endOffsets.get(node);
-
 		if (pos == null) return -1;
-
 		else return pos.getOffset();
-
 	}
-
-	
-
 	public boolean isEditable(int offset) {
-
 		Object node = getNodeForOffset(offset);
-
 		if ((node instanceof Text) && 
-
 			(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)))
-
 				return false;
-
 		else if (node instanceof Attribute &&
-
 			(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)-1))
-
 				return false;
-
 		else 
-
 			return isEditable(node);
-
 	}
-
 	public boolean isEditable(Object node) {
-
 		if (node == null) return false;
-
 		else if (node instanceof Element) return false;
-
 		else if (node instanceof Text) return true;
-
 		else if (node instanceof Attribute) return true;
-
 		else return false;
-
 	}
-
 	public JTextPane getTextPane() {
-
 		return pane;
-
 	}
-
 	public Document getXMLDocument() {
-
 		return xml;
-
 	}
-
 }
-
