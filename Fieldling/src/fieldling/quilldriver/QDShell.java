@@ -239,11 +239,18 @@ public class QDShell extends JFrame {
 					try {
 						JFileChooser fc2 = new JFileChooser(new File(myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
 						fc2.addChoosableFileFilter(new QDFileFilter());
+
+						Font ipaFont = new Font("SILDoulosUnicodeIPA",Font.PLAIN,10);
+						fc2.setFont(ipaFont);
+						fc2.updateUI();
+
+
 						if (fc2.showDialog(QDShell.this, messages.getString("SaveTranscript")) == JFileChooser.APPROVE_OPTION) {
 							File transcriptFile = fc2.getSelectedFile();
 							if (transcriptFile.exists()) { //error message: cannot make new file from existing file
 								JOptionPane.showMessageDialog(QDShell.this, NEW_FILE_ERROR_MESSAGE, "No can do!", JOptionPane.WARNING_MESSAGE);
 							} else {
+
 								String transcriptString = transcriptFile.getAbsolutePath();
 								int i = transcriptString.lastIndexOf('.');
 								if (i<0) transcriptString += dotQuillDriver;
@@ -271,7 +278,7 @@ public class QDShell extends JFrame {
 				}
 			}
 		});
-	
+
 		JMenuItem openItem = new JMenuItem(messages.getString("Open"));
 		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
@@ -519,11 +526,11 @@ public class QDShell extends JFrame {
 				new UserFeedback(QDShell.this);
 			}
 		});
-		
+
 		JMenu betaMenu =  new JMenu("Dev-Beta");
 		betaMenu.add(feedbackItem);
-		
-		
+
+
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
