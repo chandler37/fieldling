@@ -51,7 +51,7 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 		try {
 			myPlayer.destroy();
 		} catch (PanelPlayerException e) {
-			System.out.println(e.getMessage());
+			//LOGGINGSystem.out.println(e.getMessage());
 		}
 	}
 	public void start() {
@@ -62,7 +62,7 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 				myPlayer.loadMovie(new URL(getCodeBase(), FIC_SOUND));
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			//LOGGINGSystem.out.println(e.getMessage());
 		}
 	}
 /*-----------------------------------------------------------------------*/
@@ -76,7 +76,7 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 		try {
 			myPlayer.cmd_stop();
 		} catch (PanelPlayerException err) {
-			System.out.println(err.getMessage());
+			//LOGGINGSystem.out.println(err.getMessage());
 		}
  	}
 	public boolean cmd_isID(String theID) {
@@ -100,7 +100,7 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 		try {
 			JSObject.getWindow(this).call(method, args);
 		} catch (Exception e) {
-			System.out.println("Erreur appel javascript: "+e+" "+mess);
+			//LOGGINGSystem.out.println("Erreur appel javascript: "+e+" "+mess);
 		}
 	}
 /*-----------------------------------------------------------------------*/

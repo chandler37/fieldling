@@ -67,11 +67,11 @@ public class SimpleSpinner extends JPanel implements FocusListener { //ChangeLis
 		}
 	}
 	public void focusGained(FocusEvent e) {
-		System.out.println("focus gained");
+		//LOGGINGSystem.out.println("focus gained");
 	}
 	public void focusLost(FocusEvent e) {
 		fireValueChanged(new ChangeEvent(this));
-		System.out.println("focus lost");
+		//LOGGINGSystem.out.println("focus lost");
 	}/*
 	public void stateChanged(ChangeEvent e) {
 		fireValueChanged(e);
@@ -136,11 +136,11 @@ public class SimpleSpinner extends JPanel implements FocusListener { //ChangeLis
           Class classDefinition = Class.forName(className);
           object = classDefinition.newInstance();
       } catch (InstantiationException e) {
-          System.out.println(e);
+          //LOGGINGSystem.out.println(e);
       } catch (IllegalAccessException e) {
-          System.out.println(e);
+          //LOGGINGSystem.out.println(e);
       } catch (ClassNotFoundException e) {
-          System.out.println(e);
+          //LOGGINGSystem.out.println(e);
       }
       return object;
    }

@@ -157,7 +157,7 @@ public class UserFeedback {
 					msg.saveChanges();	// don't forget this
 					transport.sendMessage(msg, msg.getAllRecipients());
 					transport.close();
-					System.out.println("\nMail was sent successfully.");
+					//LOGGINGSystem.out.println("\nMail was sent successfully.");
 			}
 			catch (Exception e)
 			{
@@ -172,7 +172,7 @@ public class UserFeedback {
 		   sb.append(user.substring(0,2));
 		   Random rn=new Random();
 		   sb.append(String.valueOf(rn.nextInt()));
-		   System.out.println(sb.toString());
+		   //LOGGINGSystem.out.println(sb.toString());
 		   return(sb.toString());
 
 
@@ -187,7 +187,7 @@ public class UserFeedback {
 		sb.append("Module: " + module + "\n");
 		sb.append("Type: "+ feedback + "\n");
 		sb.append("Priority: "+ priority + "\n\n");
-		System.out.println(sb.toString());
+		//LOGGINGSystem.out.println(sb.toString());
 		return(sb.toString());
 
    }

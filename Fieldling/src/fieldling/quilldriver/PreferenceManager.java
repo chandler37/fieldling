@@ -111,11 +111,11 @@ public class PreferenceManager extends JPanel {
 
 							ite.printStackTrace();
 			} catch (IllegalAccessException e) {
-				System.out.println(e);
+				//LOGGINGSystem.out.println(e);
 			 } catch (ClassNotFoundException e)
 			 {
 
-				          System.out.println(e);
+				          //LOGGINGSystem.out.println(e);
 
       		 }
 

@@ -18,19 +18,34 @@
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
 <xsl:param name="speakers" select="''"/>
-<!-- <xsl:param name="speaker1" select="''"/>
-<xsl:param name="speaker2" select="''"/>
-<xsl:param name="speaker3" select="''"/>
-<xsl:param name="speaker4" select="''"/>
-<xsl:param name="speaker5" select="''"/>
-<xsl:param name="speaker6" select="''"/>
-<xsl:param name="speaker7" select="''"/>
-<xsl:param name="speaker8" select="''"/> -->
 
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
 <xsl:template match="*">
 			<xsl:choose>
+                <!-- speaker management tasks -->
+				<xsl:when test="$qd.task='addSpeaker'">
+					<xsl:variable name="n" select="count(SPEAKER)"/>
+					<HEADER>
+						<xsl:copy-of select="*" />
+						<xsl:element name="SPEAKER">
+							<xsl:attribute name="personId">
+								<xsl:choose>
+									<xsl:when test="$n=0">ka</xsl:when>
+									<xsl:when test="$n=1">kha</xsl:when>
+									<xsl:when test="$n=2">ga</xsl:when>
+									<xsl:when test="$n=3">nga</xsl:when>
+                                    <xsl:when test="$n=4">ca</xsl:when>
+									<xsl:when test="$n=5">cha</xsl:when>
+									<xsl:when test="$n=6">ja</xsl:when>
+									<xsl:when test="$n=7">nya</xsl:when>
+									<xsl:otherwise>X</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+							<xsl:text> </xsl:text>
+						</xsl:element>
+					</HEADER>
+				</xsl:when>
                 <xsl:when test="$qd.task='changeSpeaker'">
                     <xsl:variable name="currentwho" select="@who"/>
                     <xsl:variable name="speakercount" select="count($speakers/SPEAKER)"/>
@@ -54,9 +69,14 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
+                
+                <!-- id management: is this used? -->
 				<xsl:when test="$qd.task='computeIDs'">
 					<xsl:copy-of select="."/>
 				</xsl:when>
+                
+                <!-- insertions and deletions -->
+				<xsl:when test="$qd.task='removeNode'"/> <!-- removes current node -->
 				<xsl:when test="$qd.task='insertAfter'">
                     <xsl:copy-of select="."/>
 					<S who="{@who}">
@@ -69,6 +89,24 @@
 					</S>
 					<xsl:copy-of select="."/>
 				</xsl:when>
+				<xsl:when test="$qd.task='insertTranslation'">
+					<xsl:element name="S">
+						<xsl:if test="@who">
+							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:copy-of select="*"/>
+						<xsl:if test="not(TRANSL)">
+						    <TRANSL>
+							    <xsl:text> </xsl:text>
+                            </TRANSL>
+						</xsl:if>
+					</xsl:element>
+				</xsl:when>
+                
+                <!-- time-coding tasks -->
 				<xsl:when test="$qd.task='markStart'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -286,44 +324,8 @@
 					</W>
 				</xsl:when>
 				-->
-				<xsl:when test="$qd.task='insertTranslation'">
-					<xsl:element name="S">
-						<xsl:if test="@who">
-							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-						<xsl:copy-of select="*"/>
-						<xsl:if test="not(TRANSL)">
-						    <TRANSL>
-							    <xsl:text> </xsl:text>
-                            </TRANSL>
-						</xsl:if>
-					</xsl:element>
-				</xsl:when>
-				<xsl:when test="$qd.task='addSpeaker'">
-					<xsl:variable name="n" select="count(SPEAKER)"/>
-					<HEADER>
-						<xsl:copy-of select="*" />
-						<xsl:element name="SPEAKER">
-							<xsl:attribute name="personId">
-								<xsl:choose>
-									<xsl:when test="$n=0">ka</xsl:when>
-									<xsl:when test="$n=1">kha</xsl:when>
-									<xsl:when test="$n=2">ga</xsl:when>
-									<xsl:when test="$n=3">nga</xsl:when>
-                                    <xsl:when test="$n=4">ca</xsl:when>
-									<xsl:when test="$n=5">cha</xsl:when>
-									<xsl:when test="$n=6">ja</xsl:when>
-									<xsl:when test="$n=7">nya</xsl:when>
-									<xsl:otherwise>X</xsl:otherwise>
-								</xsl:choose>
-							</xsl:attribute>
-							<xsl:text> </xsl:text>
-						</xsl:element>
-					</HEADER>
-				</xsl:when>
+                
+                <!-- annotation tasks -->
 				<xsl:when test="$qd.task='addGeneral'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -408,12 +410,15 @@
 						<NOTE type="cultural"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
+                
+                <!-- media related tasks -->
 				<!-- All I really need to do here is replace SOUNDFILE; however, QD has a bug
 				whereby it doesn't do transformations right on nodes that are not visually present. -->
 				<xsl:when test="$qd.task='fixMedia'">
 					<SOUNDFILE href="{$qd.mediaurlstring}"/>
 				</xsl:when>
-				<xsl:when test="$qd.task='removeNode'"/>
+                
+                <!-- default: just copy existing node -->
 				<xsl:otherwise>
 					<xsl:copy-of select="."/>
 				</xsl:otherwise>

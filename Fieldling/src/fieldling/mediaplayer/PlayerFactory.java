@@ -66,9 +66,9 @@ public class PlayerFactory {
 				PanelPlayer smp = (PanelPlayer)mediaClass.newInstance();
 				mediaPlayers.add(smp);
 			} catch (ClassNotFoundException cnfe) {
-				System.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
+				//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
 			} catch (LinkageError lie) {
-				System.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
+				//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
 			} catch (InstantiationException ie) {
 				ie.printStackTrace();
 			} catch (SecurityException se) {

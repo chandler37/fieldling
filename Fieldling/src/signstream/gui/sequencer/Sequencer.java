@@ -282,10 +282,10 @@ Scrollable
     if (width == pixels || width == 0) return;
     
     // SHOULD ensure actual width is used; may need floating point pixPerSecond and/or width
-    // System.out.println("setWidth("+pixels+")");
+    // //LOGGINGSystem.out.println("setWidth("+pixels+")");
     pixPerSecond = (int) ((float)pixels * 1000f / (float)sequencerModels[0].getDuration());
     calculateDimensions();
-    // System.out.println("resulting width: "+width);
+    // //LOGGINGSystem.out.println("resulting width: "+width);
   }
   
   public void fitToView() {
@@ -407,18 +407,18 @@ Scrollable
   
   protected void editItem(SequencerTrack track, TrackItem item) {
     if (item == null || track == null) {
-      System.out.println("Attempt to edit null item or null track");
+      //LOGGINGSystem.out.println("Attempt to edit null item or null track");
       return;
     }
     if (isEditing() && !editor.stopCellEditing()) {
-      System.out.println("Couldn't stop edit in progress");
+      //LOGGINGSystem.out.println("Couldn't stop edit in progress");
       return;
     }
     editingTrack = track;
     editingItem = item;
     editor = getTrackEditor(editingTrack.constraints);
     if (!editor.isItemEditable(editingItem.getValue(), editingTrack.constraints)) {
-      System.out.println("Can't edit item value: "+editingItem.getValue());
+      //LOGGINGSystem.out.println("Can't edit item value: "+editingItem.getValue());
       return;
     }
     editorComp = editor.getEditorComponent(editingItem, editingTrack);
@@ -1188,8 +1188,8 @@ Scrollable
       BufferedImage.TYPE_USHORT_565_RGB);
       int bytes = sequenceImage.getHeight() * sequenceImage.getWidth() * 2;
       float MB = bytes / 1048576.0f; // SHOULD account for non-linear buffer; this is bogus
-      System.out.println(MB +" MB used for new image buffer");
-      System.out.println(getVisibleTrackCount() + " visible tracks, "+
+      //LOGGINGSystem.out.println(MB +" MB used for new image buffer");
+      //LOGGINGSystem.out.println(getVisibleTrackCount() + " visible tracks, "+
       (float)(sequencerModels[0].getDuration()) /1000.0f+ " seconds");
     }
     

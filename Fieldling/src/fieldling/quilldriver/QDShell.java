@@ -85,7 +85,7 @@ public class QDShell extends JFrame {
 			}
 			new QDShell();
 		} catch (NoClassDefFoundError err) {
-			System.out.println(err.toString());
+			//LOGGINGSystem.out.println(err.toString());
 			//ThdlDebug.handleClasspathError("QuillDriver's CLASSPATH", err);
 		}
 	}

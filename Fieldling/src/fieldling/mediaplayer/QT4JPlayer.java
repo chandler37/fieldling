@@ -67,7 +67,7 @@ public class QT4JPlayer extends PanelPlayer {
 		if (numberOfPlayersOpen == 1) QTSession.close();
 		removeAll();
 		mediaUrl = null;
-		System.out.println("Clean up performed.");
+		//LOGGINGSystem.out.println("Clean up performed.");
 		numberOfPlayersOpen--;
 	}
 
@@ -109,12 +109,12 @@ public class QT4JPlayer extends PanelPlayer {
 		//These three try/catch blocks come from PlayMovie.java copyright
 		// Apple Co. I'm using it to test that QT and QT4Java exist
 		
-		System.out.println("Trying to load: "+ mediaURL.toString());
+		//LOGGINGSystem.out.println("Trying to load: "+ mediaURL.toString());
 		
 		try {
 			if (QTSession.isInitialized() == false) { //{
 				QTSession.open();
-				System.out.println("initializing");
+				//LOGGINGSystem.out.println("initializing");
 				
 				/*
 				try {
@@ -126,11 +126,11 @@ public class QT4JPlayer extends PanelPlayer {
 				}*/
 			}
 		} catch (NoClassDefFoundError er) {
-			System.out.println("Can't Find QTJava classes. Check install and try again.");
+			//LOGGINGSystem.out.println("Can't Find QTJava classes. Check install and try again.");
 			er.printStackTrace();
 		} catch (SecurityException se) {
 			// this is thrown by MRJ trying to find QTSession class
-			System.out.println("Can't Find QTJava classes. Check install and try again.");
+			//LOGGINGSystem.out.println("Can't Find QTJava classes. Check install and try again.");
 			se.printStackTrace();
 		} catch (Exception e) {
 			// do a dynamic test for QTException
@@ -138,15 +138,15 @@ public class QT4JPlayer extends PanelPlayer {
 			// an unknown exception is thrown by the runtime
 			
 			if (e instanceof ClassNotFoundException || e instanceof java.io.FileNotFoundException) {
-				System.out.println("Can't Find QTJava classes. Check install and try again.");
+				//LOGGINGSystem.out.println("Can't Find QTJava classes. Check install and try again.");
 			} else if (e instanceof QTException) {
-				System.out.println("Problem with QuickTime install.");
+				//LOGGINGSystem.out.println("Problem with QuickTime install.");
 			}
 			e.printStackTrace();
 		}
 
 		try {
-			System.out.println("Removing canvas, etc.");
+			//LOGGINGSystem.out.println("Removing canvas, etc.");
 
 			canvas = new QTCanvas(QTCanvas.kInitialSize, 0.5F, 0.5F);
 			setPlayer(QTFactory.makeDrawable(mediaURL.toString()));
@@ -161,7 +161,7 @@ public class QT4JPlayer extends PanelPlayer {
 			this.add( getCanvas() );
 			*/
 			
-			System.out.println("loadMovie:"+mediaURL.toString());
+			//LOGGINGSystem.out.println("loadMovie:"+mediaURL.toString());
 			numberOfPlayersOpen++;
 			
 			myMoviesTimeBase = getPlayer().getTimeBase();
@@ -172,7 +172,7 @@ public class QT4JPlayer extends PanelPlayer {
 			//Timer timer = new Timer(10,1,new Tickler(), getPlayer().getMovieController().getMovie());
 			//timer.setActive(true);
 		} catch(QTException qte) {
-			System.out.println("loadMovie failed");
+			//LOGGINGSystem.out.println("loadMovie failed");
 			qte.printStackTrace();
 		}
 	}
@@ -198,11 +198,11 @@ public class QT4JPlayer extends PanelPlayer {
 
 			if (stopTime == null) {
 				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, player.getDuration()));
-				//System.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime: to the End" );
+				//LOGGING//LOGGINGSystem.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime: to the End" );
 			} else {
 				long t2 = stopTime.longValue() * myScale / 1000;
 				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, (int)t2));
-				//System.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime:"+(stopTime.intValue()*myScale)/1000 );
+				//LOGGING//LOGGINGSystem.out.println("startTime:"+(startTime.intValue()*myScale)/1000+" stopTime:"+(stopTime.intValue()*myScale)/1000 );
 			}
 			cmd_playOn();
 		}
@@ -248,13 +248,13 @@ public class QT4JPlayer extends PanelPlayer {
 			long now = player.getTime();
 			return (now*1000)/myScale;
 			//int myScale = getPlayer().getScale();
-			//System.out.println("getCurrentTime():"+(player.getTime()*1000)/myScale);
+			//LOGGING//LOGGINGSystem.out.println("getCurrentTime():"+(player.getTime()*1000)/myScale);
 			//return (player.getTime()*1000)/myScale;
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
 			return 0;
 		} catch (QTException qte) {
-			System.out.println("getCurrentTimeErr");
+			//LOGGINGSystem.out.println("getCurrentTimeErr");
 			return 0;
 		}
 	}
@@ -270,7 +270,7 @@ public class QT4JPlayer extends PanelPlayer {
 			stqte.printStackTrace();
 			return 0;
 		} catch (QTException qte) {
-			System.out.println("getCurrentTimeErr");
+			//LOGGINGSystem.out.println("getCurrentTimeErr");
 			return 0;
 		}
 	}
@@ -282,7 +282,7 @@ public class QT4JPlayer extends PanelPlayer {
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
 		} catch (QTException qte) {
-			System.out.println("getCurrentTimeErr");
+			//LOGGINGSystem.out.println("getCurrentTimeErr");
 		}
 	}
 // inner classes
@@ -294,7 +294,7 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 		public void execute() {
 			try {
-				System.out.println("myRateCallBack: " + String.valueOf(rateWhenCalled));
+				//LOGGINGSystem.out.println("myRateCallBack: " + String.valueOf(rateWhenCalled));
 				/* rateWhenCalled has the following value:
 					1: when the media starts playing
 					0: when the media stops
@@ -310,7 +310,7 @@ public class QT4JPlayer extends PanelPlayer {
 				cancelAndCleanup();
 				callMeWhen();
 			} catch (Exception e) {
-				System.out.println("myRateCallBack err: "+e.getMessage());
+				//LOGGINGSystem.out.println("myRateCallBack err: "+e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -321,7 +321,7 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 		public void execute() {
 			try {
-				System.out.println("myJumpCallBack: " + String.valueOf(rateWhenCalled));
+				//LOGGINGSystem.out.println("myJumpCallBack: " + String.valueOf(rateWhenCalled));
 				if (rateWhenCalled > 0) launchAnnotationTimer();
 				
 				/*
@@ -334,17 +334,17 @@ public class QT4JPlayer extends PanelPlayer {
 				cancelAndCleanup();
 				callMeWhen();
 			} catch (Exception e) {
-				System.out.println("myJumpCallBack err: "+e.getMessage());
+				//LOGGINGSystem.out.println("myJumpCallBack err: "+e.getMessage());
 				e.printStackTrace();
 			}
 		}
 	}
 	public class Tickler implements Ticklish {
 		public void timeChanged(int newTime) throws QTException {
-			//System.out.println("*** TimerClass *** timeChanged at:"+newTime);
+			//LOGGING//LOGGINGSystem.out.println("*** TimerClass *** timeChanged at:"+newTime);
 		}
 		public boolean tickle(float er,int time) throws QTException {
-			//System.out.println("*** TimerClass *** tickle at:"+time);
+			//LOGGING//LOGGINGSystem.out.println("*** TimerClass *** tickle at:"+time);
 			return true;
 		}
 	}
@@ -360,6 +360,6 @@ The bugtraq report that corresponds to this change is: 4293646.
 The sun.awt.DrawingSurface API has been removed. It was never made public, but some developers have been using it. The functionality has been replaced by the JAWT. For more information, see the AWT Native Interface description in the 1.3 release notes for AWT. 
 
 
-Java Applets cannot choose which version of Java they invoke. This choice is made instead by the browser. Microsoft’s Internet Explorer uses Java 1.3.1. Apple’s Safari uses Java 1.4.1. (Applet Launcher also uses Java 1.4.1.)
+Java Applets cannot choose which version of Java they invoke. This choice is made instead by the browser. Microsoftï¿½s Internet Explorer uses Java 1.3.1. Appleï¿½s Safari uses Java 1.4.1. (Applet Launcher also uses Java 1.4.1.)
 */
 

@@ -203,7 +203,7 @@ implements Runnable, AppletStub {
    //   appletStarted = true;
     }
     catch (Exception e) {
-      System.out.println( e );
+      //LOGGINGSystem.out.println( e );
     }
     validate();
   }

@@ -189,7 +189,7 @@ public abstract class PanelPlayer extends Panel {
 		return index;
 	}
 	public boolean cmd_isID(String theID) {
-		System.out.println(hashStart.containsKey(theID));
+		//LOGGINGSystem.out.println(hashStart.containsKey(theID));
 		return hashStart.containsKey(theID);
 	}
 	public void cmd_playFrom(String fromID) {

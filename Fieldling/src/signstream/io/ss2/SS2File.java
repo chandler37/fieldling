@@ -148,7 +148,7 @@ public final class SS2File implements XMLNodeSerializable {
   private byte[] readIntoMemory()
   throws IOException {
     if (javax.swing.SwingUtilities.isEventDispatchThread()) 
-      System.out.println("SS2File readIntoMemory() called from event dispatch thread");
+      //LOGGINGSystem.out.println("SS2File readIntoMemory() called from event dispatch thread");
     byte[] buffer = null;
     InputStream is = null;
     if (sourceData instanceof URL && ((URL)sourceData).getProtocol().equals("file"))

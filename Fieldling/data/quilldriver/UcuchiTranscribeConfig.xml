@@ -4,14 +4,7 @@
 	<parameters>
         <parameter name="qd.namespaces" val="ucuchi http://altiplano.emich.edu/ucuchi"/>
 		<parameter name="qd.root.element" val="ucuchi:TEXT"/>
-		<parameter name="speaker1" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=1]/@id"/>
-		<parameter name="speaker2" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=2]/@id"/>
-		<parameter name="speaker3" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=3]/@id"/>
-		<parameter name="speaker4" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=4]/@id"/>
-        <parameter name="speaker5" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=5]/@id"/>
-		<parameter name="speaker6" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=6]/@id"/>
-		<parameter name="speaker7" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=7]/@id"/>
-		<parameter name="speaker8" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META/ucuchi:SPEAKER[position()=8]/@id"/>
+        <parameter name="speakers" val="ancestor-or-self::ucuchi:TEXT/ucuchi:META"/>
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
@@ -26,15 +19,8 @@
 		</action-set>
 		<action-set name="Metadata">
 			<action name="Add Speaker" keystroke="control J" node="ancestor-or-self::ucuchi:TEXT/ucuchi:META" xsl-task="addSpeaker"/>
-			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" xsl-task="removeNode"/>
-			<action name="Set Speaker to s1" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker1"/>
-			<action name="Set Speaker to s2" keystroke="control 2" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker2"/>
-			<action name="Set Speaker to s3" keystroke="control 3" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker3"/>
-			<action name="Set Speaker to s4" keystroke="control 4" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker4"/>
-            <action name="Set Speaker to s5" keystroke="control 5" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker5"/>
-			<action name="Set Speaker to s6" keystroke="control 6" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker6"/>
-			<action name="Set Speaker to s7" keystroke="control 7" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker7"/>
-			<action name="Set Speaker to s8" keystroke="control 8" node="ancestor-or-self::ucuchi:C" xsl-task="setSpeaker8"/>
+			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::ucuchi:SPEAKER" xsl-task="removeNode"/>
+            <action name="Change Speaker" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="changeSpeaker"/>
 		</action-set>
 		<action-set name="Time Code">
 			<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::ucuchi:C" xsl-task="markStart"/>
@@ -61,21 +47,21 @@
 		<rendering-instructions>
 			<tag name="ucuchi:TEXT" visible="false"/>
             <tag name="ucuchi:META" visible="false"/>
-            <tag name="ucuchi:S" visible="true" displayas="S"/>
+            <tag name="ucuchi:S" visible="false" visiblecontents="true"/>
             <tag name="ucuchi:W" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:TRANS" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:SPEAKER" visible="true" displayas="'SPEAKER'"/>
-            <tag name="ucuchi:C" visible="true" displayas="@spid">
+            <tag name="ucuchi:C" visible="false" visiblecontents="true">
                 <attribute name="qd:t1" visible="false"/>
                 <attribute name="qd:t2" visible="false"/>
                 <attribute name="spid" visible="false"/>
                 <attribute name="id" visible="false"/>
             </tag>
             <tagview name="Quechua Only" keystroke="F1">
-                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
+                <tag name="ucuchi:S-F" visible="true" displayas="id(../@spid)" visiblecontents="true"/>
                 <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
             </tagview>
             <tagview name="Quechua and English" keystroke="F2">

@@ -18,6 +18,10 @@
 
 package fieldling.quilldriver;
 
+import java.util.List; //preferred over java.awt.List
+import java.util.Timer; //preferred over javax.swing.Timer
+import java.net.*;
+import java.awt.*;
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -29,67 +33,14 @@ import javax.swing.plaf.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.*;
-
-import fieldling.mediaplayer.PanelPlayer;
-import fieldling.mediaplayer.PanelPlayerException;
-import fieldling.util.JdkVersionHacks;
-import fieldling.quilldriver.TextHighlightPlayer;
-import fieldling.quilldriver.XMLView;
-import fieldling.quilldriver.XMLEditor;
-import fieldling.quilldriver.XMLUtilities;
-import fieldling.util.SimpleSpinner;
-import fieldling.util.SimpleSpinnerListener;
-import fieldling.util.I18n;
-
-import org.jdom.DocType;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Text;
-import org.jdom.Namespace;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.DOMOutputter;
-import org.jdom.transform.JDOMSource;
-import org.jdom.transform.JDOMResult;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import javax.swing.JTextPane;
-import javax.swing.JTextField;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.KeyStroke;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.Keymap;
-import java.util.List;
-import java.util.Timer;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.awt.Color;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowAdapter;
-
-import java.io.File;
-import java.net.URL;
-import java.net.MalformedURLException;
+import fieldling.mediaplayer.*;
+import fieldling.quilldriver.*;
+import fieldling.util.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import javax.xml.parsers.*;
+import org.xml.sax.*;
 
 public class QD extends JDesktopPane {
     public static final int VIEW_MODE = 0;
@@ -110,7 +61,7 @@ public class QD extends JDesktopPane {
 	protected Hashtable actions;
 	protected Properties config; //xpath based properties
 	protected Properties textConfig; //unchangeable properties
-    protected Namespace[] namespaces;
+    protected org.jdom.Namespace[] namespaces;
 	protected JMenu[] configMenus;
 	protected XMLView view;
 	protected TextHighlightPlayer hp;
@@ -139,7 +90,14 @@ public class QD extends JDesktopPane {
 		messages = I18n.getResourceBundle();
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            dbf.setValidating(true);
+            dbf.setAttribute("http://apache.org/xml/features/validation/schema", Boolean.TRUE);
 			docBuilder = dbf.newDocumentBuilder();
+            /*ErrorHandler handler = new SAXValidator();
+            parser.setErrorHandler(handler);
+        } catch (SAXException saxe) {
+            saxe.printStackTrace();*/
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
 		}
@@ -166,7 +124,6 @@ public class QD extends JDesktopPane {
 		invalidate();
 		validate();
 		repaint();
-
 
 		actionFrame = new JInternalFrame(null, false, false, false, true);
 		actionFrame.setVisible(true);
@@ -228,7 +185,7 @@ public class QD extends JDesktopPane {
 					invalidate();
 					validate();
 					repaint();
-System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
+//LOGGING//LOGGING//LOGGINGSystem.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 			}}, 0, 50);
 	}
@@ -252,7 +209,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		JTextField currentTimeField;
 		SimpleSpinner startSpinner, stopSpinner;
 		long currentTime=-1, startTime=-1, stopTime=-1;
-		//int currentTime=-1, startTime=-1, stopTime=-1;
 		final int TEXT_WIDTH, TEXT_HEIGHT;
 
 		TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
@@ -272,7 +228,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			inButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					long t = player.getCurrentTime();
-					//int t = player.getCurrentTime();
 					if (t != -1) {
 						setStartTime(t);
 						tcm.setTimeCodes(t, stopTime, tcm.getCurrentNode());
@@ -282,7 +237,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			outButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					long t = player.getCurrentTime();
-					//int t = player.getCurrentTime();
 					if (t != -1) {
 						setStopTime(t);
 						tcm.setTimeCodes(startTime, t, tcm.getCurrentNode());
@@ -302,7 +256,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							//player.cancelAnnotationTimer();
 							//player.setAutoScrolling(false);
 							player.cmd_playSegment(new Long(startTime), new Long(stopTime));
-							//player.cmd_playSegment(new Integer(startTime), new Integer(stopTime));
 						} catch (PanelPlayerException smpe) {
 							smpe.printStackTrace();
 						}
@@ -347,35 +300,28 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			//else if (obj == stopSpinner) stopTime = stopSpinner.getValue().intValue();
 			tcm.setTimeCodes(startTime, stopTime, tcm.getCurrentNode());
 		}
-		//void setCurrentTime(int t) {
 		void setCurrentTime(long t) {
 			if (t != currentTime) {
 				currentTime = t;
 				currentTimeField.setText(String.valueOf(new Long(t)));
-				//currentTimeField.setText(String.valueOf(new Integer(t)));
 			}
 		}
-		//public void setStartTime(int t) {
 		public void setStartTime(long t) {
 			if (t != startTime) {
 				startTime = t;
 				startSpinner.setValue(new Long(t));
-				//startSpinner.setValue(new Integer(t));
 			}
 		}
-		//public void setStopTime(int t) {
 		public void setStopTime(long t) {
 			if (t != stopTime) {
 				stopTime = t;
 				stopSpinner.setValue(new Long(t));
-				//stopSpinner.setValue(new Integer(t));
 			}
 		}
 	}
 	class TimeCodeModel {
 		private EventListenerList listenerList;
 		long t1, t2; //start and stop times in milliseconds
-		//int t1, t2; //start and stop times in milliseconds
 		private TextHighlightPlayer thp;
 		private Object currentNode = null;
 
@@ -394,13 +340,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		public void removeAllTimeCodeModelListeners() {
 			listenerList = new EventListenerList();
 		}
-		//public Integer getInTime() {
-		//	return new Integer(t1);
 		public Long getInTime() {
 			return new Long(t1);
 		}
-		//public Integer getOutTime() {
-		//	return new Integer(t2);
 		public Long getOutTime() {
 			return new Long(t2);
 		}
@@ -414,7 +356,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					action.actionPerformed(new ActionEvent(TimeCodeModel.this, 0, "no.command"));
 			}
 		}
-		//public void setTimeCodes(int t1, int t2, Object node) {
 		public void setTimeCodes(long t1, long t2, Object node) {
 			Object oldNode = currentNode;
 			currentNode = node;
@@ -435,28 +376,21 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 		}
 		public void setNode(Object node) {
-			Object playableparent = XMLUtilities.selectSingleJDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
+			Object playableparent = XMLUtilities.selectSingleDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
 			if (playableparent == null) {
 				setTimeCodes(-1, -1, node);
 				thp.unhighlightAll();
 				return;
 			} else {
-				String t1 = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(playableparent, config.getProperty("qd.nodebegins"), namespaces));
-				String t2 = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(playableparent, config.getProperty("qd.nodeends"), namespaces));
+				String t1 = XMLUtilities.getTextForDOMNode(XMLUtilities.selectSingleDOMNode(playableparent, config.getProperty("qd.nodebegins"), namespaces));
+				String t2 = XMLUtilities.getTextForDOMNode(XMLUtilities.selectSingleDOMNode(playableparent, config.getProperty("qd.nodeends"), namespaces));
 				float f1, f2;
 				if (t1 == null) f1 = -1;
 				else f1 = new Float(t1).floatValue()*1000;
 				if (t2 == null) f2 = -1;
 				else f2 = new Float(t2).floatValue()*1000;
 				setTimeCodes(new Float(f1).longValue(), new Float(f2).longValue(), node);
-				//setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
 				thp.unhighlightAll();
-				//FIXME FIXME FIXME should not be making reference to player in this class
-				//need better communication about highlights between PanelPlayer and TextHighlightPlayer
-				//if (!thp.getView().getTextComponent().hasFocus()) //only highlight if line is NOT selected
-				//player.fireStartAnnotation(String.valueOf(playableparent.hashCode()));
-				//thp.highlight(String.valueOf(playableparent.hashCode()));
-				//thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
 			}
 		}
 	}
@@ -474,25 +408,26 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		return player;
 	}
 
+    //DOM FIX!!!
 	public boolean saveTranscript() {
 		if (transcriptFile == null)
 			return true;
-
-		XMLOutputter xmlOut = new XMLOutputter();
-		try {
-			FileOutputStream fous = new FileOutputStream(transcriptFile);
-			xmlOut.output(editor.getXMLDocument(), fous);
-			return true;
-		} catch (FileNotFoundException fnfe) {
-			fnfe.printStackTrace();
-			//ThdlDebug.noteIffyCode();
-			return false;
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			//ThdlDebug.noteIffyCode();
-			return false;
-		}
-	}
+        try {
+            //serialize XML to file, prettified with indents, and encoded as Unicode (UTF-8)
+            org.apache.xml.serialize.OutputFormat formatter = new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true);
+            formatter.setPreserveSpace(true); //so as not to remove text nodes that consist only of whitespace, which are significant to QD
+            formatter.setLineWidth(0); //prevents line-wrapping (so as not to introduce element-internal whitespace)
+            org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(formatter);
+            FileOutputStream fous = new FileOutputStream(transcriptFile);
+            ser.setOutputByteStream(fous);
+            org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
+            domser.serialize(editor.getXMLDocument());
+            return true;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+    }
 	public void removeContent() {
 		if (transcriptFile == null) return;
 		try { //dispose of media player
@@ -515,12 +450,10 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
 				org.w3c.dom.Document d = db.newDocument();
 				d.appendChild(d.createElement("ROOT-ELEMENT"));
-				transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file)); //no args constructor implies default tree with empty root
+				transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file));
 				transformer.clearParameters();
-				if (loadTranscript(file)) {
-					if (dtdURL != null && rootElement != null) editor.getXMLDocument().setDocType(new DocType(rootElement,dtdURL));
-					return true;
-				}
+				if (loadTranscript(file))
+                    return true;
 			} catch (TransformerException tre) {
 				tre.printStackTrace();
 			} catch (javax.xml.parsers.ParserConfigurationException pce) {
@@ -533,15 +466,23 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	public boolean loadTranscript(File file) {
 			if (!file.exists())
 				return false;
-
 			if (player == null) {
 				JOptionPane.showConfirmDialog(QD.this, messages.getString("SupportedMediaError"), null, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				return false;
 			}
-
 			try {
-				//FIXME?? don't validate, since user could be offline and dtd online
-				final SAXBuilder builder = new SAXBuilder(false);
+                org.w3c.dom.Document xmlDoc = null;
+                try {
+                    
+                    xmlDoc = docBuilder.parse(file.toURL().toString());
+                    //LOGGINGSystem.out.println(file.toString() + " is well-formed");
+                } catch (org.xml.sax.SAXException saxe) {
+                    saxe.printStackTrace();
+                    return false;
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    return false;
+                }
 
 				@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
 				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
@@ -551,7 +492,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				@UNICODE@final JTextPane t = new JTextPane();
 				@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
 
-				editor = new XMLEditor(builder.build(file), t, currentTagInfo);
+				editor = new XMLEditor(xmlDoc, t, currentTagInfo);
 
 				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
 				Set keys = keyActions.keySet();
@@ -562,7 +503,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					keymap.addActionForKeyStroke(key, action);
 				}
 				editor.getTextPane().setKeymap(keymap);
-
                 
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
                 
@@ -573,8 +513,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
                 }
 				hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
                 
+                /*LOGGING
                 for (int ok=0; ok<namespaces.length; ok++)
-                    System.out.println(namespaces[ok].toString());
+                    System.out.println(namespaces[ok].toString());*/
 
 				//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
 				//Ctrl-Page_Down and so on... surely there is a better way to do this....
@@ -611,8 +552,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				String value;
 				if (config.getProperty("qd.mediaurl") == null) value = null;
 				else {
-					Object mediaURL = XMLUtilities.selectSingleJDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
-					value = XMLUtilities.getTextForJDOMNode(mediaURL);
+					Object mediaURL = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
+					value = XMLUtilities.getTextForDOMNode(mediaURL);
 				}
 				boolean nomedia = true;
 				if (value != null) {
@@ -658,8 +599,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
 				videoFrame.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
-						System.out.println("mouse clicked on player");
-						//PanelPlayer smp = (PanelPlayer)e.getSource();
+						//LOGGINGSystem.out.println("mouse clicked on player");
 						videoFrame.requestFocus();
 					}
 				});
@@ -667,8 +607,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 
 				//give text frame title of video/transcript
 				if (config.getProperty("qd.title") != null) {
-					Object obj = XMLUtilities.selectSingleJDOMNode(editor.getXMLDocument().getRootElement(), config.getProperty("qd.title"), namespaces);
-					textFrame.setTitle(XMLUtilities.getTextForJDOMNode(obj));
+					Object obj = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument().getDocumentElement(), config.getProperty("qd.title"), namespaces);
+					textFrame.setTitle(XMLUtilities.getTextForDOMNode(obj));
 				}
 
                 JRadioButton viewButton = new JRadioButton("View", true);
@@ -711,35 +651,27 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				editor.addNodeEditListener(new XMLEditor.NodeEditListener() {
 					public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
 						if (ned instanceof XMLEditor.StartEditEvent) {
-							//stop the automatic highlighting and scrolling
-							//since it would interfere with editing.
-							//player.cancelAnnotationTimer();
-							//player.setAutoScrolling(false);
 							if (tcp != null) tcp.setNode(ned.getNode());
 						} else if (ned instanceof XMLEditor.EndEditEvent) {
-							//turn auto-scrolling and highlighting back on
 							XMLEditor.EndEditEvent eee = (XMLEditor.EndEditEvent)ned;
 							if (eee.hasBeenEdited()) hp.refresh();
-							//player.setAutoScrolling(true);
 						} else if (ned instanceof XMLEditor.CantEditEvent) {
 							//if this node can't be edited, maybe it can be played!
 							Object node = ned.getNode();
 							if (node != null) {
 								editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(node));
 								if (tcp != null) tcp.setNode(node);
-								//player.setAutoScrolling(true);
 								playNode(node);
 							}
 						}
 					}
 				});
-				editor.getTextPane().addMouseMotionListener(new MouseMotionAdapter() {
+				/*editor.getTextPane().addMouseMotionListener(new MouseMotionAdapter() {
 					/* Turns off highlight if mouse is pressed, since
-					user is most likely selecting a block of text */
+					user is most likely selecting a block of text 
 					public void mouseDragged(MouseEvent e) {
-						//hp.unhighlightAll();
 					}
-				});
+				});*/
 
 				if (configuration.getEditURL() == null) editor.setEditable(false);
 				else editor.setEditabilityTracker(true);
@@ -751,14 +683,6 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 
 				return true;
-			} catch (JDOMException jdome) {
-				jdome.printStackTrace();
-				transcriptFile = null;
-				return false;
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                transcriptFile = null;
-                return false;
 			} catch (PanelPlayerException smpe) {
 				smpe.printStackTrace();
 				transcriptFile = null;
@@ -767,7 +691,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	}
 
 	public void playNode(Object node) {
-		Object playableparent = XMLUtilities.selectSingleJDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
+		Object playableparent = XMLUtilities.selectSingleDOMNode(node, config.getProperty("qd.nearestplayableparent"), namespaces);
 		if (playableparent == null) return;
 		String nodeid = String.valueOf(playableparent.hashCode());
 		if (player.cmd_isID(nodeid)) {
@@ -790,25 +714,21 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
     /** Creates an object via reflection.
      *  @return nonnull on success, null on error */
 	public static Object createObject(Constructor constructor, Object[] arguments) {
-		System.out.println ("Constructor: " + constructor.toString());
+		//LOGGINGSystem.out.println ("Constructor: " + constructor.toString());
 		Object object = null;
 		try {
 			object = constructor.newInstance(arguments);
-			System.out.println ("Object: " + object.toString());
+			//LOGGINGSystem.out.println ("Object: " + object.toString());
 			return object;
 		} catch (InstantiationException e) {
-			System.out.println(e);
-			//ThdlDebug.noteIffyCode();
+			//LOGGINGSystem.out.println(e);
 		} catch (IllegalAccessException e) {
-			System.out.println(e);
-			//ThdlDebug.noteIffyCode();
+			//LOGGINGSystem.out.println(e);
 		} catch (IllegalArgumentException e) {
-			System.out.println(e);
-			//ThdlDebug.noteIffyCode();
+			//LOGGINGSystem.out.println(e);
 		} catch (InvocationTargetException e) {
-			System.out.println(e);
-			System.out.println(e.getTargetException());
-			//ThdlDebug.noteIffyCode();
+			//LOGGINGSystem.out.println(e);
+			//LOGGINGSystem.out.println(e.getTargetException());
 		}
 		return object;
 	}
@@ -830,13 +750,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 		if (transcriptFile != null) return false;
 		try {
 			this.configuration = configuration;
-			SAXBuilder builder = new SAXBuilder();
-			Document cDoc = builder.build(configuration.getConfigURL());
-			Element cRoot = cDoc.getRootElement();
+			org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
+			org.jdom.Document cDoc = builder.build(configuration.getConfigURL());
+			org.jdom.Element cRoot = cDoc.getRootElement();
 			Iterator it;
 
 			//tag rendering
-			Element renderingInstructions = cRoot.getChild("rendering-instructions");
+			org.jdom.Element renderingInstructions = cRoot.getChild("rendering-instructions");
 			List sharedInstructions = renderingInstructions.getChildren("tag");
 			List tagViews = renderingInstructions.getChildren("tagview");
 			XMLTagInfo[] tagInfo;
@@ -847,7 +767,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				if (sharedInstructions.size() > 0) {
 					it = sharedInstructions.iterator();
 					while (it.hasNext()) {
-						Element e = (Element)it.next();
+						org.jdom.Element e = (org.jdom.Element)it.next();
 						@TIBETAN@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -857,7 +777,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						List atts = e.getChildren("attribute");
 						Iterator it2 = atts.iterator();
 						while (it2.hasNext()) {
-							Element eAtt = (Element)it2.next();
+							org.jdom.Element eAtt = (org.jdom.Element)it2.next();
 							tagInfo[0].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
 								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
 								eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
@@ -870,14 +790,14 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				int count = 0;
 				Iterator tagViewIter = tagViews.iterator();
 				while (tagViewIter.hasNext()) {
-					Element tagView = (Element)tagViewIter.next();
+					org.jdom.Element tagView = (org.jdom.Element)tagViewIter.next();
 					tagInfo[count] = new XMLTagInfo(tagView.getAttributeValue("name"));
 					KeyStroke key = KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke"));
 					tagShortcuts.put(tagInfo[count], key);
 					if (sharedInstructions.size() > 0) {
 						it = sharedInstructions.iterator();
 						while (it.hasNext()) {
-							Element e = (Element)it.next();
+							org.jdom.Element e = (org.jdom.Element)it.next();
 							@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 								@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 								@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -887,7 +807,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							List atts = e.getChildren("attribute");
 							Iterator it2 = atts.iterator();
 							while (it2.hasNext()) {
-								Element eAtt = (Element)it2.next();
+								org.jdom.Element eAtt = (org.jdom.Element)it2.next();
 								tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
 									new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
 									eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
@@ -898,7 +818,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 					List tagOptions = tagView.getChildren("tag");
 					it = tagOptions.iterator();
 					while (it.hasNext()) {
-						Element e = (Element)it.next();
+						org.jdom.Element e = (org.jdom.Element)it.next();
 						@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -908,7 +828,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						List atts = e.getChildren("attribute");
 						Iterator it2 = atts.iterator();
 						while (it2.hasNext()) {
-							Element eAtt = (Element)it2.next();
+							org.jdom.Element eAtt = (org.jdom.Element)it2.next();
 							tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
 								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
 								e.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
@@ -919,13 +839,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 
 			//parameters
-			Element parameterSet = cRoot.getChild("parameters");
+			org.jdom.Element parameterSet = cRoot.getChild("parameters");
 			List parameters = parameterSet.getChildren("parameter");
 			textConfig = new Properties();
 			config = new Properties();
 			it = parameters.iterator();
 			while (it.hasNext()) {
-				Element e = (Element)it.next();
+				org.jdom.Element e = (org.jdom.Element)it.next();
 				String type = e.getAttributeValue("type");
 				if (type == null || type.equals("xpath"))
 					config.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
@@ -939,20 +859,20 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
                 StringTokenizer tok = new StringTokenizer(nsList, ",");
                 while (tok.hasMoreTokens()) {
                     String nextNs = tok.nextToken();
-                    allNamespaces.add(Namespace.getNamespace(nextNs.substring(0, nextNs.indexOf(' ')), nextNs.substring(nextNs.indexOf(' ')+1)));
+                    allNamespaces.add(org.jdom.Namespace.getNamespace(nextNs.substring(0, nextNs.indexOf(' ')), nextNs.substring(nextNs.indexOf(' ')+1)));
                 }
             }
             if (config.getProperty("qd.timealignednodes") == null) {
-                allNamespaces.add(Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver"));
+                allNamespaces.add(org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver"));
                 config.setProperty("qd.timealignednodes", "//*[@qd:*]");
                 config.setProperty("qd.nodebegins", "@qd:t1");
                 config.setProperty("qd.nodeends", "@qd:t2");
                 config.setProperty("qd.nearestplayableparent", "ancestor-or-self::*[@qd:*]");
             }
-            namespaces = (Namespace[])allNamespaces.toArray(new Namespace[0]);
+            namespaces = (org.jdom.Namespace[])allNamespaces.toArray(new org.jdom.Namespace[0]);
             
 			//configuration-defined actions
-			Element allActions = cRoot.getChild("actions");
+			org.jdom.Element allActions = cRoot.getChild("actions");
 			List actionSets = allActions.getChildren("action-set");
 			keyActions = new HashMap(); //maps keys to actions
 			taskActions = new HashMap(); //maps task names to same actions
@@ -999,16 +919,14 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			//stupid: I just made Transformer global for no good reason
 			if (configuration.getEditURL() != null)
 				transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
-			final DOMOutputter domOut = new DOMOutputter();
-			final DOMBuilder jdomBuild = new DOMBuilder();
-
+			
 			while (actionSetIter.hasNext()) {
-				Element thisSet = (Element)actionSetIter.next();
+				org.jdom.Element thisSet = (org.jdom.Element)actionSetIter.next();
 				configMenus[xCount] = new JMenu(thisSet.getAttributeValue("name"));
 				List actions = thisSet.getChildren("action");
 				it = actions.iterator();
 				while (it.hasNext()) {
-					Element e = (Element)it.next();
+					org.jdom.Element e = (org.jdom.Element)it.next();
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
 					final String nodeSelector = e.getAttributeValue("node");
@@ -1024,11 +942,11 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									JTextPane t = editor.getTextPane();
 									int offset = t.getCaret().getMark();
 									Object context = editor.getNodeForOffset(offset);
-									System.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
+									//LOGGINGSystem.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
 									do {
 										keepSearching = false;
 										if (context != null) {
-											Object moveTo = XMLUtilities.selectSingleJDOMNode(context, nodeSelector, namespaces);
+											Object moveTo = XMLUtilities.selectSingleDOMNode(context, nodeSelector, namespaces);
 											int newStartOffset = editor.getStartOffsetForNode(moveTo);
 											if (newStartOffset > -1) {
 												t.requestFocus();
@@ -1069,24 +987,21 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									editor.setEditabilityTracker(false);
 									int offset = editor.getTextPane().getCaret().getMark();
 									Object context = editor.getNodeForOffset(offset);
-									Object transformNode = XMLUtilities.selectSingleJDOMNode(context, nodeSelector, namespaces);
-									if (!(transformNode instanceof Element)) return;
-									Element jdomEl = (Element)transformNode;
-									Element clone = (Element)jdomEl.clone();
-                                    Document jDoc = new Document(clone);
-                                    org.w3c.dom.Document transformDocument = domOut.output(jDoc);
+									Object tNode = XMLUtilities.selectSingleDOMNode(context, nodeSelector, namespaces);
+									
+                                    if (!(tNode instanceof org.w3c.dom.Node)) return;
+                                    org.w3c.dom.Node transformNode = (org.w3c.dom.Node)tNode;
+                                    org.w3c.dom.DocumentFragment frag = editor.getXMLDocument().createDocumentFragment();
+                                    frag.appendChild(transformNode.cloneNode(true)); //make deep clone of node
                                     
                                     Enumeration enum = config.propertyNames();
 									while (enum.hasMoreElements()) {
 										String key = (String)enum.nextElement();
 										String val = config.getProperty(key);
 										if (!key.startsWith("qd.")) {
-											Object obj = XMLUtilities.selectSingleJDOMNode(context, val, namespaces);
-                                            if (obj != null && obj instanceof Element) {
-                                                Element parameterClone = (Element)(((Element)obj).clone());
-                                                Document parameterDoc = new Document(parameterClone);
-                                                org.w3c.dom.Document parameterDomDoc = domOut.output(parameterDoc);
-												transformer.setParameter(key, parameterDomDoc.getDocumentElement());
+											Object obj = XMLUtilities.selectSingleDOMNode(context, val, namespaces);
+                                            if (obj != null) {
+												transformer.setParameter(key, obj);
                                             }
 										}
 									}
@@ -1103,7 +1018,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									if (outSeconds >= inSeconds) { //time parameters will not be passed if out precedes in
 										transformer.setParameter("qd.start", String.valueOf(inSeconds));
 										transformer.setParameter("qd.end", String.valueOf(outSeconds));
-										System.out.println("Start="+String.valueOf(inSeconds)+" & End="+String.valueOf(outSeconds));
+										//LOGGINGSystem.out.println("Start="+String.valueOf(inSeconds)+" & End="+String.valueOf(outSeconds));
 									} else {
 										transformer.setParameter("qd.start", "");
 										transformer.setParameter("qd.end", "");
@@ -1112,11 +1027,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									float endoftime = (float)player.getEndTime();
 									float currentSeconds = now / 1000; //convert from milliseconds
 									float endTime = endoftime / 1000; //convert from milliseconds
-									//float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
-									//float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
 									String cS = String.valueOf(currentSeconds);
 									String eT = String.valueOf(endTime);
-									System.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
+									//LOGGINGSystem.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
 									transformer.setParameter("qd.currentmediatime", String.valueOf(currentSeconds));
 									transformer.setParameter("qd.mediaduration", String.valueOf(endTime));
 									float slowInc = (float)PreferenceManager.slow_adjust;
@@ -1126,10 +1039,22 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									//send the name of the current media URL
 									transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
 
-									JDOMResult jdomResult = new JDOMResult();
-                                    DOMSource domSource = new DOMSource(transformDocument.getDocumentElement());
-                                    transformer.transform(domSource, jdomResult);
-									List replaceNodeWith = jdomResult.getResult();
+									org.w3c.dom.DocumentFragment replaceFrag = editor.getXMLDocument().createDocumentFragment();
+                                    transformer.transform(new DOMSource(frag), new DOMResult(replaceFrag));
+									
+                                    /*LOGGING
+                                    try {
+                                        System.out.println("\n------SOURCE\n");
+                                    org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));
+                                    ser.setOutputByteStream(System.out);
+                                        org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
+                                    domser.serialize(frag);
+                                    System.out.println("\n------RESULT\n");
+                                    domser.serialize(replaceFrag);
+                                    } catch (IOException ioe) {
+                                        ioe.printStackTrace();
+                                    }*/
+                                    
 
 									int start = editor.getStartOffsetForNode(transformNode);
 									int end = editor.getEndOffsetForNode(transformNode);
@@ -1154,45 +1079,20 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 											return;
 										}
 										int insertPos = start;
-										Element el = (Element)transformNode;
-										if (el.isRootElement()) {
-											Iterator replaceIter = replaceNodeWith.iterator();
-											while (replaceIter.hasNext()) {
-												Object o = replaceIter.next();
-												if (o instanceof Element) {
-													replaceIter.remove();
-													Document d = el.getDocument();
-													d.detachRootElement();
-													Element er = (Element)o;
-													d.setRootElement(er);
-													editor.removeNode(er);
-													insertPos = editor.renderElement(er, indent, insertPos);
-													break;
-												}
-											}
-										} else {
-                                            /*note: should revise to add new content first, then render,
-                                            since details of rendering could depend on parental features*/
-											List parentContent = el.getParent().getContent(); //this is a live list
-											int elPos = parentContent.indexOf(el);
-											parentContent.remove(elPos);
-											editor.removeNode(transformNode);
-											Iterator replaceIter = replaceNodeWith.iterator();
-											while (replaceIter.hasNext()) {
-												Object next = replaceIter.next();
-												replaceIter.remove();
-												if (next instanceof Element) {
-													Element elem = (Element)next;
-													insertPos = editor.renderElement(elem, indent, insertPos);
-												} else if (next instanceof Text) {
-													Text text = (Text)next;
-													if (text.getTextTrim().length() > 0)
-														insertPos = editor.renderText(text, insertPos);
-												}
-												parentContent.add(elPos, next);
-												elPos++;
-											}
-										}
+                                        org.w3c.dom.Node parentNode = transformNode.getParentNode();
+                                        if (parentNode != null) {
+                                            org.w3c.dom.Node firstInFrag = replaceFrag.getFirstChild();
+                                            int itemsInFrag = replaceFrag.getChildNodes().getLength();
+                                            parentNode.replaceChild(replaceFrag, transformNode);
+                                            editor.removeNode(transformNode);
+                                            if (firstInFrag != null) {
+                                                org.w3c.dom.Node next=firstInFrag;
+                                                for (int z=0; z<itemsInFrag; z++) {
+                                                    insertPos = XMLRenderer.render(next, editor.getTextPane(), insertPos, indent, editor.getTagInfo(), editor.getStartOffsets(), editor.getEndOffsets());
+                                                    next = next.getNextSibling();
+                                                }
+                                            }
+                                        }
 
 										try {
 											tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
@@ -1206,23 +1106,19 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 													AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
 													tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
 												}
-												System.out.println("carriage return detected");
+												//LOGGINGSystem.out.println("carriage return detected");
 											}
 										} catch (BadLocationException ble) {
 											ble.printStackTrace();
 											return;
 										}
-
 										editor.fixOffsets();
 										hp.refresh();
 										player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
-
-									transformer.clearParameters();
-									editor.setEditabilityTracker(true);
+                                        transformer.clearParameters();
+                                        editor.setEditabilityTracker(true);
 								} catch (TransformerException tre) {
 									tre.printStackTrace();
-								} catch (JDOMException jdome) {
-									jdome.printStackTrace();
 								}
 							}
 						};
@@ -1242,18 +1138,18 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				} catch (TransformerException tre) {
 					tre.printStackTrace();
 				} 
-		} catch (JDOMException jdome) {
+		} catch (org.jdom.JDOMException jdome) {
 			jdome.printStackTrace();
 		}catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
+			ioe.printStackTrace();
+		}
 		return true;
 	}
 
 	public void executeCommand(String command) {
 		//FIXME: These commands should be defined elsewhere, in programmatically extensible classes
 							if (command.equals("playNode")) {
-								Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
+								Object nearestParent = XMLUtilities.selectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 								playNode(nearestParent);
 							}
 							else if (command.equals("playPause")) {
@@ -1282,7 +1178,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("playEdge")) {
 								try {
-									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
+									Object nearestParent = XMLUtilities.selectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t2 = tcp.getOutTime();
 									long t1 = t2.longValue() - PreferenceManager.play_minus;
@@ -1294,7 +1190,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("seekStart")) {
 								try {
-									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
+									Object nearestParent = XMLUtilities.selectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t = tcp.getInTime();
 									if (player.isPlaying()) player.cmd_stop();
@@ -1305,7 +1201,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 							}
 							else if (command.equals("seekEnd")) {
 								try {
-									Object nearestParent = XMLUtilities.selectSingleJDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
+									Object nearestParent = XMLUtilities.selectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"), namespaces);
 									tcp.setNode(nearestParent);
 									Long t = tcp.getOutTime();
 									if (player.isPlaying()) player.cmd_stop();
@@ -1337,183 +1233,167 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 	@TIBETAN@}
 }
 
-
-
 /*
-public int findNextText(int startPos, StyledDocument sourceDoc, StyledDocument findDoc) {
-	if (startPos<0 || startPos>sourceDoc.getLength()-1)
-		return -1;
+XMLSerialiser: how to keep new/empty lines?
+                  Author: MartinHilpert                       
+                Aug 11, 2003 10:29 AM                        
+             
 
-try {
+        
 
-	AttributeSet firstAttr = findDoc.getCharacterElement(0).getAttributes();
-	String firstFontName = StyleConstants.getFontFamily(firstAttr);
-	char firstSearchChar = findDoc.getText(0,1).charAt(0);
+                how can i tell XMLSerializer to preserve empty lines (and spaces) within elements? i write a DOM object via
 
-	boolean match = false;
-	for (int i=startPos; i<sourceDoc.getLength()-findDoc.getLength(); i++) {
-			AttributeSet attr = sourceDoc.getCharacterElement(i).getAttributes();
-			String fontName = StyleConstants.getFontFamily(attr);
-			char c = sourceDoc.getText(i,1).charAt(0);
 
-			if (c == firstSearchChar && fontName.equals(firstFontName)) { //found first character, now check subsequents
-				match = true;
-				for (int k=1; k<findDoc.getLength() && match; k++) {
-					if (findDoc.getText(k,1).charAt(0) == sourceDoc.getText(i+k,1).charAt(0)) {
-	 					AttributeSet	attr2 = findDoc.getCharacterElement(k).getAttributes();
-									attr = sourceDoc.getCharacterElement(i+k).getAttributes();
-						if (!StyleConstants.getFontFamily(attr).equals(StyleConstants.getFontFamily(attr2)))
-							match = false;
-					} else
-						match = false;
-				}
-				if (match)
-					return i;
-			}
-	}
-	} catch (BadLocationException ble) {
-		ble.printStackTrace();
-		//ThdlDebug.noteIffyCode();
-	}
+FileWriter fw = new FileWriter(file);
+OutputFormat of = new OutputFormat(document, "iso-8859-1", true);
+of.setLineWidth(0); //turn off automatic line wrapping
+of.setPreserveSpace(false); //true preserves new lines but does not nice XML formatting
+XMLSerializer xmls = new XMLSerializer(fw,of);
+xmls.serialize(document);
 
-	return -1; //not found
-}
 
-public void findText() {
-	//get input from user on what to search for
-	JPanel p0 = new JPanel(new GridLayout(0,1));
-	JPanel p2 = new JPanel();
-	p2.add(new JLabel(messages.getString("FindWhat") + " "));
-	if (findDoc == null) {
-		sharedDP.setText("");
-		findDoc = (TibetanDocument)sharedDP.getDocument();
-	} else
-		sharedDP.setDocument(findDoc);
-	sharedDP.setPreferredSize(new Dimension(250,50));
-	p2.add(sharedDP);
-	p0.add(p2);
+and empty lines within text nodes are just ignored or a space is inserted instead. but when i set outputFormat.setPreserveSpace(true), the new lines are preserved and printed to the XML file. however, with setPreserveSpace(true) all the nice XML formatting is gone (all XML is printed to to one single line - just the explicit new lines within elements (text nodes) create new lines), too! :-(
 
-	if (JOptionPane.showConfirmDialog(textFrame, p0, messages.getString("FindHeading"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) == JOptionPane.OK_OPTION) {
+how can i preserve space in element (nodes) but still keep the nice XML formatting (with new lines for each element and indentation)?              
 
-	try {
-		TibetanDocument doc = (TibetanDocument)pane.getDocument();
-		Position pos = doc.createPosition(pane.getCaretPosition());
 
-		boolean startingOver = false;
-		int i=pos.getOffset();
-		while (true) {
-			i = findNextText(i, doc, findDoc);
-			if (i>0) { //found!! so highlight text and seek video
-				if (startingOver && i>pos.getOffset()-1)
-					break;
-				pane.setSelectionStart(i);
-				pane.setSelectionEnd(i+findDoc.getLength());
-				if (JOptionPane.showInternalConfirmDialog(textFrame, messages.getString("FindNextYesNo"), null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.YES_OPTION)
-					break;
-				i++;
-			}
-			if (i<0 || i==doc.getLength() && pos.getOffset()>0) { //reached end of document - start over?
-				if (startingOver || pos.getOffset()==0)
-					break;
-				if (JOptionPane.showInternalConfirmDialog(textFrame, messages.getString("StartFromBeginning"), null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.YES_OPTION)
-					break;
-				i=0;
-				startingOver = true;
-			}
-		}
-	} catch (BadLocationException ble) {
-		ble.printStackTrace();
-		//ThdlDebug.noteIffyCode();
-	}
 
-	}
-}
+                                                 
 
-public void replaceText() {
-	//get input from user on what to search for
-	JPanel p0 = new JPanel(new GridLayout(0,1));
-	JPanel p2 = new JPanel();
-	p2.add(new JLabel(messages.getString("FindWhat") + " "));
-	if (findDoc == null) {
-		sharedDP.setText("");
-		findDoc = (TibetanDocument)sharedDP.getDocument();
-	} else
-		sharedDP.setDocument(findDoc);
-	sharedDP.setPreferredSize(new Dimension(250,50));
-	p2.add(sharedDP);
-	JPanel p3 = new JPanel();
-	p3.add(new JLabel(messages.getString("ReplaceWith") + " "));
-	if (replaceDoc == null) {
-		sharedDP2.setText("");
-		replaceDoc = (TibetanDocument)sharedDP2.getDocument();
-	} else
-		sharedDP2.setDocument(replaceDoc);
-	sharedDP2.setPreferredSize(new Dimension(250,50));
-	p3.add(sharedDP2);
+                
 
-	p0.add(p2);
-	p0.add(p3);
+                        
 
-	if (JOptionPane.showConfirmDialog(textFrame, p0, messages.getString("FindReplaceHeading"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) == JOptionPane.OK_OPTION) {
+            
+                                Re: XMLSerialiser: how to keep new/empty lines?                 
+                                          Author: doffoel                              
+                                       In Reply To:             XMLSerialiser: how to keep new/empty lines?                                  
+                                Aug 12, 2003 1:34 PM                               
+                          Reply 1 of 4                 
+                                     
 
-	try {
-		java.util.List replaceDCs = new ArrayList();
-		for (int k=0; k<replaceDoc.getLength(); k++)
-			replaceDCs.add(new DuffCode(TibetanMachineWeb.getTMWFontNumber(StyleConstants.getFontFamily(replaceDoc.getCharacterElement(k).getAttributes())), replaceDoc.getText(k,1).charAt(0)));
-		DuffData[] dd = TibTextUtils.convertGlyphs(replaceDCs);
+        
 
-		TibetanDocument doc = (TibetanDocument)pane.getDocument();
-		Position pos = doc.createPosition(pane.getCaretPosition());
 
-		String[] replaceOptions = new String[3];
-		replaceOptions[0] = new String(messages.getString("Replace"));
-		replaceOptions[1] = new String(messages.getString("ReplaceAll"));
-		replaceOptions[2] = new String(messages.getString("NoReplace"));
 
-		boolean startingOver = false;
-		boolean replaceAll = false;
-		int i=pos.getOffset();
-		outer:
-		while (true) {
-			i = findNextText(i, doc, findDoc);
-			if (i>0) { //found!! so highlight text and seek video
-				if (startingOver && i>pos.getOffset()-1)
-					break;
-				if (replaceAll) {
-					doc.remove(i,findDoc.getLength());
-					doc.insertDuff(i,dd);
-				} else {
-					pane.setSelectionStart(i);
-					pane.setSelectionEnd(i+findDoc.getLength());
-					String choice = (String)JOptionPane.showInternalInputDialog(textFrame, messages.getString("ReplaceQ"), null, JOptionPane.PLAIN_MESSAGE, null, replaceOptions, replaceOptions[0]);
-					if (choice == null) //cancel, so stop searching
-						break outer;
-					if (choice.equals(replaceOptions[0])) { //replace
-						doc.remove(i,findDoc.getLength());
-						doc.insertDuff(i,dd);
-					}
-					else if (choice.equals(replaceOptions[1])) { //replace all
-						doc.remove(i,findDoc.getLength());
-						doc.insertDuff(i,dd);
-						replaceAll = true;
-					}
-				}
-				i++;
-			}
-			if (i<0 || i==doc.getLength() && pos.getOffset()>0) { //reached end of document - start over?
-				if (startingOver || pos.getOffset()==0)
-					break;
-				if (JOptionPane.showInternalConfirmDialog(textFrame, messages.getString("StartFromBeginning"), null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.YES_OPTION)
-					break;
-				i=0;
-				startingOver = true;
-			}
-		}
-	} catch (BadLocationException ble) {
-		ble.printStackTrace();
-		//ThdlDebug.noteIffyCode();
-	}
+                
 
-	}
-}
+                Don't you need to specify an XML schema for doing that ?
+
+PA
+http://www.doffoel.com                  
+
+        
+
+                                                 
+
+                
+
+                        
+
+            
+                                Re: XMLSerialiser: how to keep new/empty lines?                 
+                                          Author: bangz                              
+                                       In Reply To:             Re: XMLSerialiser: how to keep new/empty lines?                                  
+                                Aug 12, 2003 4:24 PM                               
+                          Reply 2 of 4                 
+                                     
+
+        
+
+
+
+                
+
+                I tried what you mentioned, I want to achieve the same thing. In my case the XML was formatted fine but all the blank spaces were not retained, only the first one was retained.
+Did you find any other solution?                  
+
+        
+
+                                                 
+
+                
+
+                        
+
+            
+                                Re: XMLSerialiser: how to keep new/empty lines?                 
+                                          Author: bangz                              
+                                       In Reply To:             Re: XMLSerialiser: how to keep new/empty lines?                                  
+                                Aug 12, 2003 8:24 PM                               
+                          Reply 3 of 4                 
+                                     
+
+        
+
+
+
+                
+
+                Hi
+Sorry for the last post. I am getting the same result as yours. I  lose all the formatting in the XML.
+So I instead of setting the attribute in the output format class for the whole XML, I just set the attribute xml:space=preserve in the element for which I need whitespaces(tabs, newline) to be preserved. 
+It worked!                  
+
+        
+
+                                                 
+
+                
+
+                        
+
+            
+                                Re: XMLSerialiser: how to keep new/empty lines?                 
+                                          Author: MartinHilpert                              
+                                       In Reply To:             Re: XMLSerialiser: how to keep new/empty lines?                                  
+                                Aug 14, 2003 2:54 AM                               
+                          Reply 4 of 4                 
+                                     
+
+        
+
+
+
+                
+
+                the xml:space preserve didn't work for me, but i found another solution: instead of using XMLSerializer, I use the standard Java XML API:
+
+
+    /**
+     * Write document (DOM object) to a file (as XML text). Default settings: encoding is "iso-8859-1",
+     * no automatic line breaks, automatic indentation.
+     * 
+     * @param document Document to write.
+     * @param file File to write to.
+     * @throws IOException
+     /
+    public static void writeDocument(Document document, File file) throws IOException {
+        if (document != null && file != null) {
+            //Java API:
+            FileOutputStream fos = new FileOutputStream(file);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            try {
+                Transformer t = tf.newTransformer();
+                t.setOutputProperty("encoding", "iso-8859-1");
+                t.setOutputProperty("indent", "yes");
+                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+                DOMSource domsource = new DOMSource(document);
+                StreamResult sr = new StreamResult(fos);
+                t.transform(domsource, sr); 
+            } catch (TransformerConfigurationException tce) {
+                tce.printStackTrace(System.err);
+            } catch (TransformerException te) {
+                te.printStackTrace(System.err);
+            }
+        }//else: no input values available
+    }//writeDocument()
+
+
+and in the XSL definition, I use the white-space-collapse and linefeed-treatment attributes to preserve the spaces and linefeeds of the selected value:
+
+
+<fo:block white-space-collapse="false" linefeed-treatment="preserve">
+    <xsl:value-of select="/Description/text()"/>
+</fo:block>
 */

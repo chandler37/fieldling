@@ -685,12 +685,12 @@ public class SS2Viewer extends javax.swing.JApplet {
     SS2Utterance utterance  = (SS2Utterance) obj;
     utteranceLabel.setText(utterance.getExcerpt());
     
-    //System.out.println("Participants: "+utterance.participantSegments.length);
+    //LOGGING//LOGGINGSystem.out.println("Participants: "+utterance.participantSegments.length);
     
     for (int s=0; s < 1; s++) {
       SequencerModel model = new SequencerModel(ss2file.fieldSpec);
       SS2ParticipantSegment segment = utterance.participantSegments[0];
-      //System.out.println(utterance.startTime);
+      //LOGGING//LOGGINGSystem.out.println(utterance.startTime);
       
       SS2Track[] tracks = segment.tracks;
       for (int i=0;i<tracks.length; i++) {
@@ -720,13 +720,13 @@ public class SS2Viewer extends javax.swing.JApplet {
     /* try {
       QTSession.open();
       quicktimePresent = true;
-      System.out.println("Quicktime for Java opened");
+      //LOGGINGSystem.out.println("Quicktime for Java opened");
     } catch ( Throwable t ) {
       t.printStackTrace();
-      System.out.println("Quicktime for Java not opened");
+      //LOGGINGSystem.out.println("Quicktime for Java not opened");
       try {
         QTSession.close();
-        System.out.println("Quicktime for Java shutdown");
+        //LOGGINGSystem.out.println("Quicktime for Java shutdown");
       } catch (Throwable t2)
       { t2.printStackTrace(); }
     } */
@@ -743,7 +743,7 @@ public class SS2Viewer extends javax.swing.JApplet {
     {
       QTFile qtFile = new QTFile( mediaFile );
       if(qtFile.exists()) {
-        System.out.println(mediaFile.getAbsolutePath()+ "doesn't exist");
+        //LOGGINGSystem.out.println(mediaFile.getAbsolutePath()+ "doesn't exist");
         return false;
       }
       /// open as a movie
@@ -773,9 +773,9 @@ public class SS2Viewer extends javax.swing.JApplet {
     if (quicktimePresent) {
       try {
         QTSession.close();
-        System.out.println("Quicktime for Java shutdown");
+        //LOGGINGSystem.out.println("Quicktime for Java shutdown");
       } catch ( Throwable t ) {
-        System.out.println("Quicktime for Java not shutdown properly");
+        //LOGGINGSystem.out.println("Quicktime for Java not shutdown properly");
  
       }
     }

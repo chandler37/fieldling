@@ -149,7 +149,7 @@ public class SS2FileImporter {
     
     Log.info("Document written to disk"); */
     
-    // ss2file.printUtterance(System.out, 0);
+    // ss2file.printUtterance(//LOGGINGSystem.out, 0);
     
     filesProcessed++;
   } // end importFile()

@@ -51,14 +51,14 @@ public class QT4JPlayerApplet extends Applet implements AnnotationPlayer {
 		//try {									//why don't you send an exception
 			myPlayer.destroy();
 		//} catch (PanelPlayerException e) {
-		//	System.out.println(e.getMessage());
+		//	//LOGGINGSystem.out.println(e.getMessage());
 		//}
 	}
 	public void start() {
 		try {
 			myPlayer.loadMovie(new URL(FIC_SOUND));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			//LOGGINGSystem.out.println(e.getMessage());
 		}
 	}
 /*-----------------------------------------------------------------------*/
@@ -72,7 +72,7 @@ public class QT4JPlayerApplet extends Applet implements AnnotationPlayer {
 		try {
 			myPlayer.cmd_stop();
 		} catch (PanelPlayerException err) {
-			System.out.println(err.getMessage());
+			//LOGGINGSystem.out.println(err.getMessage());
 		}
  	}
 	public boolean cmd_isID(String theID) {
@@ -96,7 +96,7 @@ public class QT4JPlayerApplet extends Applet implements AnnotationPlayer {
 		try {
 			JSObject.getWindow(this).call(method, args);
 		} catch (Exception e) {
-			System.out.println("Erreur appel javascript: "+e+" "+mess);
+			//LOGGINGSystem.out.println("Erreur appel javascript: "+e+" "+mess);
 		}
 	}
 /*-----------------------------------------------------------------------*/

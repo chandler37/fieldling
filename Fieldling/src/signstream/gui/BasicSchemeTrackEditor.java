@@ -294,7 +294,7 @@ implements TrackEditor, TrackRenderer {
   }
   
   public boolean isItemEditable(Object data, Object constraints) {
-    System.out.println(data);
+    //LOGGINGSystem.out.println(data);
     /* if (data instanceof SchemeValue && 
             ((SchemeValue)data).getName().equals("ONSET") ||
             ((SchemeValue)data).getName().equals("ONSET") ||

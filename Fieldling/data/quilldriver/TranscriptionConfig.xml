@@ -81,7 +81,7 @@
 				<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
 				time codes are already marked under the video in the time coding area.</desc>
 			</tag>
-			<tag name="S" displayas="@who">
+			<tag name="S" displayas="id(@who)">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 				<desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
@@ -105,7 +105,13 @@
 				</tag>
 			</tagview>
 			<tagview name="Transcription Only" keystroke="F2">
-				<tag name="FORM" displayas="'TIB'" tibetan="true">
+                <tag name="S" visible="false" visiblecontents="true">
+                    <attribute name="id" visible="false"/>
+                    <attribute name="who" visible="false"/>
+                    <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
+                    but to visually suppress its 'id' attribute.</desc>
+                </tag>
+				<tag name="FORM" displayas="id(../@who)" tibetan="true">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
 					but to visually suppress its 'type' attribute.</desc>
@@ -114,7 +120,13 @@
 				<tag name="NOTE" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="Translation Only" keystroke="F3">
-				<tag name="TRANSL" displayas="'ENG'">
+                <tag name="S" visible="false" visiblecontents="true">
+                    <attribute name="id" visible="false"/>
+                    <attribute name="who" visible="false"/>
+                    <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
+                    but to visually suppress its 'id' attribute.</desc>
+                </tag>
+				<tag name="TRANSL" displayas="id(../@who)">
 					<attribute name="xml:lang" visible="false"/>
 					<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
 					but to visually suppress its 'xml:lang' attribute.</desc>

@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
 import javax.swing.text.JTextComponent;
-import org.jdom.Document;
-import org.jdom.Namespace;
 import fieldling.quilldriver.TranscriptView;
 import fieldling.quilldriver.XMLEditor;
 import fieldling.quilldriver.XMLUtilities;
@@ -38,15 +36,16 @@ public class XMLView implements TranscriptView {
 	private Map endTimeMap;
 	private Map startOffsetMap;
 	private Map endOffsetMap;
-	private Object jdomContextNode;
+	private Object domContextNode;
+	//private Object jdomContextNode;
 	private String getNodesXPath;
 	private String getStartXPath;
 	private String getEndXPath;
-    private Namespace[] namespaces;
+    private org.jdom.Namespace[] namespaces;
 	
-	public XMLView(XMLEditor editor, Object jdomContextNode, String getNodesXPath, String getStartXPath, String getEndXPath, Namespace[] namespaces) {
-		this.editor = editor;
-		this.jdomContextNode = jdomContextNode;
+    public XMLView(XMLEditor editor, Object domContextNode, String getNodesXPath, String getStartXPath, String getEndXPath, org.jdom.Namespace[] namespaces) {
+        this.editor = editor;
+		this.domContextNode = domContextNode;
 		this.getNodesXPath = getNodesXPath;
 		this.getStartXPath = getStartXPath;
 		this.getEndXPath = getEndXPath;
@@ -58,7 +57,7 @@ public class XMLView implements TranscriptView {
 		refresh();
 	}
 	public void refresh(Object newContextNode) {
-		this.jdomContextNode = newContextNode;
+		this.domContextNode = newContextNode;
 		refresh();
 	}
 	public void refresh() {
@@ -66,18 +65,17 @@ public class XMLView implements TranscriptView {
 		endTimeMap.clear();
 		startOffsetMap.clear();
 		endOffsetMap.clear();
-		List audioNodes = XMLUtilities.selectJDOMNodes(jdomContextNode, getNodesXPath, namespaces);
+		List audioNodes = XMLUtilities.selectDOMNodes(domContextNode, getNodesXPath, namespaces);
 		Iterator iter = audioNodes.iterator();
 		while (iter.hasNext()) {
 			Object node = iter.next();
 			String id = String.valueOf(node.hashCode());
-			Object start = XMLUtilities.selectSingleJDOMNode(node, getStartXPath, namespaces);
-			String startVal = XMLUtilities.getTextForJDOMNode(start);
-			Object end = XMLUtilities.selectSingleJDOMNode(node, getEndXPath, namespaces);
-			String endVal = XMLUtilities.getTextForJDOMNode(end);
+			Object start = XMLUtilities.selectSingleDOMNode(node, getStartXPath, namespaces);
+			String startVal = XMLUtilities.getTextForDOMNode(start);
+			Object end = XMLUtilities.selectSingleDOMNode(node, getEndXPath, namespaces);
+			String endVal = XMLUtilities.getTextForDOMNode(end);
 			int startOffset = editor.getStartOffsetForNode(node);
 			int endOffset = editor.getEndOffsetForNode(node);
-			//if (!(startVal == null || endVal == null || startOffset == -1 || endOffset == -1)) {
 			if (!(startVal == null || startOffset == -1 || endOffset == -1)) {
 				startTimeMap.put(id, startVal);
 				if (endVal == null) //for single time-point (no end time), treat as if end time = start time
@@ -142,9 +140,9 @@ public class XMLView implements TranscriptView {
 			buff.append((String)iter.next());
 			buff.append(',');
 		}
-		return buff.toString();		
+		return buff.toString();
 	}
-	public Document getDocument() {
+	public org.w3c.dom.Document getDocument() {
 		return editor.getXMLDocument();
 	}
 }

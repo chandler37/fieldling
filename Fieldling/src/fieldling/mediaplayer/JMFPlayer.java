@@ -157,7 +157,7 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		if (player == null)
 			return;
 		if (event instanceof RealizeCompleteEvent) {
-			System.out.println("received RealizeCompleteEvent event");
+			//LOGGINGSystem.out.println("received RealizeCompleteEvent event");
 			isRealized = true;
 			if (mediaURL.getProtocol().equals("file")) { //if http then wait until entire media is cached
 				isCached = true;
@@ -165,7 +165,7 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 			} else if (isCached) //must be http
 				showMediaComponent();
 		} else if (event instanceof StartEvent) {
-			System.out.println("received StartEvent event");
+			//LOGGINGSystem.out.println("received StartEvent event");
 			launchAnnotationTimer(); //FIXME should have upper limit (stop time)
 
 			if (timer != null) {
@@ -203,17 +203,17 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 			}
 
 			if (event instanceof StopAtTimeEvent) {
-				System.out.println("received StopAtTimeEvent");
+				//LOGGINGSystem.out.println("received StopAtTimeEvent");
 			} else if (event instanceof StopByRequestEvent) {
-				System.out.println("received StopByRequestEvent");
+				//LOGGINGSystem.out.println("received StopByRequestEvent");
 			} else if (event instanceof RestartingEvent) {
-				System.out.println("received RestartingEvent");
+				//LOGGINGSystem.out.println("received RestartingEvent");
 			} else if (event instanceof DataStarvedEvent) {
-				System.out.println("received DataStarvedEvent");
+				//LOGGINGSystem.out.println("received DataStarvedEvent");
 			} else if (event instanceof DeallocateEvent) {
-				System.out.println("received DeallocateEvent");
+				//LOGGINGSystem.out.println("received DeallocateEvent");
 			} else if (event instanceof EndOfMediaEvent) {
-				System.out.println("received EndOfMediaEvent");
+				//LOGGINGSystem.out.println("received EndOfMediaEvent");
 			}
 
 			stopTime = null;
@@ -226,9 +226,9 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		} else if (event instanceof CachingControlEvent) {
 			CachingControlEvent  cce = (CachingControlEvent)event;
 			CachingControl cc = cce.getCachingControl();
-			System.out.println("still caching at " + String.valueOf(cc.getContentProgress()));
+			//LOGGINGSystem.out.println("still caching at " + String.valueOf(cc.getContentProgress()));
 			if (!(cc.getContentLength() > cc.getContentProgress())) {
-				System.out.println("caching done!!");
+				//LOGGINGSystem.out.println("caching done!!");
 				isCached = true;
 				if (isRealized)
 					showMediaComponent();

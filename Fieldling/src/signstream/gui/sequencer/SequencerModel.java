@@ -122,7 +122,7 @@ public class SequencerModel {
     
     SequencerTrack track = (SequencerTrack) tracks.elementAt(currentIndex);
     tracks.remove(currentIndex);
-    System.out.println(track.name);
+    //LOGGINGSystem.out.println(track.name);
     tracks.insertElementAt(track, newIndex);
     
     // if (currentIndex > newIndex) currentIndex++;
@@ -140,7 +140,7 @@ public class SequencerModel {
   
   void fireTrackAdded(SequencerTrack track) {
     for (int n=modelListeners.size()-1; n>=0; n--) {
-      System.out.println("calling trackAdded()");
+      //LOGGINGSystem.out.println("calling trackAdded()");
      ((SequencerModelListener) modelListeners.elementAt(n)).trackAdded(track);
     }
   }
