@@ -94,9 +94,9 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
             dbf.setNamespaceAware(true);
             dbf.setValidating(true);
             dbf.setAttribute("http://apache.org/xml/features/validation/schema", Boolean.TRUE);
-			docBuilder = dbf.newDocumentBuilder();
-            /*ErrorHandler handler = new SAXValidator();
-            parser.setErrorHandler(handler);
+	    docBuilder = dbf.newDocumentBuilder();
+            /*handler = new SAXValidator();
+            docBuilder.setErrorHandler(handler);
         } catch (SAXException saxe) {
             saxe.printStackTrace();*/
 		} catch (ParserConfigurationException pce) {
@@ -474,7 +474,6 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
 			try {
                 org.w3c.dom.Document xmlDoc = null;
                 try {
-                    
                     xmlDoc = docBuilder.parse(file.toURL().toString());
                     //LOGGINGSystem.out.println(file.toString() + " is well-formed");
                 } catch (org.xml.sax.SAXException saxe) {
@@ -995,9 +994,9 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
                                     org.w3c.dom.DocumentFragment frag = editor.getXMLDocument().createDocumentFragment();
                                     frag.appendChild(transformNode.cloneNode(true)); //make deep clone of node
                                     
-                                    Enumeration enum = config.propertyNames();
-									while (enum.hasMoreElements()) {
-										String key = (String)enum.nextElement();
+                                    Enumeration enm = config.propertyNames();
+									while (enm.hasMoreElements()) {
+										String key = (String)enm.nextElement();
 										String val = config.getProperty(key);
 										if (!key.startsWith("qd.")) {
 											Object obj = XMLUtilities.selectSingleDOMNode(context, val, namespaces);
@@ -1006,9 +1005,9 @@ System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerce
                                             }
 										}
 									}
-									enum = textConfig.propertyNames();
-									while (enum.hasMoreElements()) {
-										String key = (String)enum.nextElement();
+									enm = textConfig.propertyNames();
+									while (enm.hasMoreElements()) {
+										String key = (String)enm.nextElement();
 										transformer.setParameter(key, textConfig.getProperty(key));
 									}
 									transformer.setParameter("qd.task", tasks);

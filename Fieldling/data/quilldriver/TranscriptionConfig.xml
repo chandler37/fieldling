@@ -9,7 +9,7 @@
 		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
 		<parameter name="qd.nodeends" val="AUDIO/@end"/>
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
-        <parameter name="speakers" val="ancestor-or-self::TEXT/HEADER"/>
+		<parameter name="speakers" val="ancestor-or-self::TEXT/HEADER"/>
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
@@ -28,7 +28,7 @@
 			<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
 			<action name="Add Speaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" xsl-task="addSpeaker"/>
 			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" xsl-task="removeNode"/>
-            <action name="Change Speaker" keystroke="control 1" node="ancestor-or-self::S" xsl-task="changeSpeaker"/>
+			<action name="Change Speaker" keystroke="control 1" node="ancestor-or-self::S" xsl-task="changeSpeaker"/>
 		</action-set>
 		<action-set name="Time Code">
 			<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" xsl-task="markStart"/>

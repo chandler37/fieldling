@@ -83,11 +83,12 @@
 					</ucuchi:META>
 				</xsl:when>
                 
-                <!-- id management: is this used? -->
+                <!-- id management: is this used?
 				<xsl:when test="$qd.task='computeIDs'">
-					<xsl:call-template name="copyTag" />
+					<xsl:copy-of select="."/>
 				</xsl:when>
-                
+                -->
+		
                 <!-- insertions and deletions -->
 				<xsl:when test="$qd.task='removeNode'"/> <!-- delete current node -->
 				<xsl:when test="$qd.task='newClause'">
