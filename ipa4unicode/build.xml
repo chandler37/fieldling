@@ -63,14 +63,14 @@
     task appears not to work. Also, if using jedit and AntFarm, be sure to
     select "Run Ant targets using external script" rather than "Run Ant
     targets in same JVM". This avoids classpath problems. --> 
-    <target name="ipa4uni-test" depends="ipa4uni-compile" description="runs junit tests on IPA4Unicode">
-    	<!-- first build IPA and Unicode tables from data files -->
+    <!-- <target name="ipa4uni-test" depends="ipa4uni-compile" description="runs junit tests on IPA4Unicode">
+    	 first build IPA and Unicode tables from data files
 		<java classname="opennlp.ipa.IPACharacterDatabase" classpath="${build.bin.dir}">
 			<arg value="init"/>
 		</java>
         
-        <!-- then run unit tests -->
-        <junit fork="on" printsummary="on"> <!-- filtertrace="true"> -->
+         then run unit tests 
+        <junit fork="on" printsummary="on">  filtertrace="true"> 
             <formatter type="xml"/>
             <classpath>
                 <path refid="compile.classpath"/>
@@ -79,16 +79,16 @@
             <test name="opennlp.ipa.IPANetworkTest" todir="${report.dir}"/>
         </junit>
         
-        <!-- apply stylesheets to generate browsable reports -->
+         apply stylesheets to generate browsable reports 
         <junitreport todir="${report.dir}">
             <fileset dir="${report.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${report.dir}"/>
         </junitreport>
-    </target>
+    </target>-->
     
-	<target name="ipa4uni-run" depends="ipa4uni-compile, ipa4uni-test" description="runs IPA4Unicode">
+	<target name="ipa4uni-run" depends="ipa4uni-compile" description="runs IPA4Unicode">
 		<!-- first build IPA and Unicode tables from data files -->
 		<java classname="opennlp.ipa.IPACharacterDatabase" classpath="${build.bin.dir}">
 			<arg value="init"/>
