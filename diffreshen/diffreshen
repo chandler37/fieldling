@@ -1,0 +1,90 @@
+#! /bin/sh
+
+# diffreshen (restores old modification times for unchanged files).
+# Copyright (C) 2004 David L. Chandler
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+
+
+# diffreshen
+#
+# Usage: diffreshen old new
+#
+# Purpose:
+#
+# Ensures that modification times on files in the directory 'new' and
+# its subdirectories are equal to the modification times of the same
+# files in the 'old' directory whenever those same files exist and the
+# files in question are identical according to cmp (which is a Unix
+# utility much like 'diff -q').
+#
+# This is useful, for example, if you are doing nightly builds of some
+# software and then putting those builds on a website.  Let's say that
+# the build system creates a tarball or JAR file or the like.  Each
+# night you will update the source code, build that tarball, extract
+# the tarball to a new directory 'newdir', run diffreshen with last
+# night's build directory as 'old' and 'newdir' as 'new'.  Then you
+# can rename the old directory, rename the new directory to the old
+# name, and delete the old directory.  The benefit of this approach
+# becomes evident if you use something like Java Web Start (JWS),
+# which forces clients to download a JAR file your application depends
+# on if and only if the modification time of that JAR file is newer
+# than the JAR file downloaded on the client.
+#
+# This script can, in theory, help with mirroring websites and the
+# like, too.
+
+
+Usage() {
+    echo "Usage: `basename $0` old new"
+    echo ""
+    echo "where old and new are directories."
+    exit 1
+}
+
+ExistenceCheck() {
+if test ! -x "$old"; then
+    echo "Old path, '$old', does not exist."
+    exit 1
+fi
+if test ! -x "$new"; then
+    echo "New path, '$new', does not exist."
+    exit 1
+fi
+}
+
+if test $# -ne 2; then
+    Usage
+fi
+old="$1"
+new="$2"
+# If cmp isn't in your path, edit this:
+cmp="cmp"
+ExistenceCheck
+
+# Normalize old and new so that both or neither has a trailing slash.
+# Then we can do string replacements of new with old.
+if test -d "$old"; then
+    old="`cd \"$old\" && pwd`"
+fi
+if test -d "$new"; then
+    new="`cd \"$new\" && pwd`"
+fi
+
+find "$new" -type f -exec "`dirname $0`"/one_file_diffreshen.sh "{}" "$old" "$new" \;
+
+exit 0
+# FIXME: let old and new be files too
