@@ -42,6 +42,7 @@ public abstract class PanelPlayer extends Panel {
 	private Hashtable	hashStart = null, hashEnd = null;
 	private Timer annTimer = null;
 	private boolean isAutoScrolling = false;
+    private boolean areMultipleSimultaneousAnnotationsAllowed = true;
 	private Set startedAnnotations;
 	
 /*-----------------------------------------------------------------------*/
@@ -49,6 +50,9 @@ public abstract class PanelPlayer extends Panel {
 		super(layout);
 	}
 /*-----------------------------------------------------------------------*/
+    public void setMultipleAnnotationPolicy(boolean policy) {
+        areMultipleSimultaneousAnnotationsAllowed = policy;
+    }
 	public void addAnnotationPlayer(AnnotationPlayer ap) {
 		listenerList.add(AnnotationPlayer.class, ap);
 	}
@@ -73,14 +77,16 @@ public abstract class PanelPlayer extends Panel {
 		startedAnnotations.add(id);
 	}
 	public void fireStopAnnotation(String id) {
-		//see javadocs on EventListenerList for how following array is structured
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length-2; i>=0; i-=2) {
-			if (listeners[i]==AnnotationPlayer.class)
-				((AnnotationPlayer)listeners[i+1]).stopAnnotation(id);
-		}
-		startedAnnotations.remove(id);
+        if (startedAnnotations.contains(id)) {
+            //see javadocs on EventListenerList for how following array is structured
+            Object[] listeners = listenerList.getListenerList();
+    
+            for (int i = listeners.length-2; i>=0; i-=2) {
+                if (listeners[i]==AnnotationPlayer.class)
+                    ((AnnotationPlayer)listeners[i+1]).stopAnnotation(id);
+            }
+            startedAnnotations.remove(id);
+        }
 	}
 /*-----------------------------------------------------------------------*/
 	public void setAutoScrolling(boolean bool) {
@@ -236,16 +242,34 @@ public abstract class PanelPlayer extends Panel {
 	private void cmd_nextEvent() {
 		Long when = new Long(getCurrentTime());
 		//Integer when = new Integer(getCurrentTime());
-		if (!pileStart.empty()) {
-			String id = (String)pileStart.peek();
-			Long f   = (Long)hashStart.get(id);
-			if (when.longValue() >= f.longValue()) {
-			//Integer f   = (Integer)hashStart.get(id);
-			//if (when.intValue() >= f.intValue()) {
-				id = (String)pileStart.pop();
-				if (isAutoScrolling) fireStartAnnotation(id);
-			}
-		}
+        if (areMultipleSimultaneousAnnotationsAllowed || startedAnnotations.size()==0) {
+            if (!pileStart.empty()) {
+                String id = (String)pileStart.peek();
+                Long f   = (Long)hashStart.get(id);
+                if (when.longValue() >= f.longValue()) {
+                    id = (String)pileStart.pop();
+                    if (areMultipleSimultaneousAnnotationsAllowed) {
+                        //play this annotation, no questions asked
+                        if (isAutoScrolling) fireStartAnnotation(id);
+                    } else {
+                        //find the last annotation that should be started by now
+                        boolean keepGoing;
+                        do {
+                            keepGoing = false;
+                            if (!pileStart.empty()) {
+                                String temp = (String)pileStart.peek();
+                                f = (Long)hashStart.get(temp);
+                                if (when.longValue() >= f.longValue()) {
+                                    id = (String)pileStart.pop();
+                                    keepGoing = true;
+                                }
+                            }
+                        } while (keepGoing);
+                        if (isAutoScrolling) fireStartAnnotation(id);
+                    }
+                }
+            }
+        }
 		if (!pileEnd.empty()) {
 			String id = (String)pileEnd.peek();
 			Long f   = (Long)hashEnd.get(id);

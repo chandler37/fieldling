@@ -57,48 +57,6 @@ public class QDShell extends JFrame {
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 
-/**
-	//preference keys
-	public static final String WINDOW_X_KEY = "WINDOW_X";
-	public static final String WINDOW_Y_KEY = "WINDOW_Y";
-	public static final String WINDOW_WIDTH_KEY = "WINDOW_WIDTH";
-	public static final String WINDOW_HEIGHT_KEY = "WINDOW_HEIGHT";
-	public static final String WORKING_DIRECTORY_KEY = "WORKING_DIRECTORY";
-	public static final String RECENT_FILES_KEY = "RECENT_FILES";
-	public static final String MEDIA_DIRECTORY_KEY = "MEDIA_DIRECTORY";
-	public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
-	public static final String SLOW_ADJUST_KEY = "SLOW_ADJUST";
-	public static final String RAPID_ADJUST_KEY = "RAPID_ADJUST";
-	public static final String PLAY_MINUS_KEY = "PLAY_MINUS";
-	public static final String FONT_FACE_KEY = "FONT_FACE";
-	public static final String FONT_SIZE_KEY = "FONT_SIZE";
-	public static final String CONFIGURATION_KEY = "CONFIGURATION";
-	public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
-	public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
-
-
-	//preference defaults and values
-	private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
-	public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
-	public static int slow_adjust = myPrefs.getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
-	public static int rapid_adjust = myPrefs.getInt(RAPID_ADJUST_KEY, 250); //in milliseconds
-	public static int play_minus = myPrefs.getInt(PLAY_MINUS_KEY, 1000); // milliseconds
-	public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
-	public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-	public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
-
-***/
-
-/*
-
-	prefmngr.media_directory=prefmngr.getValue(prefmngr.MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
-	prefmngr.slow_adjust = prefmngr.getInt(prefmngr.SLOW_ADJUST_KEY, 25); //in milliseconds
-	prefmngr.rapid_adjust =prefmngr.getInt(prefmngr.RAPID_ADJUST_KEY, 250); //in milliseconds
-	prefmngr.play_minus = prefmngr.getInt(prefmngr.PLAY_MINUS_KEY, 1000); // milliseconds
-	prefmngr.font_face = prefmngr.getValue(prefmngr.FONT_FACE_KEY, "Courier");
-	prefmngr.font_size = prefmngr.getInt(prefmngr.FONT_SIZE_KEY, 14);
-	prefmngr.tibetan_font_size = prefmngr.getInt(prefmngr.TIBETAN_FONT_SIZE_KEY, 36);
-*/
 	public static void main(String[] args) {
 		try {
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
@@ -150,14 +108,6 @@ public class QDShell extends JFrame {
 		@UNICODE@setTitle("QuillDriver");
 		@TIBETAN@setTitle("QuillDriver-TIBETAN");
 		messages = I18n.getResourceBundle();
-
-		/*myPrefs = Preferences.userNodeForPackage(QDShell.class);
-		working_directory = myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"));
-		media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
-		font_face = myPrefs.get(FONT_FACE_KEY, "Serif");
-		font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-		tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);*/
-
 		setLocation(prefmngr.getInt(prefmngr.WINDOW_X_KEY, 0), prefmngr.getInt(prefmngr.WINDOW_Y_KEY, 0));
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
 			prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
@@ -477,7 +427,7 @@ public class QDShell extends JFrame {
 		JMenuItem fontItem = new JMenuItem("Display...");
 		fontItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				getFontPreferences();
+				getDisplayPreferences();
 			}
 		});
 
@@ -658,7 +608,7 @@ public class QDShell extends JFrame {
 		if (old_rapid_adjust != prefmngr.rapid_adjust) prefmngr.setInt(prefmngr.RAPID_ADJUST_KEY, prefmngr.rapid_adjust);
 		if (old_play_minus != prefmngr.play_minus) prefmngr.setInt(prefmngr.PLAY_MINUS_KEY, prefmngr.play_minus);
 	}
-	private void getFontPreferences() {
+	private void getDisplayPreferences() {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames = genv.getAvailableFontFamilyNames();
 
@@ -690,17 +640,40 @@ public class QDShell extends JFrame {
 		romanPanel.add(romanFontSizes);
 
         JPanel highlightPanel;
-        JComboBox highlightPosition;
+        JComboBox highlightPosition, multipleHighlightPolicy;
         JTextField highlightField;
+        JLabel hColorLabel, hPositionLabel, hMultipleLabel;
+        JPanel h1Panel, h2Panel, h3Panel;
+        
         highlightPanel = new JPanel();
-        highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight Color (in hex: see http://www.hypersolutions.org/pages/rgbhex.html) and Position"));
+        highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight-Related Preferences"));
+        
+        hColorLabel = new JLabel("Color in hex [c.f. http://www.hypersolutions.org/pages/rgbhex.html]: ");
         highlightField = new JTextField(prefmngr.highlight_color);
+        h1Panel = new JPanel();
+        h1Panel.add(hColorLabel);
+        h1Panel.add(highlightField);
+        
+        hPositionLabel = new JLabel("Highlight position: ");
         highlightPosition = new JComboBox(new String[] {"Middle", "Bottom"});
         highlightPosition.setSelectedItem(prefmngr.highlight_position);
         highlightPosition.setEditable(true);
-        highlightPanel.setLayout(new GridLayout(1,2));
-        highlightPanel.add(highlightField);
-        highlightPanel.add(highlightPosition);
+        h2Panel = new JPanel();
+        h2Panel.add(hPositionLabel);
+        h2Panel.add(highlightPosition);
+        
+        hMultipleLabel = new JLabel("Multiple highlight policy: ");
+        multipleHighlightPolicy = new JComboBox(new String[] {"Allowed", "Disallowed"});
+        multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
+        multipleHighlightPolicy.setEditable(true);
+        h3Panel = new JPanel();
+        h3Panel.add(hMultipleLabel);
+        h3Panel.add(multipleHighlightPolicy);
+        
+        highlightPanel.setLayout(new GridLayout(0,1));
+        highlightPanel.add(h1Panel);
+        highlightPanel.add(h2Panel);
+        highlightPanel.add(h3Panel);
         
 		JPanel preferencesPanel = new JPanel();
 		preferencesPanel.setLayout(new GridLayout(0,1));
@@ -747,9 +720,15 @@ public class QDShell extends JFrame {
 		}
         
         String highlightPosVal = (String)highlightPosition.getSelectedItem();
+        String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
         prefmngr.setValue(prefmngr.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-        if (qd.getEditor() != null)
+        if (qd.getEditor() != null) {
             qd.hp.setHighlightPosition(highlightPosVal);
+        }
+        if (multipleHighlightPolicyVal.equals("Allowed"))
+            qd.player.setMultipleAnnotationPolicy(true);
+        else
+            qd.player.setMultipleAnnotationPolicy(false);
         
         String hexColor = highlightField.getText();
         try {

@@ -56,6 +56,7 @@ public class PreferenceManager extends JPanel {
 		public static final String CONFIGURATION_KEY = "CONFIGURATION";
         public static final String HIGHLIGHT_KEY = "HIGHLIGHT";
         public static final String HIGHLIGHT_POSITION_KEY = "HIGHLIGHT_POSITION";
+        public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
         
         @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
         @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
@@ -68,6 +69,7 @@ public class PreferenceManager extends JPanel {
 		public static int font_size;
         public static String highlight_color;
         public static String highlight_position;
+        public static String multiple_highlight_policy;
 		@TIBETAN@public static int tibetan_font_size;
 
 		public static String working_directory;
@@ -126,6 +128,7 @@ public class PreferenceManager extends JPanel {
 			font_size = getInt(FONT_SIZE_KEY, 14);
             highlight_color = getValue(HIGHLIGHT_KEY, "FFCCFF");
             highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
+            multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
             
 			@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		}

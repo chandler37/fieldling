@@ -170,15 +170,6 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 			}
 		}
 	}
-	/*
-	public void highlight(int start, int end) {
-		try {
-			highlighter.addHighlight(start, end, highlightPainter);
-		} catch (BadLocationException ble) {
-			ble.printStackTrace();
-		}
-	}
-	*/
 	public void unhighlight(String id)
 	{
 		if (highlights.containsKey(id))
