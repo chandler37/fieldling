@@ -266,8 +266,8 @@ a version optimized for use with Tibetan script.
 <![CDATA[      href="]]>${jnlp.file}<![CDATA[">
 <information>
   <title>QuillDriver</title>
-  <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <vendor>EMU-UCLA</vendor>
+  <homepage href="http://altiplano.emich.edu/quilldriver" />
   <description>
 QuillDriver is a fully customizable tool for transcribing and annotating 
 digital video files. Annotation files can be any well-formed XML, 
