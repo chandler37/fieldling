@@ -29,18 +29,21 @@ for Tibetan-only QuillDriver
 	<property name="src.dir"        value="src"/>
 	<property name="ext"            value="extensions"/>
 	<property name="doc"            value="documentation"/>
-	<property name="jvm" value="java"/>
-
+	<property name="data.dir"	value="data"/>
+	<property name="jvm" 		value="java"/>
 	<property name="build.dir"      value="build"/>
 	<property name="build.classes"  value="${build.dir}/classes"/>
 	<property name="build.dist"     value="${build.dir}/dist"/>
 	<property name="build.dist.lib" value="${build.dist}/lib"/>
 	<property name="build.doc"      value="${build.dir}/doc"/>
 	<property name="build.eg"       value="${build.doc}/eg"/>
+	<property name="distrib.src"	value="distribSrc"/>
+	<property name="jnlp.codebase"	value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/"/>
+	<property name="ftp.server"	value="mayor.lib.virginia.edu"/>
+	<property name="remote.dir"	value="Sites/QuillDriver"/>
+	<property name="user.id"	value="eg3p"/>
+	<property name="user.password"	value="''"/>
 	
-	<property name="distrib.src"      value="distribSrc"/>
-
-
 	<path id="my.classpath">
 		<fileset id="extensions" dir="${ext}">
 			<include name="*.jar"/>
@@ -115,6 +118,16 @@ for Tibetan-only QuillDriver
 			<fileset dir="${src.dir}">
 				<include name="MessageBundle*"/>
 			</fileset>
+			<fileset dir="${data.dir}/quilldriver">
+				<include name="*.xsl"/>
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.classes}/fieldling/quilldriver">
+			<fileset dir="${data.dir}/quilldriver">
+				<include name="*.gif"/>
+				<include name="*.jpg"/>
+			</fileset>
 		</copy>
 	</target>
 
@@ -128,16 +141,102 @@ for Tibetan-only QuillDriver
 		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${build.classes}" />
 		<copy todir="${build.dist.lib}">
 			<fileset dir="${ext}">
+				<!-- We don't need to copy these files because they should always be
+				in the System's classpath if installed correctly. -->
 				<exclude name="QTJava.zip"/>
 				<exclude name="jmf.jar"/>
+				<exclude name="java40.jar"/>
 			</fileset>
 		</copy>
 	</target>
 
+	<target name="qd-sign" depends="qd-jar" description="signs all qd-related jars">
+		<signjar alias="testsigner" keystore="${data.dir}/keystore" storepass="testpassword">
+			<fileset dir="${build.dist}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</signjar>
+	</target>
+
+	<target name="qd-jnlp" depends="init" description="creates quilldriver jnlp file">
+		<!-- Write the head of the .jnlp file: -->
+		<echo file="${build.dist}/QuillDriver.jnlp" append="false">
+<![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"]]></echo>
+		<!-- Write the middle of the .jnlp file: -->
+		<echo file="${build.dist}/QuillDriver.jnlp" append="true">
+		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
+		<!-- Write the tail of the .jnlp file: -->
+		<echo file="${build.dist}/QuillDriver.jnlp" append="true">
+<![CDATA[      href="QuillDriver.jnlp">
+<information>
+  <title>QuillDriver</title>
+  <vendor>THDL</vendor>
+  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <description>
+QuillDriver is a tool for transcribing and annotating digital video files.
+Annotation files can be any well-formed XML, and supported media players include
+Java Media Framework (JMF) and Quicktime for Java. QuillDriver is fully
+customizable to project-specific uses.
+  </description>
+  <offline-allowed/>
+</information>
+<security>
+  <all-permissions/>
+</security>
+<resources os="Windows" arch="x86">
+  <j2se version="1.4+"/>
+  <jar href="quilldriver.jar"/>
+  <jar href="lib/Jskad.jar"/>
+  <jar href="lib/xml-apis.jar"/>
+  <jar href="lib/xercesImpl.jar"/>
+  <jar href="lib/xalan.jar"/>
+  <jar href="lib/jdom.jar"/>
+  <jar href="lib/jaxen-full.jar"/>
+  <jar href="lib/jaxen-jdom.jar"/>
+  <jar href="lib/saxpath.jar"/>
+</resources>
+<resources os="Mac OS X" arch="ppc">
+  <j2se version="1.3.1"/>
+  <jar href="quilldriver.jar"/>
+  <jar href="lib/Jskad.jar"/>
+  <jar href="lib/xml-apis.jar"/>
+  <jar href="lib/xercesImpl.jar"/>
+  <jar href="lib/xalan.jar"/>
+  <jar href="lib/jdom.jar"/>
+  <jar href="lib/jaxen-full.jar"/>
+  <jar href="lib/jaxen-jdom.jar"/>
+  <jar href="lib/saxpath.jar"/>
+</resources>
+<application-desc main-class="fieldling.quilldriver.QDShell"/>
+</jnlp>]]>
+		</echo>
+	</target>
+	
+	<target name="qd-pluslibs-ftp" depends="qd-jnlp, qd-sign" description="ftps qd and libraries to server">
+		<ftp server="${ftp.server}" remotedir="${remote.dir}" 
+			userid="${user.id}" password="${user.password}" 
+			binary="yes" depends="true" verbose="true">
+				<fileset dir="${build.dist}">
+					<include name="**/*"/>
+				</fileset>
+		</ftp>
+	</target>
+	
+	<target name="qd-minuslibs-ftp" depends="qd-jnlp, qd-sign" description="ftps only quilldriver.jar to the server">
+		<ftp server="${ftp.server}" remotedir="${remote.dir}" 
+			userid="${user.id}" password="${user.password}" 
+			binary="yes" depends="true" verbose="true">
+				<fileset dir="${build.dist}">
+					<include name="QuillDriver.jnlp"/>
+					<include name="quilldriver.jar"/>
+				</fileset>
+		</ftp>
+	</target>
+	
 	<!-- SOMEHOW USING <java jar="quilldriver.jar" etc.> DOES NOT WORK PROPERLY:
 		IF YOU DO THIS THEN THE EXTENSIONS ARE NOT FOUND (AT LEAST ON MAC OS X. 
 		SO INSTEAD I RUN THE CLASS AND PUT THE JAR AT THE HEAD OF THE CLASSPATH. -->
-		
 	<target name="qd-run" depends="qd-jar" description="runs QuillDriver">
 		<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
 			<classpath>

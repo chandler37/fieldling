@@ -141,212 +141,126 @@ public class XMLEditor {
 		
 
 		docListen = new DocumentListener() {
-
 			public void changedUpdate(DocumentEvent e) {
-
 				hasChanged = true;
-
 			}
-
 			public void insertUpdate(DocumentEvent e) {
-
 				hasChanged = true;
-
 				if (getStartOffsetForNode(editingNode) > e.getOffset()) {
-
 					javax.swing.text.Document d = e.getDocument();
-
 					try {
-
 						startOffsets.put(editingNode, d.createPosition(e.getOffset()));
-
 					} catch (BadLocationException ble) {
-
 						ble.printStackTrace();
-
 					}
-
 				}
-
 			}
-
 			public void removeUpdate(DocumentEvent e) {
-
 				hasChanged = true;
-
 			}
-
 		};
 
 		render();
 
-		
-
 		textCursor = new Cursor(Cursor.TEXT_CURSOR);
-
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 
-			
-
 		pane.addMouseMotionListener(new MouseMotionAdapter() {
-
 			public void mouseMoved(MouseEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.viewToModel(e.getPoint());
-
 				if (isEditable(offset)) p.setCursor(textCursor);
-
 				else p.setCursor(defaultCursor);
-
 			}
-
 		});
-
-
 
 		MouseListener[] listeners = (MouseListener[])pane.getListeners(MouseListener.class);
-
 		for (int i=0; i<listeners.length; i++) pane.removeMouseListener(listeners[i]);
-
 		pane.addMouseListener(new MouseAdapter() {
-
 			public void mouseClicked(MouseEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int offset = p.viewToModel(e.getPoint());
-
 				if (isEditable(offset)) {
-
 					p.requestFocus();
-
 					if (isEditing) fireEndEditEvent();
-
 					fireStartEditEvent(getNodeForOffset(offset));
-
 					p.setCaretPosition(offset);
-
 				} else {
-
 					Object node = getNodeForOffset(offset);
-
 					if (isEditing) fireEndEditEvent();
-
 					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
-
 				}
-
 			}
-
 		});
-
-
 
 		pane.addFocusListener(new FocusListener() {
-
 			public void focusGained(FocusEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				if (isEditable(p.getCaretPosition()))
-
 					fireStartEditEvent(getNodeForOffset(p.getCaretPosition()));
-
 			}
-
 			public void focusLost(FocusEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				if (isEditing) fireEndEditEvent();
-
 			}
-
 		});
 
-
-
 		editabilityTracker = new CaretListener() {
-
 			public void caretUpdate(CaretEvent e) {
-
 				int dot = e.getDot();
-
 				if (getNodeForOffset(dot) != getNodeForOffset(e.getMark()))
-
 					pane.getCaret().setDot(dot);
-
 				if (!isEditable(dot)) {
-
 					while (!isEditable(dot) && dot<pane.getDocument().getLength()) dot++;
-
 					if (dot == pane.getDocument().getLength()) {
-
 						dot = e.getDot();
-
 						do {
-
 							dot--;
-
 						} while (!isEditable(dot) && dot>-1);
-
 						if (dot == -1) return; //what to do? there's nothing to edit in this pane
-
 					}
-
 					if (isEditable(dot)) {
-
 						pane.getCaret().setDot(dot);
-
 						if (getNodeForOffset(dot) != null) fireStartEditEvent(getNodeForOffset(dot));
-
 					}
-
 				} else if (editingNode == null) //need to start editing because cursor happens to be on an editable node
-
 					fireStartEditEvent(getNodeForOffset(dot));
-
 			}
-
 		};
 
 		
 
 		Action nextNodeAction = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				JTextPane p = (JTextPane)e.getSource();
-
 				int prePos = p.getCaretPosition();
-
 				Object node = getNodeForOffset(prePos);
-
 				int i = prePos+1;
-
 				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
-
 				while (i<p.getDocument().getLength() && !isEditable(i)) i++;
-
 				node = getNodeForOffset(i);
-
 				while (i<p.getDocument().getLength() && isEditable(i) && getNodeForOffset(i) == node) i++;
-
 				if (isEditing) fireEndEditEvent();
-
 				i--;
-
 				fireStartEditEvent(getNodeForOffset(i));					
-
 				p.setCaretPosition(i);
-
 			}
-
 		};
 
-		
+		Action prevNodeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int prePos = p.getCaretPosition();
+				Object node = getNodeForOffset(prePos);
+				int i = prePos-1;
+				while (i>-1 && isEditable(i) && getNodeForOffset(i) == node) i--;
+				while (i>-1 && !isEditable(i)) i--;
+				node = getNodeForOffset(i);
+				if (isEditing) fireEndEditEvent();
+				fireStartEditEvent(getNodeForOffset(i));					
+				p.setCaretPosition(i);
+			}
+		};
 
 		Action selectNodeAction = new AbstractAction() {
 
@@ -756,6 +670,15 @@ public class XMLEditor {
 
 		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 		keymap.addActionForKeyStroke(back, backwardAction);
+		
+		KeyStroke forward = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
+		keymap.addActionForKeyStroke(forward, forwardAction);
+		
+		KeyStroke up = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+		keymap.addActionForKeyStroke(up, prevNodeAction);
+		
+		KeyStroke down = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+		keymap.addActionForKeyStroke(down, nextNodeAction);
 		
 		/*KeyStroke[] backwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.backwardAction));
 

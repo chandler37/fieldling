@@ -52,18 +52,18 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		highlights = new Hashtable();
 		highlighter = text.getHighlighter();
 		highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightcolor);
+		/*
 		text.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				highlighter.removeAllHighlights();
-				highlights.clear();
+				unhighlightAll();
 			}
 		});		
 		text.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				highlighter.removeAllHighlights();
-				highlights.clear();
+				unhighlightAll();
 			}
 		});
+		*/
 
 		hashStart = new Hashtable();
 		hashEnd = new Hashtable();
@@ -100,20 +100,17 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	{
 		return hashStart.containsKey(id);
 	}
-
 	public void startAnnotation(String id)
 	{
 		if (isPlayableAnnotation(id))
 			highlight(id);
 	}
-
 	public void stopAnnotation(String id)
 	{
 		if (isPlayableAnnotation(id))
 			unhighlight(id);
 	}
-
-	private void highlight(String id)
+	public void highlight(String id)
 	{
 		try
 		{
@@ -148,13 +145,23 @@ This often seems disconcerting to the user - so I am removing it. */
 			//ThdlDebug.noteIffyCode();
 		}
 	}
-
-	private void unhighlight(String id)
+	public void highlight(int start, int end) {
+		try {
+			highlighter.addHighlight(start, end, highlightPainter);
+		} catch (BadLocationException ble) {
+			ble.printStackTrace();
+		}
+	}
+	public void unhighlight(String id)
 	{
 		if (highlights.containsKey(id))
 		{
 			highlighter.removeHighlight(highlights.get(id));
 			highlights.remove(id);
 		}
+	}
+	public void unhighlightAll() {
+		highlighter.removeAllHighlights();
+		highlights.clear();
 	}
 }

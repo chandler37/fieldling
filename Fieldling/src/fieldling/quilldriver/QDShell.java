@@ -111,15 +111,24 @@ try {
 		}
 
 		if (args.length == 4) {
-			qd = new QD(configURL, editURL, newURL, dtdURL);
+			qd = new QD();
 			getContentPane().add(qd);
 			setJMenuBar(getQDShellMenu());
 		} else {
 			try {
-				String home = System.getProperty("user.home");
+				/*String home = System.getProperty("user.home");
 				String sep = System.getProperty("file.separator");
 				String path = "file:" + home + sep + "put-in-home-directory" + sep;
-				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");
+				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");*/
+				
+				//FIXME! deal with no DTD problem!!!
+				/*ClassLoader cl = this.getClass().getClassLoader();
+				qd = new QD(	cl.getResource("config.xml").toString(), 
+						cl.getResource("edit.xsl").toString(), 
+						cl.getResource("new.xsl").toString(),
+						null);
+				*/
+				qd = new QD();
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
 			} catch (SecurityException se) {
@@ -209,7 +218,42 @@ try {
 		projectMenu.add(saveItem);
 		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
+		
+		try {
+		final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(this.getClass().getClassLoader());
 
+		ButtonGroup configGroup = new ButtonGroup();
+		JMenuItem[] configItems = new JRadioButtonMenuItem[configurations.length];
+		for (int i=0; i<configurations.length; i++) {
+			final int k=i;
+			configItems[i] = new JRadioButtonMenuItem(configurations[i].getName());
+			configItems[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					qd.configure(configurations[k]);
+					JMenu[] configMenus = qd.getConfiguredMenus();
+					configMenus[0].getPopupMenu().setLightWeightPopupEnabled(false);
+					configMenus[1].getPopupMenu().setLightWeightPopupEnabled(false);
+					JMenuBar bar = QDShell.this.getJMenuBar();
+					JMenu fileMenu = bar.getMenu(0);
+					JMenu prefMenu = bar.getMenu(3);
+					JMenuBar newBar = new JMenuBar();
+					newBar.add(fileMenu);
+					newBar.add(configMenus[0]);
+					newBar.add(configMenus[1]);
+					newBar.add(prefMenu);
+					QDShell.this.setJMenuBar(newBar);
+					QDShell.this.invalidate();
+					QDShell.this.validate();
+					QDShell.this.repaint();
+				}
+			});
+			configGroup.add(configItems[i]);
+		}
+		if (configItems.length > 0) {
+			configItems[0].setSelected(true);
+			qd.configure(configurations[0]);
+		}
+		
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
 		ButtonGroup mediaGroup = new ButtonGroup();
 		JMenuItem[] mediaItems = new JRadioButtonMenuItem[moviePlayers.size()];		
@@ -223,7 +267,6 @@ try {
 			});
 			mediaGroup.add(mediaItems[i]);
 		}
-
 		if (mediaItems.length > 0) {
 			mediaItems[0].setSelected(true);
 			qd.setMediaPlayer((PanelPlayer)moviePlayers.get(0)); //set qd media player to default
@@ -246,24 +289,27 @@ try {
 			    });
 			keyboardGroup.add(keyboardItems[i]);
 		}
-
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
+		if (configItems.length > 0) {
+			for (int i=0; i<configItems.length; i++)
+				preferencesMenu.add(configItems[i]);
+			preferencesMenu.addSeparator();
+		}
 		if (mediaItems.length > 0) {
-			for (int i=0; i<mediaItems.length; i++) 
+			for (int i=0; i<mediaItems.length; i++)
 				preferencesMenu.add(mediaItems[i]);
 			preferencesMenu.addSeparator();
 		}
-		
 		//TIBETAN-SPECIFIC!!
 		keyboardItems[0].setSelected(true); //set keyboard to Wylie
 		for (int i=0; i<keyboardItems.length; i++)
 			preferencesMenu.add(keyboardItems[i]);
 		//preferencesMenu.addSeparator();
-		
-		JMenu[] configMenus = qd.getConfiguredMenus();
+			
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
+		final JMenu[] configMenus = qd.getConfiguredMenus();
 		for (int i=0; i<configMenus.length; i++) {
 			configMenus[i].getPopupMenu().setLightWeightPopupEnabled(false);
 			bar.add(configMenus[i]);
@@ -271,7 +317,12 @@ try {
 		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(preferencesMenu);
 		return bar;
+		} catch (SecurityException se) {
+			se.printStackTrace();
+			return null;
+		}
 	}
+
 
 	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
 		// accepts all directories and all savant files

@@ -76,6 +76,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.Keymap;
 import java.util.List;
+import java.util.Timer;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.awt.Color;
@@ -96,11 +97,10 @@ public class QD extends JDesktopPane {
 	protected XMLEditor editor = null;
 	protected JInternalFrame videoFrame = null;
 	protected JInternalFrame textFrame = null;
-	//protected JInternalFrame actionFrame = null;
-	protected Map keyActions;
+	protected JInternalFrame actionFrame = null;
+	protected Map keyActions = null, taskActions = null;
 	protected ResourceBundle messages;
-	protected TimeCodeManager tcp = null;
-	protected StatusBar sb = null;
+	protected TimeCodeModel tcp = null;
 	protected Hashtable actions;
 	protected Properties config; //xpath based properties
 	protected Properties textConfig; //unchangeable properties
@@ -110,21 +110,30 @@ public class QD extends JDesktopPane {
 	protected DocumentBuilder docBuilder;
 	protected File transcriptFile = null;
 	protected XMLTagInfo tagInfo = null;
+	protected Configuration configuration = null;
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
 	
-	public QD(String configURL, String editURL, String newURL, String dtdURL) {
+	public QD(Configuration configuration) {
+		setupGlobals();
+		setupGUI();
+		configure(configuration);
+	}
+	public QD() {
+		setupGlobals();
+		setupGUI();
+	}
+
+	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
-		
-		this.configURL = configURL;
-		this.newURL = newURL;
-		this.editURL = editURL;
-		this.dtdURL = dtdURL;
-	
-System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
-		
-		configure(configURL);
-		
-		setBackground(new JFrame().getBackground());
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			docBuilder = dbf.newDocumentBuilder();
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		}
+	}	
+	private void setupGUI() {
+ 		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
 	
 		//(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable)
@@ -146,7 +155,7 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		validate();
 		repaint();
 	
-		/*
+	
 		actionFrame = new JInternalFrame(null, false, false, false, true);
 		actionFrame.setVisible(true);
 		actionFrame.setLocation(0,0);
@@ -155,7 +164,6 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		invalidate();
 		validate();
 		repaint();
-		*/
 		
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
@@ -164,19 +172,12 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					videoFrame.setSize(getSize().width / 2, 0);
 				textFrame.setLocation(videoFrame.getSize().width, 0);
 				textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-				/*actionFrame.setLocation(0, videoFrame.getSize().height);
-				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);*/
+				actionFrame.setLocation(0, videoFrame.getSize().height);
+				actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 			}
 		});
-		
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			docBuilder = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		}
 	}
-
+		
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
 		timer.schedule(new TimerTask() {
@@ -185,11 +186,18 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				if (player.isInitialized())
 				{
 					timer.cancel();
-					/*actionFrame.setContentPane(tcp);
+					final TimeCodeView tcv = new TimeCodeView(player, tcp);
+					actionFrame.setContentPane(tcv);
+					Timer checkTimeTimer = new Timer(true);
+					checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
+						public void run() {
+							tcv.setCurrentTime(player.getCurrentTime());
+						}
+					}, 0, 50);
 					actionFrame.pack();
 					invalidate();
 					validate();
-					repaint();*/
+					repaint();
 					videoFrame.setContentPane(player);
 					videoFrame.pack();
 					videoFrame.setMaximumSize(videoFrame.getSize());
@@ -201,11 +209,11 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					invalidate();
 					validate();
 					repaint();
-					/*actionFrame.setLocation(0, videoFrame.getSize().height);
+					actionFrame.setLocation(0, videoFrame.getSize().height);
 					actionFrame.setSize(videoFrame.getSize().width, getSize().height - videoFrame.getSize().height);
 					invalidate();
 					validate();
-					repaint();*/
+					repaint();
 				}
 			}}, 0, 50);
 	}
@@ -223,21 +231,140 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 	    return (Action)(actions.get(name));
 	}
 
-	class TimeCodeManager {
-		int t1, t2; //start and stop times in milliseconds
-		StatusBar statBar;
 	
-		TimeCodeManager(StatusBar sb) {
-			statBar = sb;
+	class TimeCodeView extends JPanel implements TimeCodeModelListener {
+		TimeCodeModel tcm;
+		JTextField currentTimeField;
+		SimpleSpinner startSpinner, stopSpinner;
+		int currentTime=-1, startTime=-1, stopTime=-1;
+		final int TEXT_WIDTH, TEXT_HEIGHT;
+		
+		TimeCodeView(final PanelPlayer player, TimeCodeModel tcm) {
+			this.tcm = tcm;
+			
+			JLabel clockLabel = new JLabel(new ImageIcon(QD.class.getResource("clock.gif")));
+			JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.jpg")));
+			JButton outButton = new JButton(new ImageIcon(QD.class.getResource("left-arrow.jpg")));
+			JButton playButton = new JButton(new ImageIcon(QD.class.getResource("play.gif")));
+			
+			inButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int t = player.getCurrentTime();
+					if (t != -1) setStartTime(t);
+				}
+			});
+			outButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int t = player.getCurrentTime();
+					if (t != -1) {
+						setStopTime(t);
+						try {
+							player.cmd_stop();
+						} catch (PanelPlayerException smpe) {
+							smpe.printStackTrace();
+						}
+					}
+				}
+			});
+			playButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (stopTime > startTime && startTime > -1) {
+						try {
+							//automatic highlighting & scrolling interferes with time-coding
+							//player.cancelAnnotationTimer();
+							player.setAutoScrolling(false);
+							player.cmd_playSegment(new Integer(startTime), new Integer(stopTime));
+						} catch (PanelPlayerException smpe) {
+							smpe.printStackTrace();
+						}
+					}
+				}
+			});
+			TEXT_WIDTH = 60;
+			TEXT_HEIGHT = inButton.getPreferredSize().height / 2;
+			
+			currentTimeField = new JTextField();
+			currentTimeField.setEditable(false);
+			currentTimeField.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
+			
+			startSpinner = new fieldling.util.SimpleSpinner();
+			stopSpinner = new fieldling.util.SimpleSpinner();
+			startSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
+			stopSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
+			
+			
+			
+			setCurrentTime(0);
+			setStartTime(0);
+			setStopTime(0);
+			setLayout(new BorderLayout());
+			JPanel jp_top = new JPanel(new FlowLayout());
+			JPanel jp_center = new JPanel(new FlowLayout());
+			jp_top.add(clockLabel);
+			jp_top.add(currentTimeField);
+			jp_center.add(inButton);
+			jp_center.add(startSpinner);
+			jp_center.add(playButton);
+			jp_center.add(stopSpinner);
+			jp_center.add(outButton);
+			add("North", jp_top);
+			add("Center", jp_center);
+			tcm.addTimeCodeModelListener(this);
+		}
+		void changeTimeCodesInXML() {
+			if (taskActions != null) {
+				AbstractAction action = (AbstractAction)taskActions.get("qd.insertTimes");
+				if (action != null && tcm.getCurrentNode() != null)
+					action.actionPerformed(new ActionEvent(TimeCodeView.this, 0, "no.command"));
+			}
+		}
+		String getTimeAsString(int t) {
+			return String.valueOf((new Integer(t)).floatValue() / 1000);
+		}
+		void setCurrentTime(int t) {
+			if (t != currentTime) {
+				currentTime = t;
+				currentTimeField.setText(String.valueOf(new Integer(t)));
+				//currentTimeLabel.setText(getTimeAsString(currentTime));
+			}
+		}
+		public void setStartTime(int t) {
+			if (t != startTime) {
+				startTime = t;
+				startSpinner.setValue(new Integer(t));
+				changeTimeCodesInXML();
+				//startTimeLabel.setText(getTimeAsString(startTime));
+			}
+		}
+		public void setStopTime(int t) {
+			if (t != stopTime) {
+				stopTime = t;
+				stopSpinner.setValue(new Integer(t));
+				changeTimeCodesInXML();
+				//stopTimeLabel.setText(getTimeAsString(stopTime));
+			}
+		}
+	}
+	class TimeCodeModel {
+		private EventListenerList listenerList; 
+		int t1, t2; //start and stop times in milliseconds
+		private TextHighlightPlayer thp;
+		private Object currentNode = null;
+		
+		TimeCodeModel(TextHighlightPlayer thp) {
+			listenerList = new EventListenerList();
+			this.thp = thp;
 			t1 = 0;
 			t2 = 0;
 		} 
-		public void updateStatus() {	
-			statBar.replaceStatus(
-				"Start="+
-				String.valueOf((new Integer(t1)).floatValue() / 1000)+
-				" & End="+
-				String.valueOf((new Integer(t2)).floatValue() / 1000));
+		public void addTimeCodeModelListener(TimeCodeModelListener tcml) {
+			listenerList.add(TimeCodeModelListener.class, tcml);
+		}
+		public void removeTimeCodeModelListener(TimeCodeModelListener tcml) {
+			listenerList.remove(TimeCodeModelListener.class, tcml);
+		}
+		public void removeAllTimeCodeModelListeners() {
+			listenerList = new EventListenerList();
 		}
 		public Integer getInTime() {
 			return new Integer(t1);
@@ -245,23 +372,45 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		public Integer getOutTime() {
 			return new Integer(t2);
 		}
+		public Object getCurrentNode() {
+			return currentNode;
+		}
 		public void setInTime(int k) {
 			t1 = k;
-			updateStatus();
+			//see javadocs on EventListenerList for how following array is structured
+			Object[] listeners = listenerList.getListenerList();
+			for (int i = listeners.length-2; i>=0; i-=2) {
+				if (listeners[i]==TimeCodeModelListener.class)
+					((TimeCodeModelListener)listeners[i+1]).setStartTime(t1);
+			}
 		}
 		public void setOutTime(int k) {
 			t2 = k;
-			updateStatus();
+			//see javadocs on EventListenerList for how following array is structured
+			Object[] listeners = listenerList.getListenerList();
+			for (int i = listeners.length-2; i>=0; i-=2) {
+				if (listeners[i]==TimeCodeModelListener.class)
+					((TimeCodeModelListener)listeners[i+1]).setStopTime(t2);
+			}
 		}
 		public void setTimes(Object node) {
+			currentNode = node;
 			Object playableparent = XMLUtilities.findSingleNode(node, config.getProperty("qd.nearestplayableparent"));
-			if (playableparent == null) return;
-			String t1 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodebegins")));
-			String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
-			float f1 = new Float(t1).floatValue()*1000;
-			float f2 = new Float(t2).floatValue()*1000;
-			setInTime(new Float(f1).intValue());
-			setOutTime(new Float(f2).intValue());
+			if (playableparent == null) {
+				setInTime(-1);
+				setOutTime(-1);
+				thp.unhighlightAll();
+				return;
+			} else {
+				String t1 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodebegins")));
+				String t2 = XMLUtilities.getTextForNode(XMLUtilities.findSingleNode(playableparent, config.getProperty("qd.nodeends")));
+				float f1 = new Float(t1).floatValue()*1000;
+				float f2 = new Float(t2).floatValue()*1000;
+				setInTime(new Float(f1).intValue());
+				setOutTime(new Float(f2).intValue());
+				thp.unhighlightAll();
+				thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
+			}
 		}
 	}
 	
@@ -299,8 +448,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 	
 	public boolean newTranscript(File file, String mediaURL) {
 			try {
-				if (newURL == null) return false;
-				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(newURL));
+				if (configuration == null) return false;
+				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getNewURL().openStream()));
 				transformer.setParameter("qd.mediaURL", mediaURL);
 				javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
 				javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
@@ -315,6 +464,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 			} catch (TransformerException tre) {
 				tre.printStackTrace();
 			} catch (javax.xml.parsers.ParserConfigurationException pce) {
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
 			return false;
 	}
@@ -329,7 +480,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 			}
 				
 			try {
-				final SAXBuilder builder = new SAXBuilder();
+				//FIXME?? don't validate, since user could be offline and dtd online
+				final SAXBuilder builder = new SAXBuilder(false); 
 				
 				//TIBETAN-SPECIFIC
 				final JTextPane t = new org.thdl.tib.input.DuffPane();
@@ -350,9 +502,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"));
 				hp = new TextHighlightPlayer(view, Color.cyan);
-				sb = new StatusBar("Welcome to QuillDriver!");
-				tcp = new TimeCodeManager(sb);
-
+				tcp = new TimeCodeModel(hp);
+				
 				if (player.getMediaURL() != null) {
 					try {
 						player.cmd_stop();
@@ -366,15 +517,33 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					videoFrame.getContentPane().validate();
 					videoFrame.getContentPane().repaint();
 					videoFrame.setSize(new Dimension(QD.this.getSize().width / 2, 0));
-					/*actionFrame.setLocation(0,0);
-					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));*/
+					actionFrame.setLocation(0,0);
+					actionFrame.setSize(new Dimension(actionFrame.getSize().width, QD.this.getSize().height));
 				}
 
 				Object mediaURL = XMLUtilities.findSingleNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"));
 				String value = XMLUtilities.getTextForNode(mediaURL);
-				if (value == null)
+				boolean nomedia = true;
+				if (value != null) {
+					try {
+						player.loadMovie(new URL(value));
+						nomedia = false;
+					} catch (MalformedURLException murle) {} //do nothing 
+				}
+				if (nomedia) { //can't find movie: open new movie
+					JFileChooser fc = new JFileChooser();
+					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
+						File mediaFile = fc.getSelectedFile();
+						try {
+							player.loadMovie(mediaFile.toURL());
+							nomedia = false;
+						} catch (MalformedURLException murle) {} //do nothing
+					}
+				}
+				if (nomedia) { //user did not open a valid movie; therefore transcript will not be opened
+					transcriptFile = null;
 					return false;
-				player.loadMovie(new URL(value));
+				}
 				player.addAnnotationPlayer(hp);
 				player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
 				videoFrame.addMouseListener(new MouseAdapter() {
@@ -389,7 +558,6 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				JComponent c = (JComponent)textFrame.getContentPane();
 				c.setLayout(new BorderLayout());
 				c.add("Center", hp);
-				c.add("South", sb);
 				textFrame.setSize(textFrame.getSize().width, getSize().height);
 				textFrame.invalidate();
 				textFrame.validate();
@@ -399,8 +567,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 					public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
 						if (ned instanceof XMLEditor.StartEditEvent) { 
 							//stop the automatic highlighting and scrolling
-							//since it would interfere with editing
-							player.cancelAnnotationTimer();
+							//since it would interfere with editing.
+							//player.cancelAnnotationTimer();
 							player.setAutoScrolling(false);
 							if (tcp != null) tcp.setTimes(ned.getNode());
 						} else if (ned instanceof XMLEditor.EndEditEvent) {
@@ -432,10 +600,6 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				return true;
 			} catch (JDOMException jdome) {
 				jdome.printStackTrace();
-				transcriptFile = null;
-				return false;
-			} catch (MalformedURLException murle) {
-				murle.printStackTrace();
 				transcriptFile = null;
 				return false;
 			} catch (PanelPlayerException smpe) {
@@ -494,10 +658,11 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 		return sBuff.toString();
 	}
 
-	public void configure(String url) {
+	public void configure(Configuration configuration) {
 		try {
+			this.configuration = configuration;
 			SAXBuilder builder = new SAXBuilder();
-			Document cDoc = builder.build(new URL(url));
+			Document cDoc = builder.build(configuration.getConfigURL());
 			Element cRoot = cDoc.getRootElement();
 			Iterator it;
 			List tagOptions = cRoot.getChildren("tag");
@@ -537,7 +702,8 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 			final String[] navigXPath = new String[navigations.size()];
 			configMenus = new JMenu[2];
 			configMenus[1] = new JMenu(messages.getString("View"));
-			keyActions = new HashMap();
+			keyActions = new HashMap(); //maps keys to actions
+			taskActions = new HashMap(); //maps task names to same actions
 			it = navigations.iterator();
 			while (it.hasNext()) {
 				Element e = (Element)it.next();
@@ -586,17 +752,17 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 				configMenus[1].add(mItem);
 			}
 			configMenus[0] = new JMenu(messages.getString("Edit"));
-			if (editURL != null) try {
-				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(editURL));				
+			/*if (editURL != null)*/ try {
+				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));				
 				List transformations = cRoot.getChildren("transformation");
 				it = transformations.iterator();
 				while (it.hasNext()) {
 					Element e = (Element)it.next();
+					final DOMOutputter domOut = new DOMOutputter();
+					final DOMBuilder jdomBuild = new DOMBuilder();
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
 					final String tasks = e.getAttributeValue("tasks");
 					final String nodeSelector = e.getAttributeValue("node");
-					final DOMOutputter domOut = new DOMOutputter();
-					final DOMBuilder jdomBuild = new DOMBuilder();
 					mItem.setToolTipText(e.getChildTextNormalize("desc"));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
 					mItem.setAccelerator(key);
@@ -635,7 +801,7 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 								}
 								transformer.setParameter("qd.task", tasks);
 								
-								/* THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
+								// THIS CODE HANDLED OLD TIME-CODING PANEL WHICH I AM TRYING TO GET RID OF
 								float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds
 								float outSeconds = tcp.getOutTime().floatValue() / 1000; //convert from milliseconds
 								if (outSeconds >= inSeconds) { //time parameters will not be passed if out precedes in
@@ -646,7 +812,6 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 									transformer.setParameter("qd.start", "");
 									transformer.setParameter("qd.end", "");
 								}
-								*/
 								
 								float currentSeconds = (new Integer(player.getCurrentTime())).floatValue() / 1000; //convert from milliseconds
 								float endTime = (new Integer(player.getEndTime())).floatValue() / 1000; //convert from milliseconds
@@ -761,28 +926,28 @@ System.out.println("CLASSPATH = " + System.getProperty("java.class.path"));
 							} catch (JDOMException jdome) {
 								jdome.printStackTrace();
 							}
-						}						
+						}
 					};
-
 					keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
+					taskActions.put(tasks, keyAction); //to be used to call actions by task name rather than by key press
 					mItem.setAccelerator(key);
 					mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
 						public void actionPerformed(ActionEvent e) {
 							keyAction.actionPerformed(e);
 						}
-					});					
+					});
 					configMenus[0].add(mItem);
 				}
 			} catch (TransformerException tre) {
 				tre.printStackTrace();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
 		} catch (JDOMException jdome) {
 			jdome.printStackTrace();
-		} catch (MalformedURLException murle) {
-			murle.printStackTrace();
 		}
 	}
-	
+
 	public JMenu[] getConfiguredMenus() {
 		return configMenus;
 	}

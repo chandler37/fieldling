@@ -210,7 +210,7 @@ public abstract class PanelPlayer extends Panel {
 			Integer f   = (Integer)hashStart.get(id);
 			if (when.intValue() >= f.intValue()) {
 				id = (String)pileStart.pop();
-				fireStartAnnotation(id);
+				if (isAutoScrolling) fireStartAnnotation(id);
 			}
 		}
 		if (!pileEnd.empty()) {
@@ -218,7 +218,7 @@ public abstract class PanelPlayer extends Panel {
 			Integer f   = (Integer)hashEnd.get(id);
 			if (when.intValue() >= f.intValue()) {
 				id = (String)pileEnd.pop();
-				fireStopAnnotation(id);
+				if (isAutoScrolling) fireStopAnnotation(id);
 			}
 		}
 	}
@@ -226,7 +226,7 @@ public abstract class PanelPlayer extends Panel {
 		while (!pileEnd.empty()) {				//vider la pile des items qui ne sont pas
 			String id = (String)pileEnd.pop();	//encore fini
 			if (pileStart.search(id) == -1) {
-				fireStopAnnotation(id);
+				if (isAutoScrolling) fireStopAnnotation(id);
 			}
 		}
 	}
