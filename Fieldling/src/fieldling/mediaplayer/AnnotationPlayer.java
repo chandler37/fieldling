@@ -1,5 +1,5 @@
 /* ***** BEGIN LICENSE BLOCK *****
- *    Copyright 2002 Michel Jacobson jacobson@idf.ext.jussieu.fr
+ *    Copyright 2003 Edward Garrett, Michel Jacobson
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by

@@ -22,17 +22,31 @@ for Tibetan-only QuillDriver
 
 <project name="fieldlingtools" default="compile" basedir=".">
 
-	<description>fieldlingtools: tools for field linguistics, with an
-	emphasis on tools for annotating media and playing media together
-	with such annotations.</description>
+	<description>
+This project includes assorted tools for field linguistics.
+Currently, the main sub-projects are:
 
-	<property name="src.dir"        value="src"/>
+1) Media Player: a framework for synchronizing media files 
+with linguistic (and other) annotations, using Java Media 
+Framework and Quicktime for Java.
+
+2) QuillDriver: a tool for linking XML-based annotations 
+to media files. QuillDriver has a multilingual version and 
+a version optimized for use with Tibetan script.
+	</description>
+
 	<property name="ext"            value="extensions"/>
 	<property name="doc"            value="documentation"/>
 	<property name="data.dir"	value="data"/>
 	<property name="jvm" 		value="java"/>
 	<property name="build.dir"      value="build"/>
-	<property name="build.classes"  value="${build.dir}/classes"/>
+	<property name="raw.source"	value="src"/>
+	<property name="tweaked.source" value="${build.dir}/src"/>	
+	<property name="tibetan.source"	value="${tweaked.source}/tibetan"/>
+	<property name="unicode.source"	value="${tweaked.source}/unicode"/>
+	<property name="build.classes"	value="${build.dir}/classes"/>
+	<property name="unicode.classes"  value="${build.classes}/unicode"/>
+	<property name="tibetan.classes"  value="${build.classes}/tibetan"/>
 	<property name="build.dist"     value="${build.dir}/dist"/>
 	<property name="build.dist.jws"	value="${build.dist}/jws"/>
 	<property name="build.dist.jws.lib" value="${build.dist.jws}/lib"/>
@@ -41,7 +55,7 @@ for Tibetan-only QuillDriver
 	<property name="build.dist.zip.tozip.lib" value="${build.dist.zip.tozip}/lib"/>
 	<property name="build.doc"      value="${build.dir}/doc"/>
 	<property name="build.eg"       value="${build.doc}/eg"/>
-	<property name="distrib.src"	value="distribSrc"/>
+	<property name="distrib.source"	value="distribSrc"/>
 	<property name="jnlp.codebase"	value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/"/>
 	<property name="ftp.server"	value="mayor.lib.virginia.edu"/>
 	<property name="ftp.dir"	value="Sites/QuillDriver"/>
@@ -79,7 +93,12 @@ for Tibetan-only QuillDriver
 	<!-- Create the build directory structure used by compile -->
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${tweaked.source}"/>
+		<mkdir dir="${tibetan.source}"/>
+		<mkdir dir="${unicode.source}"/>
 		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${unicode.classes}"/>
+		<mkdir dir="${tibetan.classes}"/>
 		<mkdir dir="${build.dist}"/>
 		<mkdir dir="${build.dist.jws}"/>
 		<mkdir dir="${build.dist.jws.lib}"/>
@@ -98,13 +117,18 @@ for Tibetan-only QuillDriver
 	</target>
 	
 	<target name="mp-compile" depends="init" description="compile mediaplayer source">
-		<javac srcdir="${src.dir}" destdir="${build.classes}" includes="fieldling/mediaplayer/**">
+		<javac srcdir="${raw.source}" destdir="${unicode.classes}" includes="fieldling/mediaplayer/**">
 			<classpath refid="my.classpath"/>
 		</javac>
+		<copy todir="${tibetan.classes}">
+			<fileset dir="${unicode.classes}">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
 	</target>
 		
 	<target name="mp-jar" depends="mp-compile" description="generates mediaplayer.jar in build/dist">
-		<jar jarfile="${build.dist}/mediaplayer.jar" basedir="${build.classes}" />		
+		<jar jarfile="${build.dist}/mediaplayer.jar" basedir="${unicode.classes}" />		
 	</target>
 
 	<target name="mp-eg" depends="mp-jar" description="compile, build jars, create an example">
@@ -124,14 +148,55 @@ for Tibetan-only QuillDriver
 			<param name="mediafile" expression="file://${mediafile}"/>
 		</style>
 	</target>
-		
+
+	<target name="create-unicode-source" if="unicode.source.isUptodate">
+		<copy todir="${unicode.source}" overwrite="true">
+			<fileset dir="${raw.source}" includes="**/*"/>
+			<filterset>
+				<filter token="TIBETAN" value="//TIBETAN-SPECIFIC "/>
+				<filter token="UNICODE" value=""/>
+			</filterset>
+		</copy>	
+	</target>
+	
+	<target name="create-tibetan-source" if="tibetan.source.isUptodate">
+		<copy todir="${tibetan.source}" overwrite="true">
+			<fileset dir="${raw.source}" includes="**/*"/>
+			<filterset>
+				<filter token="TIBETAN" value=""/>
+				<filter token="UNICODE" value="//NON-TIBETAN "/>
+			</filterset>
+		</copy>
+	</target>
+	
 	<target name="qd-compile" depends="init,mp-compile" description="compile qd source">
-		<javac srcdir="${src.dir}" destdir="${build.classes}" includes="fieldling/quilldriver/**">
+		<!-- Instructions for Unicode version of QD -->
+		
+		<!-- check to see if Unicode source is uptodate; if not, create it -->
+		<!-- <uptodate property="unicode.source.isUptodate">
+			<srcfiles dir="${raw.source}" includes="**/*.java"/>
+			<mapper type="glob" from="*" to="${unicode.source}/*"/>
+		</uptodate> 
+		<antcall target="create-unicode-source"/> -->
+
+		<!-- create Unicode source if it's not already up to date -->
+		<copy todir="${unicode.source}" overwrite="false">
+			<fileset dir="${raw.source}" includes="**/*"/>
+			<filterset>
+				<filter token="TIBETAN" value="//TIBETAN-SPECIFIC "/>
+				<filter token="UNICODE" value=""/>
+			</filterset>
+		</copy>
+		
+		
+		<!-- compile unicode source -->
+		<javac srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**">
 			<classpath refid="my.classpath"/>
 		</javac>
-		<!-- Copy over required resources: -->
-		<copy todir="${build.classes}">
-			<fileset dir="${src.dir}">
+		
+		<!-- copy associated unicode resources -->
+		<copy todir="${unicode.classes}">
+			<fileset dir="${raw.source}">
 				<include name="MessageBundle*"/>
 			</fileset>
 			<fileset dir="${data.dir}/quilldriver">
@@ -139,12 +204,45 @@ for Tibetan-only QuillDriver
 				<include name="*.xml"/>
 			</fileset>
 		</copy>
-		<copy todir="${build.classes}/fieldling/quilldriver">
+		<copy todir="${unicode.classes}/fieldling/quilldriver">
 			<fileset dir="${data.dir}/quilldriver">
 				<include name="*.gif"/>
 				<include name="*.jpg"/>
 			</fileset>
 		</copy>
+
+		<!-- Instructions for Tibetan version of QD -->
+		
+		<!-- create Tibetan source if it's not already up to date -->
+		<copy todir="${tibetan.source}" overwrite="false">
+			<fileset dir="${raw.source}" includes="**/*"/>
+			<filterset>
+				<filter token="TIBETAN" value=""/>
+				<filter token="UNICODE" value="//NON-TIBETAN "/>
+			</filterset>
+		</copy>
+		
+		<!-- compile Tibetan source -->
+		<javac srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**">
+			<classpath refid="my.classpath"/>
+		</javac>
+		
+		<!-- copy associated Tibetan resources -->
+		<copy todir="${tibetan.classes}">
+			<fileset dir="${raw.source}">
+				<include name="MessageBundle*"/>
+			</fileset>
+			<fileset dir="${data.dir}/quilldriver">
+				<include name="*.xsl"/>
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${tibetan.classes}/fieldling/quilldriver">
+			<fileset dir="${data.dir}/quilldriver">
+				<include name="*.gif"/>
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>		
 	</target>
 
 	<!-- I HAVE NOT INCLUDED AN EXPLICIT MANIFEST BECAUSE IF YOU USE ANT TO RUN
@@ -154,12 +252,17 @@ for Tibetan-only QuillDriver
 		NOT REQUIRE A DOUBLE-CLICKABLE JAR. -->
 		
 	<target name="qd-jar" depends="qd-compile" description="generate quilldriver.jar">
-		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${build.classes}" />
+		<!-- Unicode version -->
+		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${unicode.classes}" />
+		
+		<!-- Tibetan version -->
+		<jar jarfile="${build.dist}/quilldriver-TIB.jar" basedir="${tibetan.classes}" />
 	</target>
 
 	<target name="qd-jws" depends="qd-jar" description="generate qd's Java Web Start distro">
-		<!-- Copy QD jar -->
+		<!-- Copy QD jars -->
 		<copy file="${build.dist}/quilldriver.jar" tofile="${build.dist.jws}/quilldriver.jar"/>
+		<copy file="${build.dist}/quilldriver-TIB.jar" tofile="${build.dist.jws}/quilldriver-TIB.jar"/>
 		
 		<!-- Step 1: Copy the libraries -->
 		<copy todir="${build.dist.jws.lib}">
@@ -172,10 +275,14 @@ for Tibetan-only QuillDriver
 			</fileset>
 		</copy>
 		
-		<antcall target="qd-jnlp">
+		<antcall target="qd-unicode-jnlp">
 			<param name="jnlp.file" value="QuillDriver.jnlp"/>
 			<param name="jar.file" value="quilldriver.jar"/>
 		</antcall>
+		<antcall target="qd-tibetan-jnlp">
+			<param name="jnlp.file" value="QuillDriver-TIB.jnlp"/>
+			<param name="jar.file" value="quilldriver-TIB.jar"/>
+		</antcall>		
 		
 		<!-- Step 3: Sign the jars -->
 		<signjar alias="testsigner" keystore="${data.dir}/keystore" storepass="testpassword">
@@ -184,15 +291,15 @@ for Tibetan-only QuillDriver
 			</fileset>
 		</signjar>
 		
-		<!-- Make additional dated Jar and Jnlp descriptor -->
-		<copy file="${build.dist.jws}/quilldriver.jar" tofile="${build.dist.jws}/quilldriver-${qd.date}.jar"/>
-		<antcall target="qd-jnlp">
-			<param name="jnlp.file" value="QD-${qd.date}.jnlp"/>
-			<param name="jar.file" value="quilldriver-${qd.date}.jar"/>
+		<!-- Make additional dated Jar and Jnlp descriptor for Tibetan only version -->
+		<copy file="${build.dist.jws}/quilldriver-TIB.jar" tofile="${build.dist.jws}/quilldriver-TIB-${qd.date}.jar"/>
+		<antcall target="qd-tibetan-jnlp">
+			<param name="jnlp.file" value="QD-TIB-${qd.date}.jnlp"/>
+			<param name="jar.file" value="quilldriver-TIB-${qd.date}.jar"/>
 		</antcall>
 	</target>
-	
-	<target name="qd-jnlp">
+
+	<target name="qd-unicode-jnlp">
 		<!-- Step 2: Create the jnlp file -->
 		<!-- Write the head of the .jnlp file: -->
 		<echo file="${build.dist.jws}/${jnlp.file}" append="false">
@@ -213,6 +320,62 @@ QuillDriver is a tool for transcribing and annotating digital video files.
 Annotation files can be any well-formed XML, and supported media players include
 Java Media Framework (JMF) and Quicktime for Java. QuillDriver is fully
 customizable to project-specific uses.
+  </description>
+  <offline-allowed/>
+</information>
+<security>
+  <all-permissions/>
+</security>
+<resources os="Windows" arch="x86">
+  <j2se version="1.4+"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib/xml-apis.jar"/>
+  <jar href="lib/xercesImpl.jar"/>
+  <jar href="lib/xalan.jar"/>
+  <jar href="lib/jdom.jar"/>
+  <jar href="lib/jaxen-full.jar"/>
+  <jar href="lib/jaxen-jdom.jar"/>
+  <jar href="lib/saxpath.jar"/> 
+</resources>
+<resources os="Mac OS X" arch="ppc">
+  <j2se version="1.3.1"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib/xml-apis.jar"/>
+  <jar href="lib/xercesImpl.jar"/>
+  <jar href="lib/xalan.jar"/>
+  <jar href="lib/jdom.jar"/>
+  <jar href="lib/jaxen-full.jar"/>
+  <jar href="lib/jaxen-jdom.jar"/>
+  <jar href="lib/saxpath.jar"/>
+</resources>
+<application-desc main-class="fieldling.quilldriver.QDShell"/>
+</jnlp>]]>
+		</echo>
+	</target>
+	
+	<target name="qd-tibetan-jnlp">
+		<!-- Step 2: Create the jnlp file -->
+		<!-- Write the head of the .jnlp file: -->
+		<echo file="${build.dist.jws}/${jnlp.file}" append="false">
+<![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"]]></echo>
+		<!-- Write the middle of the .jnlp file: -->
+		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
+		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
+		<!-- Write the tail of the .jnlp file: -->
+		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
+<![CDATA[      href="]]>${jnlp.file}<![CDATA[">
+<information>
+  <title>QuillDriver</title>
+  <vendor>THDL</vendor>
+  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <description>
+QuillDriver is a tool for transcribing and annotating digital video files.
+Annotation files can be any well-formed XML, and supported media players include
+Java Media Framework (JMF) and Quicktime for Java. QuillDriver is fully
+customizable to project-specific uses. This version, however, has been
+optimized for use with Tibetan script. For multilingual use, please consider
+running the Unicode version of QuillDriver.
   </description>
   <offline-allowed/>
 </information>
@@ -247,8 +410,8 @@ customizable to project-specific uses.
 </jnlp>]]>
 		</echo>
 	</target>
-	
-	<target name="qd-zip" depends="qd-jar" description="create qd zip files">
+
+	<target name="qd-zip" depends="qd-jar" description="create qd zip files for Tibetan">
 		<copy todir="${build.dist.zip.tozip.lib}">
 			<fileset dir="${ext}">
 				<!-- We don't need to copy these files because they should always be
@@ -258,17 +421,17 @@ customizable to project-specific uses.
 				<exclude name="java40.jar"/>
 			</fileset>
 		</copy>
-		<copy file="${build.dist}/quilldriver.jar" tofile="${build.dist.zip.tozip.lib}/quilldriver-${qd.date}.jar"/>
-		<echo file="${build.dist.zip.tozip}/QD-${qd.date}.bat" append="false"><![CDATA[javaw -cp lib/xercesImpl.jar;lib/xml-apis.jar;lib/xalan.jar;lib/jdom.jar;lib/saxpath.jar;lib/jaxen-full.jar;lib/jaxen-jdom.jar;lib/Jskad.jar;lib/quilldriver-]]>${qd.date}.jar fieldling.quilldriver.QDShell</echo>
-		<zip destfile="${build.dist}/QuillDriver.zip">
+		<copy file="${build.dist}/quilldriver-TIB.jar" tofile="${build.dist.zip.tozip.lib}/quilldriver-TIB-${qd.date}.jar"/>
+		<echo file="${build.dist.zip.tozip}/QD-TIB-${qd.date}.bat" append="false"><![CDATA[javaw -cp lib/xercesImpl.jar;lib/xml-apis.jar;lib/xalan.jar;lib/jdom.jar;lib/saxpath.jar;lib/jaxen-full.jar;lib/jaxen-jdom.jar;lib/Jskad.jar;lib/quilldriver-TIB-]]>${qd.date}.jar fieldling.quilldriver.QDShell</echo>
+		<zip destfile="${build.dist}/QuillDriver-TIB.zip">
 			<fileset dir="${build.dist.zip}">
 				<include name="QuillDriver/**/*"/>
 			</fileset>
 		</zip>
-		<zip destfile="${build.dist}/QD-Update-${qd.date}.zip">
+		<zip destfile="${build.dist}/QD-TIB-Update-${qd.date}.zip">
 			<fileset dir="${build.dist.zip.tozip}">
-				<include name="*.bat"/>
-				<include name="lib/quilldriver-${qd.date}.jar"/>
+				<include name="QD-TIB-${qd.date}.bat"/>
+				<include name="lib/quilldriver-TIB-${qd.date}.jar"/>
 			</fileset>
 		</zip>
 	</target>
@@ -277,8 +440,8 @@ customizable to project-specific uses.
 		<get src="${archive.location}/archive.xml" dest="${build.dist}/old-archive.xml"/>
 		<xslt in="${build.dist}/old-archive.xml" out="${build.dist}/archive.xml" style="${data.dir}/quilldriver/add-archive.xsl">
 			<param name="date" expression="${qd.date}"/>
-			<param name="jnlp" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-${qd.date}.jnlp"/>
-			<param name="zip" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-Update-${qd.date}.zip"/>
+			<param name="jnlp" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-TIB-${qd.date}.jnlp"/>
+			<param name="zip" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-TIB-Update-${qd.date}.zip"/>
 			<param name="note" expression="${update.message}"/>
 		</xslt>
 	</target>
@@ -308,8 +471,9 @@ customizable to project-specific uses.
 			userid="${ftp.id}" password="${ftp.password}" 
 			binary="yes" depends="true" verbose="true">
 				<fileset dir="${build.dist.jws}">
-					<include name="quilldriver-${qd.date}.jar"/>
-					<include name="QD-${qd.date}.jnlp"/>
+					<include name="quilldriver.jar"/>
+					<include name="quilldriver-TIB-${qd.date}.jar"/>
+					<include name="QD-TIB-${qd.date}.jnlp"/>
 				</fileset>
 		</ftp>
 	</target>
@@ -321,6 +485,8 @@ customizable to project-specific uses.
 				<fileset dir="${build.dist.jws}">
 					<include name="QuillDriver.jnlp"/>
 					<include name="quilldriver.jar"/>
+					<include name="QuillDriver-TIB.jnlp"/>
+					<include name="quilldriver-TIB.jar"/>
 				</fileset>
 		</ftp>
 	</target>
@@ -345,17 +511,29 @@ customizable to project-specific uses.
 	<!-- SOMEHOW USING <java jar="quilldriver.jar" etc.> DOES NOT WORK PROPERLY:
 		IF YOU DO THIS THEN THE EXTENSIONS ARE NOT FOUND (AT LEAST ON MAC OS X. 
 		SO INSTEAD I RUN THE CLASS AND PUT THE JAR AT THE HEAD OF THE CLASSPATH. -->
-	<target name="qd-run" depends="qd-jar" description="runs QuillDriver">
+
+	<target name="qd-run-unicode" depends="qd-compile" description="runs multilingual version of QuillDriver">
 		<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
 			<classpath>
-				<pathelement location="${build.dist}/quilldriver.jar"/>
+				<pathelement location="${unicode.classes}"/>
+				<!-- <pathelement location="${build.dist}/quilldriver.jar"/> -->
+				<path refid="my.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="qd-run-tibetan" depends="qd-compile" description="runs Tibetan version of QuillDriver">
+		<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
+			<classpath>
+				<pathelement location="${tibetan.classes}"/>
+				<!-- <pathelement location="${build.dist}/quilldriver-TIB.jar"/> -->
 				<path refid="my.classpath"/>
 			</classpath>
 		</java>
 	</target>
   
 	<target name="doc" depends="mp-compile,qd-compile" description="Build the documentation">
-		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${src.dir}" destdir="${build.doc}/api" bottom="Programme de These">
+		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${raw.source}" destdir="${build.doc}/api" bottom="Programme de These">
 			<classpath refid="my.classpath"/>
 		</javadoc>
 	</target>
@@ -384,26 +562,26 @@ customizable to project-specific uses.
 		<zip zipfile="${build.dir}/QuillDriver.zip" basedir="${build.dist}" includes="quilldriver.jar,lib/**"/>
 	</target>
 	
-	<target name="distribSrc" description="src distribution">
-		<delete dir="${distrib.src}"/>
-		<mkdir dir="${distrib.src}"/>
-		<copy todir="${distrib.src}/extensions">
+	<target name="distribSrc" description="source distribution">
+		<delete dir="${distrib.source}"/>
+		<mkdir dir="${distrib.source}"/>
+		<copy todir="${distrib.source}/extensions">
 			<fileset dir="${ext}">
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-		<copy todir="${distrib.src}/documentation">
+		<copy todir="${distrib.source}/documentation">
 			<fileset dir="${doc}">
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-		<copy todir="${distrib.src}/src">
-			<fileset dir="${src.dir}">
+		<copy todir="${distrib.source}/source">
+			<fileset dir="${raw.source}">
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-		<copy todir="${distrib.src}" file="build.xml"/>
-		<zip zipfile="fieldlingSrc.zip" basedir="${distrib.src}"/>
-		<delete dir="${distrib.src}"/>
+		<copy todir="${distrib.source}" file="build.xml"/>
+		<zip zipfile="fieldlingSrc.zip" basedir="${distrib.source}"/>
+		<delete dir="${distrib.source}"/>
 	</target>
 </project>

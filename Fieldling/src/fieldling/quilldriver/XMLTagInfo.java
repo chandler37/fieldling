@@ -5,15 +5,15 @@ import org.jdom.Element;
 import fieldling.quilldriver.XMLUtilities;
 
 public class XMLTagInfo {
-	private HashMap displayYesNo, displayContentsYesNo, displayAs, isTagTextTibetan; //TIBETAN-SPECIFIC
+	private HashMap displayYesNo, displayContentsYesNo, displayAs;
+	@TIBETAN@private HashMap isTagTextTibetan;
 	private HashMap attributeDisplayYesNo, attributeDisplayAs;
 
 	public XMLTagInfo() {
 		displayYesNo = new HashMap();
 		displayContentsYesNo = new HashMap();
 		displayAs = new HashMap();
-		//TIBETAN-SPECIFIC
-		isTagTextTibetan = new HashMap();
+		@TIBETAN@isTagTextTibetan = new HashMap();
 		attributeDisplayYesNo = new HashMap();
 		attributeDisplayAs = new HashMap();
 	}
@@ -21,11 +21,12 @@ public class XMLTagInfo {
 		if (displayYesNo.get(tag) == null) return false;
 		else return true;
 	}
-	public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, Boolean isTagTextTibetan) { //TIBETAN-SPECIFIC
+	@TIBETAN@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, Boolean isTagTextTibetan) {
+	@UNICODE@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs) {		
 		displayYesNo.put(tag, display);
 		displayContentsYesNo.put(tag, displayContents);
 		this.displayAs.put(tag, displayAs);
-		this.isTagTextTibetan.put(tag, isTagTextTibetan);
+		@TIBETAN@this.isTagTextTibetan.put(tag, isTagTextTibetan);
 	}
 	public void removeTag(String tag) {
 		displayYesNo.remove(tag);
@@ -47,12 +48,11 @@ public class XMLTagInfo {
 		if (obj == null) return true; 
 		else return ((Boolean)obj).booleanValue();
 	}
-	//TIBETAN-SPECIFIC
-	public boolean isTagTextTibetan(String tag) {
-		Object obj = isTagTextTibetan.get(tag);
-		if (obj == null) return false;
-		else return ((Boolean)obj).booleanValue();
-	}
+	@TIBETAN@public boolean isTagTextTibetan(String tag) {
+		@TIBETAN@Object obj = isTagTextTibetan.get(tag);
+		@TIBETAN@if (obj == null) return false;
+		@TIBETAN@else return ((Boolean)obj).booleanValue();
+	@TIBETAN@}
 	public boolean areTagContentsForDisplay(String tag) {
 		Object obj = displayContentsYesNo.get(tag);
 		if (obj == null) return true; 

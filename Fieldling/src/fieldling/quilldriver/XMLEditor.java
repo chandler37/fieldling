@@ -1,3 +1,21 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ *    Copyright 2003 Edward Garrett
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ***** END LICENSE BLOCK ***** */
+
 package fieldling.quilldriver;
 
 
@@ -12,16 +30,17 @@ import org.jdom.Text;
 
 import org.jdom.DocType;
 
+import java.io.IOException;
 import java.awt.Color;
 
 import java.awt.Cursor;
+import java.awt.Toolkit;
+import java.awt.datatransfer.*;
 
 import java.awt.event.KeyEvent;
-
+import java.awt.event.InputEvent;
 import java.awt.event.ActionEvent;
-
 import java.awt.event.MouseEvent;
-
 import java.awt.event.MouseAdapter;
 
 import java.awt.event.MouseListener;
@@ -137,9 +156,10 @@ public class XMLEditor {
 		startOffsets = new HashMap();
 
 		endOffsets = new HashMap();
-
 		
-
+		pane.setSelectionColor(Color.CYAN);
+		pane.setSelectedTextColor(Color.RED);
+		
 		docListen = new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				hasChanged = true;
@@ -177,7 +197,31 @@ public class XMLEditor {
 		MouseListener[] listeners = (MouseListener[])pane.getListeners(MouseListener.class);
 		for (int i=0; i<listeners.length; i++) pane.removeMouseListener(listeners[i]);
 		pane.addMouseListener(new MouseAdapter() {
+			/* Here's when these methods get called:
+				mousePressed: always
+				mouseClicked: only when you don't move the mouse in between pressing and releasing
+				mouseReleased: always
+			This is crucial info for handling cut, copy and paste, since making a selection
+			involves pressing, moving, and then releasing the mouse. */
+			
 			public void mouseClicked(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int offset = p.viewToModel(e.getPoint());
+				/*if (isEditable(offset)) {
+System.out.println("clicked on editable " + String.valueOf(offset));
+					p.requestFocus();
+					if (isEditing) fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(offset));
+					p.setCaretPosition(offset);
+				} else*/
+				if (!isEditable(offset)) {
+System.out.println("clicked on uneditable " + String.valueOf(offset));					
+					Object node = getNodeForOffset(offset);
+					if (isEditing) fireEndEditEvent();
+					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
+				}
+			}
+			public void mousePressed(MouseEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
 				int offset = p.viewToModel(e.getPoint());
 				if (isEditable(offset)) {
@@ -185,13 +229,16 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 					p.requestFocus();
 					if (isEditing) fireEndEditEvent();
 					fireStartEditEvent(getNodeForOffset(offset));
-					p.setCaretPosition(offset);
-				} else {
-System.out.println("clicked on uneditable " + String.valueOf(offset));					
-					Object node = getNodeForOffset(offset);
-					if (isEditing) fireEndEditEvent();
-					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
+					p.getCaret().setDot(offset);
 				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int j = p.getCaretPosition();
+				if (editingNode != getNodeForOffset(j)) {
+					fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(j));
+				}				
 			}
 		});
 
@@ -580,96 +627,129 @@ System.out.println("clicked on uneditable " + String.valueOf(offset));
 
 				keymap.addActionForKeyStroke(delNextKeys[i], deleteNextAction);
 		*/
-		
 		KeyStroke[] selectAllKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectAllAction));
-
 		if (selectAllKeys != null)
 			for (int i=0; i<selectAllKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selectAllKeys[i], selectNodeAction);
-
 		KeyStroke[] selLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectLineAction));
-
 		if (selLineKeys != null)
-
 			for (int i=0; i<selLineKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selLineKeys[i], selectNodeAction);			
-
 		KeyStroke[] selParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectParagraphAction));
-
 		if (selParaKeys != null)
-
 			for (int i=0; i<selParaKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selParaKeys[i], selectNodeAction);
-
 		KeyStroke[] selEndLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionEndLineAction));
-
 		if (selEndLineKeys != null)
-
 			for (int i=0; i<selEndLineKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selEndLineKeys[i], selectToNodeEndAction);
-
 		KeyStroke[] selEndParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionEndParagraphAction));
-
 		if (selEndParaKeys != null)
-
 			for (int i=0; i<selEndParaKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selEndParaKeys[i], selectToNodeEndAction);			
-
 		KeyStroke[] selBegLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionBeginLineAction));
-
 		if (selBegLineKeys != null)
-
 			for (int i=0; i<selBegLineKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selBegLineKeys[i], selectToNodeStartAction);
-
 		KeyStroke[] selBegParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionBeginParagraphAction));
-
 		if (selBegParaKeys != null)
-
 			for (int i=0; i<selBegParaKeys.length; i++)
-
 				keymap.addActionForKeyStroke(selBegParaKeys[i], selectToNodeStartAction);
-
-
-
 		KeyStroke[] endLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.endLineAction));
-
 		if (endLineKeys != null)
-
 			for (int i=0; i<endLineKeys.length; i++)
-
 				keymap.addActionForKeyStroke(endLineKeys[i], endNodeAction);
-
 		KeyStroke[] endParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.endParagraphAction));
-
 		if (endParaKeys != null)
-
 			for (int i=0; i<endParaKeys.length; i++)
-
 				keymap.addActionForKeyStroke(endParaKeys[i], endNodeAction);
-
 		KeyStroke[] begLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.beginLineAction));
-
 		if (begLineKeys != null)
-
 			for (int i=0; i<begLineKeys.length; i++)
-
 				keymap.addActionForKeyStroke(begLineKeys[i], begNodeAction);
-
 		KeyStroke[] begParaKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.beginParagraphAction));
-
 		if (begParaKeys != null)
-
 			for (int i=0; i<begParaKeys.length; i++)
-
 				keymap.addActionForKeyStroke(begParaKeys[i], begNodeAction);
 
+		Action cutAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int j = p.getSelectionStart();
+				int k = p.getSelectionEnd();
+				if (editingNode != getNodeForOffset(j)) {
+					fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(j));
+				}
+				if (getNodeForOffset(j) == getNodeForOffset(k) && isEditable(getNodeForOffset(j))) {
+					p.cut();
+				}
+			}
+		};
+		KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
+		keymap.addActionForKeyStroke(cut, cutAction);
+
+		Action copyAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int j = p.getSelectionStart();
+				int k = p.getSelectionEnd();
+				if (editingNode != getNodeForOffset(j)) {
+					fireEndEditEvent();
+					fireStartEditEvent(getNodeForOffset(j));
+				}
+				if (getNodeForOffset(j) == getNodeForOffset(k) && isEditable(getNodeForOffset(j))) {
+					p.copy();
+				}
+			}
+		};
+		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
+		keymap.addActionForKeyStroke(copy, copyAction);
+
+		Action pasteAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				JTextPane p = (JTextPane)e.getSource();
+				int j = p.getSelectionStart();
+				int k = p.getSelectionEnd();
+				Object node = getNodeForOffset(j);
+				if (editingNode != node) {
+					fireEndEditEvent();
+					fireStartEditEvent(node);
+				}
+				if (node == getNodeForOffset(k) && isEditable(node)) {					
+					//only works for element text, not for attribute values
+					@TIBETAN@boolean isTibetan = false;
+					@TIBETAN@if (node instanceof Text) {
+						@TIBETAN@Text nodeText = (Text)node;
+						@TIBETAN@isTibetan = XMLEditor.this.tagInfo.isTagTextTibetan(nodeText.getParent().getQualifiedName());					
+					@TIBETAN@}
+					
+					//if Tibetan, then use DuffPane's build-in RTF copy and paste support, which means
+					//that it will be possible to paste non-Tibetan into Tibetan field
+					@TIBETAN@if (isTibetan) p.paste();
+					@TIBETAN@else { // use String flavor of system clipboard for all else
+						@TIBETAN@Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+						@TIBETAN@try {
+						    @TIBETAN@if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+							@TIBETAN@String text = (String)t.getTransferData(DataFlavor.stringFlavor);
+							@TIBETAN@p.replaceSelection(text);
+						    @TIBETAN@}
+						@TIBETAN@} catch (UnsupportedFlavorException ufe) {
+						@TIBETAN@	ufe.printStackTrace();
+						@TIBETAN@} catch (IOException ioe) {
+						@TIBETAN@	ioe.printStackTrace();
+						@TIBETAN@}
+					@TIBETAN@}
+					@UNICODE@p.paste();
+					SimpleAttributeSet sas = new SimpleAttributeSet();
+					sas.addAttribute("xmlnode", node);
+					p.getStyledDocument().setCharacterAttributes(getStartOffsetForNode(node), getEndOffsetForNode(node)-getStartOffsetForNode(node), sas, false);
+				}
+			}
+		};
+		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
+		keymap.addActionForKeyStroke(paste, pasteAction);
+		
 		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 		keymap.addActionForKeyStroke(back, backwardAction);
 		
@@ -725,11 +805,14 @@ System.out.println("clicked on uneditable " + String.valueOf(offset));
 			public void actionPerformed(ActionEvent e) {
 				if (((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) || 
 				((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) ||
-				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK)) {
-					System.out.println("yo yo yo yo");
-					return;
-				}
-				if (e.getActionCommand() != null) { 				
+				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK)) return;
+				
+				if (e.getActionCommand() != null) {
+					int p = pane.getCaretPosition();
+					if (editingNode != getNodeForOffset(p)) {
+						fireEndEditEvent();
+						fireStartEditEvent(getNodeForOffset(p));
+					}
 					Object xmlNode = pane.getCharacterAttributes().getAttribute("xmlnode");
 					SimpleAttributeSet sas = new SimpleAttributeSet();
 					sas.addAttribute("xmlnode", xmlNode);
@@ -833,13 +916,14 @@ upAction, writableAction
 				int p1 = ((Position)startOffsets.get(node)).getOffset();
 				int p2 = ((Position)endOffsets.get(node)).getOffset();
 				
-				//TIBETAN-SPECIFIC
-				Text t = (Text)node;
 				String val;
-				if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
-					org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-					val = duff.getTibDoc().getWylie(p1, p2);
-				} else val = pane.getDocument().getText(p1, p2-p1).trim();
+				
+				@TIBETAN@Text t = (Text)node;
+				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2);
+				@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
+				@UNICODE@val = pane.getDocument().getText(p1, p2-p1).trim();
 				if (val.length()==0) val=new String(" ");
 				Text text = (Text)node;
 				text.setText(val);
@@ -940,14 +1024,13 @@ upAction, writableAction
 	}
 
 	public void fireStartEditEvent(Object node) {
-		//TIBETAN-SPECIFIC
-		if (pane instanceof org.thdl.tib.input.DuffPane && node instanceof Text) {
-			Text t = (Text)node;
-			org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-			if (tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
-				if (duff.isRomanMode()) duff.toggleLanguage();
-			} else if (!duff.isRomanMode()) duff.toggleLanguage();
-		}
+		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && node instanceof Text) {
+			@TIBETAN@Text t = (Text)node;
+			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+			@TIBETAN@if (tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+				@TIBETAN@if (duff.isRomanMode()) duff.toggleLanguage();
+			@TIBETAN@} else if (!duff.isRomanMode()) duff.toggleLanguage();
+		@TIBETAN@}
 		
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
@@ -963,13 +1046,12 @@ upAction, writableAction
 
 	public void fireEndEditEvent() {
 		if (!isEditing) return;
-		
-		//TIBETAN-SPECIFIC
-		if (pane instanceof org.thdl.tib.input.DuffPane && editingNode instanceof Text) {
-			Text t = (Text)editingNode;
-			org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-			if (!duff.isRomanMode()) duff.toggleLanguage();
-		}
+
+		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && editingNode instanceof Text) {
+			@TIBETAN@Text t = (Text)editingNode;
+			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+			@TIBETAN@if (!duff.isRomanMode()) duff.toggleLanguage();
+		@TIBETAN@}
 		
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
@@ -1374,18 +1456,17 @@ upAction, writableAction
 			String s = t.getTextTrim();
 			int start = pos.getOffset();
 			startOffsets.put(t, new Integer(start));
-			
-			//TIBETAN-SPECIFIC:
-			if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
-				org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-				duff.toTibetanMachineWeb(s, pos.getOffset());
-				SimpleAttributeSet tibAtt = new SimpleAttributeSet();
-				tibAtt.addAttribute("xmlnode", t);
-				doc.setCharacterAttributes(start, pos.getOffset()-start, tibAtt, false);
-			} else {
-				doc.insertString(pos.getOffset(), s, tAttributes); //insert text
-			}
-			
+
+			@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParent().getQualifiedName())) {
+				@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+				@TIBETAN@duff.toTibetanMachineWeb(s, pos.getOffset());
+				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
+				@TIBETAN@tibAtt.addAttribute("xmlnode", t);
+				@TIBETAN@doc.setCharacterAttributes(start, pos.getOffset()-start, tibAtt, false);
+			@TIBETAN@} else {
+				@TIBETAN@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
+			@TIBETAN@}
+			@UNICODE@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
 			int end = pos.getOffset();
 			endOffsets.put(t, new Integer(end));
 			doc.insertString(pos.getOffset(), "\n", tAttributes);

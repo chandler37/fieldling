@@ -51,7 +51,9 @@
 		</parameter>
 		
 		
-		
+		<navigation name="Play/Pause" keystroke="control RIGHT" val="." command="playPause">
+			<desc>If the media is stopped, this plays it; and if the media is playing, this pauses it.</desc>
+		</navigation>
 		<navigation name="Next Playable" keystroke="control DOWN" val="following::*[AUDIO]" command="playNode">
 			<desc>This navigation is used to play the next part of the text that has time codes associated with it.
 			First, the next playable node is located. Then, it is played because this viewing function is
@@ -93,7 +95,7 @@
 		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" tasks="markStart">
 			<desc>This assigns the start time of the current sentence to the start time in the time coding window.</desc>
 		</transformation>
-		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::S" tasks="markStop">
+		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::S" tasks="markStop" command="stopMedia">
 			<desc>This assigns the stop time of the current sentence to the stop time in the time coding window.</desc>
 		</transformation>
 		<transformation name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::S" tasks="qd.insertTimes">
@@ -129,7 +131,7 @@
 			<desc>This function inserts a blank sentence after the current sentence. This new sentence will be assigned the
 			same speaker as the current sentence.</desc>
 		</transformation>
-		<transformation name="Insert Before" keystroke="control N" node="ancestor-or-self::S" tasks="insertBefore">
+		<transformation name="Insert Before" keystroke="control B" node="ancestor-or-self::S" tasks="insertBefore">
 			<desc>This function inserts a blank sentence before the current sentence. This new sentence will be assigned the
 			same speaker as the current sentence.</desc>
 		</transformation>

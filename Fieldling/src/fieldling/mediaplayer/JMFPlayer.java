@@ -79,7 +79,7 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		if (false)
 			throw new PanelPlayerException();
 		removeAllAnnotationPlayers();
-		player.close();
+		if (player != null) player.close();
 		removeAll();
 		mediaURL = null;
 		isRealized = false;
@@ -182,7 +182,8 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 				}}, 0, 15);
 		} else if (event instanceof StopEvent) {
 			pauseTime = player.getMediaTime();
-			cancelAnnotationTimer();
+			//not needed because launchAnnotationTimer automatically cancels
+			//cancelAnnotationTimer();
 
 			/*messy problems require messy solutions:
 				if the slider is present, dragging it while playing creates

@@ -1,3 +1,21 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ *    Copyright 2003 Edward Garrett, Michel Jacobson, Travis McCauley
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ***** END LICENSE BLOCK ***** */
+
 package fieldling.mediaplayer;
 
 import java.awt.*;
@@ -17,7 +35,7 @@ import quicktime.app.QTFactory;
 
 public class QT4JPlayer extends PanelPlayer {
 
-	private myJumpCallBack               theJumpper = null;
+	private myJumpCallBack               theJumper = null;
 	private myRateCallBack               theRater = null;
 	private URL                          mediaUrl = null;
 	private TimeBase                     myMoviesTimeBase;
@@ -40,11 +58,11 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 //destructor
 	public void destroy() {
-		if (theJumpper != null)
-			theJumpper.cancelAndCleanup();
+		if (theJumper != null)
+			theJumper.cancelAndCleanup();
 		if(theRater != null)
 			theRater.cancelAndCleanup();
-
+		cancelAnnotationTimer();
 		removeAllAnnotationPlayers();
 		QTSession.close();
 		removeAll();
@@ -144,12 +162,12 @@ public class QT4JPlayer extends PanelPlayer {
 			System.out.println("loadMovie:"+mediaURL.toString());
 
 			myMoviesTimeBase = getPlayer().getTimeBase();
-			theJumpper = new myJumpCallBack(myMoviesTimeBase);
-			theJumpper.callMeWhen();
+			theJumper = new myJumpCallBack(myMoviesTimeBase);
+			theJumper.callMeWhen();
 			theRater = new myRateCallBack(myMoviesTimeBase, 0, StdQTConstants.triggerRateChange);
 			theRater.callMeWhen();
-			Timer timer = new Timer(10,1,new Tickler(), getPlayer().getMovieController().getMovie());
-			timer.setActive(true);
+			//Timer timer = new Timer(10,1,new Tickler(), getPlayer().getMovieController().getMovie());
+			//timer.setActive(true);
 		} catch(QTException qte) {
 			System.out.println("loadMovie failed");
 			qte.printStackTrace();
@@ -166,8 +184,9 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public void cmd_playSegment(Integer startTime, Integer stopTime) throws PanelPlayerException {
 		try {
-			int myScale = getPlayer().getScale();
 			cmd_stop();
+			
+			int myScale = getPlayer().getScale();
 			getPlayer().setTime( (startTime.intValue() * myScale) / 1000 );
 
 			if (stopTime == null) {
@@ -188,7 +207,14 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public void cmd_stop() throws PanelPlayerException {
 		try {
+			//it seems that if theRater is not cancelled and recalled then a threading problem arises
+			theRater.cancelAndCleanup();
+			theJumper.cancelAndCleanup();
 			getPlayer().setRate(0.0F);
+			int myScale = getPlayer().getScale();
+			myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime())); //default behavior is to play to the end of the video
+			theRater.callMeWhen();
+			theJumper.callMeWhen();
 		} catch(QTException qte) {
 			qte.printStackTrace();
 		}
@@ -243,19 +269,24 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 		public void execute() {
 			try {
-				//System.out.println("myRateCallBack: " + String.valueOf(rateWhenCalled));
-				if (rateWhenCalled > 0)
-					launchAnnotationTimer();
-				else {
+				System.out.println("myRateCallBack: " + String.valueOf(rateWhenCalled));
+				/* rateWhenCalled has the following value:
+					1: when the media starts playing
+					0: when the media stops
+				*/
+				if (rateWhenCalled > 0) launchAnnotationTimer();
+				else { 
 					int myScale = getPlayer().getScale();
 					//needed to ensure that stop time does not stick (and interfere with behavior of slider)
 					myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime()));
-					cancelAnnotationTimer();
+					//not needed since launchAnnotationTimer() cancels automatically
+					//cancelAnnotationTimer();
 				}
-				cancel();
+				cancelAndCleanup();
 				callMeWhen();
 			} catch (Exception e) {
 				System.out.println("myRateCallBack err: "+e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -265,13 +296,21 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 		public void execute() {
 			try {
-				//System.out.println("myJumpCallBack: " + String.valueOf(rateWhenCalled));
-				if (rateWhenCalled > 0)
-					launchAnnotationTimer();
-				cancel();
+				System.out.println("myJumpCallBack: " + String.valueOf(rateWhenCalled));
+				if (rateWhenCalled > 0) launchAnnotationTimer();
+				
+				/*
+				//Just added this: ok??
+				int myScale = getPlayer().getScale();
+				//needed to ensure that stop time does not stick (and interfere with behavior of slider)
+				myMoviesTimeBase.setStopTime(new TimeRecord(myScale, getEndTime()));
+				*/
+				
+				cancelAndCleanup();
 				callMeWhen();
 			} catch (Exception e) {
 				System.out.println("myJumpCallBack err: "+e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}

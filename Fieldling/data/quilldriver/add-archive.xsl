@@ -10,10 +10,10 @@
 <xsl:param name="note" select="''"/>
 
 <xsl:template match="qd-jws/version[position()=1]">
-	<xsl:call-template name="copyTag"/>
 	<version date="{$date}" jnlp="{$jnlp}" zip="{$zip}">
 		<xsl:value-of select="$note"/>
 	</version>
+	<xsl:call-template name="copyTag"/>
 </xsl:template>
 
 <xsl:template name="copyTag">

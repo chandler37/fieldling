@@ -1,5 +1,5 @@
 /* ***** BEGIN LICENSE BLOCK *****
- *    Copyright 2002 Michel Jacobson jacobson@idf.ext.jussieu.fr
+ *    Copyright 2002 Michel Jacobson, Edward Garrett
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,16 @@ package fieldling.mediaplayer;
 /*-----------------------------------------------------------------------*/
 import java.awt.*;
 import java.net.*;
-import java.util.*;
+import java.util.StringTokenizer;
+import java.util.Hashtable;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Stack;
+import java.util.Vector;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.event.EventListenerList;
 /*-----------------------------------------------------------------------*/
 
@@ -33,6 +42,7 @@ public abstract class PanelPlayer extends Panel {
 	private Hashtable	hashStart = null, hashEnd = null;
 	private Timer annTimer = null;
 	private boolean isAutoScrolling = false;
+	private Set startedAnnotations;
 	
 /*-----------------------------------------------------------------------*/
 	public PanelPlayer(GridLayout layout) {
@@ -48,7 +58,10 @@ public abstract class PanelPlayer extends Panel {
 	public void removeAllAnnotationPlayers() {
 		listenerList = new EventListenerList();
 	}
-	private void fireStartAnnotation(String id) {
+	//FIXME both fireStartAnnotation and fireStopAnnotation should really not be public
+	//this is only a workaround in lieu of better communication between PanelPlayer
+	//TextHighlightPlayer
+	public void fireStartAnnotation(String id) {
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 
@@ -57,8 +70,9 @@ public abstract class PanelPlayer extends Panel {
 			if (listeners[i]==AnnotationPlayer.class)
 				((AnnotationPlayer)listeners[i+1]).startAnnotation(id);
 		}
+		startedAnnotations.add(id);
 	}
-	private void fireStopAnnotation(String id) {
+	public void fireStopAnnotation(String id) {
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 
@@ -66,6 +80,7 @@ public abstract class PanelPlayer extends Panel {
 			if (listeners[i]==AnnotationPlayer.class)
 				((AnnotationPlayer)listeners[i+1]).stopAnnotation(id);
 		}
+		startedAnnotations.remove(id);
 	}
 /*-----------------------------------------------------------------------*/
 	public void setAutoScrolling(boolean bool) {
@@ -76,6 +91,7 @@ public abstract class PanelPlayer extends Panel {
 		String TAB_ENDS  	= ends;
 		String TAB_IDS  	= ids;
 
+		startedAnnotations = new HashSet();
 		hashStart = new Hashtable();
 		hashEnd = new Hashtable();
 		pileStart = new Stack();
@@ -177,31 +193,28 @@ public abstract class PanelPlayer extends Panel {
 			smpe.printStackTrace();
 		}
 	}
-	public void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
-		if (listenerList.getListenerCount() == 0) //no annotation listeners
-			return;
-
+	protected void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
+		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
+		cancelAnnotationTimer();
 		int i = getCurrentTime();
 		Integer from = new Integer(i);
 		remplisPileStart(from, new Integer(getEndTime()));
-		if (annTimer != null) {
-			annTimer.cancel();
-			annTimer = null;
-		}
-		annTimer = new java.util.Timer(true);
+		annTimer = new Timer(true);
 		annTimer.schedule(new TimerTask() {
 			public void run() {
 				cmd_nextEvent();
 			}}, 0, 15);
 	}
-	public void cancelAnnotationTimer() {
-		if (listenerList.getListenerCount() == 0) //no annotation listeners
-			return;
-
+	protected void cancelAnnotationTimer() {
+		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
 		if (annTimer != null) {
 			annTimer.cancel();
 			annTimer = null;
 		}
+		// remove all annotations that started but weren't officially stopped
+		HashSet startedAnnotationsCopy = new HashSet(startedAnnotations);
+		Iterator iter = startedAnnotationsCopy.iterator();
+		while (iter.hasNext()) fireStopAnnotation((String)iter.next());
 	}
 	private void cmd_nextEvent() {
 		Integer when = new Integer(getCurrentTime());

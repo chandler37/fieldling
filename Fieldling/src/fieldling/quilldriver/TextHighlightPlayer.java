@@ -1,20 +1,20 @@
-/*
-The contents of this file are subject to the THDL Open Community License
-Version 1.0 (the "License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License on the THDL web site 
-(http://www.thdl.org/).
-
-Software distributed under the License is distributed on an "AS IS" basis, 
-WITHOUT WARRANTY OF ANY KIND, either express or implied. See the 
-License for the specific terms governing rights and limitations under the 
-License. 
-
-The Initial Developer of this software is the Tibetan and Himalayan Digital
-Library (THDL). Portions created by the THDL are Copyright 2001 THDL.
-All Rights Reserved. 
-
-Contributor(s): ______________________________________.
-*/
+/* ***** BEGIN LICENSE BLOCK *****
+ *    Copyright 2003 Edward Garrett
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ***** END LICENSE BLOCK ***** */
 
 package fieldling.quilldriver;
 
@@ -120,39 +120,42 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	}
 	public void highlight(String id)
 	{
-		try
-		{
-			Integer startInt = (Integer)hashStart.get(id);
-			Integer endInt = (Integer)hashEnd.get(id);
-			int start = startInt.intValue();
-			int end = endInt.intValue();
-			Object tag = highlighter.addHighlight(start, end, highlightPainter);
-			highlights.put(id, tag);
-
-/*			
-// scrolls highlighted text to middle of viewport
-				JViewport viewport = (JViewport)SwingUtilities.getAncestorOfClass(JViewport.class, text);
-				int halfViewHeight = viewport.getExtentSize().height / 2;
-				Rectangle textRectangle = text.modelToView(end);
-				int yFactor = textRectangle.y - halfViewHeight;
-				if (yFactor > 0) {
-					viewport.setViewPosition(new Point(0, yFactor));
+		if (!highlights.containsKey(id)) {
+			try
+			{
+				Integer startInt = (Integer)hashStart.get(id);
+				Integer endInt = (Integer)hashEnd.get(id);
+				int start = startInt.intValue();
+				int end = endInt.intValue();
+				Object tag = highlighter.addHighlight(start, end, highlightPainter);
+				highlights.put(id, tag);
+	
+	/*			
+	// scrolls highlighted text to middle of viewport
+					JViewport viewport = (JViewport)SwingUtilities.getAncestorOfClass(JViewport.class, text);
+					int halfViewHeight = viewport.getExtentSize().height / 2;
+					Rectangle textRectangle = text.modelToView(end);
+					int yFactor = textRectangle.y - halfViewHeight;
+					if (yFactor > 0) {
+						viewport.setViewPosition(new Point(0, yFactor));
+						text.repaint();
+					}
+	This often seems disconcerting to the user - so I am removing it. */
+	
+	// this does scrolling at the bottom of the text window
+					Rectangle rect = text.modelToView(end);
+					text.scrollRectToVisible(rect);
 					text.repaint();
-				}
-This often seems disconcerting to the user - so I am removing it. */
-
-// this does scrolling at the bottom of the text window
-				Rectangle rect = text.modelToView(end);
-				text.scrollRectToVisible(rect);
-				text.repaint();
-
-		}
-		catch (BadLocationException ble)
-		{
-			ble.printStackTrace();
-			//ThdlDebug.noteIffyCode();
+	
+			}
+			catch (BadLocationException ble)
+			{
+				ble.printStackTrace();
+				//ThdlDebug.noteIffyCode();
+			}
 		}
 	}
+	/*
 	public void highlight(int start, int end) {
 		try {
 			highlighter.addHighlight(start, end, highlightPainter);
@@ -160,6 +163,7 @@ This often seems disconcerting to the user - so I am removing it. */
 			ble.printStackTrace();
 		}
 	}
+	*/
 	public void unhighlight(String id)
 	{
 		if (highlights.containsKey(id))

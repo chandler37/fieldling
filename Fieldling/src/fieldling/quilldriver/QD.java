@@ -1,20 +1,20 @@
-/*
-The contents of this file are subject to the THDL Open Community License.
-Version 1.0 (the "License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License on the THDL web site 
-(http://www.thdl.org/).
-
-Software distributed under the License is distributed on an "AS IS" basis, 
-WITHOUT WARRANTY OF ANY KIND, either express or implied. See the 
-License for the specific terms governing rights and limitations under the 
-License. 
-
-The Initial Developer of this software is the Tibetan and Himalayan Digital
-Library (THDL). Portions created by the THDL are Copyright 2001 THDL.
-All Rights Reserved. 
-
-Contributor(s): ______________________________________.
-*/
+/* ***** BEGIN LICENSE BLOCK *****
+ *    Copyright 2003 Edward Garrettc
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ***** END LICENSE BLOCK ***** */
 
 package fieldling.quilldriver;
 
@@ -92,8 +92,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 public class QD extends JDesktopPane {
-	//TIBETAN-SPECIFIC
-	protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
+	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected XMLEditor editor = null;
 	protected JInternalFrame videoFrame = null;
@@ -113,6 +112,7 @@ public class QD extends JDesktopPane {
 	protected XMLTagInfo tagInfo = null;
 	protected Configuration configuration = null;
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
+	public Timer checkTimeTimer = null;
 	
 	public QD(Configuration configuration) {
 		setupGlobals();
@@ -189,7 +189,7 @@ public class QD extends JDesktopPane {
 					timer.cancel();
 					final TimeCodeView tcv = new TimeCodeView(player, tcp);
 					actionFrame.setContentPane(tcv);
-					Timer checkTimeTimer = new Timer(true);
+					checkTimeTimer = new Timer(true);
 					checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
 						public void run() {
 							tcv.setCurrentTime(player.getCurrentTime());
@@ -215,6 +215,9 @@ public class QD extends JDesktopPane {
 					invalidate();
 					validate();
 					repaint();
+					
+					
+System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 			}}, 0, 50);
 	}
@@ -391,7 +394,9 @@ public class QD extends JDesktopPane {
 						((TimeCodeModelListener)listeners[i+1]).setStopTime(t2);
 					}
 				}
-				if (currentNode == oldNode) changeTimeCodesInXML(); //update the XML file
+				if (currentNode == oldNode) {
+					if (t2 >= t1 && t1 > -1) changeTimeCodesInXML(); //update the XML file
+				}
 			}
 		}
 		public void setNode(Object node) {
@@ -407,7 +412,12 @@ public class QD extends JDesktopPane {
 				float f2 = new Float(t2).floatValue()*1000;
 				setTimeCodes(new Float(f1).intValue(), new Float(f2).intValue(), node);
 				thp.unhighlightAll();
-				thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
+				//FIXME FIXME FIXME should not be making reference to player in this class
+				//need better communication about highlights between PanelPlayer and TextHighlightPlayer
+				//if (!thp.getView().getTextComponent().hasFocus()) //only highlight if line is NOT selected
+				player.fireStartAnnotation(String.valueOf(playableparent.hashCode()));
+				//thp.highlight(String.valueOf(playableparent.hashCode()));
+				//thp.highlight(editor.getStartOffsetForNode(playableparent), editor.getEndOffsetForNode(playableparent));
 			}
 		}
 	}
@@ -481,10 +491,8 @@ public class QD extends JDesktopPane {
 				//FIXME?? don't validate, since user could be offline and dtd online
 				final SAXBuilder builder = new SAXBuilder(false); 
 				
-				//TIBETAN-SPECIFIC
-				final JTextPane t = new org.thdl.tib.input.DuffPane();
-				//IF NOT TIBETAN, THEN USE:
-				//final JTextPane t = new JTextPane();
+				@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
+				@UNICODE@final JTextPane t = new JTextPane();
 
 				editor = new XMLEditor(builder.build(file), t, tagInfo);
 
@@ -586,11 +594,18 @@ public class QD extends JDesktopPane {
 						}
 					}
 				});
+				editor.getTextPane().addMouseMotionListener(new MouseMotionAdapter() {
+					/* Turns off highlight if mouse is pressed, since
+					user is most likely selecting a block of text */
+					public void mouseDragged(MouseEvent e) {
+						//hp.unhighlightAll();
+					}
+				});
 				editor.setEditabilityTracker(true);
 				transcriptFile = file;
-				
-				//TIBETAN-SPECIFIC!!
-				if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
+				textFrame.requestFocus(); //otherwise the first time you press Play you don't get highlights in the text window!!
+
+				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 				
 				return true;
 			} catch (JDOMException jdome) {
@@ -609,6 +624,9 @@ public class QD extends JDesktopPane {
 		if (playableparent == null) return;
 		String nodeid = String.valueOf(playableparent.hashCode());
 		if (player.cmd_isID(nodeid)) {
+			/* by transferring focus, we don't have to worry about problems caused by
+			the cursor position in the editor being different from the highlight,
+			since users will have to click on the editor to get back into editing */
 			editor.getTextPane().transferFocus();
 			player.cmd_playS(nodeid);
 		}
@@ -667,10 +685,12 @@ public class QD extends JDesktopPane {
 				while (it.hasNext()) {
 					Element e = (Element)it.next();
 					
-					//TIBETAN-SPECIFIC
-					tagInfo.addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
-						new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
-						new Boolean(e.getAttributeValue("tibetan")));
+					
+					@TIBETAN@tagInfo.addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
+						@TIBETAN@new Boolean(e.getAttributeValue("tibetan")));
+					@UNICODE@tagInfo.addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")), 
+						@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"));
 					List atts = e.getChildren("attribute");
 					Iterator it2 = atts.iterator();
 					while (it2.hasNext()) {
@@ -730,10 +750,7 @@ public class QD extends JDesktopPane {
 									}
 								}
 							} while (keepSearching);
-							if (command.equals("playNode")) {
-								Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(t.getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
-								playNode(nearestParent);
-							}
+							if (command != null) executeCommand(command);
 						}
 					}				
 				};
@@ -757,6 +774,7 @@ public class QD extends JDesktopPane {
 					final DOMBuilder jdomBuild = new DOMBuilder();
 					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
 					final String tasks = e.getAttributeValue("tasks");
+					final String command = e.getAttributeValue("command");
 					final String nodeSelector = e.getAttributeValue("node");
 					mItem.setToolTipText(e.getChildTextNormalize("desc"));
 					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
@@ -764,6 +782,7 @@ public class QD extends JDesktopPane {
 					final Action keyAction = new AbstractAction() {
 						public void actionPerformed(ActionEvent e) {
 							try {
+								if (command != null) executeCommand(command);
 								editor.fireEndEditEvent();
 								editor.setEditabilityTracker(false);
 								int offset = editor.getTextPane().getCaret().getMark();
@@ -942,17 +961,42 @@ public class QD extends JDesktopPane {
 		}
 	}
 
+	public void executeCommand(String command) {
+		//FIXME: These commands should be defined elsewhere, in programmatically extensible classes
+							if (command.equals("playNode")) {
+								Object nearestParent = XMLUtilities.findSingleNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), config.getProperty("qd.nearestplayableparent"));
+								playNode(nearestParent);
+							}
+							else if (command.equals("playPause")) {
+								try {
+									/* by transferring focus, we don't have to worry about problems caused by
+									the cursor position in the editor being different from the highlight,
+									since users will have to click on the editor to get back into editing */
+									editor.getTextPane().transferFocus();
+									if (player.isPlaying()) player.cmd_stop();
+									else player.cmd_playOn();
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+							else if (command.equals("stopMedia")) {
+								try {
+									if (player.isPlaying()) player.cmd_stop();
+								} catch (PanelPlayerException ppe) {
+									ppe.printStackTrace();
+								}
+							}
+	}
 	public JMenu[] getConfiguredMenus() {
 		return configMenus;
 	}
 	
-	//TIBETAN-SPECIFIC!!
-	public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
-		activeKeyboard = kbd;
-		if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
-		org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
-		kbd.activate(dp);
-	}
+	@TIBETAN@public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
+		@TIBETAN@activeKeyboard = kbd;
+		@TIBETAN@if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
+		@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
+		@TIBETAN@kbd.activate(dp);
+	@TIBETAN@}
 }
 
 

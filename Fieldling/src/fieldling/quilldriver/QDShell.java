@@ -1,20 +1,20 @@
-/*
-The contents of this file are subject to the THDL Open Community License
-Version 1.0 (the "License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License on the THDL web site 
-(http://www.thdl.org/).
-
-Software distributed under the License is distributed on an "AS IS" basis, 
-WITHOUT WARRANTY OF ANY KIND, either express or implied. See the 
-License for the specific terms governing rights and limitations under the 
-License. 
-
-The Initial Developer of this software is the Tibetan and Himalayan Digital
-Library (THDL). Portions created by the THDL are Copyright 2001 THDL.
-All Rights Reserved. 
-
-Contributor(s): ______________________________________.
-*/
+/* ***** BEGIN LICENSE BLOCK *****
+ *    Copyright 2003 Edward Garrett
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ***** END LICENSE BLOCK ***** */
 
 package fieldling.quilldriver;
 
@@ -141,6 +141,12 @@ public class QDShell extends JFrame {
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
 				qd.saveTranscript();
+				try {
+					if (qd.checkTimeTimer != null) qd.checkTimeTimer.cancel();
+					qd.getMediaPlayer().destroy();
+				} catch (PanelPlayerException ppe) {
+					ppe.printStackTrace();
+				}
 				System.exit(0);
 			}
 		});
@@ -188,13 +194,14 @@ public class QDShell extends JFrame {
 				}
 			}
 		});
-
+/*
 		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
 		closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));
 		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		*/
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -215,7 +222,7 @@ public class QDShell extends JFrame {
 		projectMenu.add(newItem);
 		projectMenu.addSeparator(); 
 		projectMenu.add(openItem);
-		projectMenu.add(closeItem);
+		//projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
 		projectMenu.addSeparator();
@@ -274,23 +281,20 @@ public class QDShell extends JFrame {
 			qd.setMediaPlayer((PanelPlayer)moviePlayers.get(0)); //set qd media player to default
 		}
 
-		//TIBETAN-SPECIFIC!!
-		org.thdl.tib.input.JskadKeyboardManager keybdMgr = 
-			new org.thdl.tib.input.JskadKeyboardManager(
-				org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-		ButtonGroup keyboardGroup = new ButtonGroup();
-		JMenuItem[] keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-		for (int i=0; i<keybdMgr.size(); i++) {
-		    final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+		@TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+		@TIBETAN@ButtonGroup keyboardGroup = new ButtonGroup();
+		@TIBETAN@JMenuItem[] keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+		@TIBETAN@for (int i=0; i<keybdMgr.size(); i++) {
+		    @TIBETAN@final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
 		    //if (kbd.hasQuickRefFile()) {
-			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-			keyboardItems[i].addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				    qd.changeKeyboard(kbd);
-				}
-			    });
-			keyboardGroup.add(keyboardItems[i]);
-		}
+			@TIBETAN@keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+			@TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
+				@TIBETAN@public void actionPerformed(ActionEvent e) {
+				    @TIBETAN@qd.changeKeyboard(kbd);
+				@TIBETAN@}
+			    @TIBETAN@});
+			@TIBETAN@keyboardGroup.add(keyboardItems[i]);
+		@TIBETAN@}
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		if (configItems.length > 0) {
 			for (int i=0; i<configItems.length; i++)
@@ -302,10 +306,9 @@ public class QDShell extends JFrame {
 				preferencesMenu.add(mediaItems[i]);
 			preferencesMenu.addSeparator();
 		}
-		//TIBETAN-SPECIFIC!!
-		keyboardItems[0].setSelected(true); //set keyboard to Wylie
-		for (int i=0; i<keyboardItems.length; i++)
-			preferencesMenu.add(keyboardItems[i]);
+		@TIBETAN@keyboardItems[0].setSelected(true); //set keyboard to Wylie
+		@TIBETAN@for (int i=0; i<keyboardItems.length; i++)
+			@TIBETAN@preferencesMenu.add(keyboardItems[i]);
 		//preferencesMenu.addSeparator();
 			
 		JMenuBar bar = new JMenuBar();
