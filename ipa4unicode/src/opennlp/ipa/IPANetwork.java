@@ -295,40 +295,55 @@ public class IPANetwork {
                         //FIXME TO DEAL WITH MORE THAN ONE PROFILE PER DIACRITIC
                         IPASymbol symbol = (IPASymbol)mIter.next();
                         List profiles = symbol.getProfiles();
-                        IPASymbol.Profile profile = (IPASymbol.Profile)profiles.get(0);
-                        Set loseSet = new HashSet(profile.removes());
-                        Set gainSet = new HashSet(profile.adds());
-                        Set domainSet = new HashSet(profile.expects()); //domain for this diacritical modifier
-                        Set leftOverGain = new HashSet(gainSet);
-                        leftOverGain.removeAll(domainRestrictions); //for lower tape we only want those things that can't be possible restriction
-                        gainSet.retainAll(domainRestrictions); //for continuation we only care about what could be possible restriction
                         Iterator udder = initialTransitions.iterator();
                         while (udder.hasNext()) {
                             StateTransition iT = (StateTransition)udder.next();
-                            if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
-                                Set outputState = new HashSet(iT.endState.properties);
-                                outputState.removeAll(loseSet);
-                                outputState.addAll(gainSet);
-                                Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
-                                incompatibleWith.addAll(symbol.getIncompatibleWith());
-                                State res = new State(combiningClasses[i], outputState, incompatibleWith);
-                                StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
-                                transitionsForClass[i].add(st);
+                            if (!iT.endState.incompatibleWith.contains(symbol)) {
+                                Iterator pIterator = profiles.iterator();
+                                while (pIterator.hasNext()) {
+                                    IPASymbol.Profile profile = (IPASymbol.Profile)pIterator.next();
+                                    if (iT.endState.properties.containsAll(profile.expects())) {
+                                        Set gainSet = new HashSet(profile.adds());
+                                        Set leftOverGain = new HashSet(gainSet);
+                                        leftOverGain.removeAll(domainRestrictions); //for lower tape we only want those things that can't be possible restriction
+                                        gainSet.retainAll(domainRestrictions); //for continuation we only care about what could be possible restriction
+                                        Set outputState = new HashSet(iT.endState.properties);
+                                        outputState.removeAll(profile.removes());
+                                        outputState.addAll(gainSet);
+                                        Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
+                                        incompatibleWith.addAll(symbol.getIncompatibleWith());
+                                        State res = new State(combiningClasses[i], outputState, incompatibleWith);
+                                        StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
+                                        transitionsForClass[i].add(st);
+                                        break;
+                                    }
+                                }
                             }
                         }
                         for (int k=0; k<i; k++) {
                             Iterator iterX = transitionsForClass[k].iterator();
                             while (iterX.hasNext()) {
                                 StateTransition iT = (StateTransition)iterX.next();
-                                if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
-                                    Set outputState = new HashSet(iT.endState.properties);
-                                    outputState.removeAll(loseSet);
-                                    outputState.addAll(gainSet);
-                                    Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
-                                    incompatibleWith.addAll(symbol.getIncompatibleWith());
-                                    State res = new State(combiningClasses[i], outputState, incompatibleWith);
-                                    StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
-                                    transitionsForClass[i].add(st);
+                                if (!iT.endState.incompatibleWith.contains(symbol)) {
+                                    Iterator pIterator = profiles.iterator();
+                                    while (pIterator.hasNext()) {
+                                        IPASymbol.Profile profile = (IPASymbol.Profile)pIterator.next();
+                                        if (iT.endState.properties.containsAll(profile.expects())) {
+                                            Set gainSet = new HashSet(profile.adds());
+                                            Set leftOverGain = new HashSet(gainSet);
+                                            leftOverGain.removeAll(domainRestrictions); //for lower tape we only want those things that can't be possible restriction
+                                            gainSet.retainAll(domainRestrictions); //for continuation we only care about what could be possible restriction
+                                            Set outputState = new HashSet(iT.endState.properties);
+                                            outputState.removeAll(profile.removes());
+                                            outputState.addAll(gainSet);
+                                            Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
+                                            incompatibleWith.addAll(symbol.getIncompatibleWith());
+                                            State res = new State(combiningClasses[i], outputState, incompatibleWith);
+                                            StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
+                                            transitionsForClass[i].add(st);
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -341,19 +356,20 @@ public class IPANetwork {
                             //FIXME TO DEAL WITH MORE THAN ONE PROFILE PER DIACRITIC
                             IPASymbol symbol = (IPASymbol)mIter.next();
                             List profiles = symbol.getProfiles();
-                            IPASymbol.Profile profile = (IPASymbol.Profile)profiles.get(0);
-                            Set loseSet = new HashSet(profile.removes());
-                            Set gainSet = new HashSet(profile.adds());
-                            Set domainSet = new HashSet(profile.expects());
-                            Set leftOverGain = new HashSet(gainSet);
-                            leftOverGain.removeAll(domainRestrictions); //for lower tape we only want those things that can't be possible restriction
-                            gainSet.retainAll(domainRestrictions); //for continuation we only care about what could be possible restriction
-                            Iterator iterX = transitionsForClass[i].iterator(); 
+                            Iterator iterX = transitionsForClass[i].iterator();
                             while (iterX.hasNext()) {
-                                        StateTransition iT = (StateTransition)iterX.next();
-                                        if (iT.endState.properties.containsAll(domainSet) && !iT.endState.incompatibleWith.contains(symbol)) {
+                                StateTransition iT = (StateTransition)iterX.next();
+                                if (!iT.endState.incompatibleWith.contains(symbol)) {
+                                    Iterator pIterator = profiles.iterator();
+                                    while (pIterator.hasNext()) {
+                                        IPASymbol.Profile profile = (IPASymbol.Profile)pIterator.next();
+                                        if (iT.endState.properties.containsAll(profile.expects())) {
+                                            Set gainSet = new HashSet(profile.adds());
+                                            Set leftOverGain = new HashSet(gainSet);
+                                            leftOverGain.removeAll(domainRestrictions); //for lower tape we only want those things that can't be possible restriction
+                                            gainSet.retainAll(domainRestrictions); //for continuation we only care about what could be possible restriction
                                             Set outputState = new HashSet(iT.endState.properties);
-                                            outputState.removeAll(loseSet);
+                                            outputState.removeAll(profile.removes());
                                             outputState.addAll(gainSet);
                                             Set incompatibleWith = new HashSet(iT.endState.incompatibleWith);
                                             incompatibleWith.addAll(symbol.getIncompatibleWith());
@@ -361,8 +377,11 @@ public class IPANetwork {
                                             StateTransition st = new StateTransition(iT.endState, res, symbol.getUnicodeCharacter(), leftOverGain);
                                             if (!(transitionsForClass[i].contains(st) || bonus.contains(st)))
                                                 bonus.add(st);
+                                            break;
                                         }
                                     }
+                                }
+                            }
                     }
                     transitionsForClass[i].addAll(bonus);
             } while (bonus.size() > 0); //there are still more states

@@ -1,4 +1,13 @@
-﻿NOTE: Double diacritics ARE possible: n̠̥ ẽ̹ t̼̬ e̝̙
+﻿(1) SYMBOLS WITH MORE THAN ONE PROFILE
+
+Retraction: k̠ t̠
+Dental: no examples
+Linguolabial: no examples
+
+
+(2) MUTUALLY EXCLUSIVE SYMBOLS
+
+Double diacritics ARE possible: n̠̥ ẽ̹ t̼̬ e̝̙
 Secondary articulation: tʲ tˠ tʷˠ tʲʷˠ
 Plosive release: dˡ dⁿ dˡⁿ
 Place diacritics: t̠ t̼ t̼̠

@@ -43,6 +43,17 @@
                 <S audio="IPAHandbook/French/Narrative/narrative5.wav">alɔ̈ʁ̞ lə sɔlɛʲ kɔmɑ̃sa bʁ̥ije ‖ e o bu dɛ̹̃ mɔmɑ̃ lə vwɑjaʒœ ʁeʃofe ota sɔ̃ mɑto ‖</S>
                 <S audio="IPAHandbook/French/Narrative/narrative6.wav">ɛ̃si la biz dy ʁəkɔnɛt kə lə sɔlɛʲ ɛtɛ lə ply fɔ̈ʁ̞.</S>
         </narrative>
+        <narrative lang="Hausa">
+                <S audio="IPAHandbook/Hausa/Narrative/narrative1.wav">wətə raːnaː, də̥̀ ʔɪskə̀r hʊntuːrùː tə ʔərèːwəʔ | də̀ raːnaː sʊkə̀ ji ɡə̀rdəmàː ʔə̀ kə̂n koːwàːtʃeːtʃèː də̀ɡə̀ tʃɨkɪnsù tə ɸi kʼərɸiː.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative2.wav">tò sʊnàː tʃɨkɪn wənnə̀ŋ ɡə̀rdəmàː | səj ɡàː wənɨ mətə̀fɪjiː, jaː zoː səɲiː.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative3.wav">tò ʃiːkə̀ːnən, səj ʔɪskər hʊ̀ntuːrùː də̀ raːnaː sʊkə̀ ji jə̀rdʒeːdʒeːnìjaː, ?ə̀ kə̀n jə̂w, zaːʔə̀ ji kʷʼʊreʔ, dɔn ʔè ɡə̀ koː wàː zə̂j ʔijə̀ sâː mətə̀fɪ̀jɪ̀n jə̀ tuːɓèː rìːɡərsə̀ʔ ʔə̀ kə̂n tiːlə̀s.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative4.wav">tò ʃiːkèːnən, səj ʔɪskə̀r hʊ̀ntuːrùː tə buːsoː səɲɪ ntə̀ʔ, də kʼərɸiː | ʔijə̀ jɪntə̀ | ə̀mmaː ìnâː.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative5.wav">səj tə kaːsə̀ sâː ʃiː wənnə̀m mətə̀fɪjɪː | jə̀ kʷəɓèː rìːɡərsèʔ, dɔn kʷʊ̀wa, jaː dəndə̀nneː rìːɡə̂r gə̀mgə̀m ʔə̀ jɨ̀jɪnsə̀ʔ.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative6.wav">tò də̀ɡə̀ kʼə̀rʃeː dəj, səj ʔɪskàː tə səllə̀maː, də̀ɡə nən nèː kʷʊma, ʔɪtə raːnaː | tə ʃɨ̀ɡə naːtə̀ ʔajkɪ̀ŋ.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative7.wav">ʔaj kòː raːnaː | səj tə buːɗoː həskʲəntə̀ də̀ zaːfɪntə̀ wə̀rwə́r.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative8.wav">hə́bə̀ː | kə̀n kə̀ tʃêː mèː, səj ɡàː ʃi wənnə̀m mʊ̀tʊ̂m | mətə̀fɪ̀jiː | jaː kʷəɓə̀ː rìːɡərsàː, bâː gʲɪrmaː də̀ ʔərzɨ̀kiː.</S>
+                <S audio="IPAHandbook/Hausa/Narrative/narrative9.wav">ɡənɨŋ həkə̀ kʷʊ̀wa | səj ʔɪskàː dóːlè tə ?əmmɪ̀ntʃeː ʔə̀ kə̂n tʃêːwaː, ləlleː | raːnaː taː fiː tə̀ kʼərɸiː.</S>
+        </narrative>
         <narrative lang="Hindi">
                 <S audio="IPAHandbook/Hindi/Narrative/narrative1.wav">ʊt̪ːəɾi həʋɑ ɔɾ suɾədʒ ɪs bɑt̪ pəɾ dʒʱəgəɽ ɾəhə t̪ʰe ki həm d̪onõ mẽ zjɑd̪ɑ bəlʋɑn kɔɾ hɛ.</S>
                 <S audio="IPAHandbook/Hindi/Narrative/narrative2.wav">ɪt̪ne mẽ gəɾəm tʃogɑ pɛhne ek mʊsɑfɪɾ ʊd̪ʱəɾ ɑ nɪklɑ.</S>
