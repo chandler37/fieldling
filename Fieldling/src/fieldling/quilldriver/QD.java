@@ -578,7 +578,7 @@ public class QD extends JDesktopPane {
                 buttons.add(editButton);
                 JPanel buttonPanel = new JPanel(new BorderLayout());
                 JPanel subPanel = new JPanel();
-                subPanel.add(new JLabel("Select Mode: "));
+                subPanel.add(new JLabel(messages.getString("SelectMode")));
 		JPanel vePanel = new JPanel(new GridLayout(0,1));
 		vePanel.add(viewButton);
                 vePanel.add(editButton);
