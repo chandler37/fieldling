@@ -33,7 +33,7 @@ import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 
 public class QDShell extends JFrame {
-	
+
     /** the middleman that keeps code regarding Tibetan keyboards
      *  clean */
      /*
@@ -46,14 +46,14 @@ public class QDShell extends JFrame {
 
 	ResourceBundle messages = null;
 	QD qd = null;
-	
+
 	private static int numberOfQDsOpen = 0;
 	public static final String NEW_FILE_ERROR_MESSAGE =
-		"This file already exists! Type a new file name\n" + 
+		"This file already exists! Type a new file name\n" +
 		"instead of selecting an existing file.";
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
-	
+
 	//preference keys
 	public static final String WINDOW_X_KEY = "WINDOW_X";
 	public static final String WINDOW_Y_KEY = "WINDOW_Y";
@@ -69,10 +69,10 @@ public class QDShell extends JFrame {
 	public static final String FONT_FACE_KEY = "FONT_FACE";
 	public static final String FONT_SIZE_KEY = "FONT_SIZE";
 	public static final String CONFIGURATION_KEY = "CONFIGURATION";
-	@TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
-	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
-	
-	
+	public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
+	public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
+
+
 	//preference defaults and values
 	private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
 	public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
@@ -81,9 +81,39 @@ public class QDShell extends JFrame {
 	public static int play_minus = myPrefs.getInt(PLAY_MINUS_KEY, 1000); // milliseconds
 	public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
 	public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-	@TIBETAN@public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
-	
-	
+	public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
+
+
+	//Variables for user Info
+		public JTextField fname,lname;
+		public JButton okbtn,cancelbtn;
+		public JLabel fnamelbl, lnamelbl;
+		public JPanel name;
+		public static String FirstName;
+		public static String LastName;
+
+		class okButtonListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				FirstName = fname.getText();
+				LastName = lname.getText();
+				JOptionPane.showMessageDialog(null,"Thank You " + FirstName +" "+LastName + " for entering your information");
+				dispose();
+
+			}
+		}
+
+		class cancelButtonListener implements ActionListener
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					hide();
+				}
+	}
+
+
+
 	public static void main(String[] args) {
 		try {
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
@@ -122,7 +152,7 @@ public class QDShell extends JFrame {
 	String newURL = null;
 	String editURL = null;
 	String dtdURL = null;
-		
+
 		switch (args.length) {
 			case 4:	dtdURL = new String(args[3]);
 			case 3: newURL = new String(args[2]);
@@ -130,8 +160,8 @@ public class QDShell extends JFrame {
 			case 1: configURL = new String(args[0]);
 		}
 		*/
-		@UNICODE@setTitle("QuillDriver");
-		@TIBETAN@setTitle("QuillDriver-TIBETAN");
+		//NON-TIBETAN setTitle("QuillDriver");
+		setTitle("QuillDriver-TIBETAN");
 		messages = I18n.getResourceBundle();
 
 		/*myPrefs = Preferences.userNodeForPackage(QDShell.class);
@@ -139,12 +169,12 @@ public class QDShell extends JFrame {
 		media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
 		font_face = myPrefs.get(FONT_FACE_KEY, "Serif");
 		font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-		@TIBETAN@tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);*/ 
-		
+		tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);*/
+
 		setLocation(myPrefs.getInt(WINDOW_X_KEY, 0), myPrefs.getInt(WINDOW_Y_KEY, 0));
-		setSize(new Dimension(myPrefs.getInt(WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), 
+		setSize(new Dimension(myPrefs.getInt(WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
 			myPrefs.getInt(WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
-		
+
 		/*
 		// Code for Merlin
 		if (JdkVersionHacks.maximizedBothSupported(getToolkit())) {
@@ -174,11 +204,11 @@ public class QDShell extends JFrame {
 				String sep = System.getProperty("file.separator");
 				String path = "file:" + home + sep + "put-in-home-directory" + sep;
 				qd = new QD(path+"config.xml", path+"edit.xsl", path+"new.xsl", path+"dtd.dtd");*/
-				
+
 				//FIXME! deal with no DTD problem!!!
 				/*ClassLoader cl = this.getClass().getClassLoader();
-				qd = new QD(	cl.getResource("config.xml").toString(), 
-						cl.getResource("edit.xsl").toString(), 
+				qd = new QD(	cl.getResource("config.xml").toString(),
+						cl.getResource("edit.xsl").toString(),
 						cl.getResource("new.xsl").toString(),
 						null);
 				*/
@@ -196,7 +226,7 @@ public class QDShell extends JFrame {
 				if (numberOfQDsOpen == 0) {
 					putPreferences();
 					System.exit(0);
-				} 
+				}
 			}
 		});
 		setVisible(true);
@@ -272,6 +302,17 @@ public class QDShell extends JFrame {
 			}
 		});
 
+		// Added a few lines - shreya
+		JMenuItem UserInfo = new JMenuItem("User Info");
+		UserInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//UserInfo();
+			}
+		});
+
+
+		JMenuItem Feedback = new JMenuItem("Feedback");
+
 		JMenuItem openItem = new JMenuItem(messages.getString("Open"));
 		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
@@ -281,7 +322,7 @@ public class QDShell extends JFrame {
 				if (fc.showDialog(QDShell.this, messages.getString("OpenTranscript")) == JFileChooser.APPROVE_OPTION) {
 					File transcriptFile = fc.getSelectedFile();
 					String transcriptString = transcriptFile.getAbsolutePath();
-					myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));		
+					myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
 					if (qd.getEditor() == null) { //nothing in this QD
 						//qd.saveTranscript();
 						qd.loadTranscript(transcriptFile);
@@ -319,18 +360,20 @@ public class QDShell extends JFrame {
 		quitItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				System.exit(tryToQuit());
-				
+
 					putPreferences();
 					System.exit(0);
 				}
 			}
 		});*/
-		
+
 		projectMenu.add(newItem);
-		projectMenu.addSeparator(); 
+		projectMenu.addSeparator();
 		projectMenu.add(openItem);
+		projectMenu.add(UserInfo);
+		projectMenu.add(Feedback);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
@@ -363,7 +406,7 @@ public class QDShell extends JFrame {
 
 		//projectMenu.addSeparator();
 		//projectMenu.add(quitItem);
-		
+
 		try {
 		final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(this.getClass().getClassLoader());
 
@@ -406,10 +449,10 @@ public class QDShell extends JFrame {
 				}
 			}
 		}
-		
+
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
 		ButtonGroup mediaGroup = new ButtonGroup();
-		JMenuItem[] mediaItems = new JRadioButtonMenuItem[moviePlayers.size()];		
+		JMenuItem[] mediaItems = new JRadioButtonMenuItem[moviePlayers.size()];
 		for (int i=0; i<moviePlayers.size(); i++) {
 			final PanelPlayer mPlayer = (PanelPlayer)moviePlayers.get(i);
 			mediaItems[i] = new JRadioButtonMenuItem(mPlayer.getIdentifyingName());
@@ -450,38 +493,38 @@ public class QDShell extends JFrame {
 				getFontPreferences();
 			}
 		});
-		
+
 		JMenuItem timeCodeItem = new JMenuItem("Time coding...");
 		timeCodeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getTimeCodePreferences();
 			}
 		});
-		
-		@TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
-		@TIBETAN@JMenuItem[] keyboardItems = null;
-		@TIBETAN@try {
-		@TIBETAN@keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-		@TIBETAN@}catch (Exception e) {}
-		@TIBETAN@if (keybdMgr != null) {
-		@TIBETAN@ButtonGroup keyboardGroup = new ButtonGroup();
-		@TIBETAN@keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-		@TIBETAN@for (int i=0; i<keybdMgr.size(); i++) {
-		    @TIBETAN@final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+
+		org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
+		JMenuItem[] keyboardItems = null;
+		try {
+		keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+		}catch (Exception e) {}
+		if (keybdMgr != null) {
+		ButtonGroup keyboardGroup = new ButtonGroup();
+		keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+		for (int i=0; i<keybdMgr.size(); i++) {
+		    final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
 		    //if (kbd.hasQuickRefFile()) {
-			@TIBETAN@keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-			@TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
-				@TIBETAN@public void actionPerformed(ActionEvent e) {
-				    @TIBETAN@qd.changeKeyboard(kbd);
-				    @TIBETAN@myPrefs.put(TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
-				@TIBETAN@}
-			    @TIBETAN@});
-			@TIBETAN@keyboardGroup.add(keyboardItems[i]);
-		@TIBETAN@}
-		@TIBETAN@}
+			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+			keyboardItems[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				    qd.changeKeyboard(kbd);
+				    myPrefs.put(TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
+				}
+			    });
+			keyboardGroup.add(keyboardItems[i]);
+		}
+		}
 
 
-		
+
 		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
 		preferencesMenu.add(fontItem);
 		preferencesMenu.add(timeCodeItem);
@@ -496,22 +539,22 @@ public class QDShell extends JFrame {
 				preferencesMenu.add(mediaItems[i]);
 			preferencesMenu.addSeparator();
 		}
-		
-		@TIBETAN@if (keybdMgr != null) {
-		@TIBETAN@String userKeyboard = myPrefs.get(TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
-		@TIBETAN@int i;
-		@TIBETAN@for (i=0; i<keybdMgr.size(); i++)
-			@TIBETAN@if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
-		@TIBETAN@if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
-			@TIBETAN@keyboardItems[0].setSelected(true);
-		@TIBETAN@else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
-			@TIBETAN@keyboardItems[i].setSelected(true);
-			@TIBETAN@qd.changeKeyboard(keybdMgr.elementAt(i));
-		@TIBETAN@}
-		@TIBETAN@for (int k=0; k<keyboardItems.length; k++)
-			@TIBETAN@preferencesMenu.add(keyboardItems[k]);
-		@TIBETAN@}
-			
+
+		if (keybdMgr != null) {
+		String userKeyboard = myPrefs.get(TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
+		int i;
+		for (i=0; i<keybdMgr.size(); i++)
+			if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
+		if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
+			keyboardItems[0].setSelected(true);
+		else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
+			keyboardItems[i].setSelected(true);
+			qd.changeKeyboard(keybdMgr.elementAt(i));
+		}
+		for (int k=0; k<keyboardItems.length; k++)
+			preferencesMenu.add(keyboardItems[k]);
+		}
+
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
@@ -528,6 +571,65 @@ public class QDShell extends JFrame {
 			return null;
 		}
 	}
+
+	// User Information
+	private void UserInfo()
+	{
+
+		//setTitle("User Information");
+		//setSize(275,225);
+		name = new JPanel(new BorderLayout());
+		name.setLayout(null);
+		setContentPane(name);
+		add(name);
+
+
+		fname=new JTextField("");
+		lname=new JTextField("");
+		fname.setSize(150,30);
+		lname.setSize(150,30);
+		fname.setLocation(100,50);
+		lname.setLocation(100,100);
+		name.add(fname);
+		name.add(lname);
+
+		//labels
+		fnamelbl=new JLabel("First Name");
+		lnamelbl=new JLabel("Last Name");
+		fnamelbl.setSize(100,100);
+		lnamelbl.setSize(100,100);
+		fnamelbl.setLocation(10,25);
+		lnamelbl.setLocation(10,70);
+		name.add(fnamelbl);
+		name.add(lnamelbl);
+
+		// buttons
+		okbtn=new JButton("OK");
+		okbtn.setSize(70,25);
+		okbtn.addActionListener(new okButtonListener());
+
+		cancelbtn=new JButton("Cancel");
+		cancelbtn.setSize(100,25);
+		cancelbtn.addActionListener(new cancelButtonListener());
+
+
+		okbtn.setLocation(75,150);
+		cancelbtn.setLocation(150,150);
+		name.add(okbtn);
+		name.add(cancelbtn);
+
+		JPanel preferencesPanel = new JPanel();
+		preferencesPanel.setLayout(new GridLayout(2,1));
+		preferencesPanel.add(name);
+
+		JOptionPane pane = new JOptionPane(preferencesPanel);
+		JDialog dialog = pane.createDialog(this, "User Information");
+
+		// This returns only when the user has closed the dialog
+		dialog.show();
+
+	}
+
 	private void makeRecentlyOpened(String s) {
 		String r = myPrefs.get(RECENT_FILES_KEY, null);
 		if (r == null) myPrefs.put(RECENT_FILES_KEY, s);
@@ -567,13 +669,13 @@ public class QDShell extends JFrame {
 		 JTextField playMinusField = new JTextField(String.valueOf(play_minus));
 		 playMinusField.setPreferredSize(new Dimension(240,30));
 		 playMinusPanel.add(playMinusField);
-		 
+
 		 JPanel preferencesPanel = new JPanel();
 		preferencesPanel.setLayout(new GridLayout(3,1));
 		preferencesPanel.add(slowAdjustPanel);
 		preferencesPanel.add(rapidAdjustPanel);
 		preferencesPanel.add(playMinusPanel);
-		
+
 		 JOptionPane pane = new JOptionPane(preferencesPanel);
 		 JDialog dialog = pane.createDialog(this, "Time Coding Preferences");
 		 // This returns only when the user has closed the dialog
@@ -583,7 +685,7 @@ public class QDShell extends JFrame {
 			slow_adjust = Integer.parseInt(slowAdjustField.getText());
 		} catch (NumberFormatException ne) {
 		}
-		
+
 		 int old_rapid_adjust = rapid_adjust;
 		 try {
 			rapid_adjust = Integer.parseInt(rapidAdjustField.getText());
@@ -603,15 +705,15 @@ public class QDShell extends JFrame {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames = genv.getAvailableFontFamilyNames();
 
-		@TIBETAN@JPanel tibetanPanel;
-		@TIBETAN@JComboBox tibetanFontSizes;
-		@TIBETAN@tibetanPanel = new JPanel();
-		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
-		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
-		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
-		@TIBETAN@tibetanFontSizes.setEditable(true);
-		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
+		JPanel tibetanPanel;
+		JComboBox tibetanFontSizes;
+		tibetanPanel = new JPanel();
+		tibetanPanel.setBorder(BorderFactory.createTitledBorder("Tibetan Font Size"));
+		tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
+		tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
+		tibetanFontSizes.setSelectedItem(String.valueOf(tibetan_font_size));
+		tibetanFontSizes.setEditable(true);
+		tibetanPanel.add(tibetanFontSizes);
 
 		JPanel romanPanel;
 		JComboBox romanFontFamilies;
@@ -631,9 +733,9 @@ public class QDShell extends JFrame {
 		romanPanel.add(romanFontSizes);
 
 		JPanel preferencesPanel = new JPanel();
-		@UNICODE@preferencesPanel.setLayout(new BorderLayout());
-		@TIBETAN@preferencesPanel.setLayout(new GridLayout(2,1));
-		@TIBETAN@preferencesPanel.add(tibetanPanel);
+		//NON-TIBETAN preferencesPanel.setLayout(new BorderLayout());
+		preferencesPanel.setLayout(new GridLayout(2,1));
+		preferencesPanel.add(tibetanPanel);
 		preferencesPanel.add(romanPanel);
 
 		JOptionPane pane = new JOptionPane(preferencesPanel);
@@ -641,13 +743,13 @@ public class QDShell extends JFrame {
 
         // This returns only when the user has closed the dialog
 		dialog.show();
-		
-		@TIBETAN@int old_tibetan_font_size = tibetan_font_size;
-		@TIBETAN@try {
-			@TIBETAN@tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
-		@TIBETAN@} catch (NumberFormatException ne) {
-			@TIBETAN@tibetan_font_size = old_tibetan_font_size;
-		@TIBETAN@}
+
+		int old_tibetan_font_size = tibetan_font_size;
+		try {
+			tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
+		} catch (NumberFormatException ne) {
+			tibetan_font_size = old_tibetan_font_size;
+		}
 
 		String old_font_face = new String(font_face);
 		font_face = romanFontFamilies.getSelectedItem().toString();
@@ -661,15 +763,15 @@ public class QDShell extends JFrame {
 
 		myPrefs.put(FONT_FACE_KEY, font_face);
 		myPrefs.putInt(FONT_SIZE_KEY, font_size);
-		@TIBETAN@myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
-		
+		myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
+
 		if (qd.getEditor() != null) {
-			@UNICODE@if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
-			@TIBETAN@if (!(old_font_size == font_size && old_font_face.equals(font_face) && old_tibetan_font_size == tibetan_font_size)) {
-				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
-				@TIBETAN@dp.setByUserTibetanFontSize(tibetan_font_size);
-				@TIBETAN@dp.setByUserRomanAttributeSet(font_face, font_size);
-				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(font_face, Font.PLAIN, font_size));
+			//NON-TIBETAN if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
+			if (!(old_font_size == font_size && old_font_face.equals(font_face) && old_tibetan_font_size == tibetan_font_size)) {
+				org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+				dp.setByUserTibetanFontSize(tibetan_font_size);
+				dp.setByUserRomanAttributeSet(font_face, font_size);
+				//NON-TIBETAN qd.getEditor().getTextPane().setFont(new Font(font_face, Font.PLAIN, font_size));
 				qd.getEditor().render();
 			}
 		}
@@ -684,7 +786,7 @@ public class QDShell extends JFrame {
 			}
 			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver);
 		}
-    
+
 		//the description of this filter
 		public String getDescription() {
 			return "QD File Format (" + QDShell.dotQuillDriver + ")";
