@@ -27,16 +27,16 @@
 # normalized.
 
 
-# I'm using backslash, not forward slash as a quote character because
-# it's rare for Unix paths to contain a backslash.  If your path does,
-# you're out of luck.  FIXME: Die nicely if that's the case.  FIXME:
-# Which sed versions support sqfooqbarq?
+# I'm using '+', not forward slash as a quote character because it's
+# rarer for Unix paths to contain a plus sign than a forward slash.
+# If your path does contain '+', then you're out of luck.  FIXME: Die
+# nicely if that's the case.
 newfile="$1"
 old="$2"
 new="$3"
-oldfile=`echo "$1" | sed -e "s\\\\${new}\\\\${old}\\\\"`
+oldfile=`echo "$1" | sed -e "s+${new}+${old}+"`
 if test "$newfile" = "$oldfile"; then
-    echo "Oops!  old file and new file are both '$newfile'"
+    echo "Oops!  old file and new file are both '$newfile'.  sed must not support '+' as a quote character for 's//'."
     exit 1
 fi
 
@@ -44,17 +44,15 @@ fi
 # 'diffreshen foo-old foo' is used.  So test for the existence of
 # s/^$new/$old/ and abort if it exists.
 
-# With my version of cmp, this test is redundant because cmp returns 2
-# on trouble and 1 for a diff.  Both are treated the same way.  But
-# for clarity and robustness:
-if test -x "$oldfile"; then
-    if cmp "$oldfile" "$newfile" 1>/dev/null 2>&1; then
-        # FIXME: Find out which versions of touch support this and
-        # document that as a dependence.
-        touch -r "$oldfile" "$newfile"
-        if test "$DFVERBOSE" = "true"; then
-            echo "touching '$newfile' so that is has the same modification time as '$oldfile'"
-        fi
+# Both GNU cmp and Solaris cmp return 2 on trouble and 1 for a diff.
+# Both are treated the same way here, so we don't care if $oldfile
+# exists.
+if cmp "$oldfile" "$newfile" 1>/dev/null 2>&1; then
+    # FIXME: Find out which versions of touch support this and
+    # document that as a dependence.
+    touch -r "$oldfile" "$newfile"
+    if test "$DFVERBOSE" = "true"; then
+        echo "touching '$newfile' so that is has the same modification time as '$oldfile'"
     fi
 fi
 exit 0
