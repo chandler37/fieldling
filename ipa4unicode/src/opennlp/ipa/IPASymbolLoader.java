@@ -44,7 +44,7 @@ public class IPASymbolLoader {
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(IPASymbolLoader.class.getResource("UnicodeData.txt").openStream()));
             while ((line = reader.readLine()) != null) {
-                Character codePoint = UnicodeUtils.getCharacterForCodePoint(line.substring(0,4));
+                Character codePoint = new Character(UnicodeUtils.getCharacterForCodePoint(line.substring(0,4)));
                 if (IPASymbol.existsSymbol(codePoint)) {
                     IPASymbol.newSymbol(codePoint).setUnicodeData(line.split(";"));
                     k++;

@@ -369,7 +369,7 @@ public class IPANetwork {
             StateTransition st = (StateTransition)iter.next();
             g.put(st.upper, st);
             Map h = new HashMap();
-            h.put(ZERO_CHAR, new StateTransition(st.endState, finalXState, ZERO_CHAR, st.endState.properties));
+            h.put(ZERO_CHAR, new StateTransition(st.endState, finalXState, ZERO_CHAR.charValue(), st.endState.properties));
             f.put(st.endState, h);
         }
         f.put(initialState, g);
@@ -385,7 +385,7 @@ public class IPANetwork {
                     m = (Map)f.get(s);
                 else {
                     m = new HashMap();
-                    m.put(ZERO_CHAR, new StateTransition(st.startState, finalXState, ZERO_CHAR, st.startState.properties));
+                    m.put(ZERO_CHAR, new StateTransition(st.startState, finalXState, ZERO_CHAR.charValue(), st.startState.properties));
                     f.put(s, m);
                 }
                 m.put(st.upper, st);
@@ -395,7 +395,7 @@ public class IPANetwork {
                     h = new HashMap();
                     f.put(st.endState, h);
                 }
-                h.put(ZERO_CHAR, new StateTransition(st.endState, finalXState, ZERO_CHAR, st.endState.properties));
+                h.put(ZERO_CHAR, new StateTransition(st.endState, finalXState, ZERO_CHAR.charValue(), st.endState.properties));
             }
         }
         return f;
