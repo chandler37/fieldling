@@ -92,6 +92,8 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 public class QD extends JDesktopPane {
+    protected static Color hColor = Color.cyan;
+    
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected XMLEditor editor = null;
@@ -558,7 +560,13 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 
                 
 				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
-				hp = new TextHighlightPlayer(view, Color.cyan);
+                
+                try {
+                    hColor = Color.decode(PreferenceManager.highlight_color);
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                }
+				hp = new TextHighlightPlayer(view, hColor);
                 
                 for (int ok=0; ok<namespaces.length; ok++)
                     System.out.println(namespaces[ok].toString());

@@ -688,11 +688,22 @@ public class QDShell extends JFrame {
 		romanPanel.add(romanFontFamilies);
 		romanPanel.add(romanFontSizes);
 
+        JPanel highlightPanel;
+        JLabel highlightLabel;
+        JTextField highlightField;
+        highlightPanel = new JPanel();
+        highlightPanel.setBorder(BorderFactory.createTitledBorder("Highlight Color"));
+        highlightLabel = new JLabel("Enter the hex code of the highlight color (see http://www.hypersolutions.org/pages/rgbhex.html):");
+        highlightField = new JTextField(prefmngr.highlight_color);
+        highlightPanel.setLayout(new BorderLayout());
+        highlightPanel.add(highlightLabel, BorderLayout.NORTH);
+        highlightPanel.add(highlightField, BorderLayout.CENTER);
+        
 		JPanel preferencesPanel = new JPanel();
-		@UNICODE@preferencesPanel.setLayout(new BorderLayout());
-		@TIBETAN@preferencesPanel.setLayout(new GridLayout(2,1));
+		preferencesPanel.setLayout(new GridLayout(0,1));
 		@TIBETAN@preferencesPanel.add(tibetanPanel);
 		preferencesPanel.add(romanPanel);
+        preferencesPanel.add(highlightPanel);
 
 		JOptionPane pane = new JOptionPane(preferencesPanel);
 		JDialog dialog = pane.createDialog(this, "Font and Style Preferences");
@@ -731,6 +742,19 @@ public class QDShell extends JFrame {
 				qd.getEditor().render();
 			}
 		}
+        
+        String hexColor = highlightField.getText();
+        try {
+            Color c = Color.decode("0x"+hexColor);
+            prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
+            if (qd.getEditor() != null) {
+                if (qd.hp != null) {
+                    qd.hp.setHighlightColor(c);
+                }
+            }
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+        }
 	}
 
 	private class QDFileFilter extends javax.swing.filechooser.FileFilter {

@@ -41,7 +41,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	protected JScrollPane scrollPane;
 	protected TranscriptView view;
 
-	public TextHighlightPlayer(TranscriptView tView, Color highlightcolor)
+	public TextHighlightPlayer(TranscriptView tView, Color highlightColor)
 	{
 		view = tView;
 		text = view.getTextComponent();
@@ -52,7 +52,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 */	
 		highlights = new Hashtable();
 		highlighter = text.getHighlighter();
-		highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightcolor);
+		setHighlightColor(highlightColor);
 		/*
 		text.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -74,6 +74,9 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		setLayout(new GridLayout(1,1));
 		add(scrollPane);
 	}
+    public void setHighlightColor(Color highlightColor) {
+        highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightColor);
+    }
 	public void refresh() {
 		//FIXME FIXME FIXME!!!
 		if (view instanceof XMLView) {
