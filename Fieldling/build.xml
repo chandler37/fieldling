@@ -39,7 +39,8 @@ for Tibetan-only QuillDriver
 	<property name="build.eg"       value="${build.doc}/eg"/>
 	
 	<property name="distrib.src"      value="distribSrc"/>
-	
+
+
 	<path id="my.classpath">
 		<fileset id="extensions" dir="${ext}">
 			<include name="*.jar"/>
@@ -49,7 +50,6 @@ for Tibetan-only QuillDriver
 
 <!--
 	<path id="my.classpath">
-		<path refid="my.classpath"/>
 		<pathelement location="${ext}/xml-apis.jar"/>
 		<pathelement location="${ext}/xercesImpl.jar"/>
 		<pathelement location="${ext}/xalan.jar"/>
@@ -58,6 +58,9 @@ for Tibetan-only QuillDriver
 		<pathelement location="${ext}/jaxen-jdom.jar"/>
 		<pathelement location="${ext}/saxpath.jar"/>
 		<pathelement location="${ext}/Jskad.jar"/>
+		<pathelement location="${ext}/QTJava.zip"/>
+		<pathelement location="${ext}/java40.jar"/>
+		<pathelement location="${ext}/jmf.jar"/>
 	</path>
 -->
 
@@ -135,14 +138,14 @@ for Tibetan-only QuillDriver
 		IF YOU DO THIS THEN THE EXTENSIONS ARE NOT FOUND (AT LEAST ON MAC OS X. 
 		SO INSTEAD I RUN THE CLASS AND PUT THE JAR AT THE HEAD OF THE CLASSPATH. -->
 		
-  <target name="qd-run" depends="qd-jar" description="runs QuillDriver">
-	<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
-		<classpath>
-			<pathelement location="${build.dist}/quilldriver.jar"/>
-			<path refid="my.classpath"/>
-		</classpath>
-	</java>
-</target>
+	<target name="qd-run" depends="qd-jar" description="runs QuillDriver">
+		<java classname="fieldling.quilldriver.QDShell" jvm="${jvm}" fork="yes">
+			<classpath>
+				<pathelement location="${build.dist}/quilldriver.jar"/>
+				<path refid="my.classpath"/>
+			</classpath>
+		</java>
+	</target>
   
 	<target name="doc" depends="mp-compile,qd-compile" description="Build the documentation">
 		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${src.dir}" destdir="${build.doc}/api" bottom="Programme de These">
