@@ -65,13 +65,13 @@ public class QDShell extends JFrame {
 
 
 	//preference defaults and values
-	public String media_directory ;
-	public int slow_adjust;
-	public int rapid_adjust;
-	public int play_minus;
-	public String font_face;
-	public int font_size;
-	public int tibetan_font_size;
+	public static String media_directory ;
+	public static int slow_adjust;
+	public static int rapid_adjust;
+	public static int play_minus;
+	public static String font_face;
+	public static int font_size;
+	public static int tibetan_font_size;
 
 	public String working_directory;
 	public String tibetan_keyboard;
