@@ -28,9 +28,14 @@ import javax.swing.text.*;
 import javax.swing.text.rtf.*;
 import java.util.prefs.*;
 
+import java.lang.reflect.*;
+
+
 import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
+import fieldling.quilldriver.*;
+
 
 public class QDShell extends JFrame {
 
@@ -46,6 +51,10 @@ public class QDShell extends JFrame {
 
 	ResourceBundle messages = null;
 	QD qd = null;
+	QDShell qds = null;
+
+	PreferenceManager prefmngr = new PreferenceManager();
+
 
 	private static int numberOfQDsOpen = 0;
 	public static final String NEW_FILE_ERROR_MESSAGE =
@@ -54,34 +63,23 @@ public class QDShell extends JFrame {
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 
-	//preference keys
-	public static final String WINDOW_X_KEY = "WINDOW_X";
-	public static final String WINDOW_Y_KEY = "WINDOW_Y";
-	public static final String WINDOW_WIDTH_KEY = "WINDOW_WIDTH";
-	public static final String WINDOW_HEIGHT_KEY = "WINDOW_HEIGHT";
-	public static final String WORKING_DIRECTORY_KEY = "WORKING_DIRECTORY";
-	public static final String RECENT_FILES_KEY = "RECENT_FILES";
-	public static final String MEDIA_DIRECTORY_KEY = "MEDIA_DIRECTORY";
-	public static final String MEDIA_PLAYER_KEY = "MEDIA_PLAYER_KEY";
-	public static final String SLOW_ADJUST_KEY = "SLOW_ADJUST";
-	public static final String RAPID_ADJUST_KEY = "RAPID_ADJUST";
-	public static final String PLAY_MINUS_KEY = "PLAY_MINUS";
-	public static final String FONT_FACE_KEY = "FONT_FACE";
-	public static final String FONT_SIZE_KEY = "FONT_SIZE";
-	public static final String CONFIGURATION_KEY = "CONFIGURATION";
-	public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
-	public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
-
 
 	//preference defaults and values
-	private static Preferences myPrefs = Preferences.userNodeForPackage(QDShell.class);
-	public static String media_directory = myPrefs.get(MEDIA_DIRECTORY_KEY, System.getProperty("user.home"));
-	public static int slow_adjust = myPrefs.getInt(SLOW_ADJUST_KEY, 25); //in milliseconds
-	public static int rapid_adjust = myPrefs.getInt(RAPID_ADJUST_KEY, 250); //in milliseconds
-	public static int play_minus = myPrefs.getInt(PLAY_MINUS_KEY, 1000); // milliseconds
-	public static String font_face = myPrefs.get(FONT_FACE_KEY, "Courier");
-	public static int font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
-	public static int tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);
+	public String media_directory ;
+	public int slow_adjust;
+	public int rapid_adjust;
+	public int play_minus;
+	public String font_face;
+	public int font_size;
+	public int tibetan_font_size;
+
+	public String working_directory;
+	public String tibetan_keyboard;
+	public String recent_files;
+	public String configuration_key;
+	public String media_player;
+
+	public int xl,yl,ww,wh;
 
 
 	public static void main(String[] args) {
@@ -141,9 +139,9 @@ public class QDShell extends JFrame {
 		font_size = myPrefs.getInt(FONT_SIZE_KEY, 14);
 		tibetan_font_size = myPrefs.getInt(TIBETAN_FONT_SIZE_KEY, 36);*/
 
-		setLocation(myPrefs.getInt(WINDOW_X_KEY, 0), myPrefs.getInt(WINDOW_Y_KEY, 0));
-		setSize(new Dimension(myPrefs.getInt(WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
-			myPrefs.getInt(WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
+		setLocation(xl, yl);
+
+		setSize(new Dimension(ww,wh));
 
 		/*
 		// Code for Merlin
@@ -182,6 +180,9 @@ public class QDShell extends JFrame {
 						cl.getResource("new.xsl").toString(),
 						null);
 				*/
+
+				qds=new QDShell();	// for reflection APIs
+
 				qd = new QD();
 				getContentPane().add(qd);
 				setJMenuBar(getQDShellMenu());
@@ -202,11 +203,19 @@ public class QDShell extends JFrame {
 		setVisible(true);
 	}
 	private void putPreferences() {
-		myPrefs.putInt(WINDOW_X_KEY, getX());
-		myPrefs.putInt(WINDOW_Y_KEY, getY());
-		myPrefs.putInt(WINDOW_WIDTH_KEY, getWidth());
-		myPrefs.putInt(WINDOW_HEIGHT_KEY, getHeight());
-		myPrefs.put(MEDIA_DIRECTORY_KEY, media_directory);
+
+		try{
+
+			prefmngr.wxk.setInt(qds, getX());
+			prefmngr.wyk.setInt(qds, getY());
+			prefmngr.wwk.setInt(qds, getWidth());
+			prefmngr.whk.setInt(qds, getHeight());
+			prefmngr.md.set(qds, media_directory);
+
+		 }  catch (IllegalAccessException e) {
+		          System.out.println(e);
+		      }
+
 	}
 	private void closeThisQDFrame() {
 		/*i first used dispose() instead of hide(), which should clear up memory,
@@ -237,7 +246,7 @@ public class QDShell extends JFrame {
 				if (fc.showDialog(QDShell.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 					File mediaFile = fc.getSelectedFile();
 					try {
-						JFileChooser fc2 = new JFileChooser(new File(myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+						JFileChooser fc2 = new JFileChooser(new File(working_directory));
 						fc2.addChoosableFileFilter(new QDFileFilter());
 
 						Font ipaFont = new Font("SILDoulosUnicodeIPA",Font.PLAIN,10);
@@ -257,7 +266,15 @@ public class QDShell extends JFrame {
 								else transcriptString = transcriptString.substring(0, i) + dotQuillDriver;
 								transcriptFile = new File(transcriptString);
 								fc2.rescanCurrentDirectory();
-								myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
+
+								try{
+
+									prefmngr.wd.set(qds, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
+
+								 }  catch (IllegalAccessException ie)
+								 {
+										          System.out.println(ie);
+		      					 }
 								String mediaString = mediaFile.getAbsolutePath();
 								media_directory = mediaString.substring(0, mediaString.lastIndexOf(FILE_SEPARATOR)+1);
 								String mediaString2 = mediaFile.toURL().toString();
@@ -283,12 +300,18 @@ public class QDShell extends JFrame {
 		openItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		openItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(new File(myPrefs.get(WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+				JFileChooser fc = new JFileChooser(new File(working_directory));
 				fc.addChoosableFileFilter(new QDFileFilter());
 				if (fc.showDialog(QDShell.this, messages.getString("OpenTranscript")) == JFileChooser.APPROVE_OPTION) {
 					File transcriptFile = fc.getSelectedFile();
 					String transcriptString = transcriptFile.getAbsolutePath();
-					myPrefs.put(WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
+
+					try{
+						prefmngr.wd.set(qds, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
+					 }  catch (IllegalAccessException ie) {
+							          System.out.println(ie);
+		      		 }
+
 					if (qd.getEditor() == null) { //nothing in this QD
 						//qd.saveTranscript();
 						qd.loadTranscript(transcriptFile);
@@ -342,7 +365,9 @@ public class QDShell extends JFrame {
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
 
-		String r = myPrefs.get(RECENT_FILES_KEY, null);
+
+
+		String r = recent_files;
 		if (r != null) {
 			projectMenu.addSeparator();
 			StringTokenizer tok = new StringTokenizer(r, ",");
@@ -381,7 +406,11 @@ public class QDShell extends JFrame {
 			configItems[i] = new JRadioButtonMenuItem(configurations[i].getName());
 			configItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					myPrefs.put(CONFIGURATION_KEY, configurations[k].getName());
+					try{
+							prefmngr.ck.set(qds, configurations[k].getName());
+					   }  catch (IllegalAccessException ie) {
+								          System.out.println(ie);
+		      		   }
 					if (qd.configure(configurations[k])) { //cannot re-configure if transcript is already loaded
 						JMenuBar bar = QDShell.this.getJMenuBar();
 						JMenu fileMenu = bar.getMenu(0);
@@ -405,8 +434,11 @@ public class QDShell extends JFrame {
 			});
 			configGroup.add(configItems[i]);
 		}
-		if (configItems.length > 0) {
-			String configName = myPrefs.get(CONFIGURATION_KEY, configurations[0].getName());
+		if (configItems.length > 0)
+		{
+
+
+			String configName = configuration_key;
 			for (int j=0; j<configItems.length; j++) {
 				if (configName.equals(configurations[j].getName())) {
 					configItems[j].setSelected(true);
@@ -425,14 +457,18 @@ public class QDShell extends JFrame {
 			mediaItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					qd.setMediaPlayer(mPlayer);
-					myPrefs.put(MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
+					try{
+							prefmngr.mpk.set(qds, mPlayer.getIdentifyingName());
+						}  catch (IllegalAccessException ie) {
+							          System.out.println(ie);
+		      		   }
 				}
 			});
 			mediaGroup.add(mediaItems[i]);
 		}
 		if (mediaItems.length > 0) {
 			PanelPlayer mPlayer = (PanelPlayer)moviePlayers.get(0);
-			String myPlayerName = myPrefs.get(MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
+			String myPlayerName = media_player;
 			if (myPlayerName.equals(mPlayer.getIdentifyingName())) { //user's player identical to QD's default player
 				mediaItems[0].setSelected(true);
 				qd.setMediaPlayer(mPlayer);
@@ -482,7 +518,13 @@ public class QDShell extends JFrame {
 			keyboardItems[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 				//    qd.changeKeyboard(kbd);
-				    myPrefs.put(TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
+
+				try{
+
+				    	prefmngr.tkk.set(qds,kbd.getIdentifyingString());
+				    }  catch (IllegalAccessException ie) {
+						          System.out.println(ie);
+		      		}
 				}
 			    });
 			keyboardGroup.add(keyboardItems[i]);
@@ -505,7 +547,7 @@ public class QDShell extends JFrame {
 		}
 
 		if (keybdMgr != null) {
-		String userKeyboard = myPrefs.get(TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
+		String userKeyboard = tibetan_keyboard;
 		int i;
 		for (i=0; i<keybdMgr.size(); i++)
 			if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
@@ -551,8 +593,13 @@ public class QDShell extends JFrame {
 	}
 
 	private void makeRecentlyOpened(String s) {
-		String r = myPrefs.get(RECENT_FILES_KEY, null);
-		if (r == null) myPrefs.put(RECENT_FILES_KEY, s);
+		String r = recent_files;
+		if (r == null)
+		try{
+				prefmngr.rfk.set(qds, s);
+			}  catch (IllegalAccessException ie) {
+				     System.out.println(ie);
+		    }
 		else {
 			LinkedList recents = new LinkedList();
 			recents.add(s);
@@ -569,7 +616,12 @@ public class QDShell extends JFrame {
 				sb.append((String)recents.removeFirst());
 				sb.append(',');
 			}
-			myPrefs.put(RECENT_FILES_KEY, sb.toString());
+
+			try{
+					prefmngr.rfk.set(qds, sb.toString());
+				}  catch (IllegalAccessException ie) {
+						System.out.println(ie);
+		        }
 		}
 	}
 	private void getTimeCodePreferences() {
@@ -617,9 +669,24 @@ public class QDShell extends JFrame {
 		} catch (NumberFormatException ne) {
 		}
 		// note: if these become negative numbers no error
-		if (old_slow_adjust != slow_adjust) myPrefs.putInt(SLOW_ADJUST_KEY, slow_adjust);
-		if (old_rapid_adjust != rapid_adjust) myPrefs.putInt(RAPID_ADJUST_KEY, rapid_adjust);
-		if (old_play_minus != play_minus) myPrefs.putInt(PLAY_MINUS_KEY, play_minus);
+		if (old_slow_adjust != slow_adjust)
+		try{
+			prefmngr.sa.setInt(qds, slow_adjust);
+		}  catch (IllegalAccessException ie) {
+		      System.out.println(ie);
+		}
+		if (old_rapid_adjust != rapid_adjust)
+		try{
+			prefmngr.ra.setInt(qds, rapid_adjust);
+		}  catch (IllegalAccessException ie) {
+				      System.out.println(ie);
+		}
+		if (old_play_minus != play_minus)
+		try{
+			prefmngr.pm.setInt(qds, play_minus);
+		}  catch (IllegalAccessException ie) {
+				      System.out.println(ie);
+		}
 	}
 	private void getFontPreferences() {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -681,9 +748,16 @@ public class QDShell extends JFrame {
 			font_size = old_font_size;
 		}
 
-		myPrefs.put(FONT_FACE_KEY, font_face);
-		myPrefs.putInt(FONT_SIZE_KEY, font_size);
-		@TIBETAN@myPrefs.putInt(TIBETAN_FONT_SIZE_KEY, tibetan_font_size);
+		try {
+
+				prefmngr.ff.set(qds, font_face);
+				prefmngr.fs.setInt(qds, font_size);
+
+		 		@TIBETAN@prefmngr.tfs.setInt(qds,tibetan_font_size);
+
+		}  catch(IllegalAccessException ie) {
+		          System.out.println(ie);
+		}
 
 		if (qd.getEditor() != null) {
 			//NON-TIBETAN if (!(old_font_size == font_size && old_font_face.equals(font_face))) {
