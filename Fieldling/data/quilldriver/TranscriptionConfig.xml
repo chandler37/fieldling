@@ -9,15 +9,7 @@
 		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
 		<parameter name="qd.nodeends" val="AUDIO/@end"/>
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
-		<parameter name="speaker1" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=1]/@personId"/>
-		<parameter name="speaker2" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=2]/@personId"/>
-		<parameter name="speaker3" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=3]/@personId"/>
-		<parameter name="speaker4" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=4]/@personId"/>
-        <parameter name="speaker5" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=5]/@personId"/>
-		<parameter name="speaker6" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=6]/@personId"/>
-		<parameter name="speaker7" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=7]/@personId"/>
-		<parameter name="speaker8" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=8]/@personId"/>
-		<parameter name="isTranslating" val="" type="text"/>
+        <parameter name="speakers" val="ancestor-or-self::TEXT/HEADER"/>
 	</parameters>
 	<actions>
 		<action-set name="Navigate">
@@ -36,14 +28,7 @@
 			<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
 			<action name="Add Speaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" xsl-task="addSpeaker"/>
 			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" xsl-task="removeNode"/>
-			<action name="Set Speaker to ka" keystroke="control 1" node="ancestor-or-self::S" xsl-task="setSpeaker1"/>
-			<action name="Set Speaker to kha" keystroke="control 2" node="ancestor-or-self::S" xsl-task="setSpeaker2"/>
-			<action name="Set Speaker to ga" keystroke="control 3" node="ancestor-or-self::S" xsl-task="setSpeaker3"/>
-			<action name="Set Speaker to nga" keystroke="control 4" node="ancestor-or-self::S" xsl-task="setSpeaker4"/>
-            <action name="Set Speaker to ca" keystroke="control 5" node="ancestor-or-self::S" xsl-task="setSpeaker5"/>
-			<action name="Set Speaker to cha" keystroke="control 6" node="ancestor-or-self::S" xsl-task="setSpeaker6"/>
-			<action name="Set Speaker to ja" keystroke="control 7" node="ancestor-or-self::S" xsl-task="setSpeaker7"/>
-			<action name="Set Speaker to nya" keystroke="control 8" node="ancestor-or-self::S" xsl-task="setSpeaker8"/>
+            <action name="Change Speaker" keystroke="control 1" node="ancestor-or-self::S" xsl-task="changeSpeaker"/>
 		</action-set>
 		<action-set name="Time Code">
 			<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" xsl-task="markStart"/>

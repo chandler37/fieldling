@@ -17,85 +17,43 @@
 <xsl:param name="qd.rapidincrease" select=".250"/>
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
-<xsl:param name="isTranslating" select="''"/>
-<xsl:param name="translationLanguage" select="''"/>
-<xsl:param name="speaker1" select="''"/>
+<xsl:param name="speakers" select="''"/>
+<!-- <xsl:param name="speaker1" select="''"/>
 <xsl:param name="speaker2" select="''"/>
 <xsl:param name="speaker3" select="''"/>
 <xsl:param name="speaker4" select="''"/>
 <xsl:param name="speaker5" select="''"/>
 <xsl:param name="speaker6" select="''"/>
 <xsl:param name="speaker7" select="''"/>
-<xsl:param name="speaker8" select="''"/>
+<xsl:param name="speaker8" select="''"/> -->
 
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
-<xsl:template match="S">
+<xsl:template match="*">
 			<xsl:choose>
-				<xsl:when test="$qd.task='setSpeaker1'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker1"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker2'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker2"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker3'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker3"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker4'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker4"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker5'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker5"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker6'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker6"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker7'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker7"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
-				<xsl:when test="$qd.task='setSpeaker8'">
-                    <xsl:copy>
-                        <xsl:attribute name="who">
-                            <xsl:value-of select="$speaker8"/>
-                        </xsl:attribute>
-                        <xsl:copy-of select="child::*"/>
-                    </xsl:copy>
-				</xsl:when>
+                <xsl:when test="$qd.task='changeSpeaker'">
+                    <xsl:variable name="currentwho" select="@who"/>
+                    <xsl:variable name="speakercount" select="count($speakers/SPEAKER)"/>
+                    <xsl:variable name="currentwhonum" select="count($speakers/SPEAKER[@personId=$currentwho]/preceding-sibling::SPEAKER)"/>
+                    <xsl:choose>
+                        <xsl:when test="$currentwhonum+2 > $speakercount">
+                            <xsl:copy>
+                                <xsl:attribute name="who">
+                                    <xsl:value-of select="$speakers/SPEAKER[position()=1]/@personId"/>
+                                </xsl:attribute>
+                                <xsl:copy-of select="child::*"/>
+                            </xsl:copy>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:copy>
+                                <xsl:attribute name="who">
+                                    <xsl:value-of select="$speakers/SPEAKER[position()=$currentwhonum+2]/@personId"/>
+                                </xsl:attribute>
+                                <xsl:copy-of select="child::*"/>
+                            </xsl:copy>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
 				<xsl:when test="$qd.task='computeIDs'">
 					<xsl:copy-of select="."/>
 				</xsl:when>
@@ -103,31 +61,11 @@
                     <xsl:copy-of select="."/>
 					<S who="{@who}">
 						<FORM type="transliteration"><xsl:text> </xsl:text></FORM>
-						<xsl:if test="$isTranslating">
-							<TRANSL>
-								<xsl:if test="$translationLanguage">
-									<xsl:attribute name="xml:lang">
-										<xsl:value-of select="$translationLanguage" />
-									</xsl:attribute>
-								</xsl:if>
-								<xsl:text> </xsl:text>
-							</TRANSL>
-						</xsl:if>
 					</S>
 				</xsl:when>
 				<xsl:when test="$qd.task='insertBefore'">
 					<S who="{@who}">
 						<FORM type="transliteration"><xsl:text> </xsl:text></FORM>
-						<xsl:if test="$isTranslating">
-							<TRANSL>
-								<xsl:if test="$translationLanguage">
-									<xsl:attribute name="xml:lang">
-										<xsl:value-of select="$translationLanguage" />
-									</xsl:attribute>
-								</xsl:if>
-								<xsl:text> </xsl:text>
-							</TRANSL>
-						</xsl:if>
 					</S>
 					<xsl:copy-of select="."/>
 				</xsl:when>
@@ -358,21 +296,9 @@
 						</xsl:if>
 						<xsl:copy-of select="*"/>
 						<xsl:if test="not(TRANSL)">
-							<xsl:if test="not(TRANSL[@xml:lang=$translationLanguage])">	
-								<TRANSL>
-									<xsl:choose>
-				  						<xsl:when test="$translationLanguage">
-											<xsl:attribute name="xml:lang">
-												<xsl:value-of select="$translationLanguage" />
-											</xsl:attribute>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:attribute name="xml:lang">en</xsl:attribute>
-										</xsl:otherwise>
-									</xsl:choose>
-									<xsl:text> </xsl:text>
-								</TRANSL>
-							</xsl:if>
+						    <TRANSL>
+							    <xsl:text> </xsl:text>
+                            </TRANSL>
 						</xsl:if>
 					</xsl:element>
 				</xsl:when>

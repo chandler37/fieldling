@@ -1073,27 +1073,21 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									if (!(transformNode instanceof Element)) return;
 									Element jdomEl = (Element)transformNode;
 									Element clone = (Element)jdomEl.clone();
-									//Element cloneOwner = new Element("CloneOwner");
-									//cloneOwner.addContent(clone);
-                                    //jdom-b10 eliminated DOMOutputter.output(Element)
-									//org.w3c.dom.Element transformElement = domOut.output((Element)cloneOwner);
-                                    //Document jDoc = new Document(new Element("CloneOwner"));
-                                    //jDoc.addContent(clone); //only works for jdom-b10
                                     Document jDoc = new Document(clone);
-                                    //jDoc.getRootElement().addContent(clone); //use for jdom-b9
                                     org.w3c.dom.Document transformDocument = domOut.output(jDoc);
-									//String refreshID = XMLUtilities.getTextForJDOMNode(XMLUtilities.selectSingleJDOMNode(context, config.getProperty("qd.refreshid"), namespaces));
-									Enumeration enum = config.propertyNames();
+                                    
+                                    Enumeration enum = config.propertyNames();
 									while (enum.hasMoreElements()) {
 										String key = (String)enum.nextElement();
 										String val = config.getProperty(key);
 										if (!key.startsWith("qd.")) {
 											Object obj = XMLUtilities.selectSingleJDOMNode(context, val, namespaces);
-											if (obj != null) {
-												String id = XMLUtilities.getTextForJDOMNode(obj);
-												transformer.setParameter(key, id);
-												System.out.println("key="+key+" & id="+id);
-											}
+                                            if (obj != null && obj instanceof Element) {
+                                                Element parameterClone = (Element)(((Element)obj).clone());
+                                                Document parameterDoc = new Document(parameterClone);
+                                                org.w3c.dom.Document parameterDomDoc = domOut.output(parameterDoc);
+												transformer.setParameter(key, parameterDomDoc.getDocumentElement());
+                                            }
 										}
 									}
 									enum = textConfig.propertyNames();
@@ -1133,22 +1127,9 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 									transformer.setParameter("qd.mediaurlstring", player.getMediaURL().toString());
 
 									JDOMResult jdomResult = new JDOMResult();
-									//DOMSource domSource = new DOMSource(docBuilder.newDocument());
-									//domSource.getNode().appendChild(transformElement);
-									//if (transformElement.getParentNode() == null)
-									//	System.out.println("null parent");
-									DOMSource domSource = new DOMSource(transformDocument.getDocumentElement());
-									//if (domSource == null)
-									//	System.out.println("dom source is null");
-									transformer.transform(domSource, jdomResult);
+                                    DOMSource domSource = new DOMSource(transformDocument.getDocumentElement());
+                                    transformer.transform(domSource, jdomResult);
 									List replaceNodeWith = jdomResult.getResult();
-
-									/*XMLOutputter xmlOut = new XMLOutputter();
-									try {
-										Element ee = (Element)cloneOwner;
-										xmlOut.output(ee, System.out);
-										xmlOut.output(jdomResult.getDocument(), System.out);
-									} catch (IOException ioe) {ioe.printStackTrace();}*/
 
 									int start = editor.getStartOffsetForNode(transformNode);
 									int end = editor.getEndOffsetForNode(transformNode);
