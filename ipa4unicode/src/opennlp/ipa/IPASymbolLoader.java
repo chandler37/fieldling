@@ -7,7 +7,7 @@ import java.io.*;
 public class IPASymbolLoader {
     public static IPASymbol[] readIPASymbols() {
         try {
-            Document d = new org.jdom.input.SAXBuilder().build(IPASymbolLoader.class.getResource("ipa4unicode.xml"));
+            Document d = new org.jdom.input.SAXBuilder().build(new BufferedReader(new InputStreamReader(IPASymbolLoader.class.getResource("ipa4unicode.xml").openStream(), "UTF-8")));
             List symbols = d.getRootElement().getChildren("symbol");
             Iterator it = symbols.iterator();
             while (it.hasNext()) {
