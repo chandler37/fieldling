@@ -26,7 +26,7 @@
             <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
-            <tag name="ucuchi:C" visible="true" displayas="XPATH:@spid">
+            <tag name="ucuchi:C" visible="true" displayas="@spid">
                 <attribute name="qd:t1" visible="false"/>
                 <attribute name="qd:t2" visible="false"/>
                 <attribute name="spid" visible="false"/>

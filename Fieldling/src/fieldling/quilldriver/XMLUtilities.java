@@ -64,6 +64,9 @@ public class XMLUtilities {
 		} else if (jdomNode instanceof Element) {
 			Element e = (Element)jdomNode;
 			return e.getTextTrim();
-		} else return null;
+		} else if (jdomNode instanceof String) {
+            return (String)jdomNode;
+        }
+        return null;
 	}
 }

@@ -97,13 +97,13 @@ public class XMLTagInfo {
 			Object obj = displayAs.get(name);
 			if (obj == null) return name;
 			String val = (String)obj;
-			if (val.startsWith("XPATH:")) {
+			//if (val.startsWith("XPATH:")) {
 				Object node = XMLUtilities.selectSingleJDOMNode(tag, val.substring(val.indexOf(':')+1));
 				if (node == null) return name;
 				String s = XMLUtilities.getTextForJDOMNode(node);
 				if (s == null) return name;
 				else return s;
-			} else return val;
+			//} else return val;
 		} else return icon;
 	}
 	public boolean isAttributeEditable(String name, String parentTag) {

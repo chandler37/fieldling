@@ -67,8 +67,8 @@
             <tag name="ucuchi:PAUSE" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
             <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
-            <tag name="ucuchi:SPEAKER" visible="true" displayas="SPEAKER"/>
-            <tag name="ucuchi:C" visible="true" displayas="XPATH:@spid">
+            <tag name="ucuchi:SPEAKER" visible="true" displayas="'SPEAKER'"/>
+            <tag name="ucuchi:C" visible="true" displayas="@spid">
                 <attribute name="qd:t1" visible="false"/>
                 <attribute name="qd:t2" visible="false"/>
                 <attribute name="spid" visible="false"/>
@@ -80,7 +80,7 @@
             </tagview>
             <tagview name="Quechua and English" keystroke="F2">
                 <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
-                <tag name="ucuchi:TRANSL" visiblecontents="true" displayas="ENG"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="true" displayas="'ENG'"/>
             </tagview>
 		</rendering-instructions>
 </qd-configuration>

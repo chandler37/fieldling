@@ -1171,6 +1171,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 												}
 											}
 										} else {
+                                            /*note: should revise to add new content first, then render,
+                                            since details of rendering could depend on parental features*/
 											List parentContent = el.getParent().getContent(); //this is a live list
 											int elPos = parentContent.indexOf(el);
 											parentContent.remove(elPos);
