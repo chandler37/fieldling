@@ -1,99 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
 <qd-configuration>
 		<!-- parameters -->
-		<parameter name="qd.root.element" val="body" type="text"/>
-	<!--	<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/> -->
-	<!--	<parameter name="qd.mediaurl" val="/LOG/HEADER/SOUNDFILE/@href"> -->
-		<parameter name="qd.timealignednodes" val="//*[@t1]"/>
-		<parameter name="qd.nodebegins" val="@t1"/>
-		<parameter name="qd.nodeends" val="@t2"/>
-		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[@t1]"/>
+		<parameters>
+			<parameter name="qd.root.element" val="body" type="text"/>
+		<!--	<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/> -->
+		<!--	<parameter name="qd.mediaurl" val="/LOG/HEADER/SOUNDFILE/@href"> -->
+			<parameter name="qd.timealignednodes" val="//*[@t1]"/>
+			<parameter name="qd.nodebegins" val="@t1"/>
+			<parameter name="qd.nodeends" val="@t2"/>
+			<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[@t1]"/>
+		</parameters>
 		
-		
-		<!-- navigation possibilities -->
-		<navigation name="Play/Pause" keystroke="control SLASH" val="." command="playPause"/>
-		<navigation name="Play Next" keystroke="control shift DOWN" val="following::*[@t1]" command="playNode"/>
-		<navigation name="Play Current" keystroke="control LEFT" val="ancestor-or-self::*[@t1]" command="playNode"/>
-		<navigation name="Play Previous" keystroke="control shift UP" val="preceding::*[@t1]" command="playNode"/>
-		<navigation name="Goto Start" keystroke="control L" val="ancestor-or-self::*[name()='seg' or name()='NOTE']" command="seekStart"/>
-		<navigation name="Goto End" keystroke="control SEMICOLON" val="ancestor-or-self::*[name()='seg' or name()='NOTE']" command="seekEnd"/>
-		<navigation name="Next" keystroke="control DOWN" val="following::*[name()='seg' or name()='NOTE']"/>
-		<navigation name="Previous" keystroke="control UP" val="preceding::*[name()='seg' or name()='NOTE']"/>
-		<navigation name="Jump Ahead 10 Lines" keystroke="control PAGE_DOWN" val="following::seg[position()=10]"/>
-		<navigation name="Jump Back 10 Lines" keystroke="control PAGE_UP" val="preceding::seg[position()=10]"/>
-
-		<!--
-		<navigation name="Goto Start" keystroke="control L" val="ancestor-or-self::S" command="seekStart"/>
-		<navigation name="Goto End" keystroke="control SEMICOLON" val="ancestor-or-self::S" command="seekEnd"/>
-		<navigation name="Next Sentence" keystroke="control DOWN" val="following::S"/>
-		<navigation name="Previous Sentence" keystroke="control UP" val="preceding::S"/>
-			-->	
-		
-		<!-- media related -->
-	<!--	
-		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::LOG/HEADER/SOUNDFILE" tasks="fixMedia">
-			<desc>Takes the currently open media file or URL and copies it into the transcript.</desc>
-		</transformation>
--->	
-	
-		<!-- time-coding -->
-		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="markStart">
-			<desc>This assigns the start time of the current sentence to the start time in the time coding window.</desc>
-		</transformation>
-		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="markStop" command="stopMedia">
-			<desc>This assigns the stop time of the current sentence to the stop time in the time coding window.</desc>
-		</transformation>
-		<transformation name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="qd.insertTimes">
-			<desc>This editing function is used to copy the time codes found under the video next to the 'Start' and 'Stop' buttons into 
-			your XML file. They will be copied to the current node you are working on. For example, if you are 
-			typing or translating text, they will be assigned to the current 'S' (Sentence) node.</desc>
-		</transformation>
-		<transformation name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="increaseStart">
-			<desc>Increases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="increaseStart">
-			<desc>Increases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="decreaseStart">
-			<desc>Decreases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="decreaseStart">
-			<desc>Decreases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="increaseStop">
-			<desc>Increases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="increaseStop">
-			<desc>Increases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="decreaseStop">
-			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="decreaseStop">
-			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		
-		<!-- adding notes -->
-		<transformation name="Insert General Note" keystroke="alt N" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertGeneral"/>
-		<transformation name="Insert Lexical Note" keystroke="alt L" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertLexical"/>
-		<transformation name="Insert Grammatical Note" keystroke="alt G" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertGrammatical"/>
-		<transformation name="Insert Pronunciation Note" keystroke="alt P" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertPronunciation"/>
-		<transformation name="Insert Interpretive Note" keystroke="alt I" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertInterpretive"/>
-		<transformation name="Insert Sociolinguistic Note" keystroke="alt S" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertSociolinguistic"/>
-		<transformation name="Insert Cultural Note" keystroke="alt C" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" tasks="insertCultural"/>
-		<transformation name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" tasks="removeNode"/>
-		
+		<actions>
+			<action-set name="View">
+				<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
+				<action name="Play Next" keystroke="control shift DOWN" node="following::*[@t1]" qd-command="playNode"/>
+				<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[@t1]" qd-command="playNode"/>
+				<action name="Play Previous" keystroke="control shift UP" node="preceding::*[@t1]" qd-command="playNode"/>
+				<action name="Goto Start" keystroke="control L" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" qd-command="seekStart"/>
+				<action name="Goto End" keystroke="control SEMICOLON" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" qd-command="seekEnd"/>
+				<action name="Next" keystroke="control DOWN" node="following::*[name()='seg' or name()='NOTE']"/>
+				<action name="Previous" keystroke="control UP" node="preceding::*[name()='seg' or name()='NOTE']"/>
+				<action name="Jump Ahead 10 Lines" keystroke="control PAGE_DOWN" node="following::seg[position()=10]"/>
+				<action name="Jump Back 10 Lines" keystroke="control PAGE_UP" node="preceding::seg[position()=10]"/>
+			</action-set>
+			<action-set name="Time Code">
+				<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="markStart"/>
+				<action name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="markStop" qd-command="stopMedia"/>
+				<action name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="qd.insertTimes"/>
+				<action name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="increaseStart"/>
+				<action name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="increaseStart"/>
+				<action name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="decreaseStart"/>
+				<action name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="decreaseStart"/>
+				<action name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="increaseStop"/>
+				<action name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="increaseStop"/>
+				<action name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="decreaseStop"/>
+				<action name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="decreaseStop"/>
+			</action-set>
+			<action-set name="Annotate">
+				<action name="Insert General Note" keystroke="alt N" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertGeneral"/>
+				<action name="Insert Lexical Note" keystroke="alt L" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertLexical"/>
+				<action name="Insert Grammatical Note" keystroke="alt G" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertGrammatical"/>
+				<action name="Insert Pronunciation Note" keystroke="alt P" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertPronunciation"/>
+				<action name="Insert Interpretive Note" keystroke="alt I" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertInterpretive"/>
+				<action name="Insert Sociolinguistic Note" keystroke="alt S" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertSociolinguistic"/>
+				<action name="Insert Cultural Note" keystroke="alt C" node="ancestor-or-self::*[name()='seg' or name()='NOTE']" xsl-task="insertCultural"/>
+				<action name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" xsl-task="removeNode"/>
+			</action-set>
+		</actions>
 		<!-- rendering parameters for tags -->
 		<rendering-instructions>
-			<tag name="body" visible="false" visiblecontents="true"/>
-			<!-- <tag name="div" visible="false" visiblecontents="true"/> -->
-			<!-- <tag name="p" visible="false" visiblecontents="true"/> -->
-			<tag name="seg" visible="true" visiblecontents="true" displayas="XPATH:@n" tibetan="true" editable="false">
+			<tag name="body" visible="false"/>
+			<tag name="seg" displayas="XPATH:@n" tibetan="true" editable="false">
 				<attribute name="n" visible="false"/>
 				<attribute name="type" visible="false"/>
 				<attribute name="t1" visible="false"/>
 			</tag>
-			<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type" tibetan="false" editable="true">
+			<tag name="NOTE" displayas="XPATH:@type">
 				<attribute name="type" visible="false"/>
 				<attribute name="t1" visible="false"/>
 				<attribute name="t2" visible="false"/>

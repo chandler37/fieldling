@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <qd-configurations>
-		<!-- For transcribing and annotating videos using the LACITO-THDL DTD -->
+		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
 		<configuration menu-name="THDL Transcription">
 			<config href="TranscriptionConfig.xml"/>
 			<edit href="TranscriptionEdit.xsl"/>

@@ -112,6 +112,7 @@ public class QD extends JDesktopPane {
 	protected Configuration configuration = null;
 	protected String configURL, newURL, editURL, dtdURL, rootElement;
 	public Timer checkTimeTimer = null;
+	protected Transformer transformer = null; //this has no place here
 	
 	public QD(Configuration configuration) {
 		setupGlobals();
@@ -863,7 +864,8 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 			
 			//parameters
-			List parameters = cRoot.getChildren("parameter");
+			Element parameterSet = cRoot.getChild("parameters");
+			List parameters = parameterSet.getChildren("parameter");
 			textConfig = new Properties();
 			config = new Properties();
 			it = parameters.iterator();
@@ -877,36 +879,106 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 			}
 			rootElement = textConfig.getProperty("qd.root.element");
 			
-			//navigations and transformations
-			List navigations = cRoot.getChildren("navigation");
-			List transformations = cRoot.getChildren("transformation");
-			
+			//configuration-defined actions
+			Element allActions = cRoot.getChild("actions");
+			List actionSets = allActions.getChildren("action-set");
 			keyActions = new HashMap(); //maps keys to actions
 			taskActions = new HashMap(); //maps task names to same actions
 			
 			int xCount = 0;
-			if (!navigations.isEmpty()) xCount++;
-			if (!(transformations.isEmpty() || configuration.getEditURL() == null)) xCount++;
-			configMenus = new JMenu[xCount];
+			if (tagInfo.length < 2)
+				configMenus = new JMenu[actionSets.size()]; //no need for extra "Visualizations" menu
+			else {
+				configMenus = new JMenu[actionSets.size()+1]; //need extra "Visualizations" menu
+				configMenus[xCount] = new JMenu("Visualizations");
+					ButtonGroup tagGroup = new ButtonGroup();
+					for (int z=0; z<tagInfo.length; z++) {
+						final XMLTagInfo zTagInfo = tagInfo[z];
+						final Action changeViewAction = new AbstractAction() {
+							public void actionPerformed(ActionEvent e) {
+								currentTagInfo = zTagInfo;
+								if (editor != null) {
+									editor.setTagInfo(currentTagInfo);
+									hp.refresh();
+								}
+							}
+						};
+						JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(tagInfo[z].getIdentifyingName());
+						tagItem.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								changeViewAction.actionPerformed(e);
+							}
+						});
+						KeyStroke k = (KeyStroke)tagShortcuts.get(tagInfo[z]);
+						if (k != null) {
+							tagItem.setAccelerator(k);
+							keyActions.put(k, changeViewAction);
+						}
+						tagGroup.add(tagItem);
+						if (z == 0) tagItem.setSelected(true);
+						configMenus[xCount].add(tagItem);
+					}
+				currentTagInfo = tagInfo[0];
+				xCount++;
+			}
 			
-			xCount = 0;
-			
-			if (!(transformations.isEmpty() || configuration.getEditURL() == null)) {
-				configMenus[xCount] = new JMenu(messages.getString("Edit"));
-				try {
-					final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
-					it = transformations.iterator();
-					while (it.hasNext()) {
-						Element e = (Element)it.next();
-						final DOMOutputter domOut = new DOMOutputter();
-						final DOMBuilder jdomBuild = new DOMBuilder();
-						final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
-						final String tasks = e.getAttributeValue("tasks");
-						final String command = e.getAttributeValue("command");
-						final String nodeSelector = e.getAttributeValue("node");
-						//mItem.setToolTipText(e.getChildTextNormalize("desc"));
-						KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke")); 
+			Iterator actionSetIter = actionSets.iterator();
+			try {
+			//stupid: I just made Transformer global for no good reason
+			if (configuration.getEditURL() != null)
+				transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getEditURL().openStream()));
+			final DOMOutputter domOut = new DOMOutputter();
+			final DOMBuilder jdomBuild = new DOMBuilder();
+				
+			while (actionSetIter.hasNext()) {
+				Element thisSet = (Element)actionSetIter.next();
+				configMenus[xCount] = new JMenu(thisSet.getAttributeValue("name"));
+				List actions = thisSet.getChildren("action");
+				it = actions.iterator();
+				while (it.hasNext()) {
+					Element e = (Element)it.next();
+					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
+					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
+					final String nodeSelector = e.getAttributeValue("node");
+					final String command = e.getAttributeValue("qd-command");
+					final String tasks = e.getAttributeValue("xsl-task");
+					if (tasks == null) { //no need for xsl transform
+						final Action keyAction = new AbstractAction() {
+							public void actionPerformed(ActionEvent e) {
+								if (nodeSelector != null) {
+									editor.fireEndEditEvent();
+									boolean keepSearching;
+									JTextPane t = editor.getTextPane();
+									int offset = t.getCaret().getMark();
+									Object context = editor.getNodeForOffset(offset);
+									System.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
+									do {
+										keepSearching = false;
+										if (context != null) {
+											Object moveTo = XMLUtilities.findSingleNode(context, nodeSelector);
+											int newStartOffset = editor.getStartOffsetForNode(moveTo);
+											if (newStartOffset > -1) {
+												t.requestFocus();
+												t.setCaretPosition(newStartOffset);
+											} else {
+												keepSearching = true; //search again
+												context = moveTo;
+											}
+										}
+									} while (keepSearching);
+									if (command != null) executeCommand(command);
+								}
+							}
+						};
+						keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
 						mItem.setAccelerator(key);
+						mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
+							public void actionPerformed(ActionEvent e) {
+								keyAction.actionPerformed(e);
+							}
+						});
+						configMenus[xCount].add(mItem);
+					} else { //need for xsl transform
 						final Action keyAction = new AbstractAction() {
 							public void actionPerformed(ActionEvent e) {
 								try {
@@ -1094,92 +1166,14 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 						});
 						configMenus[xCount].add(mItem);
 					}
+				}
+				xCount++;
+			}
 				} catch (TransformerException tre) {
 					tre.printStackTrace();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
-				xCount++;
-			}
-			if (!navigations.isEmpty()) {
-				final String[] navigXPath = new String[navigations.size()];
-				configMenus[xCount] = new JMenu(messages.getString("View"));
-				it = navigations.iterator();
-				while (it.hasNext()) {
-					Element e = (Element)it.next();
-					final JMenuItem mItem = new JMenuItem(e.getAttributeValue("name"));
-					final String xpathExpression = e.getAttributeValue("val");
-					final String command = e.getAttributeValue("command");
-					//mItem.setToolTipText(e.getChildTextNormalize("desc"));
-					KeyStroke key = KeyStroke.getKeyStroke(e.getAttributeValue("keystroke"));
-					final Action keyAction = new AbstractAction() {
-						public void actionPerformed(ActionEvent e) {
-							if (xpathExpression != null) {
-								editor.fireEndEditEvent();
-								boolean keepSearching;
-								JTextPane t = editor.getTextPane();
-								int offset = t.getCaret().getMark();
-								Object context = editor.getNodeForOffset(offset);
-								System.out.println("xpath--"+String.valueOf(offset)+": "+context.toString());
-								do {
-									keepSearching = false;
-									if (context != null) {
-										Object moveTo = XMLUtilities.findSingleNode(context, xpathExpression);
-										int newStartOffset = editor.getStartOffsetForNode(moveTo);
-										if (newStartOffset > -1) {
-											t.requestFocus();
-											t.setCaretPosition(newStartOffset);
-										} else {
-											keepSearching = true; //search again
-											context = moveTo;
-										}
-									}
-								} while (keepSearching);
-								if (command != null) executeCommand(command);
-							}
-						}
-					};
-					keyActions.put(key, keyAction);	//eventually to be registered with transcript's JTextPane
-					mItem.setAccelerator(key);
-					mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
-						public void actionPerformed(ActionEvent e) {
-							keyAction.actionPerformed(e);
-						}
-					});
-					configMenus[xCount].add(mItem);
-				}
-				if (tagInfo.length > 1) {
-					configMenus[xCount].addSeparator();
-					ButtonGroup tagGroup = new ButtonGroup();
-					for (int z=0; z<tagInfo.length; z++) {
-						final XMLTagInfo zTagInfo = tagInfo[z];
-						final Action changeViewAction = new AbstractAction() {
-							public void actionPerformed(ActionEvent e) {
-								currentTagInfo = zTagInfo;
-								if (editor != null) {
-									editor.setTagInfo(currentTagInfo);
-									hp.refresh();
-								}
-							}
-						};
-						JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(tagInfo[z].getIdentifyingName());
-						tagItem.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								changeViewAction.actionPerformed(e);
-							}
-						});
-						KeyStroke k = (KeyStroke)tagShortcuts.get(tagInfo[z]);
-						if (k != null) {
-							tagItem.setAccelerator(k);
-							keyActions.put(k, changeViewAction);
-						}
-						tagGroup.add(tagItem);
-						if (z == 0) tagItem.setSelected(true);
-						configMenus[xCount].add(tagItem);
-					}
-				}
-				currentTagInfo = tagInfo[0];
-			}
 		} catch (JDOMException jdome) {
 			jdome.printStackTrace();
 		}

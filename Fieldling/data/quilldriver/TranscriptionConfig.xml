@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
 <qd-configuration>
+	<parameters>
 		<parameter name="qd.root.element" val="TEXT" type="text"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
@@ -12,72 +14,72 @@
 		<parameter name="speaker3" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=3]/@personId"/>
 		<parameter name="speaker4" val="ancestor-or-self::TEXT/HEADER/SPEAKER[position()=4]/@personId"/>
 		<parameter name="isTranslating" val="" type="text"/>
-		
-		
-		<navigation name="Play/Pause" keystroke="control SLASH" val="." command="playPause"/>
-		<navigation name="Play Back" keystroke="control QUOTE" val="." command="playBack"/>
-		<navigation name="Play Next" keystroke="control shift DOWN" val="following::*[AUDIO]" command="playNode"/>
-		<navigation name="Play Current" keystroke="control LEFT" val="ancestor-or-self::*[AUDIO]" command="playNode"/>
-		<navigation name="Play End of Current" keystroke="control RIGHT" val="ancestor-or-self::*[AUDIO]" command="playEdge"/>
-		<navigation name="Play Previous" keystroke="control shift UP" val="preceding::*[AUDIO]" command="playNode"/>
-		<navigation name="Goto Start" keystroke="control L" val="ancestor-or-self::S" command="seekStart"/>
-		<navigation name="Goto End" keystroke="control SEMICOLON" val="ancestor-or-self::S" command="seekEnd"/>
-		<navigation name="Next Sentence" keystroke="control DOWN" val="following::S"/>
-		<navigation name="Previous Sentence" keystroke="control UP" val="preceding::S"/>
-		
-		<!-- relating to media -->
-		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" tasks="fixMedia"/>
-		
-		<!-- relating to speaker names -->
-		<transformation name="Add Speaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" tasks="addSpeaker"/>
-		<transformation name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" tasks="removeNode"/>
-		<transformation name="Set Speaker to ka" keystroke="control 1" node="ancestor-or-self::S" tasks="setSpeaker1"/>
-		<transformation name="Set Speaker to kha" keystroke="control 2" node="ancestor-or-self::S" tasks="setSpeaker2"/>
-		<transformation name="Set Speaker to ga" keystroke="control 3" node="ancestor-or-self::S" tasks="setSpeaker3"/>
-		<transformation name="Set Speaker to nga" keystroke="control 4" node="ancestor-or-self::S" tasks="setSpeaker4"/>
-		
-		<!-- time-coding transformations -->
-		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" tasks="markStart"/>
-		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::S" tasks="markStop" command="stopMedia"/>
-		<transformation name="Mark Start and Stop" keystroke="control shift QUOTE" node="ancestor-or-self::S" tasks="qd.insertTimes"/>
-		<transformation name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::S" tasks="zapTimes"/>
-		<transformation name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::S" tasks="increaseStart"/>
-		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::S" tasks="rapidIncreaseStart"/>
-		<transformation name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::S" tasks="decreaseStart"/>
-		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::S" tasks="rapidDecreaseStart"/>
-		<transformation name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::S" tasks="increaseStop"/>
-		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::S" tasks="rapidIncreaseStop"/>
-		<transformation name="Maximize Stop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::S" tasks="maximizeStop"/>
-		<transformation name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::S" tasks="decreaseStop"/>
-		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::S" tasks="rapidDecreaseStop"/>
-		
-		<!-- adding content -->
-		<transformation name="Insert After" keystroke="control M" node="ancestor-or-self::S" tasks="insertAfter"/>
-		<transformation name="Insert Before" keystroke="control B" node="ancestor-or-self::S" tasks="insertBefore"/>
-		<transformation name="Delete Sentence" keystroke="control R" node="ancestor-or-self::S" tasks="removeNode"/>
-		<transformation name="Insert Translation" keystroke="control T" node="ancestor-or-self::S" tasks="insertTranslation"/>
-		<transformation name="Delete Translation" keystroke="control alt T" node="ancestor-or-self::TRANSL" tasks="removeNode"/>
-		
-		<!-- adding notes -->
-		<transformation name="Add General Note" keystroke="alt N" node="ancestor-or-self::S" tasks="addGeneral"/>
-		<transformation name="Add Lexical Note" keystroke="alt L" node="ancestor-or-self::S" tasks="addLexical"/>
-		<transformation name="Add Grammatical Note" keystroke="alt G" node="ancestor-or-self::S" tasks="addGrammatical"/>
-		<transformation name="Add Pronunciation Note" keystroke="alt P" node="ancestor-or-self::S" tasks="addPronunciation"/>
-		<transformation name="Add Interpretive Note" keystroke="alt I" node="ancestor-or-self::S" tasks="addInterpretive"/>
-		<transformation name="Add Sociolinguistic Note" keystroke="alt S" node="ancestor-or-self::S" tasks="addSociolinguistic"/>
-		<transformation name="Add Cultural Note" keystroke="alt C" node="ancestor-or-self::S" tasks="addCultural"/>
-		<transformation name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" tasks="removeNode"/>
-		
+	</parameters>
+	<actions>
+		<action-set name="View">
+			<action name="Play/Pause" keystroke="control SLASH" node="." qd-command="playPause"/>
+			<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+			<action name="Play Next" keystroke="control shift DOWN" node="following::*[AUDIO]" qd-command="playNode"/>
+			<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" qd-command="playNode"/>
+			<action name="Play End of Current" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" qd-command="playEdge"/>
+			<action name="Play Previous" keystroke="control shift UP" node="preceding::*[AUDIO]" qd-command="playNode"/>
+			<action name="Goto Start" keystroke="control L" node="ancestor-or-self::S" qd-command="seekStart"/>
+			<action name="Goto End" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="seekEnd"/>
+			<action name="Next Sentence" keystroke="control DOWN" node="following::S"/>
+			<action name="Previous Sentence" keystroke="control UP" node="preceding::S"/>
+		</action-set>
+		<action-set name="Metadata">
+			<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
+			<action name="Add Speaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" xsl-task="addSpeaker"/>
+			<action name="Delete Speaker" keystroke="control K" node="ancestor-or-self::SPEAKER" xsl-task="removeNode"/>
+			<action name="Set Speaker to ka" keystroke="control 1" node="ancestor-or-self::S" xsl-task="setSpeaker1"/>
+			<action name="Set Speaker to kha" keystroke="control 2" node="ancestor-or-self::S" xsl-task="setSpeaker2"/>
+			<action name="Set Speaker to ga" keystroke="control 3" node="ancestor-or-self::S" xsl-task="setSpeaker3"/>
+			<action name="Set Speaker to nga" keystroke="control 4" node="ancestor-or-self::S" xsl-task="setSpeaker4"/>
+		</action-set>
+		<action-set name="Time Code">
+			<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::S" xsl-task="markStart"/>
+			<action name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::S" xsl-task="markStop" qd-command="stopMedia"/>
+			<action name="Mark Start and Stop" keystroke="control shift QUOTE" node="ancestor-or-self::S" xsl-task="qd.insertTimes"/>
+			<action name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::S" xsl-task="zapTimes"/>
+			<action name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::S" xsl-task="increaseStart"/>
+			<action name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::S" xsl-task="rapidIncreaseStart"/>
+			<action name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::S" xsl-task="decreaseStart"/>
+			<action name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::S" xsl-task="rapidDecreaseStart"/>
+			<action name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::S" xsl-task="increaseStop"/>
+			<action name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::S" xsl-task="rapidIncreaseStop"/>
+			<action name="Maximize Stop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::S" xsl-task="maximizeStop"/>
+			<action name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::S" xsl-task="decreaseStop"/>
+			<action name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::S" xsl-task="rapidDecreaseStop"/>
+		</action-set>
+		<action-set name="Edit">
+			<action name="Insert After" keystroke="control M" node="ancestor-or-self::S" xsl-task="insertAfter"/>
+			<action name="Insert Before" keystroke="control B" node="ancestor-or-self::S" xsl-task="insertBefore"/>
+			<action name="Delete Sentence" keystroke="control R" node="ancestor-or-self::S" xsl-task="removeNode"/>
+			<action name="Insert Translation" keystroke="control T" node="ancestor-or-self::S" xsl-task="insertTranslation"/>
+			<action name="Delete Translation" keystroke="control alt T" node="ancestor-or-self::TRANSL" xsl-task="removeNode"/>
+		</action-set>
+		<action-set name="Annotate">
+			<action name="Add General Note" keystroke="alt N" node="ancestor-or-self::S" xsl-task="addGeneral"/>
+			<action name="Add Lexical Note" keystroke="alt L" node="ancestor-or-self::S" xsl-task="addLexical"/>
+			<action name="Add Grammatical Note" keystroke="alt G" node="ancestor-or-self::S" xsl-task="addGrammatical"/>
+			<action name="Add Pronunciation Note" keystroke="alt P" node="ancestor-or-self::S" xsl-task="addPronunciation"/>
+			<action name="Add Interpretive Note" keystroke="alt I" node="ancestor-or-self::S" xsl-task="addInterpretive"/>
+			<action name="Add Sociolinguistic Note" keystroke="alt S" node="ancestor-or-self::S" xsl-task="addSociolinguistic"/>
+			<action name="Add Cultural Note" keystroke="alt C" node="ancestor-or-self::S" xsl-task="addCultural"/>
+			<action name="Delete Note" keystroke="alt D" node="ancestor-or-self::NOTE" xsl-task="removeNode"/>
+		</action-set>
+	</actions>
 		<rendering-instructions>
-			<tag name="TEXT" visible="true" visiblecontents="true">
+			<tag name="TEXT">
 				<attribute name="xml:lang" visible="false"/>
 				<desc>Display TEXT tag but not its attributes.</desc>
 			</tag>
-			<tag name="TITLE" visible="true" visiblecontents="true" editable="true">
+			<tag name="TITLE">
 				<attribute name="xml:lang" visible="false"/>
 				<desc>Display TITLE tag but not its attributes.</desc>
 			</tag>
-			<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type" tibetan="false" editable="true">
+			<tag name="NOTE" displayas="XPATH:@type">
 				<attribute name="type" visible="false"/>
 				<desc>This tells QuillDriver to render the NOTE tag as the value of its
 				'type' attribute.</desc>
@@ -86,31 +88,31 @@
 				<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
 				time codes are already marked under the video in the time coding area.</desc>
 			</tag>
-			<tag name="S" visible="true" visiblecontents="true" displayas="XPATH:@who">
+			<tag name="S" displayas="XPATH:@who">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 				<desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
 				but to visually suppress its 'id' attribute.</desc>
 			</tag>
 			<tagview name="Show Everything" keystroke="F1">
-				<tag name="FORM" visible="true" visiblecontents="true" displayas="TIB" tibetan="true" editable="true">
+				<tag name="FORM" displayas="TIB" tibetan="true">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
 					but to visually suppress its 'type' attribute.</desc>
 				</tag>
-				<tag name="TRANSL" visible="true" visiblecontents="true" displayas="ENG" tibetan="false" editable="true">
+				<tag name="TRANSL" displayas="ENG">
 					<attribute name="xml:lang" visible="false"/>
 					<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
 					but to visually suppress its 'xml:lang' attribute.</desc>
 				</tag>
-				<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type" tibetan="false" editable="true">
+				<tag name="NOTE" displayas="XPATH:@type">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to render the NOTE tag as the value of its
 					'type' attribute.</desc>
 				</tag>
 			</tagview>
 			<tagview name="Transcription Only" keystroke="F2">
-				<tag name="FORM" visible="true" visiblecontents="true" displayas="TIB" tibetan="true" editable="true">
+				<tag name="FORM" displayas="TIB" tibetan="true">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
 					but to visually suppress its 'type' attribute.</desc>
@@ -119,7 +121,7 @@
 				<tag name="NOTE" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="Translation Only" keystroke="F3">
-				<tag name="TRANSL" visible="true" visiblecontents="true" displayas="ENG" tibetan="false" editable="true">
+				<tag name="TRANSL" displayas="ENG">
 					<attribute name="xml:lang" visible="false"/>
 					<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
 					but to visually suppress its 'xml:lang' attribute.</desc>
@@ -128,12 +130,12 @@
 				<tag name="NOTE" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="Transcription and Notes" keystroke="F4">
-				<tag name="FORM" visible="true" visiblecontents="true" displayas="TIB" tibetan="true" editable="true">
+				<tag name="FORM" displayas="TIB" tibetan="true">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
 					but to visually suppress its 'type' attribute.</desc>
 				</tag>
-				<tag name="NOTE" visible="true" visiblecontents="true" displayas="XPATH:@type" tibetan="false" editable="true">
+				<tag name="NOTE" displayas="XPATH:@type">
 					<attribute name="type" visible="false"/>
 					<desc>This tells QuillDriver to render the NOTE tag as the value of its
 					'type' attribute.</desc>

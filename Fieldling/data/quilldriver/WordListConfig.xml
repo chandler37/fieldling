@@ -1,159 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qd-configuration SYSTEM "qd-configuration.dtd">
 <qd-configuration>
-		<parameter name="qd.root.element" val="WORDLIST" type="text">
-			<desc>This is a required parameter that tells QuillDriver what the root element of its data
-			files must be. For example, in this case, it must be 'WORDLIST'.</desc>
-		</parameter>
-		<parameter name="qd.title" val="/WORDLIST/HEADER/TITLE"/>
-		<parameter name="qd.mediaurl" val="/WORDLIST/HEADER/SOUNDFILE/@href">
-			<desc>This is a required parameter that tells QuillDriver where to find the audio or video file associated with
-			this XML annotation. Its value is an XPATH expression which is based at the root of the XML tree.</desc>
-		</parameter>
-		<parameter name="qd.timealignednodes" val="//*[@start and @end]">
-			<desc>Without this parameter, QuillDriver will not know how to find out which nodes are 'associated'
-			with time codes and which are not. The value of this parameter is an XPATH expression which returns
-			all XML nodes that are associated with time codes, again searching from the root of the XML tree.</desc>
-		</parameter>
-		<parameter name="qd.nodebegins" val="@start">
-			<desc>The parameter qd.timealignednodes returns the set of XML nodes associated with time codes. Once this
-			set is established, then we still need to know how get the start and end time for an associated node.
-			This parameter is an XPATH expression which locates the start time for a XML node associated with
-			time codes.</desc>
-		</parameter>
-		<parameter name="qd.nodeends" val="@end">
-			<desc>The parameter qd.timealignednodes returns the set of XML nodes associated with time codes. Once this
-			set is established, then we still need to know how get the start and end time for an associated node.
-			This parameter is an XPATH expression which locates the end time for a XML node associated with
-			time codes.</desc>
-		</parameter>
-		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[@start]">
-			<desc>For any given node, this required parameter locates the nearest 'playable' parent node.
-			When you click on a node in the annotation the default action is to play the nearest playable
-			parent node. For example, if time codes are associated with Sentences and you click on a Word,
-			then setting this parameter correctly ensures that its containing sentence is played.</desc>
-		</parameter>
-		
-		<navigation name="Play/Pause" keystroke="control SPACE" val="." command="playPause">
-			<desc>If the media is stopped, this plays it; and if the media is playing, this pauses it.</desc>
-		</navigation>
-		<navigation name="Play Back" keystroke="control QUOTE" val="." command="playBack">
-			<desc>This plays the media, starting from X second(s) before the current media point.</desc>
-		</navigation>
-		<navigation name="Play Next" keystroke="control shift DOWN" val="following::*[@start]" command="playNode">
-			<desc>This navigation is used to play the next part of the text that has time codes associated with it.
-			First, the next playable node is located. Then, it is played because this viewing function is
-			associated with the QuillDriver command 'playNode'.</desc>
-		</navigation>
-		<navigation name="Play Current" keystroke="control LEFT" val="ancestor-or-self::*[@start]" command="playNode">
-			<desc>This navigation is used to play the current part of the text that has time codes associated with it,
-			for example, the current sentence. First, the current node is located. Then, it is played because this 
-			viewing function is associated with the QuillDriver command 'playNode'.</desc>
-		</navigation>
-		<navigation name="Play End of Current" keystroke="control RIGHT" val="ancestor-or-self::*[@start]" command="playEdge">
-			<desc>Play the last X second(s) of the current sentence.</desc>
-		</navigation>
-		<navigation name="Play Previous" keystroke="control shift UP" val="preceding::*[@start]" command="playNode">
-			<desc>This navigation is used to play the last part of the text that has time codes associated with it.
-			First, the next playable node is located. Then, it is played because this viewing function is
-			associated with the QuillDriver command 'playNode'.</desc>
-		</navigation>
-		<navigation name="Seek Start" keystroke="control L" val="ancestor-or-self::*[name()='TIB' or name()='ENG']" command="seekStart">
-			<desc>Jumps to the start time of the current sentence, without playing it.</desc>
-		</navigation>
-		<navigation name="Seek End" keystroke="control SEMICOLON" val="ancestor-or-self::*[name()='TIB' or name()='ENG']" command="seekEnd">
-		`	<desc>Jumps to the end time of the current sentence, without playing it.</desc>
-		</navigation> -->
-		<navigation name="Seek Next" keystroke="control DOWN" val="following::*[name()='TIB' or name()='ENG']">
-			<desc>Jumps to the next sentence, without playing it.</desc>
-		</navigation>
-		<navigation name="Seek Previous" keystroke="control UP" val="preceding::*[name()='TIB' or name()='ENG']">
-			<desc>Jumps to the previous sentence, without playing it.</desc>
-		</navigation>
-		
-		<!-- relating to media -->
-		<transformation name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::WORDLIST/HEADER/SOUNDFILE" tasks="fixMedia">
-			<desc>Takes the currently open media file or URL and copies it into the transcript.</desc>
-		</transformation>
-		
-		<!-- time-coding transformations -->
-		<transformation name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="markStart">
-			<desc>This assigns the start time of the current sentence to the start time in the time coding window.</desc>
-		</transformation>
-		<transformation name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="markStop" command="stopMedia">
-			<desc>This assigns the stop time of the current sentence to the stop time in the time coding window.</desc>
-		</transformation>
-		<transformation name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="qd.insertTimes">
-			<desc>This editing function is used to copy the time codes found under the video next to the 'Start' and 'Stop' buttons into 
-			your XML file. They will be copied to the current node you are working on. For example, if you are 
-			typing or translating text, they will be assigned to the current 'S' (Sentence) node.</desc>
-		</transformation>
-		<transformation name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="zapTimes">
-			<desc>Removes time codes for current sentence.</desc>
-		</transformation>
-		<transformation name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="increaseStart">
-			<desc>Increases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="rapidIncreaseStart">
-			<desc>Increases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="decreaseStart">
-			<desc>Decreases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="rapidDecreaseStart">
-			<desc>Decreases the start time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="increaseStop">
-			<desc>Increases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="rapidIncreaseStop">
-			<desc>Increases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="decreaseStop">
-			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		<transformation name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" tasks="rapidDecreaseStop">
-			<desc>Decreases the stop time of the current sentence by a specified value.</desc>
-		</transformation>
-		
-		<!-- adding content -->
-		<transformation name="Insert After" keystroke="control M" node="ancestor-or-self::WORD" tasks="insertAfter">
-			<desc>This function inserts an empty word after the current word.</desc>
-		</transformation>
-		<transformation name="Insert Before" keystroke="control B" node="ancestor-or-self::WORD" tasks="insertBefore">
-			<desc>This function inserts an empty word before the current word.</desc>
-		</transformation>
-		<transformation name="Delete Word" keystroke="control D" node="ancestor-or-self::WORD" tasks="removeNode">
-			<desc>This editing function deletes the word you are current working on.</desc>
-		</transformation>
-		
+		<parameters>
+			<parameter name="qd.root.element" val="WORDLIST" type="text"/>
+			<parameter name="qd.title" val="/WORDLIST/HEADER/TITLE"/>
+			<parameter name="qd.mediaurl" val="/WORDLIST/HEADER/SOUNDFILE/@href"/>
+			<parameter name="qd.timealignednodes" val="//*[@start and @end]"/>
+			<parameter name="qd.nodebegins" val="@start"/>
+			<parameter name="qd.nodeends" val="@end"/>
+			<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[@start]"/>
+		</parameters>
+		<actions>
+			<action-set name="View">
+				<action name="Play/Pause" keystroke="control SPACE" node="." qd-command="playPause"/>
+				<action name="Play Back" keystroke="control QUOTE" node="." qd-command="playBack"/>
+				<action name="Play Next" keystroke="control shift DOWN" node="following::*[@start]" qd-command="playNode"/>
+				<action name="Play Current" keystroke="control LEFT" node="ancestor-or-self::*[@start]" qd-command="playNode"/>
+				<action name="Play End of Current" keystroke="control RIGHT" node="ancestor-or-self::*[@start]" qd-command="playEdge"/>
+				<action name="Play Previous" keystroke="control shift UP" node="preceding::*[@start]" qd-command="playNode"/>
+				<action name="Seek Start" keystroke="control L" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" qd-command="seekStart"/>
+				<action name="Seek End" keystroke="control SEMICOLON" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" qd-command="seekEnd"/>
+				<action name="Seek Next" keystroke="control DOWN" node="following::*[name()='TIB' or name()='ENG']"/>
+				<action name="Seek Previous" keystroke="control UP" node="preceding::*[name()='TIB' or name()='ENG']"/>
+			</action-set>
+			<action-set name="Media">
+				<action name="Fix Media" keystroke="control INSERT" node="ancestor-or-self::WORDLIST/HEADER/SOUNDFILE" xsl-task="fixMedia"/>
+			</action-set>
+			<action-set name="Time Code">
+				<action name="Mark Start Time" keystroke="control COMMA" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="markStart"/>
+				<action name="Mark Stop Time" keystroke="control PERIOD" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="markStop" qd-command="stopMedia"/>
+				<action name="Mark Start and Stop" keystroke="control SLASH" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="qd.insertTimes"/>
+				<action name="Zap Time Codes" keystroke="control shift SLASH" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="zapTimes"/>
+				<action name="Increase Start Time" keystroke="control EQUALS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="increaseStart"/>
+				<action name="Rapid Increase Start" keystroke="alt control EQUALS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="rapidIncreaseStart"/>
+				<action name="Decrease Start Time" keystroke="control MINUS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="decreaseStart"/>
+				<action name="Rapid Decrease Start" keystroke="alt control MINUS" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="rapidDecreaseStart"/>
+				<action name="Increase Stop Time" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="increaseStop"/>
+				<action name="Rapid Increase Stop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="rapidIncreaseStop"/>
+				<action name="Decrease Stop Time" keystroke="control OPEN_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="decreaseStop"/>
+				<action name="Rapid Decrease Stop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::*[name()='TIB' or name()='ENG']" xsl-task="rapidDecreaseStop"/>
+			</action-set>
+			<action-set name="Edit">
+				<action name="Insert After" keystroke="control M" node="ancestor-or-self::WORD" xsl-task="insertAfter"/>
+				<action name="Insert Before" keystroke="control B" node="ancestor-or-self::WORD" xsl-task="insertBefore"/>
+				<action name="Delete Word" keystroke="control D" node="ancestor-or-self::WORD" xsl-task="removeNode"/>
+			</action-set>
+		</actions>
 		<rendering-instructions>
-			<tag name="WORDLIST" visible="true" visiblecontents="true">
+			<tag name="WORDLIST">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>Display WORDLIST tag but not its attributes.</desc>
 			</tag>
-			<tag name="TITLE" visible="true" visiblecontents="true" editable="true">
+			<tag name="TITLE">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>Display TITLE tag but not its attributes.</desc>
 			</tag>
-		<!--	<tag name="AUDIO" visible="false" visiblecontents="false">
-				<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
-				time codes are already marked under the video in the time coding area.</desc>
-			</tag>
-			<tag name="SOUNDFILE" visible="false" visiblecontents="false" displayas="SOUNDFILE">
-				<desc>Tells QuillDriver not to display the SOUNDFILE tag.</desc>
-			</tag> -->
-			<tag name="WORD" visible="true" visiblecontents="true"/>
-			<tag name="TIB" visible="true" visiblecontents="true" tibetan="true" editable="true">
+			<tag name="TIB" tibetan="true">
 				<attribute name="start" visible="false"/>
 				<attribute name="end" visible="false"/>
-				<desc>This tells QuillDriver to display the TIB tag as 'TIB', and to display its contents,
-				but to visually suppress its 'type' attribute.</desc>
 			</tag>
-			<tag name="ENG" visible="true" visiblecontents="true" tibetan="false" editable="true">
+			<tag name="ENG">
 				<attribute name="start" visible="false"/>
 				<attribute name="end" visible="false"/>
-				<desc>This tells QuillDriver to display the ENG tag as 'ENG', and to display its contents,
-				but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
 		</rendering-instructions>
 </qd-configuration>

@@ -1,0 +1,41 @@
+<!ELEMENT qd-configuration (parameters, actions, rendering-instructions?)>
+
+<!ELEMENT parameters (parameter+)>
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter name CDATA #REQUIRED
+                    val CDATA #REQUIRED
+		    type CDATA #IMPLIED
+		    >
+		    
+<!ELEMENT actions (action-set+)>
+<!ELEMENT action-set (action+)>
+<!ATTLIST action-set name CDATA #REQUIRED>
+<!ELEMENT action EMPTY>
+<!ATTLIST action name CDATA #REQUIRED
+                 keystroke CDATA #REQUIRED
+		 node CDATA #IMPLIED
+		 qd-command CDATA #IMPLIED
+		 xsl-task CDATA #IMPLIED>
+
+<!ELEMENT rendering-instructions (tag | tagview )*>
+
+<!ELEMENT tagview (tag+)>
+<!ATTLIST tagview name CDATA #REQUIRED
+                  keystroke CDATA #REQUIRED
+		  >
+<!ELEMENT tag (attribute*, desc?)>
+<!ATTLIST tag name CDATA #REQUIRED
+              visible CDATA "true"
+	      visiblecontents CDATA "true"
+	      displayas CDATA #IMPLIED
+	      editable CDATA "true"
+	      icon CDATA #IMPLIED
+	      tibetan CDATA "false"
+	      >
+<!ELEMENT attribute EMPTY>
+<!ATTLIST attribute name CDATA #REQUIRED
+                    visible CDATA "true"
+		    icon CDATA #IMPLIED
+		    >
+<!ELEMENT desc (#PCDATA)>
+
