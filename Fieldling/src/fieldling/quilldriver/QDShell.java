@@ -49,9 +49,9 @@ public class QDShell extends JFrame {
 	QD qd = null;
 	PreferenceManager prefmngr= new fieldling.quilldriver.PreferenceManager();;
 	private static int numberOfQDsOpen = 0;
-	public static final String NEW_FILE_ERROR_MESSAGE =
+	/* public static final String NEW_FILE_ERROR_MESSAGE =
 		"This file already exists! Type a new file name\n" +
-		"instead of selecting an existing file.";
+		"instead of selecting an existing file.";*/
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 
@@ -88,14 +88,11 @@ public class QDShell extends JFrame {
             }
         }
         
-        class Wizard extends JDialog {
-            final static String NEW_TRANSCRIPT_TEXT = "Create a new transcript";
-            final static String OPEN_EXISTING_TEXT = "Open an existing transcript";
-            
+        class Wizard extends JDialog {            
             public Wizard() {
                         //choice of configuration
                         JPanel configurationChoice = new JPanel();
-                        configurationChoice.setBorder(BorderFactory.createTitledBorder("Select configuration"));
+                        configurationChoice.setBorder(BorderFactory.createTitledBorder(messages.getString("SelectConfiguration")));
                         final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
                         final ButtonGroup configGroup = new ButtonGroup();
                         final JRadioButton[] configItems = new JRadioButton[configurations.length];
@@ -122,7 +119,7 @@ public class QDShell extends JFrame {
                         
                 //choice of video player
                 JPanel moviePlayerChoice = new JPanel();
-                moviePlayerChoice.setBorder(BorderFactory.createTitledBorder("Select video player"));
+                moviePlayerChoice.setBorder(BorderFactory.createTitledBorder(messages.getString("SelectVideoPlayer")));
                 java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
 		ButtonGroup mediaGroup = new ButtonGroup();
 		JRadioButton[] mediaItems = new JRadioButton[moviePlayers.size()];
@@ -185,10 +182,10 @@ public class QDShell extends JFrame {
                 String[] recentVideos = (String[])recentVideoList.toArray(new String[0]);
                 final ButtonGroup dataSourceGroup = new ButtonGroup();
                 JRadioButton[] dataSourceButtons = new JRadioButton[2 + recentFileList.size()];
-                dataSourceButtons[0] = new JRadioButton(NEW_TRANSCRIPT_TEXT);
-                dataSourceButtons[1] = new JRadioButton(OPEN_EXISTING_TEXT);
-                dataSourceButtons[0].setActionCommand(NEW_TRANSCRIPT_TEXT);
-                dataSourceButtons[1].setActionCommand(OPEN_EXISTING_TEXT);
+                dataSourceButtons[0] = new JRadioButton(messages.getString("NewTranscriptText"));
+                dataSourceButtons[1] = new JRadioButton(messages.getString("OpenExisting"));
+                dataSourceButtons[0].setActionCommand(messages.getString("NewTranscriptText"));
+                dataSourceButtons[1].setActionCommand(messages.getString("OpenExisting"));
                 Iterator itty = recentFileList.iterator();
                 int count = 2;
                 final Map recentTranscriptToRecentVideoMap = new HashMap();
@@ -236,7 +233,7 @@ public class QDShell extends JFrame {
                         }
                         ButtonModel selectedRb =dataSourceGroup.getSelection();
                         String command = selectedRb.getActionCommand();
-                        if (command.equals(NEW_TRANSCRIPT_TEXT)) {
+                        if (command.equals(messages.getString("NewTranscriptText"))) {
                             File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
                             if (newTemplateFile == null) System.exit(0); //FIX
                             if (!newTemplateFile.exists()) System.exit(0); //FIX
@@ -248,7 +245,7 @@ public class QDShell extends JFrame {
                             prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY, transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR)+1));
                             makeRecentlyOpened(transcriptString);
                             makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-                        } else if (command.equals(OPEN_EXISTING_TEXT)) {
+                        } else if (command.equals(messages.getString("OpenExisting"))) {
                             File transcriptFile = selectTranscriptFile("Open Transcript");
                             if (transcriptFile != null) {
                                 qd.loadTranscript(transcriptFile);
