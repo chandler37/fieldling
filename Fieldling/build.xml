@@ -4,9 +4,11 @@
 @author Michel Jacobson, jacobson@idf.ext.jussieu.fr
 
 This buildfile needs the following jar files:
+for mediaplayer:
 	extensions/jmf.jar
 	extensions/java40.jar
 	extensions/QTJava.zip
+for QuillDriver:
 	extensions/xalan.jar
 	extensions/xercesImpl.jar
 	extensions/xml-apis.jar
@@ -22,16 +24,16 @@ This buildfile needs the following jar files:
 	emphasis on tools for annotating media and playing media together
 	with such annotations.</description>
 
-	<property name="src.dir"       value="src"/>
-	<property name="ext"           value="extensions"/>
-	<property name="doc"           value="documentation"/>
+	<property name="src.dir"        value="src"/>
+	<property name="ext"            value="extensions"/>
+	<property name="doc"            value="documentation"/>
 
-	<property name="build.dir"     value="build"/>
-	<property name="build.classes" value="${build.dir}/classes"/>
+	<property name="build.dir"      value="build"/>
+	<property name="build.classes"  value="${build.dir}/classes"/>
 	<property name="build.dist"     value="${build.dir}/dist"/>
 	<property name="build.dist.lib" value="${build.dist}/lib"/>
-	<property name="build.doc"     value="${build.dir}/doc"/>
-	<property name="build.eg"      value="${build.doc}/eg"/>
+	<property name="build.doc"      value="${build.dir}/doc"/>
+	<property name="build.eg"       value="${build.doc}/eg"/>
 	
 	<property name="distrib.src"      value="distribSrc"/>
 	
@@ -39,10 +41,6 @@ This buildfile needs the following jar files:
 		<fileset id="extensions" dir="${ext}">
 			<include name="*.jar"/>
 			<include name="*.zip"/>
-			<exclude name="java40.jar"/>
-		</fileset>
-		<fileset id="extensions2" dir="${ext}">
-			<include name="java40.jar"/>
 		</fileset>
 	</path>
 
@@ -70,12 +68,26 @@ This buildfile needs the following jar files:
 		<jar jarfile="${build.dist}/mediaplayer.jar" basedir="${build.classes}" />		
 	</target>
 
-	<target name="mp-run" depends="mp-compile" description="runs mediaplayer with test files">
-		<java classname="fr.cnrs.lacito.phono.myMain" classpath="${build.classes}" classpathref="my.classpath" fork="true"/>
-	</target>	
+	<target name="mp-eg" depends="mp-jar" description="compile, build jars, create an example">
+		<delete dir="${build.eg}"/>
+		<copy todir="${build.eg}">
+			<fileset dir="${doc}/eg">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+		<property location="${build.eg}/BAC.mp3" name="mediafile"/>
+		<style out="${build.eg}/testJMF.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
+			<param name="player" expression="jmf"/>
+			<param name="mediafile" expression="file://${mediafile}"/>
+		</style>
+		<style out="${build.eg}/testQT4J.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
+			<param name="player" expression="qt4j"/>
+			<param name="mediafile" expression="file://${mediafile}"/>
+		</style>
+	</target>
 		
 	<target name="qd-compile" depends="init" description="Compile QuillDriver source">
-		<javac srcdir="${src.dir}" destdir="${build.classes}" includes="fieldling/quilldriver/**,fieldling/mediaplayer/**">
+		<javac srcdir="${src.dir}" destdir="${build.classes}" includes="fieldling/quilldriver/**">
 			<classpath refid="my.classpath"/>
 		</javac>
 		<!-- Copy over required resources: -->
@@ -88,11 +100,11 @@ This buildfile needs the following jar files:
 
 	<target name="qd-jar" depends="qd-compile" description="generates quilldriver.jar in build/dist">
 		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${build.classes}">
-      		<manifest>
-        		<attribute name="Main-Class" value="fieldling.quilldriver.QDShell"/>
-      			<!-- <attribute name="Class-Path" value="lib/Jskad.jar lib/xml-apis.jar lib/xercesImpl.jar lib/xalan.jar lib/jdom.jar lib/jaxen-full.jar lib/jaxen-jdom.jar lib/saxpath.jar" /> -->
-      		</manifest>
-      	</jar>
+			<manifest>
+				<attribute name="Main-Class" value="fieldling.quilldriver.QDShell"/>
+				<!-- <attribute name="Class-Path" value="lib/Jskad.jar lib/xml-apis.jar lib/xercesImpl.jar lib/xalan.jar lib/jdom.jar lib/jaxen-full.jar lib/jaxen-jdom.jar lib/saxpath.jar" /> -->
+			</manifest>
+	      	</jar>
 		<copy todir="${build.dist.lib}">
 			<fileset dir="${ext}">
 				<exclude name="QTJava.zip"/>
@@ -177,131 +189,3 @@ This buildfile needs the following jar files:
 		<delete dir="${distrib.src}"/>
 	</target>
 </project>
-
-<!--
-    <antcall target="compile-classes-accessed-by-reflection">
-      <param name="mybin" value="${qdbin}"/>
-    </antcall>  
-  
-    <target name="qt4j-compile"
-          if="found.QT4J"
-          description="compiles QT4J integration if available">
-    <antcall target="our-internal-javac-task">
-      <param name="mybin" value="${qdbin}"/>
-      <param name="my.included.source.file"
-             value="org/thdl/media/SmartQT4JPlayer.java"/>
-    </antcall>
-    <antcall target="our-internal-javac-task">
-      <param name="mybin" value="${savantbin}"/>
-      <param name="my.included.source.file"
-             value="org/thdl/media/SmartQT4JPlayer.java"/>
-    </antcall>
-  </target>
-
-  <target name="jmf-compile"
-          if="found.JMF"
-          description="compiles JMF integration if available">
-    <antcall target="our-internal-javac-task">
-      <param name="mybin" value="${qdbin}"/>
-      <param name="my.included.source.file"
-             value="org/thdl/media/SmartJMFPlayer.java"/>
-    </antcall>
-    <antcall target="our-internal-javac-task">
-      <param name="mybin" value="${savantbin}"/>
-      <param name="my.included.source.file"
-             value="org/thdl/media/SmartJMFPlayer.java"/>
-    </antcall>
-  </target>
-
-  <target name="reflect-compile"
-          description="compiles classes accessed via reflection">
-    <available classname="javax.media.NoPlayerException"
-               classpathref="${my.classpath}"
-               property="found.JMF"/>
-    <available classname="quicktime.std.clocks.TimeCallBack"
-               classpathref="${my.classpath}"
-               property="found.QT4J"/>
-    <antcall target="jmf-compile"/>
-    <antcall target="qt4j-compile"/>
-  </target>
-  
-  <target name="create-Savant-jnlp-file"
-          depends="init"
-          description="Creates Savant's JNLP file based on a template hard-coded into this build file and your choice of the jnlp.codebase property.">
-
-    <echo file="${dist}/Savant.jnlp"
-          append="false"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+"]]></echo>
-
-    <echo file="${dist}/Savant.jnlp"
-          append="true">
-<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
-
-    <echo file="${dist}/Savant.jnlp"
-          append="true">
-<![CDATA[      href="Savant.jnlp">
-<information>
-  <title>Savant</title>
-  <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/savant/" />
-
-  <description>
-    Savant displays foreign-language text, audio, and video
-    side-by-side to help you learn foreign languages or just study.
-  </description>
-
-  <offline-allowed/>
-</information>
-<security>
-  <all-permissions/>
-</security>
-<resources>
-  <j2se version="1.2+"/>
-  <jar href="Savant-self-contained.jar" />
-</resources>
-<application-desc />
-</jnlp>
-]]></echo>
-
-  </target>
-
-
-  <target name="create-QuillDriver-jnlp-file"
-          depends="init"
-          description="Creates QuillDriver's JNLP file based on a template hard-coded into this build file and your choice of the jnlp.codebase property.">
-
-    <echo file="${dist}/QuillDriver.jnlp"
-          append="false"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+"]]></echo>
-
-    <echo file="${dist}/QuillDriver.jnlp"
-          append="true">
-<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
-
-    <echo file="${dist}/QuillDriver.jnlp"
-          append="true">
-<![CDATA[      href="QuillDriver.jnlp">
-<information>
-  <title>QuillDriver</title>
-  <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver/" />
-
-  <description>
-    QuillDriver helps you develop content for Savant, another THDL tool.
-  </description>
-
-  <offline-allowed/>
-</information>
-<security>
-  <all-permissions/>
-</security>
-<resources>
-  <j2se version="1.2+"/>
-  <jar href="QuillDriver-self-contained.jar" />
-</resources>
-<application-desc />
-</jnlp>
-]]></echo>
-
-  </target>
--->
