@@ -1,0 +1,26 @@
+                    changelog.txt
+
+This file documents meaningful changes to QuillDriver,
+in reverse chronological order. If QuillDriver does
+not behave as described here, or if you think we are
+moving in the wrong direction, send us feedback. 
+Note that as this file gets big, older bits will be
+chopped off and archived. Thanks!
+
+
+JAN 23, 2004:
+   - Retrofitted to work with Roger Andersen et al's
+     'Ucuchi Live and In Color' content. From the 'View'
+     menu, select 'Ucuchi Live'. Then download sample
+     content at
+     
+      http://altiplano.emich.edu/quilldriver/Scene01.zip
+     
+     This zip archive contains two files, a transcript
+     and a video, which you can open in QuillDriver with
+     'File - Open'.
+
+   - Added a 'Help' menu which, among other things,
+     allows users to view this file from within QuillDriver.
+     
+     
