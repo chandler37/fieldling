@@ -98,9 +98,10 @@ public class XMLEditor {
 		this.tagInfo = tagInfo;
 		startOffsets = new HashMap();
 		endOffsets = new HashMap();
-        //For some reason Color.CYAN and Color.RED are not recognized on Mac OS X!!
-		//pane.setSelectionColor(Color.CYAN);
-		//pane.setSelectedTextColor(Color.RED);
+        //For some reason uppercase color names, e.g. Color.CYAN and Color.RED,
+        //are not recognized on Mac OS X, for Java 1.3.1 at least!!
+		pane.setSelectionColor(Color.cyan);
+		pane.setSelectedTextColor(Color.red);
 		doc = pane.getStyledDocument();
 		textCursor = new Cursor(Cursor.TEXT_CURSOR);
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -674,7 +675,8 @@ System.out.println("clicked on editable " + String.valueOf(offset));
 				@TIBETAN@Text t = (Text)node;
 				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(((Element)t.getParent()).getQualifiedName())) {
 					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2);
+                    @TIBETAN@boolean[] noSuchWylie = new boolean[1];
+					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2, noSuchWylie);
 				@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
 				@UNICODE@val = pane.getDocument().getText(p1, p2-p1).trim();
 				if (val.length()==0) val=new String(" ");
