@@ -13,6 +13,9 @@ For QuillDriver, you also need these:
 	extensions/jaxen-full.jar
 	extensions/jaxen-jdom.jar
 	extensions/saxpath.jar
-	
+
+To run the Tibetan version of QuillDriver you also need:
+	Jskad.jar
+
 Edward Garrett
 March 28, 2003
