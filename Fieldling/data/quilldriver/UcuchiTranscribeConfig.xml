@@ -66,8 +66,8 @@
                 <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
             </tagview>
             <tagview name="Quechua and English" keystroke="F2">
-                <tag name="ucuchi:S-F" visible="false" visiblecontents="true"/>
-                <tag name="ucuchi:TRANSL" visiblecontents="true" displayas="'ENG'"/>
+                <tag name="ucuchi:S-F" visible="true" displayas="id(../@spid)" visiblecontents="true"/>
+                <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
             </tagview>
 		</rendering-instructions>
 </qd-configuration>

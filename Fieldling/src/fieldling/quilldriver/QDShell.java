@@ -347,6 +347,12 @@ public class QDShell extends JFrame {
 	public JMenuBar getQDShellMenu() {
                 //File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
+                JMenuItem wizardItem = new JMenuItem("New Wizard");
+                wizardItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        new QDShell();
+                    }
+                });
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -364,6 +370,8 @@ public class QDShell extends JFrame {
 				System.exit(0);
 			}
 		});
+                projectMenu.add(wizardItem);
+                projectMenu.addSeparator();
 		projectMenu.add(saveItem);
 		projectMenu.addSeparator();
                 projectMenu.add(quitItem);
