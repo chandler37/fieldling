@@ -31,6 +31,9 @@
                           <symbol name="LATIN SMALL LETTER G" codepoint="U+0067">
                                 <features>CONSONANT VELAR VOICED PLOSIVE</features>
                           </symbol>
+                          <symbol name="LATIN SMALL LETTER G" codepoint="U+0261">
+                                <features>CONSONANT VELAR VOICED PLOSIVE</features>
+                          </symbol>
                           <symbol name="LATIN SMALL LETTER Q" codepoint="U+0071">
                                 <features>CONSONANT UVULAR VOICELESS PLOSIVE</features>
                           </symbol>
