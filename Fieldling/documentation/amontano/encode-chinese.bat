@@ -1,0 +1,1 @@
+native2ascii -encoding UTF-8 MessageBundle_zh.txt MessageBundle_zh.properties
