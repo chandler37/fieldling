@@ -397,7 +397,7 @@ public class QDShell extends JFrame {
 				new UserFeedback(QDShell.this);
 			}
 		});
-                JMenuItem aboutItem = new JMenuItem(messages.getString("About QuillDriver"));
+                JMenuItem aboutItem = new JMenuItem(messages.getString("AboutQuillDriver"));
                 try {
                     final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
                     aboutItem.addActionListener(new ActionListener() {
@@ -657,7 +657,7 @@ public class QDShell extends JFrame {
                 h2Panel = new JPanel();
                 h2Panel.add(hPositionLabel);
                 h2Panel.add(highlightPosition);
-                hMultipleLabel = new JLabel(messages.getString("Multiple highlight policy: "));
+                hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
                 multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
                 multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
                 multipleHighlightPolicy.setEditable(true);
