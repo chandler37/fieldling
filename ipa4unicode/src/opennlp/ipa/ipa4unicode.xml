@@ -374,7 +374,11 @@
                                         <adds>RHOTACIZED</adds>
                                 </profile>
                           </symbol>-->
-                          
+                       
+
+<!--
+  <symbol name="LATIN SMALL LETTER L WITH MIDDLE TILDE" codepoint="U+026B"/>
+  -->   
                           <!-- Non-IPA diacritics that are part of base IPA symbols when they are decomposed into Normalized Form NF-D -->
                           <symbol name="COMBINING CEDILLA" codepoint="U+0327"> <!-- Cedilla -->
                                 <profile>
@@ -654,7 +658,3 @@
   <exclusive-group id="CentralizationAndRaisingDiacritics">U+033D U+0308 U+031D U+031E</exclusive-group><!-- Mid-centralized, Centralized, Raised, Lowered -->
   <exclusive-group id="LengthDiacritics">U+02D0 U+02D1 U+0306</exclusive-group><!-- Long, Half-long, Extra-short -->
 </ipa4unicode>
-
-<!--
-  <symbol name="LATIN SMALL LETTER L WITH MIDDLE TILDE" codepoint="U+026B"/>
-  -->
