@@ -12,7 +12,12 @@ public class I18n {
 
 	public static ResourceBundle getResourceBundle() {
 		if (resources == null)
+		{
 			resources = ResourceBundle.getBundle("MessageBundle", getLocale());
+			
+			// testing chinese:
+			// resources = ResourceBundle.getBundle("MessageBundle", Locale.SIMPLIFIED_CHINESE);
+		}
 		return resources;
 	}
 	public static void setLocale(Locale l) {
