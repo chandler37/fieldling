@@ -221,8 +221,6 @@ public class QD extends JDesktopPane {
 					invalidate();
 					validate();
 					repaint();
-
-
 System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				}
 			}}, 0, 50);
@@ -711,7 +709,7 @@ System.out.println("DURATION = " + String.valueOf(player.getEndTime()));
 				else editor.setEditabilityTracker(true);
 
 				transcriptFile = file;
-				textFrame.requestFocus(); //otherwise the first time you press Play you don't get highlights in the text window!!
+				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
 
 				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 
