@@ -40,7 +40,7 @@ a version optimized for use with Tibetan script.
 	</description>
 
 	<property name="ext"            value="extensions"/>
-	<property name="doc"            value="documentation"/>
+	<property name="doc.dir"            value="documentation"/>
 	<property name="data.dir"	value="data"/>
 	<property name="jvm" 		value="java"/>
 	<property name="build.dir"      value="build"/>
@@ -51,30 +51,24 @@ a version optimized for use with Tibetan script.
 	<property name="build.classes"	value="${build.dir}/classes"/>
 	<property name="unicode.classes"  value="${build.classes}/unicode"/>
 	<property name="tibetan.classes"  value="${build.classes}/tibetan"/>
-	<property name="build.dist"     value="${build.dir}/dist"/>
-	<property name="build.dist.jws"	value="${build.dist}/jws"/>
-	<property name="build.dist.jws.lib" value="${build.dist.jws}/lib"/>
-	<property name="build.dist.zip"	value="${build.dist}/zip"/>
-	<property name="build.dist.zip.tozip" value="${build.dist.zip}/QuillDriver"/>
-	<property name="build.dist.zip.tozip.lib" value="${build.dist.zip.tozip}/lib"/>
 	<property name="build.doc"      value="${build.dir}/doc"/>
 	<property name="build.eg"       value="${build.doc}/eg"/>
+    <property name="webapp.dir"     value="${build.dir}/webapp"/>
+    <property name="webapp.doc.dir" value="${webapp.dir}/doc"/>
+    <property name="webapp.dtddoc.dir" value="${webapp.doc.dir}/dtddoc"/>
+    <property name="webapp.api.dir" value="${webapp.doc.dir}/api"/>
+    <property name="webapp.code.dir" value="${webapp.doc.dir}/code"/>
+	<property name="webstart.lib" value="${webapp.dir}/lib_webstart"/>
+    
 	<property name="distrib.source"	value="distribSrc"/>
+    
 	<property name="jnlp.codebase"	value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/"/>
-	<property name="ftp.server"	value="mayor.lib.virginia.edu"/>
-	<property name="ftp.dir"	value="Sites/QuillDriver"/>
-	<property name="ftp.id"	value="eg3p"/>
-	<property name="ftp.password"	value="''"/>
-	<property name="archive.location" value="http://mayor.lib.virginia.edu/~eg3p/QuillDriver"/>
-	<property name="mail.from"	value="egarrett@emich.edu"/>
-	<property name="mail.host"	value="smtp.emich.edu"/>
-	<property name="mail.to"	value="snw8f@virginia.edu,egarrett@emich.edu,cewalker@midway.uchicago.edu,dfg9w@virginia.edu,epw6y@virginia.edu,rogerand@humnet.ucla.edu,fmg3u@virginia.edu,twm4g@virginia.edu"/>
-	<property name="update.message"	value=""/>
-
+    <property name="tomcat.home" value="/usr/local/jakarta-tomcat-4.1.29"/>
 
 	<!-- Tell ant where to find the code of the DTDDoc task -->
-	<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
-
+	<!--<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
+-->
+    
 	<path id="my.classpath">
 		<fileset id="extensions" dir="${ext}">
 			<include name="*.jar"/>
@@ -82,39 +76,25 @@ a version optimized for use with Tibetan script.
 		</fileset>
 	</path>
 
-<!--
-	<path id="my.classpath">
-		<pathelement location="${ext}/xml-apis.jar"/>
-		<pathelement location="${ext}/xercesImpl.jar"/>
-		<pathelement location="${ext}/xalan.jar"/>
-		<pathelement location="${ext}/jdom.jar"/>
-		<pathelement location="${ext}/jaxen-full.jar"/>
-		<pathelement location="${ext}/jaxen-jdom.jar"/>
-		<pathelement location="${ext}/saxpath.jar"/>
-		<pathelement location="${ext}/Jskad.jar"/>
-		<pathelement location="${ext}/QTJava.zip"/>
-		<pathelement location="${ext}/java40.jar"/>
-		<pathelement location="${ext}/jmf.jar"/>
-	</path>
--->
+
 
 	<!-- Create the build directory structure used by compile -->
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.doc}"/>
+		<mkdir dir="${build.eg}"/>
 		<mkdir dir="${tweaked.source}"/>
 		<mkdir dir="${tibetan.source}"/>
 		<mkdir dir="${unicode.source}"/>
 		<mkdir dir="${build.classes}"/>
 		<mkdir dir="${unicode.classes}"/>
 		<mkdir dir="${tibetan.classes}"/>
-		<mkdir dir="${build.dist}"/>
-		<mkdir dir="${build.dist.jws}"/>
-		<mkdir dir="${build.dist.jws.lib}"/>
-		<mkdir dir="${build.dist.zip}"/>
-		<mkdir dir="${build.dist.zip.tozip}"/>
-		<mkdir dir="${build.dist.zip.tozip.lib}"/>
-		<mkdir dir="${build.doc}"/>
-		<mkdir dir="${build.eg}"/>
+		<mkdir dir="${webapp.dir}"/>
+		<mkdir dir="${webapp.doc.dir}"/>
+        <mkdir dir="${webapp.dtddoc.dir}"/>
+		<mkdir dir="${webapp.api.dir}"/>
+		<mkdir dir="${webapp.code.dir}"/>
+		<mkdir dir="${webstart.lib}"/>
 		<tstamp>
 			<format property="qd.date" pattern="dd.MM.yy-h.mma"/>
 		</tstamp>
@@ -135,56 +115,25 @@ a version optimized for use with Tibetan script.
 		</copy>
 	</target>
 		
-	<target name="mp-jar" depends="mp-compile" description="generates mediaplayer.jar in build/dist">
-		<jar jarfile="${build.dist}/mediaplayer.jar" basedir="${unicode.classes}" />		
-	</target>
 
-	<target name="mp-sign" depends="mp-jar" description="signs mediaplayer.jar">
-		<!-- Step 3: Sign the jars -->
-		<signjar alias="testsigner" keystore="${data.dir}/keystore" storepass="testpassword">
-			<fileset dir="${build.dist}">
-				<include name="mediaplayer.jar"/>
-			</fileset>
-		</signjar>
-	</target>
-
-	<target name="mp-eg" depends="mp-sign" description="compile, build jars, create an example">
-		<delete dir="${build.eg}"/>
-		<copy todir="${build.eg}">
-			<fileset dir="${doc}/eg">
-				<include name="*.*"/>
-			</fileset>
-		</copy>
-		<property location="${build.eg}/BAC.mp3" name="mediafile"/>
-		<xslt out="${build.eg}/testJMF.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
-			<param name="player" expression="jmf"/>
-			<param name="mediafile" expression="http://hitchcock.itc.virginia.edu/TibetMedia/movies/Dream.mpg"/>
-		<!--	<param name="mediafile" expression="file:${mediafile}"/> -->
-		</xslt>
-		<xslt out="${build.eg}/testQT4J.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
-			<param name="player" expression="qt4j"/>
-			<param name="mediafile" expression="http://hitchcock.itc.virginia.edu/TibetMedia/movies/WomenTalkDreamsHI.mov"/>
-		<!-- I get an access denied error when I try this: 
-			<param name="mediafile" expression="file:${mediafile}"/> -->
-		</xslt>
-	</target>
-
+    <!-- lines marked @UNICODE@ in the source are only for the Unicode version of QD -->
 	<target name="create-unicode-source" if="unicode.source.isUptodate">
 		<copy todir="${unicode.source}" overwrite="true">
 			<fileset dir="${raw.source}" includes="**/*"/>
 			<filterset>
-				<filter token="TIBETAN" value="//TIBETAN-SPECIFIC "/>
+				<filter token="TIBETAN" value="//TIBETAN-SPECIFIC "/> <!-- we keep this so that line #s aren't affected by the deletion -->
 				<filter token="UNICODE" value=""/>
 			</filterset>
 		</copy>	
 	</target>
 	
+    <!-- lines marked @TIBETAN@ are hacks for the non-Unicode Tibetan-only version of QD -->
 	<target name="create-tibetan-source" if="tibetan.source.isUptodate">
 		<copy todir="${tibetan.source}" overwrite="true">
 			<fileset dir="${raw.source}" includes="**/*"/>
 			<filterset>
 				<filter token="TIBETAN" value=""/>
-				<filter token="UNICODE" value="//NON-TIBETAN "/>
+				<filter token="UNICODE" value="//NON-TIBETAN "/> <!-- we keep this so that line #s aren't affected by the deletion -->
 			</filterset>
 		</copy>
 	</target>
@@ -224,6 +173,9 @@ a version optimized for use with Tibetan script.
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 			</fileset>
+            <fileset dir="${doc.dir}">
+                <include name="changelog.txt"/>
+            </fileset>
 		</copy>
 		<copy todir="${unicode.classes}/fieldling/quilldriver">
 			<fileset dir="${data.dir}/quilldriver">
@@ -258,6 +210,9 @@ a version optimized for use with Tibetan script.
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 			</fileset>
+            <fileset dir="${doc.dir}">
+                <include name="changelog.txt"/>
+            </fileset>
 		</copy>
 		<copy todir="${tibetan.classes}/fieldling/quilldriver">
 			<fileset dir="${data.dir}/quilldriver">
@@ -267,267 +222,10 @@ a version optimized for use with Tibetan script.
 		</copy>		
 	</target>
 
-	<!-- I HAVE NOT INCLUDED AN EXPLICIT MANIFEST BECAUSE IF YOU USE ANT TO RUN
-		A JAR FILE (AT LEAST ON MAC OS X), THEN IT FAILS TO LOAD THE EXTENSIONS,
-		EVEN IF THEY ARE SPECIFIED IN THE CLASSPATH. IN ANY CASE THE MANIFEST 
-		IS NOT REQUIRED SINCE OUR DEPLOYMENT METHODS FOR QD (MAC APP; JWS) DO 
-		NOT REQUIRE A DOUBLE-CLICKABLE JAR. -->
-		
-	<target name="qd-jar" depends="qd-compile" description="generate quilldriver.jar">
-		<!-- Unicode version -->
-		<jar jarfile="${build.dist}/quilldriver.jar" basedir="${unicode.classes}" />
-		
-		<!-- Tibetan version -->
-		<jar jarfile="${build.dist}/quilldriver-TIB.jar" basedir="${tibetan.classes}" />
-	</target>
 
-	<target name="qd-jws" depends="qd-jar" description="generate qd's Java Web Start distro">
-		<!-- Copy QD jars -->
-		<copy file="${build.dist}/quilldriver.jar" tofile="${build.dist.jws}/quilldriver.jar"/>
-		<copy file="${build.dist}/quilldriver-TIB.jar" tofile="${build.dist.jws}/quilldriver-TIB.jar"/>
-		
-		<!-- Step 1: Copy the libraries -->
-		<copy todir="${build.dist.jws.lib}">
-			<fileset dir="${ext}">
-				<!-- We don't need to copy these files because they should always be
-				in the System's classpath if installed correctly. -->
-				<exclude name="QTJava.zip"/>
-				<exclude name="jmf.jar"/>
-				<exclude name="java40.jar"/>
-			</fileset>
-		</copy>
-		
-		<antcall target="qd-unicode-jnlp">
-			<param name="jnlp.file" value="QuillDriver.jnlp"/>
-			<param name="jar.file" value="quilldriver.jar"/>
-		</antcall>
-		<antcall target="qd-tibetan-jnlp">
-			<param name="jnlp.file" value="QuillDriver-TIB.jnlp"/>
-			<param name="jar.file" value="quilldriver-TIB.jar"/>
-		</antcall>		
-		
-		<!-- Step 3: Sign the jars -->
-		<signjar alias="testsigner" keystore="${data.dir}/keystore" storepass="testpassword">
-			<fileset dir="${build.dist.jws}">
-				<include name="**/*.jar"/>
-			</fileset>
-		</signjar>
-		
-		<!-- Make additional dated Jar and Jnlp descriptor for Tibetan only version -->
-		<copy file="${build.dist.jws}/quilldriver-TIB.jar" tofile="${build.dist.jws}/quilldriver-TIB-${qd.date}.jar"/>
-		<antcall target="qd-tibetan-jnlp">
-			<param name="jnlp.file" value="QD-TIB-${qd.date}.jnlp"/>
-			<param name="jar.file" value="quilldriver-TIB-${qd.date}.jar"/>
-		</antcall>
-	</target>
-
-	<target name="qd-unicode-jnlp">
-		<!-- Step 2: Create the jnlp file -->
-		<!-- Write the head of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="false">
-<![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+"]]></echo>
-		<!-- Write the middle of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
-		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
-		<!-- Write the tail of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
-<![CDATA[      href="]]>${jnlp.file}<![CDATA[">
-<information>
-  <title>QuillDriver</title>
-  <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
-  <description>
-QuillDriver is a fully customizable tool for transcribing and annotating 
-digital video files. Annotation files can be any well-formed XML, 
-and supported media players include Java Media Framework (JMF) 
-and Quicktime for Java.
-  </description>
-  <offline-allowed/>
-</information>
-<security>
-  <all-permissions/>
-</security>
-<resources os="Windows" arch="x86">
-  <j2se version="1.4+"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
-  <jar href="lib/xml-apis.jar"/>
-  <jar href="lib/xercesImpl.jar"/>
-  <jar href="lib/xalan.jar"/>
-  <jar href="lib/jdom.jar"/>
-  <jar href="lib/jaxen-full.jar"/>
-  <jar href="lib/jaxen-jdom.jar"/>
-  <jar href="lib/saxpath.jar"/> 
-</resources>
-<resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3.1"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
-  <jar href="lib/xml-apis.jar"/>
-  <jar href="lib/xercesImpl.jar"/>
-  <jar href="lib/xalan.jar"/>
-  <jar href="lib/jdom.jar"/>
-  <jar href="lib/jaxen-full.jar"/>
-  <jar href="lib/jaxen-jdom.jar"/>
-  <jar href="lib/saxpath.jar"/>
-</resources>
-<application-desc main-class="fieldling.quilldriver.QDShell"/>
-</jnlp>]]>
-		</echo>
-	</target>
-	
-	<target name="qd-tibetan-jnlp">
-		<!-- Step 2: Create the jnlp file -->
-		<!-- Write the head of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="false">
-<![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+"]]></echo>
-		<!-- Write the middle of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
-		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
-		<!-- Write the tail of the .jnlp file: -->
-		<echo file="${build.dist.jws}/${jnlp.file}" append="true">
-<![CDATA[      href="]]>${jnlp.file}<![CDATA[">
-<information>
-  <title>QuillDriver-TIBETAN</title>
-  <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
-  <description>
-QuillDriver is a tool for transcribing and annotating digital video files.
-Annotation files can be any well-formed XML, and supported media players include
-Java Media Framework (JMF) and Quicktime for Java. QuillDriver-TIBETAN has been
-optimized for use with Tibetan script.
-  </description>
-  <offline-allowed/>
-</information>
-<security>
-  <all-permissions/>
-</security>
-<resources os="Windows" arch="x86">
-  <j2se version="1.4+"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
-  <jar href="lib/Jskad.jar"/>
-  <jar href="lib/xml-apis.jar"/>
-  <jar href="lib/xercesImpl.jar"/>
-  <jar href="lib/xalan.jar"/>
-  <jar href="lib/jdom.jar"/>
-  <jar href="lib/jaxen-full.jar"/>
-  <jar href="lib/jaxen-jdom.jar"/>
-  <jar href="lib/saxpath.jar"/> 
-</resources>
-<resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3.1"/>
-  <jar href="]]>${jar.file}<![CDATA["/>
-  <jar href="lib/Jskad.jar"/>
-  <jar href="lib/xml-apis.jar"/>
-  <jar href="lib/xercesImpl.jar"/>
-  <jar href="lib/xalan.jar"/>
-  <jar href="lib/jdom.jar"/>
-  <jar href="lib/jaxen-full.jar"/>
-  <jar href="lib/jaxen-jdom.jar"/>
-  <jar href="lib/saxpath.jar"/>
-</resources>
-<application-desc main-class="fieldling.quilldriver.QDShell"/>
-</jnlp>]]>
-		</echo>
-	</target>
-
-	<target name="qd-zip" depends="qd-jar" description="create qd zip files for Tibetan">
-		<copy todir="${build.dist.zip.tozip.lib}">
-			<fileset dir="${ext}">
-				<!-- We don't need to copy these files because they should always be
-				in the System's classpath if installed correctly. -->
-				<exclude name="QTJava.zip"/>
-				<exclude name="jmf.jar"/>
-				<exclude name="java40.jar"/>
-			</fileset>
-		</copy>
-		<copy file="${build.dist}/quilldriver-TIB.jar" tofile="${build.dist.zip.tozip.lib}/quilldriver-TIB-${qd.date}.jar"/>
-		<echo file="${build.dist.zip.tozip}/QD-TIB-${qd.date}.bat" append="false"><![CDATA[javaw -cp lib/xercesImpl.jar;lib/xml-apis.jar;lib/xalan.jar;lib/jdom.jar;lib/saxpath.jar;lib/jaxen-full.jar;lib/jaxen-jdom.jar;lib/Jskad.jar;lib/quilldriver-TIB-]]>${qd.date}.jar fieldling.quilldriver.QDShell</echo>
-		<zip destfile="${build.dist}/QuillDriver-TIB.zip">
-			<fileset dir="${build.dist.zip}">
-				<include name="QuillDriver/**/*"/>
-			</fileset>
-		</zip>
-		<zip destfile="${build.dist}/QD-TIB-Update-${qd.date}.zip">
-			<fileset dir="${build.dist.zip.tozip}">
-				<include name="QD-TIB-${qd.date}.bat"/>
-				<include name="lib/quilldriver-TIB-${qd.date}.jar"/>
-			</fileset>
-		</zip>
-	</target>
-
-	<target name="qd-update-archive" description="update server's archives.xml file">
-		<get src="${archive.location}/archive.xml" dest="${build.dist}/old-archive.xml"/>
-		<xslt in="${build.dist}/old-archive.xml" out="${build.dist}/archive.xml" style="${data.dir}/quilldriver/add-archive.xsl">
-			<param name="date" expression="${qd.date}"/>
-			<param name="jnlp" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-TIB-${qd.date}.jnlp"/>
-			<param name="zip" expression="http://mayor.lib.virginia.edu/~eg3p/QuillDriver/QD-TIB-Update-${qd.date}.zip"/>
-			<param name="note" expression="${update.message}"/>
-		</xslt>
-	</target>
-		
-	<target name="qd-ftp-zip" depends="qd-zip" description="ftp qd zip files to server">
-		<ftp server="${ftp.server}" remotedir="${ftp.dir}" 
-			userid="${ftp.id}" password="${ftp.password}" 
-			binary="yes" depends="true" verbose="true">
-				<fileset dir="${build.dist}">
-					<include name="*.zip"/>
-				</fileset>
-		</ftp>
-	</target>
-	
-	<target name="qd-ftp-jws-libs" depends="qd-ftp-jws-nolibs" description="ftp qd and libraries to server">
-		<ftp server="${ftp.server}" remotedir="${ftp.dir}" 
-			userid="${ftp.id}" password="${ftp.password}" 
-			binary="yes" depends="true" verbose="true">
-				<fileset dir="${build.dist.jws.lib}">
-					<include name="**/*"/>
-				</fileset>
-		</ftp>
-	</target>
-
-	<target name="qd-ftp-jws-update" depends="qd-jws" description="ftp new qd to server">
-		<ftp server="${ftp.server}" remotedir="${ftp.dir}" 
-			userid="${ftp.id}" password="${ftp.password}" 
-			binary="yes" depends="true" verbose="true">
-				<fileset dir="${build.dist.jws}">
-					<include name="quilldriver.jar"/>
-					<include name="quilldriver-TIB-${qd.date}.jar"/>
-					<include name="QD-TIB-${qd.date}.jnlp"/>
-				</fileset>
-		</ftp>
-	</target>
-	
-	<target name="qd-ftp-jws-nolibs" depends="qd-jws" description="ftp new qd to server">
-		<ftp server="${ftp.server}" remotedir="${ftp.dir}" 
-			userid="${ftp.id}" password="${ftp.password}" 
-			binary="yes" depends="true" verbose="true">
-				<fileset dir="${build.dist.jws}">
-					<include name="QuillDriver.jnlp"/>
-					<include name="quilldriver.jar"/>
-					<include name="QuillDriver-TIB.jnlp"/>
-					<include name="quilldriver-TIB.jar"/>
-				</fileset>
-		</ftp>
-	</target>
-	
-	<target name="qd-ftp-update" depends="qd-ftp-zip,qd-ftp-jws-nolibs,qd-ftp-jws-update,qd-update-archive" description="ftp all new version info to website">
-		<ftp server="${ftp.server}" remotedir="${ftp.dir}" 
-			userid="${ftp.id}" password="${ftp.password}" 
-			binary="no" depends="true" verbose="true">
-				<fileset dir="${build.dist}">
-					<include name="archive.xml"/>
-				</fileset>
-		</ftp>
-		<antcall target="qd-email-notify"/>
-	</target>
-
-	<target name="qd-email-notify" description="send email alerting users to update">
-		<mail from="${mail.from}" tolist="${mail.to}" mailhost="${mail.host}" subject="Check the QuillDriver Archive for a new version">
-			<message>${update.message}</message>
-		</mail>
-	</target>
-	
+    
+    
+    
 	<!-- SOMEHOW USING <java jar="quilldriver.jar" etc.> DOES NOT WORK PROPERLY:
 		IF YOU DO THIS THEN THE EXTENSIONS ARE NOT FOUND (AT LEAST ON MAC OS X. 
 		SO INSTEAD I RUN THE CLASS AND PUT THE JAR AT THE HEAD OF THE CLASSPATH. -->
@@ -551,26 +249,226 @@ optimized for use with Tibetan script.
 			</classpath>
 		</java>
 	</target>
-  
-	<target name="doc" depends="mp-compile,qd-compile" description="Build the documentation">
-		<javadoc packagenames="fieldling.util.*,fieldling.mediaplayer.*,fieldling.quilldriver.*" sourcepath="${unicode.source}" destdir="${build.doc}/api" bottom="Programme de These">
-			<classpath refid="my.classpath"/>
-		</javadoc>
-		<copy todir="${build.doc}">
-			<fileset dir="${doc}">
-				<include name="*.*"/>
+    
+
+
+	<target name="qd-unicode-jnlp">
+		<!-- Step 2: Create the jnlp file -->
+		<!-- Write the head of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="false">
+<![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"]]></echo>
+		<!-- Write the middle of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
+		<!-- Write the tail of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+<![CDATA[      href="]]>${jnlp.file}<![CDATA[">
+<information>
+  <title>QuillDriver</title>
+  <vendor>THDL</vendor>
+  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <description>
+QuillDriver is a fully customizable tool for transcribing and annotating 
+digital video files. Annotation files can be any well-formed XML, 
+and supported media players include Java Media Framework (JMF) 
+and Quicktime for Java.
+  </description>
+  <offline-allowed/>
+</information>
+<security>
+  <all-permissions/>
+</security>
+<resources os="Windows" arch="x86">
+  <j2se version="1.4+"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/xml-apis.jar"/>
+  <jar href="lib_webstart/xercesImpl.jar"/>
+  <jar href="lib_webstart/xalan.jar"/>
+  <jar href="lib_webstart/jdom.jar"/>
+  <jar href="lib_webstart/jaxen-full.jar"/>
+  <jar href="lib_webstart/jaxen-jdom.jar"/>
+  <jar href="lib_webstart/saxpath.jar"/>
+  <jar href="lib_webstart/mail.jar"/>
+  <jar href="lib_webstart/activation.jar"/>
+</resources>
+<resources os="Mac OS X" arch="ppc">
+  <j2se version="1.3.1"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/xml-apis.jar"/>
+  <jar href="lib_webstart/xercesImpl.jar"/>
+  <jar href="lib_webstart/xalan.jar"/>
+  <jar href="lib_webstart/jdom.jar"/>
+  <jar href="lib_webstart/jaxen-full.jar"/>
+  <jar href="lib_webstart/jaxen-jdom.jar"/>
+  <jar href="lib_webstart/saxpath.jar"/>
+  <jar href="lib_webstart/mail.jar"/>
+  <jar href="lib_webstart/activation.jar"/>
+</resources>
+<application-desc main-class="fieldling.quilldriver.QDShell"/>
+</jnlp>]]>
+		</echo>
+	</target>
+	
+	<target name="qd-tibetan-jnlp">
+		<!-- Step 2: Create the jnlp file -->
+		<!-- Write the head of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="false">
+<![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"]]></echo>
+		<!-- Write the middle of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+		<![CDATA[      codebase="]]>${jnlp.codebase}<![CDATA["]]></echo>
+		<!-- Write the tail of the .jnlp file: -->
+		<echo file="${webapp.dir}/${jnlp.file}" append="true">
+<![CDATA[      href="]]>${jnlp.file}<![CDATA[">
+<information>
+  <title>QuillDriver-TIBETAN</title>
+  <vendor>THDL</vendor>
+  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <description>
+QuillDriver is a tool for transcribing and annotating digital video files.
+Annotation files can be any well-formed XML, and supported media players include
+Java Media Framework (JMF) and Quicktime for Java. QuillDriver-TIBETAN has been
+optimized for use with Tibetan script.
+  </description>
+  <offline-allowed/>
+</information>
+<security>
+  <all-permissions/>
+</security>
+<resources os="Windows" arch="x86">
+  <j2se version="1.4+"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/Jskad.jar"/>
+  <jar href="lib_webstart/xml-apis.jar"/>
+  <jar href="lib_webstart/xercesImpl.jar"/>
+  <jar href="lib_webstart/xalan.jar"/>
+  <jar href="lib_webstart/jdom.jar"/>
+  <jar href="lib_webstart/jaxen-full.jar"/>
+  <jar href="lib_webstart/jaxen-jdom.jar"/>
+  <jar href="lib_webstart/saxpath.jar"/> 
+  <jar href="lib_webstart/mail.jar"/>
+  <jar href="lib_webstart/activation.jar"/>
+</resources>
+<resources os="Mac OS X" arch="ppc">
+  <j2se version="1.3.1"/>
+  <jar href="]]>${jar.file}<![CDATA["/>
+  <jar href="lib_webstart/Jskad.jar"/>
+  <jar href="lib_webstart/xml-apis.jar"/>
+  <jar href="lib_webstart/xercesImpl.jar"/>
+  <jar href="lib_webstart/xalan.jar"/>
+  <jar href="lib_webstart/jdom.jar"/>
+  <jar href="lib_webstart/jaxen-full.jar"/>
+  <jar href="lib_webstart/jaxen-jdom.jar"/>
+  <jar href="lib_webstart/saxpath.jar"/>
+  <jar href="lib_webstart/mail.jar"/>
+  <jar href="lib_webstart/activation.jar"/>
+</resources>
+<application-desc main-class="fieldling.quilldriver.QDShell"/>
+</jnlp>]]>
+		</echo>
+	</target>
+    
+    <target name="qd-create-webapp" depends="qd-compile" description="creates fieldling webapp">
+        
+        <!-- Step 1: create jar files needed for qd -->
+        <jar jarfile="${webstart.lib}/mediaplayer.jar" basedir="${unicode.classes}" />
+        <jar jarfile="${webstart.lib}/quilldriver.jar" basedir="${unicode.classes}" /> <!-- Unicode version -->
+        <jar jarfile="${webstart.lib}/quilldriver-TIB.jar" basedir="${tibetan.classes}" /> <!-- Tibetan version -->
+
+        <!-- Step 2: copy libraries needed for qd -->
+		<copy todir="${webstart.lib}" includeEmptyDirs="false">
+			<fileset dir="${ext}">
+				<!-- We don't need to copy these files because they should always be
+				in the System's classpath if installed correctly. -->
+				<exclude name="QTJava.zip"/>
+				<exclude name="jmf.jar"/>
+				<exclude name="java40.jar"/>
+                <exclude name="ant-extensions/*"/>
 			</fileset>
 		</copy>
-		<!-- Execute DTDDoc -->
+        
+        <!-- Step 3: sign all jars -->
+		<signjar alias="testsigner" keystore="${data.dir}/keystore" storepass="testpassword">
+			<fileset dir="${webstart.lib}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</signjar>
+		
+		<!-- Step 4: create jnlp descriptor files -->
+		<antcall target="qd-unicode-jnlp">
+			<param name="jnlp.file" value="QuillDriver.jnlp"/>
+			<param name="jar.file" value="quilldriver.jar"/>
+		</antcall>
+		<antcall target="qd-tibetan-jnlp">
+			<param name="jnlp.file" value="QuillDriver-TIB.jnlp"/>
+			<param name="jar.file" value="quilldriver-TIB.jar"/>
+		</antcall>
+        
+        <!-- Step 5: copy and create documentation and api files -->
+        <javadoc use="true"
+                author="true"
+                version="true"
+                destdir="${webapp.api.dir}">
+                <fileset dir="${unicode.source}">
+                    <include name="**/*.java"/>
+                </fileset>
+                <link href="http://java.sun.com/j2se/1.4.2/docs/api"/> <!-- JDK API -->
+                <link href="http://www.jdom.org/docs/apidocs"/> <!-- JDOM API -->
+                <link href="http://xml.apache.org/xerces2-j/javadocs/api"/> <!-- Xerces API -->
+                <link href="http://xml.apache.org/xalan-j/apidocs/index.html"/> <!-- Xalan API -->
+        </javadoc>
+        
+        <zip destfile="${webapp.dir}/fieldling_src.zip" basedir="." excludes="${build.dir}/**/* ${build.dir}" update="true"/>
+        <zip destfile="${webapp.dir}/fieldling_api.zip" basedir="${webapp.api.dir}" update="true"/>
+        
+        <copy todir="${webapp.dir}">
+            <fileset dir="${doc.dir}" includes="**/*"/>
+        </copy>
+		
+        <!--
 		<DTDDoc showHiddenTags="true"
-                	showFixmeTags="false"
+            showFixmeTags="false"
 			sourceDir="${data.dir}/quilldriver"
-			destDir="${build.doc}/DTDDocs"
+			destDir="${webapp.dtddoc.dir}"
 			docTitle = "QD DTDs">
 			<include name="*.dtd"/>
 		</DTDDoc>
+        -->
+        
+        <!-- Step 6: zip entire webapp into war file -->
+        <zip destfile="${build.dir}/quilldriver.war" basedir="${webapp.dir}"/>
+    </target>
+    
+    <target name="qd-deploy-webapp" depends="qd-create-webapp"
+        description="unwar into servlet container's deployment directory">
+          <unwar src="${build.dir}/quilldriver.war"
+            dest="${tomcat.home}/webapps/quilldriver"/>
+    </target>
+	
+    <!--
+    	<target name="mp-eg" depends="mp-sign" description="compile, build jars, create an example">
+		<delete dir="${build.eg}"/>
+		<copy todir="${build.eg}">
+			<fileset dir="${doc}/eg">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+		<property location="${build.eg}/BAC.mp3" name="mediafile"/>
+		<xslt out="${build.eg}/testJMF.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
+			<param name="player" expression="jmf"/>
+			<param name="mediafile" expression="http://hitchcock.itc.virginia.edu/TibetMedia/movies/Dream.mpg"/>
+			<param name="mediafile" expression="file:${mediafile}"/>
+		</xslt>
+		<xslt out="${build.eg}/testQT4J.htm" in="${build.eg}/BAC.xml" style="${build.eg}/playerManager.xsl">
+			<param name="player" expression="qt4j"/>
+			<param name="mediafile" expression="http://hitchcock.itc.virginia.edu/TibetMedia/movies/WomenTalkDreamsHI.mov"/>
+		I get an access denied error when I try this: 
+			<param name="mediafile" expression="file:${mediafile}"/>
+		</xslt>
 	</target>
-       
+
 	<target name="distrib" depends="clean,mp-jar,qd-jar,doc" description="clean, compile, build jars, docs, and zips">
 		<copy todir="${build.doc}">
 			<fileset dir="${doc}">
@@ -617,4 +515,5 @@ optimized for use with Tibetan script.
 		<zip zipfile="fieldlingSrc.zip" basedir="${distrib.source}"/>
 		<delete dir="${distrib.source}"/>
 	</target>
+    -->
 </project>

@@ -544,9 +544,28 @@ public class QDShell extends JFrame {
 			}
 		});
 
-		JMenu betaMenu =  new JMenu("Dev-Beta");
+        //about menu item
+        JMenuItem aboutItem = new JMenuItem("About QuillDriver");
+        
+        //changelog
+        JMenuItem changeItem = new JMenuItem("Read changelog");
+        try {
+            final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "changelog.txt");
+            changeItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JFrame f = new JFrame();
+                    f.setSize(500,400);
+                    f.getContentPane().add(sp);
+                    f.setVisible(true);
+                }
+            }); 
+        } catch (IOException ioe ) {
+            ioe.printStackTrace();
+        }
+		JMenu betaMenu =  new JMenu("Help");
+        betaMenu.add(aboutItem);
+        betaMenu.add(changeItem);
 		betaMenu.add(feedbackItem);
-
 
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
@@ -730,4 +749,30 @@ public class QDShell extends JFrame {
 		}
 
 	}
+  
+    private JScrollPane getScrollPaneForTextFile(ClassLoader resourceLoader, String textFileName) 
+        throws IOException, FileNotFoundException
+    {
+        InputStream in = resourceLoader.getResourceAsStream(textFileName);
+        if (in == null) {
+            throw new FileNotFoundException(textFileName);
+        }
+
+        try {
+            BufferedReader changeReader = new BufferedReader(new InputStreamReader(in));
+            StringBuffer concat = new StringBuffer();
+            String line;
+            while (null != (line = changeReader.readLine())) {
+                concat.append(line);
+                concat.append('\n');
+            }
+            JTextArea changeText = new JTextArea(concat.toString());
+            changeText.setEditable(false);
+            JScrollPane sp = new JScrollPane();
+            sp.setViewportView(changeText);
+            return sp;
+        } catch (IOException ioe) {
+            throw ioe;
+        }
+    }
 }
