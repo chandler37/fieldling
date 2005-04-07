@@ -33,7 +33,8 @@ import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 
-public class QDShell extends JFrame implements ItemListener {
+public class QDShell extends JFrame implements ItemListener
+{
 	/** the middleman that keeps code regarding Tibetan keyboards
 
 	 *  clean */
@@ -46,12 +47,13 @@ public class QDShell extends JFrame implements ItemListener {
 	/** When opening a file, this is the only extension QuillDriver
 	 cares about.  This is case-insensitive. */
 	protected final static String dotQuillDriver = ".xml";
+	protected final static String dotQuillDriverTibetan = ".qdt";
 
 	ResourceBundle messages = null;
 
 	QD qd = null;
 
-	PreferenceManager prefmngr = new fieldling.quilldriver.PreferenceManager();;
+	PreferenceManager prefmngr = new fieldling.quilldriver.PreferenceManager();
 
 	private static int numberOfQDsOpen = 0;
 
@@ -73,41 +75,93 @@ public class QDShell extends JFrame implements ItemListener {
 	 */
 	private boolean needsToRestart;
 
-	public static void main(String[] args) {
-		try {
+	private static void printSyntax()
+	{
+		System.out.println("Syntax: QDShell [-edit | -read  transcript-file]");
+	}
+	
+	public static void main(String[] args)
+	{
+		PrintStream ps=null;
+		try 
+		{
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
 			Locale locale;
 			//note: by default Java 1.5 (and 1.4??) uses a buggy transformer based on an
 			//earlier version of Xalan-Java. so we need to set this system property
 			System.setProperty("javax.xml.transform.TransformerFactory",
 					"org.apache.xalan.processor.TransformerFactoryImpl");
-			try {
+			try 
+			{
 				UIManager.setLookAndFeel(UIManager
 						.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
 			}
-			try {
-				PrintStream ps = new PrintStream(new FileOutputStream(System
+			try 
+			{
+				ps = new PrintStream(new FileOutputStream(System
 						.getProperty("user.home")
 						+ "/qd.log"));
 				System.setOut(ps);
 				System.setErr(ps);
 			} catch (FileNotFoundException fnfe) {
 			}
-			new QDShell();
+			if (args.length==0) 
+			{
+				new QDShell();
+				return;
+			}
+				
+			if (args.length==1)
+			{
+				System.out.println("Syntax error: missing arguments!");
+				printSyntax();
+				return;
+			}
+			if (args[0].charAt(0)!='-')
+			{
+				System.out.println("Syntax error: option expected!");
+				printSyntax();
+				return;
+			}
+			
+			String option = args[0].substring(1);
+			boolean readOnly;
+			
+			if (option.equals("edit"))
+				readOnly = false;
+			else if (option.equals("read"))
+				readOnly = true;
+			else
+			{
+				System.out.println("Syntax error: invalid option!");
+				printSyntax();
+				return;
+			}
+			
+			File transcriptFile = new File (args[1]);
+			if (!transcriptFile.exists())
+			{
+				System.out.println("Error reading file!");
+				return;
+			}
+			new QDShell(transcriptFile, readOnly);
+			
 		} catch (NoClassDefFoundError err) {
 		}
 	}
 
-	public File selectTranscriptFile(String message) {
-		JFileChooser fc = new JFileChooser(new File(prefmngr
-				.getValue(prefmngr.WORKING_DIRECTORY_KEY, System
-						.getProperty("user.home"))));
+	public File selectTranscriptFile(String message) 
+	{
+		JFileChooser fc = new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
 		fc.addChoosableFileFilter(new QDFileFilter());
-		if (fc.showDialog(QDShell.this, message) == JFileChooser.APPROVE_OPTION) {
+		if (fc.showDialog(QDShell.this, message) == JFileChooser.APPROVE_OPTION) 
+		{
 			File transcriptFile = fc.getSelectedFile();
 			return transcriptFile;
-		} else {
+		} 
+		else 
+		{
 			return null;
 		}
 	}
@@ -116,22 +170,16 @@ public class QDShell extends JFrame implements ItemListener {
 		public Wizard() {
 			//choice of configuration
 			JPanel configurationChoice = new JPanel();
-			configurationChoice.setBorder(BorderFactory
-					.createTitledBorder(messages
-							.getString("SelectConfiguration")));
-			final Configuration[] configurations = ConfigurationFactory
-					.getAllQDConfigurations(QDShell.this.getClass()
-							.getClassLoader());
+			configurationChoice.setBorder(BorderFactory.createTitledBorder(messages.getString("SelectConfiguration")));
+			final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
 			final ButtonGroup configGroup = new ButtonGroup();
 			final JRadioButton[] configItems = new JRadioButton[configurations.length];
 			for (int i = 0; i < configurations.length; i++) {
-				configItems[i] = new JRadioButton(messages
-						.getString(configurations[i].getName()));
+				configItems[i] = new JRadioButton(messages.getString(configurations[i].getName()));
 				configItems[i].setActionCommand(String.valueOf(i));
 				configGroup.add(configItems[i]);
 			}
-			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY,
-					configurations[0].getName());
+			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY,configurations[0].getName());
 			int j = 0;
 			for (j = 0; j < configItems.length; j++) {
 				if (configName.equals(configurations[j].getName())) {
@@ -158,7 +206,7 @@ public class QDShell extends JFrame implements ItemListener {
 			JRadioButton[] mediaItems = new JRadioButton[moviePlayers.size()];
 			for (int i = 0; i < moviePlayers.size(); i++) {
 				final PanelPlayer mPlayer = (PanelPlayer) moviePlayers.get(i);
-				mediaItems[i] = new JRadioButton(mPlayer.getIdentifyingName());
+				mediaItems[i] = new JRadioButton(messages.getString(mPlayer.getIdentifyingName()));
 				mediaItems[i].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						qd.setMediaPlayer(mPlayer);
@@ -267,17 +315,13 @@ public class QDShell extends JFrame implements ItemListener {
 			JButton okButton = new JButton(messages.getString("Ok"));
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					ButtonModel selectedConfiguration = configGroup
-							.getSelection();
-					String configCommand = selectedConfiguration
-							.getActionCommand();
+					ButtonModel selectedConfiguration = configGroup.getSelection();
+					String configCommand = selectedConfiguration.getActionCommand();
 					try {
 						int i = Integer.parseInt(configCommand);
 						qd.configure(configurations[i]);
-						prefmngr.setValue(prefmngr.CONFIGURATION_KEY,
-								configurations[i].getName());
-						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, qd.player
-								.getIdentifyingName());
+						prefmngr.setValue(prefmngr.CONFIGURATION_KEY,configurations[i].getName());
+						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, qd.player.getIdentifyingName());
 					} catch (NumberFormatException nfe) {
 						nfe.printStackTrace();
 						System.exit(0);
@@ -285,57 +329,37 @@ public class QDShell extends JFrame implements ItemListener {
 					ButtonModel selectedRb = dataSourceGroup.getSelection();
 					String command = selectedRb.getActionCommand();
 					if (command.equals(messages.getString("NewTranscriptText"))) {
-						File newTemplateFile = new File(prefmngr.getValue(
-								prefmngr.WORKING_DIRECTORY_KEY, System
-										.getProperty("user.home"))
-								+ qd.newTemplateFileName);
+						File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
 						if (newTemplateFile == null)
 							System.exit(0); //FIX
 						if (!newTemplateFile.exists())
 							System.exit(0); //FIX
 						qd.loadTranscript(newTemplateFile);
-						File saveAsFile = selectTranscriptFile(messages
-								.getString("SaveTranscriptAs"));
+						File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
 						if (saveAsFile != null)
 							qd.changeTranscriptFile(saveAsFile);
 						String transcriptString = saveAsFile.getAbsolutePath();
-						prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,
-								transcriptString.substring(0, transcriptString
-										.lastIndexOf(FILE_SEPARATOR) + 1));
+						prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 						makeRecentlyOpened(transcriptString);
-						makeRecentlyOpenedVideo(qd.player.getMediaURL()
-								.toString());
-					} else if (command.equals(messages
-							.getString("OpenExisting"))) {
-						File transcriptFile = selectTranscriptFile(messages
-								.getString("OpenTranscript"));
+						makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+					} else if (command.equals(messages.getString("OpenExisting"))) {
+						File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 						if (transcriptFile != null) {
+							String transcriptString = transcriptFile.getAbsolutePath();
+							prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 							qd.loadTranscript(transcriptFile);
-							String transcriptString = transcriptFile
-									.getAbsolutePath();
-							prefmngr
-									.setValue(
-											prefmngr.WORKING_DIRECTORY_KEY,
-											transcriptString
-													.substring(
-															0,
-															transcriptString
-																	.lastIndexOf(FILE_SEPARATOR) + 1));
 							makeRecentlyOpened(transcriptString);
-							makeRecentlyOpenedVideo(qd.player.getMediaURL()
-									.toString());
+							makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
 						}
 					} else { //must be recent file
 						File transcriptFile = new File(command);
-						Object video = recentTranscriptToRecentVideoMap
-								.get(command);
+						Object video = recentTranscriptToRecentVideoMap.get(command);
 						if (video == null)
 							qd.loadTranscript(transcriptFile);
 						else
 							qd.loadTranscript(transcriptFile, (String) video);
 						makeRecentlyOpened(command);
-						makeRecentlyOpenedVideo(qd.player.getMediaURL()
-								.toString());
+						makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
 					}
 					Wizard.this.hide();
 				}
@@ -355,8 +379,13 @@ public class QDShell extends JFrame implements ItemListener {
 			getContentPane().add(content);
 		}
 	}
+	
+	public QDShell()
+	{
+		this (null, false);
+	}
 
-public QDShell() {
+	public QDShell(File transcriptFile, boolean readOnly) {
 		numberOfQDsOpen++;
 		@UNICODE@setTitle("QuillDriver");
 		@TIBETAN@setTitle("QuillDriver-TIBETAN");
@@ -368,15 +397,54 @@ public QDShell() {
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
 		prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
 		qd = new QD(prefmngr);
-		Wizard wiz = new Wizard();
-		wiz.setModal(true);
-		wiz.setSize(new Dimension(600,400));
-		wiz.addWindowListener(new WindowAdapter () {
-			public void windowClosing (WindowEvent e) {
-                            System.exit(0);
+		if (transcriptFile==null)
+		{
+			Wizard wiz = new Wizard();
+			wiz.setModal(true);
+			wiz.setSize(new Dimension(600,400));
+			wiz.addWindowListener(new WindowAdapter () {
+				public void windowClosing (WindowEvent e) {
+	                            System.exit(0);
+				}
+			});
+			wiz.show();
+		}
+		else
+		{
+			String transcriptString = transcriptFile.getAbsolutePath(), configName;
+			prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+			if (readOnly)
+				configName = "THDLReadonly";
+			else
+				configName = "THDLTranscription";
+			
+			final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
+			int j;
+			for (j = 0; j < configurations.length; j++) {
+				if (configurations[j].getName().equals(configName))
+				{
+					qd.configure(configurations[j]);
+					break;
+				}
 			}
-		});
-		wiz.show();
+
+			java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
+			PanelPlayer mPlayer;
+			
+			for (j=0; j<moviePlayers.size(); j++)
+			{
+				mPlayer = (PanelPlayer) moviePlayers.get(j);
+				if (mPlayer.getIdentifyingName().equals("QuicktimeforJava"))
+				{
+					qd.setMediaPlayer(mPlayer);
+					break;
+				}
+			}
+			
+			qd.loadTranscript(transcriptFile);
+			makeRecentlyOpened(transcriptString);
+			makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+		}
 		getContentPane().add(qd);
 		setJMenuBar(getQDShellMenu());
 		// setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -942,7 +1010,7 @@ public QDShell() {
 
 			}
 
-			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver);
+			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
 
 		}
 
@@ -951,7 +1019,7 @@ public QDShell() {
 
 		public String getDescription() {
 
-			return "QD File Format (" + QDShell.dotQuillDriver + ")";
+			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 
 		}
 

@@ -503,8 +503,20 @@ public class QD extends JDesktopPane {
 				boolean nomedia = true;
 				if (value != null) {
 					try {
-						if (value.startsWith("file:")) { //it's a file, so try to load
-							File mediaFile = new File(value.substring(5));
+						if (value.startsWith("http:"))
+						{
+							player.loadMovie(new URL(value));
+							nomedia = false;
+						}
+						else
+						{ //it's a file, so try to load
+							File mediaFile;
+							if (value.startsWith("file:")) mediaFile = new File(value.substring(5));
+							else
+							{
+								String transcriptString = file.getAbsolutePath();
+								mediaFile = new File(transcriptString.substring(0,transcriptString.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
+							}
 							if (mediaFile.exists()) { //open the actual file
 								player.loadMovie(mediaFile.toURL());
 								nomedia = false;
@@ -517,10 +529,7 @@ public class QD extends JDesktopPane {
 									//INSERT VIDEO NAME INTO DATA FILE
 								}
 							}
-						} else {
-							player.loadMovie(new URL(value));
-							nomedia = false;
-						}
+						}  
 					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
 				}
 				if (nomedia) { //can't find movie: open new movie
