@@ -7,7 +7,7 @@ Do produce this files simply put the message name columns (first column) and the
 
 "QuillDriver.nsi" contains the NSIS script to produce an installer for QuillDriverTibetan. All files needed would be automatically found by the relative path names except for two additional files which should be downloaded separatedly. These are the installers for Quicktime and JRE. Simply modify PATH_TO_INSTALLERS, QUICKTIME_INSTALLER, and JRE_INSTALLER to point to the correct location on your computer. The installer includes Tibetan Machine Web which are assumed to be in "c:\windows\fonts". Use NSIS (http://nsis.sourceforge.net/) to generate the installer.
 
-The file "InstallationMessages.xls" contains the messages in English and Chinese used in the installer. The Chinese is in non-unicode ascii.
+The file "InstallationMessages.xls" contains the messages in English and Chinese used in the installer. Here the Chinese messages are in Unicode. Nevertheless NSIS does not support Unicode, so in order to convert the messages into Chinese non-unicode paste them into BabelPad (http://www.babelstone.co.uk/Software/BabelPad.html) and select "File" -> "Export..." and choose "GB18030" as encoding and save it as "InstallationMessages.txt". Then copy and paste the individual messages into their respective places in "QuillDriver.nsi". Remember to to a return after "$\n\".
 
 System requirements:
 - A Pentium processor-based PC or compatible computer
