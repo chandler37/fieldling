@@ -1,0 +1,8 @@
+在你的计算机上未安装过Java运行环境，$\n\没有它不能运行${PRODUCT_NAME}。$\n$\n\你现在要安装它吗？
+安装程序将开始安装Java虚拟机。$\n$\n\提示：若询问重新启动计算机请点击NO(不)$\n\使之继续安装${PRODUCT_NAME}。
+未能找到Java运行环境，安装失败。
+在你的计算机上未安装过QuickTime for Java，$\n\没有它不能运行${PRODUCT_NAME}。$\n$\n\你现在要安装它吗？
+现在安装程序要开始安装QuickTime$\n$\n\提示：QuickTime for  Java不是QuickTime“推荐安装”部分，$\n\所以你要“自定义安装”并选择QuickTime for Java或全部安装。$\n$\n\${PRODUCT_NAME}然后安装程序自动安装。
+未能找到QuickTime for Java，安装失败。
+$(^Name)从你计算机上已成功删除。
+你确定从你计算机上要完全删除$(^Name) 及其组件？
