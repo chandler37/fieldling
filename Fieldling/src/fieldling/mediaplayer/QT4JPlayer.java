@@ -75,7 +75,7 @@ public class QT4JPlayer extends PanelPlayer {
 
 //accessors
 	public String getIdentifyingName() {
-		return "Quicktime for Java";
+		return "QuicktimeforJava";
 	}
 	public URL getMediaURL() {
 		return mediaUrl;

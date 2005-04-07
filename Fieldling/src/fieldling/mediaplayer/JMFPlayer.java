@@ -51,7 +51,7 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		private Float			to = null;
 /*-----------------------------------------------------------------------*/
 	public String getIdentifyingName() {
-		return "Java Media Framework";
+		return "JavaMediaFramework";
 	}
 	public URL getMediaURL() {
 		return mediaURL;
