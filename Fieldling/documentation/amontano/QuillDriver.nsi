@@ -187,6 +187,17 @@ Function GetJRE
   IfErrors 0 JreFound
 
   ; Was not found. Install.
+  StrCmp $LANGUAGE $LANG_ENGLISH wantjre_eng
+  
+  ; message in chinese
+  MessageBox MB_ICONEXCLAMATION|MB_YESNO \
+  '在你的计算机上未安装过Java运行环境，$\n\
+  没有它不能运行${PRODUCT_NAME}。$\n$\n\
+  你现在要安装它吗？' \
+  IDYES InstallJre
+  Abort
+    
+  wantjre_eng:
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
   'Could not find a Java Runtime Environment installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
@@ -195,11 +206,22 @@ Function GetJRE
   Abort
   
   InstallJre:
+  StrCmp $LANGUAGE $LANG_ENGLISH jrewarning_eng
+  
+  ; warning in Chinese
+  MessageBox MB_OK \
+  '安装程序将开始安装Java虚拟机。$\n$\n\
+  提示：若询问重新启动计算机请点击NO(不)$\n\
+  使之继续安装${PRODUCT_NAME}。'
+  goto resume_after_jrewarning
+  
+  jrewarning_eng:
   MessageBox MB_OK \
   'The installer for the Java Runtime Enviroment will begin now. $\n$\n\
   IMPORTANT: If it asks to restart the computer please click NO$\n\
   in order to complete the ${PRODUCT_NAME} installation.'
-
+  
+  resume_after_jrewarning:
   SetOutPath "$TEMP"
   File "${PATH_TO_INSTALLERS}\${JRE_INSTALLER}"
   ExecWait "$TEMP\${JRE_INSTALLER}"
@@ -214,7 +236,13 @@ Function GetJRE
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
   IfErrors 0 JreFound
+
+  StrCmp $LANGUAGE $LANG_ENGLISH abortjre_eng
   
+  ; Abort in Chinese
+  Abort '未能找到Java运行环境，安装失败。'
+  
+  abortjre_eng:  
   Abort 'Unable to find Java Runtime Environment.$\n\
   Installation failed.'
   
@@ -233,6 +261,17 @@ Function getQTJava
   IfErrors 0 allSet
 
   ; Was not found. Install.
+  StrCmp $LANGUAGE $LANG_ENGLISH wantqt_eng
+  
+  ; message in Chinese
+  MessageBox MB_ICONEXCLAMATION|MB_YESNO \
+  '在你的计算机上未安装过QuickTime for Java，$\n\
+  没有它不能运行${PRODUCT_NAME}。$\n$\n\
+  你现在要安装它吗？'\
+  IDYES InstallQT
+  Abort
+  
+  wantqt_eng:
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
   'Could not find QuickTime for Java installed on your computer. Without it $\n\
   you cannot run ${PRODUCT_NAME}. Would you like to install it now?'\
@@ -240,12 +279,24 @@ Function getQTJava
   Abort
   
   InstallQT:
+  StrCmp $LANGUAGE $LANG_ENGLISH warningqt_eng
+  
+  ; warning in Chinese
+  MessageBox MB_OK \
+  '现在安装程序要开始安装QuickTime$\n$\n\
+  提示：QuickTime for Java不是QuickTime“推荐安装”部分，$\n\
+  所以你要“自定义安装”并选择QuickTime for Java或全部安装。$\n$\n\
+  ${PRODUCT_NAME}然后安装程序自动安装。'  
+  Goto resume_after_qtwarning
+  
+  warningqt_eng:
   MessageBox MB_OK \
   'The installer for QuickTime will begin now. $\n$\n\
   IMPORTANT: QuickTime for Java is not part of the "Recommended" QuickTime install, so you$\n\
   need to do a "Custom" install and specifically select QuickTime for Java or select all.$\n$\n\
   Afterwards the ${PRODUCT_NAME} installation will resume automatically.'
   
+  resume_after_qtwarning:
   SetOutPath "$TEMP"
   File "${PATH_TO_INSTALLERS}\${QUICKTIME_INSTALLER}"
   ExecWait "$TEMP\${QUICKTIME_INSTALLER}"
@@ -255,7 +306,12 @@ Function getQTJava
   ReadRegStr $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime\Installed Files\QTJava.dll" "Full Path"
   IfErrors 0 allSet
   
+  StrCmp $LANGUAGE $LANG_ENGLISH abortqt_eng
   
+  ;Abort in Chinese
+  Abort '未能找到QuickTime for Java，安装失败。'
+  
+  abortqt_eng:
   Abort 'Unable to find QuickTime for Java.$\n\
   Installation failed.'
   
@@ -266,13 +322,27 @@ FunctionEnd
 
 Function un.onUninstSuccess
   HideWindow
+  StrCmp $LANGUAGE $LANG_ENGLISH removesuccess_eng
+  ; Ask in Chinese
+  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name)从你计算机上已成功删除。"
+  Goto resume_after_remove
+  
+  removesuccess_eng:
   MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
+  resume_after_remove:
 FunctionEnd
 
 Function un.onInit
 !insertmacro MUI_UNGETLANGUAGE
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
+  StrCmp $LANGUAGE $LANG_ENGLISH askifsure_eng
+  ; ask in Chinese
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "你确定从你计算机上要完全删除$(^Name) 及其组件？" IDYES issure
   Abort
+  
+  askifsure_eng:
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES issure
+  Abort
+  issure:
 FunctionEnd
 
 Section Uninstall
