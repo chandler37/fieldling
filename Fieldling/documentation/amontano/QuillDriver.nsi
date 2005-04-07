@@ -187,7 +187,7 @@ Function GetJRE
   IfErrors 0 JreFound
 
   ; Was not found. Install.
-  StrCmp $LANGUAGE $LANG_ENGLISH wantjre_eng
+  StrCmp $LANGUAGE "1033" wantjre_eng
   
   ; message in chinese
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
@@ -206,7 +206,7 @@ Function GetJRE
   Abort
   
   InstallJre:
-  StrCmp $LANGUAGE $LANG_ENGLISH jrewarning_eng
+  StrCmp $LANGUAGE "1033" jrewarning_eng
   
   ; warning in Chinese
   MessageBox MB_OK \
@@ -237,7 +237,7 @@ Function GetJRE
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
   IfErrors 0 JreFound
 
-  StrCmp $LANGUAGE $LANG_ENGLISH abortjre_eng
+  StrCmp $LANGUAGE "1033" abortjre_eng
   
   ; Abort in Chinese
   Abort '未能找到Java运行环境，安装失败。'
@@ -261,7 +261,7 @@ Function getQTJava
   IfErrors 0 allSet
 
   ; Was not found. Install.
-  StrCmp $LANGUAGE $LANG_ENGLISH wantqt_eng
+  StrCmp $LANGUAGE "1033" wantqt_eng
   
   ; message in Chinese
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
@@ -279,7 +279,7 @@ Function getQTJava
   Abort
   
   InstallQT:
-  StrCmp $LANGUAGE $LANG_ENGLISH warningqt_eng
+  StrCmp $LANGUAGE "1033" warningqt_eng
   
   ; warning in Chinese
   MessageBox MB_OK \
@@ -306,7 +306,7 @@ Function getQTJava
   ReadRegStr $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime\Installed Files\QTJava.dll" "Full Path"
   IfErrors 0 allSet
   
-  StrCmp $LANGUAGE $LANG_ENGLISH abortqt_eng
+  StrCmp $LANGUAGE "1033" abortqt_eng
   
   ;Abort in Chinese
   Abort '未能找到QuickTime for Java，安装失败。'
@@ -322,7 +322,7 @@ FunctionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  StrCmp $LANGUAGE $LANG_ENGLISH removesuccess_eng
+  StrCmp $LANGUAGE "1033" removesuccess_eng
   ; Ask in Chinese
   MessageBox MB_ICONINFORMATION|MB_OK "$(^Name)从你计算机上已成功删除。"
   Goto resume_after_remove
@@ -334,7 +334,7 @@ FunctionEnd
 
 Function un.onInit
 !insertmacro MUI_UNGETLANGUAGE
-  StrCmp $LANGUAGE $LANG_ENGLISH askifsure_eng
+  StrCmp $LANGUAGE "1033" askifsure_eng
   ; ask in Chinese
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "你确定从你计算机上要完全删除$(^Name) 及其组件？" IDYES issure
   Abort
