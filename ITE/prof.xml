@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?> 
+
+<profile>
+	<item name="english"    value="/profiles/enOptions.xml"/>
+	<item name="français"    value="/profiles/frOptions.xml"/>
+</profile>

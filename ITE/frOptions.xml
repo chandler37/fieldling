@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<options>
+	<option name="T_XPATH"             value="//TEXT"/>       	<!-- chemin a partir de la racine jusqu'au texte -->
+	<option name="S_XPATH"             value="./S"/>          	<!-- chemin a partir du texte jusqu'à la phrase -->
+	<option name="W_XPATH"             value="./W"/>          	<!-- chemin a partir de la phrase jusqu'aux mots -->
+	<option name="M_XPATH"             value="./M"/>          	<!-- chemin a partir du mot jusqu'aux morphèmes -->
+
+	<option name="FORM2T_XPATH"        value="ancestor::TEXT"/>   	<!-- chemin a partir de la transcription au texte -->
+	<option name="FORM2S_XPATH"        value="ancestor::S"/>      	<!-- chemin a partir de la transcription à la phrase -->
+	<option name="FORM2W_XPATH"        value="ancestor::W"/>      	<!-- chemin a partir de la transcription au mot -->
+	<option name="FORM2M_XPATH"        value="ancestor::M"/>      	<!-- chemin a partir de la transcription au morpheme -->
+	<option name="GLOSE2T_XPATH"       value="ancestor::TEXT"/>   	<!-- chemin a partir de la traduction au texte -->
+	<option name="GLOSE2S_XPATH"       value="ancestor::S"/>      	<!-- chemin a partir de la traduction à la phrase -->
+	<option name="GLOSE2W_XPATH"       value="ancestor::W"/>      	<!-- chemin a partir de la glose au mot -->
+	<option name="GLOSE2M_XPATH"       value="ancestor::M"/>      	<!-- chemin a partir de la glose au morpheme -->
+
+	<option name="S2T_XPATH"           value="ancestor::TEXT"/>     <!-- chemin a partir de la phrase au texte -->
+	<option name="W2S_XPATH"           value="ancestor::S"/>        <!-- chemin a partir du mot a la phrase -->
+	<option name="M2W_XPATH"           value="ancestor::W"/>        <!-- chemin a partir du morphème au mot -->
+
+	<option name="T_FORM_XPATH"        value="./FORM[last()]"/>     <!-- chemin a partir du texte jusqu'à la transcription -->
+	<option name="S_FORM_XPATH"        value="./FORM[last()]"/>     <!-- chemin a partir de la phrase jusqu'à la transcription -->
+	<option name="W_FORM_XPATH"        value="./FORM[last()]"/>     <!-- chemin a partir du mot jusqu'à la transcription -->
+	<option name="M_FORM_XPATH"        value="./FORM[last()]"/>     <!-- chemin a partir du morphème jusqu'à la transcription -->
+
+	<option name="T_GLOSE_XPATH"       value="./TRANSL[lang('fr')]"/>   <!-- chemin a partir du texte jusqu'à la traduction -->
+	<option name="S_GLOSE_XPATH"       value="./TRANSL[lang('fr')]"/>   <!-- chemin a partir de la phrase jusqu'à la glose -->
+	<option name="W_GLOSE_XPATH"       value="./TRANSL[lang('fr')]"/>   <!-- chemin a partir du mot jusqu'à la glose -->
+	<option name="M_GLOSE_XPATH"       value="./TRANSL[lang('fr')]"/>   <!-- chemin a partir du morphème jusqu'à la glose -->
+
+	<option name="MEDIA_XPATH"         value="//SOUNDFILE/@href"/>  <!-- chemin a partir de la racine jusqu'au nom du fichier media -->
+
+	<option name="STARTT_XPATH"         value="./AUDIO/@start"/>    <!-- chemin a partir du texte jusqu'a la valeur de debut -->
+	<option name="STARTS_XPATH"         value="./AUDIO/@start"/>    <!-- chemin a partir de la phrase jusqu'a la valeur de debut -->
+	<option name="STARTW_XPATH"         value="./AUDIO/@start"/>    <!-- chemin a partir du mot jusqu'a la valeur de debut -->
+	<option name="STARTM_XPATH"         value="./AUDIO/@start"/>    <!-- chemin a partir du morpheme jusqu'a la valeur de debut -->
+	<option name="ENDT_XPATH"           value="./AUDIO/@end"/>      <!-- chemin a partir du texte jusqu'a la valeur de fin -->
+	<option name="ENDS_XPATH"           value="./AUDIO/@end"/>      <!-- chemin a partir de la phrase jusqu'a la valeur de fin -->
+	<option name="ENDW_XPATH"           value="./AUDIO/@end"/>      <!-- chemin a partir du mot jusqu'a la valeur de fin -->
+	<option name="ENDM_XPATH"           value="./AUDIO/@end"/>      <!-- chemin a partir du morpheme jusqu'a la valeur de fin -->
+
+	<option name="regexS"              value="\n+"/>               		<!-- expression regulière pour découper un texte en phrase -->
+	<option name="regexW"              value="[ \t.;:,!\?]+"/>    		<!-- expression regulière pour découper une phrase en mots -->
+	<option name="regexM"              value="\-"/>                		<!-- expression regulière pour découper un mot en morphèmes -->
+	<option name="className"           value="fr.yanntool.gloser.domArchivageFr"/>   		<!-- nom de la classe qui agit sur le dom -->
+
+	<option name="XSLT_modifications"  value="/styles/modifications_fr.xsl"/>
+</options>
