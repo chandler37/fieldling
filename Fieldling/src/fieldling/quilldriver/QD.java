@@ -501,7 +501,7 @@ public class QD extends JDesktopPane {
 					value = XMLUtilities.getTextForDOMNode(mediaURL);
 				}
 				boolean nomedia = true;
-				if (value != null) {
+				if (value != null && !value.equals("")) {
 					try {
 						if (value.startsWith("http:"))
 						{
