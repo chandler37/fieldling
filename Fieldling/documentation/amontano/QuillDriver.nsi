@@ -363,6 +363,7 @@ Section Uninstall
   Delete "$INSTDIR\xalan.jar"
   Delete "$INSTDIR\xercesImpl.jar"
   Delete "$INSTDIR\xml-apis.jar"
+  Delete "$INSTDIR\QuillDriver.ico"
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall QuillDriver.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\QuillDriver Website.lnk"
