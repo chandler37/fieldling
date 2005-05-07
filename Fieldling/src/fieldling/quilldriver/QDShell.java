@@ -329,12 +329,13 @@ public class QDShell extends JFrame implements ItemListener
 					ButtonModel selectedRb = dataSourceGroup.getSelection();
 					String command = selectedRb.getActionCommand();
 					if (command.equals(messages.getString("NewTranscriptText"))) {
-						File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
-						if (newTemplateFile == null)
+						// File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
+						URL newTemplateURL = QDShell.this.getClass().getClassLoader().getResource(qd.newTemplateFileName);
+						if (newTemplateURL == null)
 							System.exit(0); //FIX
-						if (!newTemplateFile.exists())
-							System.exit(0); //FIX
-						qd.loadTranscript(newTemplateFile);
+						/*if (!newTemplateFile.exists())
+							System.exit(0); //FIX*/
+						qd.loadTranscript(newTemplateURL);
 						File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
 						if (saveAsFile != null)
 							qd.changeTranscriptFile(saveAsFile);

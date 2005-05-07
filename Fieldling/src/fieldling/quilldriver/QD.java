@@ -386,159 +386,187 @@ public class QD extends JDesktopPane {
 		editor = null;
 		setupGUI(); //set up GUI for another transcript
 	}
+	
 	public boolean newTranscript(File file, String mediaURL) {
-			try {
-				if (configuration == null) return false;
-				final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getNewURL().openStream()));
-				transformer.setParameter("qd.mediaURL", mediaURL);
-				javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-				javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
-				org.w3c.dom.Document d = db.newDocument();
-				d.appendChild(d.createElement("ROOT-ELEMENT"));
-				transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file));
-				transformer.clearParameters();
-				if (loadTranscript(file))
-                    return true;
-			} catch (TransformerException tre) {
-				tre.printStackTrace();
-			} catch (javax.xml.parsers.ParserConfigurationException pce) {
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-			return false;
+		try {
+			if (configuration == null) return false;
+			final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(configuration.getNewURL().openStream()));
+			transformer.setParameter("qd.mediaURL", mediaURL);
+			javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
+			org.w3c.dom.Document d = db.newDocument();
+			d.appendChild(d.createElement("ROOT-ELEMENT"));
+			transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file));
+			transformer.clearParameters();
+			if (loadTranscript(file))
+                return true;
+		} catch (TransformerException tre) {
+			tre.printStackTrace();
+		} catch (javax.xml.parsers.ParserConfigurationException pce) {
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		return false;
 	}
+	
+	public boolean loadTranscript(File file) {
+        return loadTranscript(file, null);
+    }
 
-        public boolean loadTranscript(File file) {
-            return loadTranscript(file, null);
-        }
 	public boolean loadTranscript(File file, String videoUrl) {
-			if (!file.exists())
-				return false;
-			if (player == null) {
-				JOptionPane.showConfirmDialog(QD.this, messages.getString("SupportedMediaError"), null, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				return false;
+		try 
+		{
+			return loadTranscript(file.toURI().toURL(), videoUrl);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace(System.err);
+			return false;
+		}
+        
+    }
+	
+	public boolean loadTranscript(URL transcriptURL) {
+        return loadTranscript(transcriptURL, null);
+    }	
+	
+	public boolean loadTranscript(URL transcriptURL, String videoUrl) {
+		/*if (!file.exists())
+			return false;*/
+		String transcriptString = transcriptURL.toString();
+		if (player == null) {
+			JOptionPane.showConfirmDialog(QD.this, messages.getString("SupportedMediaError"), null, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			return false;
+		}
+		try {
+            org.w3c.dom.Document xmlDoc = null;
+            try {
+                xmlDoc = docBuilder.parse(transcriptString);
+                //LOGGINGSystem.out.println(file.toString() + " is well-formed");
+            } catch (org.xml.sax.SAXException saxe) {
+                saxe.printStackTrace();
+                return false;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                return false;
+            }
+
+			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
+			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
+			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+
+			@UNICODE@final JTextPane t = new JTextPane();
+			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+
+			editor = new XMLEditor(xmlDoc, t, currentTagInfo);
+
+			Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
+			Set keys = keyActions.keySet();
+			Iterator keyIter = keys.iterator();
+			while (keyIter.hasNext()) {
+				KeyStroke key = (KeyStroke)keyIter.next();
+				Action action = (Action)keyActions.get(key);
+				keymap.addActionForKeyStroke(key, action);
 			}
-			try {
-                org.w3c.dom.Document xmlDoc = null;
-                try {
-                    xmlDoc = docBuilder.parse(file.toURL().toString());
-                    //LOGGINGSystem.out.println(file.toString() + " is well-formed");
-                } catch (org.xml.sax.SAXException saxe) {
-                    saxe.printStackTrace();
-                    return false;
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    return false;
-                }
+			editor.getTextPane().setKeymap(keymap);
+            
+			view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
+            
+            try {
+                hColor = Color.decode("0x"+PreferenceManager.highlight_color);
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+			hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
+            
+            /*LOGGING
+            for (int ok=0; ok<namespaces.length; ok++)
+                System.out.println(namespaces[ok].toString());*/
 
-				@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
-				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-				@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-				@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
-
-				@UNICODE@final JTextPane t = new JTextPane();
-				@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
-
-				editor = new XMLEditor(xmlDoc, t, currentTagInfo);
-
-				Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
-				Set keys = keyActions.keySet();
-				Iterator keyIter = keys.iterator();
+			//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
+			//Ctrl-Page_Down and so on... surely there is a better way to do this....
+			JScrollBar sb = hp.getScroller().getVerticalScrollBar();
+			if (sb != null) {
+				keyIter = keys.iterator();
 				while (keyIter.hasNext()) {
 					KeyStroke key = (KeyStroke)keyIter.next();
 					Action action = (Action)keyActions.get(key);
-					keymap.addActionForKeyStroke(key, action);
+					sb.getInputMap().put(key, action);
+					sb.getActionMap().put(action, action);
 				}
-				editor.getTextPane().setKeymap(keymap);
-                
-				view = new XMLView(editor, editor.getXMLDocument(), config.getProperty("qd.timealignednodes"), config.getProperty("qd.nodebegins"), config.getProperty("qd.nodeends"), namespaces);
-                
-                try {
-                    hColor = Color.decode("0x"+PreferenceManager.highlight_color);
-                } catch (NumberFormatException nfe) {
-                    nfe.printStackTrace();
-                }
-				hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
-                
-                /*LOGGING
-                for (int ok=0; ok<namespaces.length; ok++)
-                    System.out.println(namespaces[ok].toString());*/
+			}
 
-				//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
-				//Ctrl-Page_Down and so on... surely there is a better way to do this....
-				JScrollBar sb = hp.getScroller().getVerticalScrollBar();
-				if (sb != null) {
-					keyIter = keys.iterator();
-					while (keyIter.hasNext()) {
-						KeyStroke key = (KeyStroke)keyIter.next();
-						Action action = (Action)keyActions.get(key);
-						sb.getInputMap().put(key, action);
-						sb.getActionMap().put(action, action);
+			tcp = new TimeCodeModel(hp);
+
+			if (player.getMediaURL() != null) {
+				try {
+					player.cmd_stop();
+					player.destroy();
+				} catch (PanelPlayerException smpe) {
+					smpe.printStackTrace();
+					return false;
+				}
+				videoFrame.getContentPane().remove(player);
+				videoFrame.getContentPane().invalidate();
+				videoFrame.getContentPane().validate();
+				videoFrame.getContentPane().repaint();
+				videoFrame.setSize(new Dimension(QD.this.getSize().width / 2, 0));
+			}
+
+			String value;
+			if (config.getProperty("qd.mediaurl") == null) value = null;
+			else {
+				Object mediaURL = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
+				value = XMLUtilities.getTextForDOMNode(mediaURL);
+			}
+			boolean nomedia = true;
+			if (value != null && !value.equals("")) {
+				try {
+					if (value.startsWith("http:"))
+					{
+						player.loadMovie(new URL(value));
+						nomedia = false;
 					}
-				}
-
-				tcp = new TimeCodeModel(hp);
-
-				if (player.getMediaURL() != null) {
-					try {
-						player.cmd_stop();
-						player.destroy();
-					} catch (PanelPlayerException smpe) {
-						smpe.printStackTrace();
-						return false;
-					}
-					videoFrame.getContentPane().remove(player);
-					videoFrame.getContentPane().invalidate();
-					videoFrame.getContentPane().validate();
-					videoFrame.getContentPane().repaint();
-					videoFrame.setSize(new Dimension(QD.this.getSize().width / 2, 0));
-				}
-
-				String value;
-				if (config.getProperty("qd.mediaurl") == null) value = null;
-				else {
-					Object mediaURL = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
-					value = XMLUtilities.getTextForDOMNode(mediaURL);
-				}
-				boolean nomedia = true;
-				if (value != null && !value.equals("")) {
-					try {
-						if (value.startsWith("http:"))
-						{
-							player.loadMovie(new URL(value));
-							nomedia = false;
-						}
+					else
+					{ //it's a file, so try to load
+						File mediaFile=null;
+						if (value.startsWith("file:")) mediaFile = new File(value.substring(5));
 						else
-						{ //it's a file, so try to load
-							File mediaFile;
-							if (value.startsWith("file:")) mediaFile = new File(value.substring(5));
-							else
+						{
+							try
 							{
-								String transcriptString = file.getAbsolutePath();
-								mediaFile = new File(transcriptString.substring(0,transcriptString.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
+								File transcriptFile = new File (transcriptURL.toURI());
+								String transcriptAbs = transcriptFile.getAbsolutePath();
+								mediaFile = new File(transcriptAbs.substring(0,transcriptAbs.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
 							}
-							if (mediaFile.exists()) { //open the actual file
+							catch (Exception e)
+							{
+								e.printStackTrace(System.err);
+							}
+						}
+						if (mediaFile.exists()) { //open the actual file
+							player.loadMovie(mediaFile.toURL());
+							nomedia = false;
+						} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
+							String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
+							mediaFile = new File(PreferenceManager.media_directory, mediaName);
+							if (mediaFile.exists()) {
 								player.loadMovie(mediaFile.toURL());
 								nomedia = false;
-							} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
-								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
-								mediaFile = new File(PreferenceManager.media_directory, mediaName);
-								if (mediaFile.exists()) {
-									player.loadMovie(mediaFile.toURL());
-									nomedia = false;
-									//INSERT VIDEO NAME INTO DATA FILE
-								}
+								//INSERT VIDEO NAME INTO DATA FILE
 							}
-						}  
-					} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
-				}
-				if (nomedia) { //can't find movie: open new movie
-                                    if (videoUrl != null) {
-                                        try {
-                                            player.loadMovie(new URL(videoUrl));
-                                            nomedia = false;
-                                        } catch (MalformedURLException murle) {murle.printStackTrace();}
-                                    } else {
+						}
+					}  
+				} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
+			}
+			if (nomedia) { //can't find movie: open new movie
+                if (videoUrl != null) {
+                    try {
+                        player.loadMovie(new URL(videoUrl));
+                        nomedia = false;
+                    } catch (MalformedURLException murle) {murle.printStackTrace();}
+                } else {
 					JFileChooser fc = new JFileChooser(PreferenceManager.media_directory);
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
@@ -550,114 +578,121 @@ public class QD extends JDesktopPane {
 							//INSERT VIDEO NAME INTO DATA FILE
 						} catch (MalformedURLException murle) {} //do nothing
 					}
-                                    }
 				}
-				if (nomedia) { //user did not open a valid movie; therefore transcript will not be opened
-					transcriptFile = null;
-					return false;
-				}
-				player.addAnnotationPlayer(hp);
-				player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
-				videoFrame.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent e) {
-						//LOGGINGSystem.out.println("mouse clicked on player");
-						videoFrame.requestFocus();
-					}
-				});
-				startTimer();
-
-				//give text frame title of video/transcript
-				if (config.getProperty("qd.title") != null) {
-					Object obj = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument().getDocumentElement(), config.getProperty("qd.title"), namespaces);
-					textFrame.setTitle(XMLUtilities.getTextForDOMNode(obj));
-				}
-					final TimeCodeView tcv = new TimeCodeView(player, tcp);
-					checkTimeTimer = new Timer(true);
-					checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
-						public void run() {
-							tcv.setCurrentTime(player.getCurrentTime());
-						}
-					}, 0, 50);
-                JRadioButton viewButton = new JRadioButton(messages.getString("View"), true);
-                JRadioButton editButton = new JRadioButton(messages.getString("Edit"));
-                viewButton.setActionCommand(messages.getString("View"));
-                editButton.setActionCommand(messages.getString("Edit"));
-                ButtonGroup buttons = new ButtonGroup();
-                buttons.add(viewButton);
-                buttons.add(editButton);
-                JPanel buttonPanel = new JPanel(new BorderLayout());
-                JPanel subPanel = new JPanel();
-                subPanel.add(new JLabel(messages.getString("SelectMode")));
-		JPanel vePanel = new JPanel(new GridLayout(0,1));
-		vePanel.add(viewButton);
-                vePanel.add(editButton);
-		subPanel.add(vePanel);
-                buttonPanel.add("West", subPanel);
-		buttonPanel.add("East", tcv); //added
-                ActionListener acList = new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        String s = e.getActionCommand();
-                        if (s.equals("View")) {
-                            mode = VIEW_MODE;
-                            player.setAutoScrolling(true);
-                        } else {
-                            mode = EDIT_MODE;
-                            player.setAutoScrolling(false);
-                        }
-                    }
-                };
-                viewButton.addActionListener(acList);
-                editButton.addActionListener(acList);
-                
-				JComponent c = (JComponent)textFrame.getContentPane();
-				c.setLayout(new BorderLayout());
-                c.add("North", buttonPanel);
-				c.add("Center", hp);
-				textFrame.setSize(textFrame.getSize().width, getSize().height);
-				textFrame.invalidate();
-				textFrame.validate();
-				textFrame.repaint();
-
-				editor.addNodeEditListener(new XMLEditor.NodeEditListener() {
-					public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
-						if (ned instanceof XMLEditor.StartEditEvent) {
-							if (tcp != null) tcp.setNode(ned.getNode());
-						} else if (ned instanceof XMLEditor.EndEditEvent) {
-							XMLEditor.EndEditEvent eee = (XMLEditor.EndEditEvent)ned;
-							if (eee.hasBeenEdited()) hp.refresh();
-						} else if (ned instanceof XMLEditor.CantEditEvent) {
-							//if this node can't be edited, maybe it can be played!
-							Object node = ned.getNode();
-							if (node != null) {
-								editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(node));
-								if (tcp != null) tcp.setNode(node);
-								playNode(node);
-							}
-						}
-					}
-				});
-				/*editor.getTextPane().addMouseMotionListener(new MouseMotionAdapter() {
-					/* Turns off highlight if mouse is pressed, since
-					user is most likely selecting a block of text 
-					public void mouseDragged(MouseEvent e) {
-					}
-				});*/
-
-				if (configuration.getEditURL() == null) editor.setEditable(false);
-				else editor.setEditabilityTracker(true);
-
-				transcriptFile = file;
-				if (mode == VIEW_MODE)
-                    player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
-
-				@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
-
-				return true;
-			} catch (PanelPlayerException smpe) {
-				smpe.printStackTrace();
+			}
+			if (nomedia) { //user did not open a valid movie; therefore transcript will not be opened
 				transcriptFile = null;
 				return false;
 			}
+			player.addAnnotationPlayer(hp);
+			player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
+			videoFrame.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					//LOGGINGSystem.out.println("mouse clicked on player");
+					videoFrame.requestFocus();
+				}
+			});
+			startTimer();
+
+			//give text frame title of video/transcript
+			if (config.getProperty("qd.title") != null) {
+				Object obj = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument().getDocumentElement(), config.getProperty("qd.title"), namespaces);
+				textFrame.setTitle(XMLUtilities.getTextForDOMNode(obj));
+			}
+			final TimeCodeView tcv = new TimeCodeView(player, tcp);
+			checkTimeTimer = new Timer(true);
+			checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {
+					tcv.setCurrentTime(player.getCurrentTime());
+				}
+			}, 0, 50);
+            JRadioButton viewButton = new JRadioButton(messages.getString("View"), true);
+            JRadioButton editButton = new JRadioButton(messages.getString("Edit"));
+            viewButton.setActionCommand(messages.getString("View"));
+            editButton.setActionCommand(messages.getString("Edit"));
+            ButtonGroup buttons = new ButtonGroup();
+            buttons.add(viewButton);
+            buttons.add(editButton);
+            JPanel buttonPanel = new JPanel(new BorderLayout());
+            JPanel subPanel = new JPanel();
+            subPanel.add(new JLabel(messages.getString("SelectMode")));
+			JPanel vePanel = new JPanel(new GridLayout(0,1));
+			vePanel.add(viewButton);
+	                vePanel.add(editButton);
+			subPanel.add(vePanel);
+	                buttonPanel.add("West", subPanel);
+			buttonPanel.add("East", tcv); //added
+            ActionListener acList = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String s = e.getActionCommand();
+                    if (s.equals("View")) {
+                        mode = VIEW_MODE;
+                        player.setAutoScrolling(true);
+                    } else {
+                        mode = EDIT_MODE;
+                        player.setAutoScrolling(false);
+                    }
+                }
+            };
+            viewButton.addActionListener(acList);
+            editButton.addActionListener(acList);
+            
+			JComponent c = (JComponent)textFrame.getContentPane();
+			c.setLayout(new BorderLayout());
+            c.add("North", buttonPanel);
+			c.add("Center", hp);
+			textFrame.setSize(textFrame.getSize().width, getSize().height);
+			textFrame.invalidate();
+			textFrame.validate();
+			textFrame.repaint();
+
+			editor.addNodeEditListener(new XMLEditor.NodeEditListener() {
+				public void nodeEditPerformed(XMLEditor.NodeEditEvent ned) {
+					if (ned instanceof XMLEditor.StartEditEvent) {
+						if (tcp != null) tcp.setNode(ned.getNode());
+					} else if (ned instanceof XMLEditor.EndEditEvent) {
+						XMLEditor.EndEditEvent eee = (XMLEditor.EndEditEvent)ned;
+						if (eee.hasBeenEdited()) hp.refresh();
+					} else if (ned instanceof XMLEditor.CantEditEvent) {
+						//if this node can't be edited, maybe it can be played!
+						Object node = ned.getNode();
+						if (node != null) {
+							editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(node));
+							if (tcp != null) tcp.setNode(node);
+							playNode(node);
+						}
+					}
+				}
+			});
+			/*editor.getTextPane().addMouseMotionListener(new MouseMotionAdapter() {
+				/* Turns off highlight if mouse is pressed, since
+				user is most likely selecting a block of text 
+				public void mouseDragged(MouseEvent e) {
+				}
+			});*/
+
+			if (configuration.getEditURL() == null) editor.setEditable(false);
+			else editor.setEditabilityTracker(true);
+
+			try
+			{
+				transcriptFile = new File(transcriptURL.toURI());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace(System.err);
+			}
+			if (mode == VIEW_MODE)
+                player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
+
+			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
+
+			return true;
+		} catch (PanelPlayerException smpe) {
+			smpe.printStackTrace();
+			transcriptFile = null;
+			return false;
+		}
 	}
 
 	public void playNode(Object node) {
@@ -822,7 +857,7 @@ public class QD extends JDesktopPane {
 				else if (type.equals("text"))
 					textConfig.put(e.getAttributeValue("name"), e.getAttributeValue("val"));
 			}
-                        newTemplateFileName = textConfig.getProperty("qd.new.template.file.name");
+			newTemplateFileName = textConfig.getProperty("qd.new.template.file.name");
             List allNamespaces = new ArrayList();
             if (config.getProperty("qd.namespaces") != null) {
                 String nsList = config.getProperty("qd.namespaces");
