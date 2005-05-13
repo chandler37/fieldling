@@ -62,6 +62,8 @@ a version optimized for use with Tibetan script.
 	<property name="webstart.lib" value="${webapp.dir}/lib_webstart"/>
 	<property name="distrib.source"	value="distribSrc"/>
 	<property name="jnlp.codebase"	value="http://altiplano.emich.edu/quilldriver"/>
+	<property name="target.jvm" value="1.2"/>
+	<property name="source.jvm" value="1.2"/>
 
 	<!-- Tell ant where to find the code of the DTDDoc task -->
 	<!--<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
@@ -122,7 +124,7 @@ a version optimized for use with Tibetan script.
 	</target>
 	
 	<target name="mp-compile" depends="init" description="compile mediaplayer source">
-		<javac srcdir="${raw.source}" destdir="${unicode.classes}" includes="fieldling/mediaplayer/**" debug="on">
+		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${raw.source}" destdir="${unicode.classes}" includes="fieldling/mediaplayer/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		<copy todir="${tibetan.classes}">
@@ -176,7 +178,7 @@ a version optimized for use with Tibetan script.
 		
 		
 		<!-- compile unicode source -->
-		<javac srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**" debug="on">
+		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		
@@ -213,7 +215,7 @@ a version optimized for use with Tibetan script.
 		</copy>
 		
 		<!-- compile Tibetan source -->
-		<javac srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**" debug="on">
+		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		
