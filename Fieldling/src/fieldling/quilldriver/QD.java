@@ -536,7 +536,8 @@ public class QD extends JDesktopPane {
 						{
 							try
 							{
-								File transcriptFile = new File (transcriptURL.toURI());
+                                //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+                                File transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 								String transcriptAbs = transcriptFile.getAbsolutePath();
 								mediaFile = new File(transcriptAbs.substring(0,transcriptAbs.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
 							}
@@ -676,7 +677,8 @@ public class QD extends JDesktopPane {
 
 			try
 			{
-				transcriptFile = new File(transcriptURL.toURI());
+                //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+                File transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 			}
 			catch (Exception e)
 			{
