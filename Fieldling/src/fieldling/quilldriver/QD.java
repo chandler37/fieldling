@@ -518,7 +518,8 @@ public class QD extends JDesktopPane {
 			if (config.getProperty("qd.mediaurl") == null) value = null;
 			else {
 				Object mediaURL = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument(), config.getProperty("qd.mediaurl"), namespaces);
-				value = XMLUtilities.getTextForDOMNode(mediaURL).trim();
+				value = XMLUtilities.getTextForDOMNode(mediaURL);
+				if (value!=null) value = value.trim();
 			}
 			boolean nomedia = true;
 			if (value != null && !value.equals("")) {
