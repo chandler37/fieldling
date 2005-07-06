@@ -23,8 +23,9 @@
 <TEXT xml:lang="x-sil-TIC">
         <HEADER>
                 <TITLE xml:lang="en"> </TITLE>
+                <SPEAKER personId="N000001">ka/</SPEAKER>
 	</HEADER>
-        <S>
+        <S who="N000001">
                 <FORM type="transliteration"> </FORM>
         </S>
 </TEXT>

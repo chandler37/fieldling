@@ -123,6 +123,7 @@
 	      editable CDATA "true"
 	      icon CDATA #IMPLIED
 	      tibetan CDATA "false"
+              tibetancontents CDATA "false"
 	      >
 
 <!-- An attribute -->
@@ -139,6 +140,7 @@
 <!ATTLIST attribute name CDATA #REQUIRED
                     visible CDATA "true"
 		    icon CDATA #IMPLIED
+                    tibetan CDATA "false"
 		    >
 		    
 <!-- A description -->

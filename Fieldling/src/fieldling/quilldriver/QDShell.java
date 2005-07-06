@@ -503,8 +503,8 @@ public class QDShell extends JFrame implements ItemListener
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (qd.getEditor().isEditable())
-					qd.saveTranscript();
+                            if (qd.getEditor().isEditable())
+                                qd.saveTranscript();
 			}
 		});
 		JMenuItem quitItem = new JMenuItem(messages.getString("Quit"));

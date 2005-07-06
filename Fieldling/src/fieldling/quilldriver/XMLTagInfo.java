@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 
 public class XMLTagInfo {
 	private HashMap displayYesNo, displayContentsYesNo, displayAs, displayIcon, editableYesNo;
-	@TIBETAN@private HashMap isTagTextTibetan;
+	@TIBETAN@private HashMap areTagContentsTibetan, isAttributeTextTibetan, isTagItselfTibetan;
 	private HashMap attributeDisplayYesNo, attributeDisplayAs, attributeDisplayIcon, attributeEditableYesNo;
 	private String identifyingName = null;
 
@@ -23,7 +23,9 @@ public class XMLTagInfo {
 		displayAs = new HashMap();
 		displayIcon = new HashMap();
 		editableYesNo = new HashMap();
-		@TIBETAN@isTagTextTibetan = new HashMap();
+                @TIBETAN@isTagItselfTibetan = new HashMap();
+		@TIBETAN@areTagContentsTibetan = new HashMap();
+                @TIBETAN@isAttributeTextTibetan = new HashMap();
 		attributeDisplayYesNo = new HashMap();
 		attributeDisplayAs = new HashMap();
 		attributeDisplayIcon = new HashMap();
@@ -39,14 +41,15 @@ public class XMLTagInfo {
 		if (displayYesNo.get(tag) == null) return false;
 		else return true;
 	}
-	@TIBETAN@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, Boolean isTagTextTibetan, String displayIcon, Boolean isEditable) {
+	@TIBETAN@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, Boolean areTagContentsTibetan, String displayIcon, Boolean isEditable, Boolean isTagItselfTibetan) {
 	@UNICODE@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, String displayIcon, Boolean isEditable) {
 		displayYesNo.put(tag, display);
 		displayContentsYesNo.put(tag, displayContents);
 		this.displayAs.put(tag, displayAs);
 		editableYesNo.put(tag, isEditable);
 		if (displayIcon != null) this.displayIcon.put(tag, new ImageIcon(XMLTagInfo.class.getResource(displayIcon)));
-		@TIBETAN@this.isTagTextTibetan.put(tag, isTagTextTibetan);
+		@TIBETAN@this.areTagContentsTibetan.put(tag, areTagContentsTibetan);
+                @TIBETAN@this.isTagItselfTibetan.put(tag, isTagItselfTibetan);
 	}
 	public void removeTag(String tag) {
 		displayYesNo.remove(tag);
@@ -54,12 +57,16 @@ public class XMLTagInfo {
 		displayAs.remove(tag);
 		editableYesNo.remove(tag);
 		displayIcon.remove(tag);
+                @TIBETAN@areTagContentsTibetan.remove(tag);
+                @TIBETAN@isTagItselfTibetan.remove(tag);
 	}
-	public void addAttribute(String name, String parentTag, Boolean display, String displayAs, String displayIcon, Boolean isEditable) {
+	@UNICODE@public void addAttribute(String name, String parentTag, Boolean display, String displayAs, String displayIcon, Boolean isEditable) {
+	@TIBETAN@public void addAttribute(String name, String parentTag, Boolean display, String displayAs, String displayIcon, Boolean isEditable, Boolean isTibetan) {
 		String s = parentTag + "/@" + name;
 		attributeDisplayYesNo.put(s, display);
 		attributeDisplayAs.put(s, displayAs);
 		attributeEditableYesNo.put(s, isEditable);
+                @TIBETAN@isAttributeTextTibetan.put(s, isTibetan);
 		if (displayIcon != null) attributeDisplayIcon.put(s, new ImageIcon(XMLTagInfo.class.getResource(displayIcon)));
 	}
 	public void removeAttribute(String name, String parentTag) {
@@ -68,6 +75,7 @@ public class XMLTagInfo {
 		attributeDisplayAs.remove(s);
 		attributeDisplayIcon.remove(s);
 		attributeEditableYesNo.remove(s);
+                @TIBETAN@isAttributeTextTibetan.remove(s);
 	}	
 	public boolean isTagForDisplay(String tag) {
 		Object obj = displayYesNo.get(tag);
@@ -79,8 +87,13 @@ public class XMLTagInfo {
 		if (obj == null) return true;
 		else return ((Boolean)obj).booleanValue();
 	}
-	@TIBETAN@public boolean isTagTextTibetan(String tag) {
-		@TIBETAN@Object obj = isTagTextTibetan.get(tag);
+        @TIBETAN@public boolean isTagItselfTibetan(String tag) {
+                @TIBETAN@Object obj = isTagItselfTibetan.get(tag);
+                @TIBETAN@if (obj == null) return false;
+                @TIBETAN@else return ((Boolean)obj).booleanValue();
+        @TIBETAN@}
+	@TIBETAN@public boolean areTagContentsTibetan(String tag) {
+		@TIBETAN@Object obj = areTagContentsTibetan.get(tag);
 		@TIBETAN@if (obj == null) return false;
 		@TIBETAN@else return ((Boolean)obj).booleanValue();
 	@TIBETAN@}
@@ -115,6 +128,12 @@ public class XMLTagInfo {
 		if (obj == null) return true;
 		else return ((Boolean)obj).booleanValue();
 	}
+	@TIBETAN@public boolean isAttributeTextTibetan(String name, String parentTag) {
+                @TIBETAN@String s = parentTag + "/@" + name;
+		@TIBETAN@Object obj = isAttributeTextTibetan.get(s);
+		@TIBETAN@if (obj == null) return false;
+		@TIBETAN@else return ((Boolean)obj).booleanValue();
+	@TIBETAN@}
 	public Object getAttributeDisplay(String name, String parentTag) {
 		String s = parentTag + "/@" + name;
 		Object icon = attributeDisplayIcon.get(s);

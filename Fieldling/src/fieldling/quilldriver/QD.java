@@ -355,8 +355,8 @@ public class QD extends JDesktopPane {
         
     //DOM FIX!!!
 	public boolean saveTranscript() {
-		if (transcriptFile == null)
-			return true;
+            if (transcriptFile == null)
+		return true;
         try {
             //serialize XML to file, prettified with indents, and encoded as Unicode (UTF-8)
             org.apache.xml.serialize.OutputFormat formatter = new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true);
@@ -398,8 +398,10 @@ public class QD extends JDesktopPane {
 			d.appendChild(d.createElement("ROOT-ELEMENT"));
 			transformer.transform(new javax.xml.transform.dom.DOMSource(d), new StreamResult(file));
 			transformer.clearParameters();
-			if (loadTranscript(file))
-                return true;
+			if (loadTranscript(file)) {
+                            transcriptFile = file; //otherwise transcriptFile will be null, and so file won't be saveable
+                            return true;
+                        }
 		} catch (TransformerException tre) {
 			tre.printStackTrace();
 		} catch (javax.xml.parsers.ParserConfigurationException pce) {
@@ -538,7 +540,7 @@ public class QD extends JDesktopPane {
 							try
 							{
                                 //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-                                File transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+                                transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 								String transcriptAbs = transcriptFile.getAbsolutePath();
 								mediaFile = new File(transcriptAbs.substring(0,transcriptAbs.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
 							}
@@ -679,7 +681,7 @@ public class QD extends JDesktopPane {
 			try
 			{
                 //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-                File transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+                transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 			}
 			catch (Exception e)
 			{
@@ -778,7 +780,8 @@ public class QD extends JDesktopPane {
 						org.jdom.Element e = (org.jdom.Element)it.next();
 						@TIBETAN@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
-							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+							@TIBETAN@new Boolean(e.getAttributeValue("tibetancontents")), e.getAttributeValue("icon"), 
+                                                        @TIBETAN@new Boolean(e.getAttributeValue("editable")), new Boolean(e.getAttributeValue("tibetan")));
 						@UNICODE@tagInfo[0].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -786,9 +789,13 @@ public class QD extends JDesktopPane {
 						Iterator it2 = atts.iterator();
 						while (it2.hasNext()) {
 							org.jdom.Element eAtt = (org.jdom.Element)it2.next();
-							tagInfo[0].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
-								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
-								eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+                                                        @TIBETAN@tagInfo[0].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								@TIBETAN@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								@TIBETAN@eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")),
+                                                                @TIBETAN@new Boolean(eAtt.getAttributeValue("tibetan")));
+							@UNICODE@tagInfo[0].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								@UNICODE@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								@UNICODE@eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
 						}
 					}
 				}
@@ -808,7 +815,8 @@ public class QD extends JDesktopPane {
 							org.jdom.Element e = (org.jdom.Element)it.next();
 							@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 								@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
-								@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+								@TIBETAN@new Boolean(e.getAttributeValue("tibetancontents")), e.getAttributeValue("icon"), 
+                                                                @TIBETAN@new Boolean(e.getAttributeValue("editable")), new Boolean(e.getAttributeValue("tibetan")));
 							@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 								@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 								@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -816,9 +824,13 @@ public class QD extends JDesktopPane {
 							Iterator it2 = atts.iterator();
 							while (it2.hasNext()) {
 								org.jdom.Element eAtt = (org.jdom.Element)it2.next();
-								tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
-									new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
-									eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+								@TIBETAN@tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+									@TIBETAN@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+									@TIBETAN@eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")),
+                                                                        @TIBETAN@new Boolean(eAtt.getAttributeValue("tibetan")));
+								@UNICODE@tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+									@UNICODE@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+									@UNICODE@eAtt.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
 							}
 						}
 					}
@@ -829,7 +841,8 @@ public class QD extends JDesktopPane {
 						org.jdom.Element e = (org.jdom.Element)it.next();
 						@TIBETAN@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@TIBETAN@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
-							@TIBETAN@new Boolean(e.getAttributeValue("tibetan")), e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
+							@TIBETAN@new Boolean(e.getAttributeValue("tibetancontents")), e.getAttributeValue("icon"), 
+                                                        @TIBETAN@new Boolean(e.getAttributeValue("editable")), new Boolean(e.getAttributeValue("tibetan")));
 						@UNICODE@tagInfo[count].addTag(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("visible")),
 							@UNICODE@new Boolean(e.getAttributeValue("visiblecontents")), e.getAttributeValue("displayas"),
 							@UNICODE@e.getAttributeValue("icon"), new Boolean(e.getAttributeValue("editable")));
@@ -837,9 +850,13 @@ public class QD extends JDesktopPane {
 						Iterator it2 = atts.iterator();
 						while (it2.hasNext()) {
 							org.jdom.Element eAtt = (org.jdom.Element)it2.next();
-							tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
-								new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
-								e.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
+							@TIBETAN@tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								@TIBETAN@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								@TIBETAN@e.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")),
+                                                                @TIBETAN@new Boolean(eAtt.getAttributeValue("tibetan")));
+							@UNICODE@tagInfo[count].addAttribute(eAtt.getAttributeValue("name"), e.getAttributeValue("name"),
+								@UNICODE@new Boolean(eAtt.getAttributeValue("visible")), eAtt.getAttributeValue("displayas"),
+								@UNICODE@e.getAttributeValue("icon"), new Boolean(eAtt.getAttributeValue("editable")));
 						}
 					}
 					count++;

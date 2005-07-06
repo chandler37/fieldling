@@ -28,7 +28,7 @@
 		<configuration menu-name="THDLTranscription">
 			<config href="TranscriptionConfig.xml"/>
 			<edit href="TranscriptionEdit.xsl"/>
-			<new href="TranscriptionNew.xsl"/>
+			<new href="TranscriptionNew.xml"/>
 		</configuration>
 		
         <!--	

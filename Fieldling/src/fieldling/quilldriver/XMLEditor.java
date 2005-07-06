@@ -293,7 +293,7 @@ public class XMLEditor {
 					@TIBETAN@boolean isTibetan = false;
 					@TIBETAN@if (node instanceof org.w3c.dom.Text) {
 						@TIBETAN@org.w3c.dom.Text nodeText = (org.w3c.dom.Text)node;
-						@TIBETAN@isTibetan = XMLEditor.this.tagInfo.isTagTextTibetan(nodeText.getParentNode().getNodeName());
+						@TIBETAN@isTibetan = XMLEditor.this.tagInfo.areTagContentsTibetan(nodeText.getParentNode().getNodeName());
 					@TIBETAN@}
 
 					//if Tibetan, then use DuffPane's build-in RTF copy and paste support, which means
@@ -623,7 +623,7 @@ upAction, writableAction
 				String val;
 
 				@TIBETAN@org.w3c.dom.Text t = (org.w3c.dom.Text)node;
-				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagTextTibetan(t.getParentNode().getNodeName())) {
+				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.areTagContentsTibetan(t.getParentNode().getNodeName())) {
 					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
                     @TIBETAN@boolean[] noSuchWylie = new boolean[1];
 					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2, noSuchWylie);
@@ -686,7 +686,7 @@ upAction, writableAction
 		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && node instanceof org.w3c.dom.Text) {
 			@TIBETAN@org.w3c.dom.Text t = (org.w3c.dom.Text)node;
 			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-			@TIBETAN@if (tagInfo.isTagTextTibetan(t.getParentNode().getNodeName())) {
+			@TIBETAN@if (tagInfo.areTagContentsTibetan(t.getParentNode().getNodeName())) {
 				@TIBETAN@if (duff.isRomanMode()) duff.toggleLanguage();
 			@TIBETAN@} else if (!duff.isRomanMode()) duff.toggleLanguage();
 		@TIBETAN@}
