@@ -335,10 +335,25 @@ public class QDShell extends JFrame implements ItemListener
 							System.exit(0); //FIX
 						/*if (!newTemplateFile.exists())
 							System.exit(0); //FIX*/
-						qd.loadTranscript(newTemplateURL);
+                                                        
 						File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
-						if (saveAsFile != null)
-							qd.changeTranscriptFile(saveAsFile);
+                                                
+                                                try {
+                                                    InputStream in = newTemplateURL.openStream();
+                                                    OutputStream out = new FileOutputStream(saveAsFile);
+                                                    // Transfer bytes from in to out
+                                                    byte[] buf = new byte[1024];
+                                                    int len;
+                                                    while ((len = in.read(buf)) > 0) {
+                                                        out.write(buf, 0, len);
+                                                    }
+                                                    in.close();
+                                                    out.close();
+                                                } catch (IOException ioe) {
+                                                    ioe.printStackTrace();
+                                                }
+                                                
+                                                qd.loadTranscript(saveAsFile);
 						String transcriptString = saveAsFile.getAbsolutePath();
 						prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 						makeRecentlyOpened(transcriptString);
