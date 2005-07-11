@@ -11,7 +11,7 @@
         <configuration menu-name="TranscribeQuechua">
             <config href="UcuchiTranscribeConfig.xml"/>
             <edit href="UcuchiTranscribeEdit.xsl"/>
-            <new href="UcuchiTranscribeNew.xsl"/>
+            <new href="UcuchiTranscribeNew.xml"/>
         </configuration>
         
 		<configuration menu-name="THDLReadonly">
