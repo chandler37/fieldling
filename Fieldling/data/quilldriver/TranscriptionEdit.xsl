@@ -18,30 +18,36 @@
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
 <xsl:param name="speakers" select="''"/>
-
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
+
+<xsl:template name="make-speaker-id">
+        <xsl:param name="count"/>
+        <xsl:variable name="try" select="concat('s', $count)"/>
+        <xsl:choose>
+                <xsl:when test="not($speakers/SPEAKER[@personId=$try])">
+                        <xsl:value-of select="$try"/>
+                </xsl:when>
+                <xsl:otherwise>
+                        <xsl:call-template name="make-speaker-id">
+                                <xsl:with-param name="count" select="$count + 1"/>
+                        </xsl:call-template>
+                </xsl:otherwise>
+       </xsl:choose>
+</xsl:template>
 
 <xsl:template match="*">
 			<xsl:choose>
                 <!-- speaker management tasks -->
 				<xsl:when test="$qd.task='addSpeaker'">
-					<xsl:variable name="n" select="count(SPEAKER)"/>
+					<xsl:variable name="n" select="count(SPEAKER)+1"/>
 					<HEADER>
 						<xsl:copy-of select="*" />
 						<xsl:element name="SPEAKER">
 							<xsl:attribute name="personId">
-								<xsl:choose>
-									<xsl:when test="$n=0">ka</xsl:when>
-									<xsl:when test="$n=1">kha</xsl:when>
-									<xsl:when test="$n=2">ga</xsl:when>
-									<xsl:when test="$n=3">nga</xsl:when>
-                                    <xsl:when test="$n=4">ca</xsl:when>
-									<xsl:when test="$n=5">cha</xsl:when>
-									<xsl:when test="$n=6">ja</xsl:when>
-									<xsl:when test="$n=7">nya</xsl:when>
-									<xsl:otherwise>X</xsl:otherwise>
-								</xsl:choose>
-							</xsl:attribute>
+                                                                <xsl:call-template name="make-speaker-id">
+                                                                        <xsl:with-param name="count" select="$n"/>
+                                                                </xsl:call-template>
+                                                        </xsl:attribute>
 							<xsl:text> </xsl:text>
 						</xsl:element>
 					</HEADER>

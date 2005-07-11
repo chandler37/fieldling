@@ -24,7 +24,20 @@
 
 <xsl:param name="speakers" select="''"/>
 
-<!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
+<xsl:template name="make-speaker-id">
+        <xsl:param name="count"/>
+        <xsl:variable name="try" select="concat('s', $count)"/>
+        <xsl:choose>
+                <xsl:when test="not($speakers/ucuchi:SPEAKER[@id=$try])">
+                        <xsl:value-of select="$try"/>
+                </xsl:when>
+                <xsl:otherwise>
+                        <xsl:call-template name="make-speaker-id">
+                                <xsl:with-param name="count" select="$count + 1"/>
+                        </xsl:call-template>
+                </xsl:otherwise>
+       </xsl:choose>
+</xsl:template>
 
 <xsl:template match="*">
     <xsl:choose> 
@@ -61,12 +74,14 @@
                     </xsl:choose>
                 </xsl:when>
 				<xsl:when test="$qd.task='addSpeaker'">
-					<xsl:variable name="n" select="count(ucuchi:SPEAKER)"/>
+					<xsl:variable name="n" select="count(ucuchi:SPEAKER)+1"/>
 					<ucuchi:META>
 						<xsl:copy-of select="*" />
 						<xsl:element name="ucuchi:SPEAKER">
 							<xsl:attribute name="id">
-                                                                <xsl:text>s</xsl:text><xsl:value-of select="$n"/>
+                                                                <xsl:call-template name="make-speaker-id">
+                                                                        <xsl:with-param name="count" select="$n"/>
+                                                                </xsl:call-template>
 							</xsl:attribute>
 							<xsl:text> </xsl:text>
 						</xsl:element>
