@@ -62,6 +62,8 @@ public class PreferenceManager extends JPanel {
         public static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
         public static final String DEFAULT_INTERFACE_FONT_KEY = "DEFAULT_INTERFACE_FONT";
         
+        public static final String USE_WIZARD_KEY = "USE_WIZARD";
+        
         @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
         @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 
@@ -85,6 +87,8 @@ public class PreferenceManager extends JPanel {
 		
 		public static int default_language;
 		public static String default_interface_font;
+		
+		public static int use_wizard;
 		
 		ResourceBundle messages = null;
 		Method getMethodvalue, getMethodint,setMethodvalue, setMethodint;
@@ -132,7 +136,7 @@ public class PreferenceManager extends JPanel {
             multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
             default_language = getInt(DEFAULT_LANGUAGE_KEY, -1);
             default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
-            
+            use_wizard = getInt(USE_WIZARD_KEY, 1);
 			@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		}
 

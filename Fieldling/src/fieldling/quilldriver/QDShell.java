@@ -126,13 +126,9 @@ public class QDShell extends JFrame implements ItemListener
 			}
 			
 			String option = args[0].substring(1);
-			boolean readOnly;
-			
-			if (option.equals("edit"))
-				readOnly = false;
-			else if (option.equals("read"))
-				readOnly = true;
-			else
+			String configName;
+			// for now only these two options are available. More to come...
+			if (!option.equals("THDLTranscription") || !option.equals("THDLReadonly"))
 			{
 				System.out.println("Syntax error: invalid option!");
 				printSyntax();
@@ -145,7 +141,8 @@ public class QDShell extends JFrame implements ItemListener
 				System.out.println("Error reading file!");
 				return;
 			}
-			new QDShell(transcriptFile, readOnly);
+			// if arguments are passed through the command-line default to Quick-time for Java
+			new QDShell(transcriptFile, option, "QuicktimeforJava");
 			
 		} catch (NoClassDefFoundError err) {
 		}
@@ -194,6 +191,17 @@ public class QDShell extends JFrame implements ItemListener
 			for (int k = 0; k < configItems.length; k++) {
 				configurationChoice.add(configItems[k]);
 			}
+			
+			// load by default?
+			boolean useDefaultSettings = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1)==-1;
+			JCheckBox useAsDefault = new JCheckBox(messages.getString("UseTheseSettingsAsDefault"), useDefaultSettings);
+			useAsDefault.addItemListener(new ItemListener()
+			{
+				public void itemStateChanged(ItemEvent e) 
+				{
+					prefmngr.setInt(prefmngr.USE_WIZARD_KEY, e.getStateChange()==e.SELECTED?-1:1);
+				}				
+			});
 
 			//choice of video player
 			JPanel moviePlayerChoice = new JPanel();
@@ -381,8 +389,13 @@ public class QDShell extends JFrame implements ItemListener
 				}
 			});
 			JPanel northChoices = new JPanel(new GridLayout(1, 0));
+			JPanel northEastChoices = new JPanel (new BorderLayout());
+			JPanel defaultPanel = new JPanel (new FlowLayout(FlowLayout.RIGHT));
+			defaultPanel.add(useAsDefault);
+			northEastChoices.add(BorderLayout.NORTH, defaultPanel);
+			northEastChoices.add(BorderLayout.CENTER, moviePlayerChoice);
 			northChoices.add(configurationChoice);
-			northChoices.add(moviePlayerChoice);
+			northChoices.add(northEastChoices);
 			JPanel choices = new JPanel(new GridLayout(0, 1));
 			choices.add(northChoices);
 			choices.add(dataSourceChoice);
@@ -395,13 +408,11 @@ public class QDShell extends JFrame implements ItemListener
 			getContentPane().add(content);
 		}
 	}
-	
-	public QDShell()
+		
+	/** Constructor for generic stuff loaded regardless of how to get initial state (wizard, command-line,
+	 * or defaults in pref manager). Not meant to be called directly!!! */
+	private void loadGenericInitialState()
 	{
-		this (null, false);
-	}
-
-	public QDShell(File transcriptFile, boolean readOnly) {
 		numberOfQDsOpen++;
 		@UNICODE@setTitle("QuillDriver");
 		@TIBETAN@setTitle("QuillDriver-TIBETAN");
@@ -413,56 +424,8 @@ public class QDShell extends JFrame implements ItemListener
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
 		prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
 		qd = new QD(prefmngr);
-		if (transcriptFile==null)
-		{
-			Wizard wiz = new Wizard();
-			wiz.setModal(true);
-			wiz.setSize(new Dimension(600,400));
-			wiz.addWindowListener(new WindowAdapter () {
-				public void windowClosing (WindowEvent e) {
-	                            System.exit(0);
-				}
-			});
-			wiz.show();
-		}
-		else
-		{
-			String transcriptString = transcriptFile.getAbsolutePath(), configName;
-			prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-			if (readOnly)
-				configName = "THDLReadonly";
-			else
-				configName = "THDLTranscription";
-			
-			final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
-			int j;
-			for (j = 0; j < configurations.length; j++) {
-				if (configurations[j].getName().equals(configName))
-				{
-					qd.configure(configurations[j]);
-					break;
-				}
-			}
-
-			java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
-			PanelPlayer mPlayer;
-			
-			for (j=0; j<moviePlayers.size(); j++)
-			{
-				mPlayer = (PanelPlayer) moviePlayers.get(j);
-				if (mPlayer.getIdentifyingName().equals("QuicktimeforJava"))
-				{
-					qd.setMediaPlayer(mPlayer);
-					break;
-				}
-			}
-			
-			qd.loadTranscript(transcriptFile);
-			makeRecentlyOpened(transcriptString);
-			makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-		}
+		
 		getContentPane().add(qd);
-		setJMenuBar(getQDShellMenu());
 		// setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
@@ -473,7 +436,156 @@ public class QDShell extends JFrame implements ItemListener
 					System.exit(0);
 				}
 			}
+		});		
+	}
+	
+	private void loadSpecificInitialStateFromWizard()
+	{
+		Wizard wiz = new Wizard();
+		wiz.setModal(true);
+		wiz.setSize(new Dimension(600,400));
+		wiz.addWindowListener(new WindowAdapter () {
+			public void windowClosing (WindowEvent e) {
+                            System.exit(0);
+			}
 		});
+		wiz.show();		
+	}
+
+	
+	private void loadSpecificInitialStateFromDefaults() throws Exception
+	{
+		File transcriptFile;
+		String transcriptFileName, s, mediaURL, configName, mediaPlayer;;
+		int pos;
+		
+		s = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
+		
+		pos = s.indexOf(",");
+		if (pos==-1) transcriptFileName = s.trim();
+		else transcriptFileName = s.substring(0,pos).trim();
+		
+		transcriptFile = new File(transcriptFileName);
+		if (!transcriptFile.exists()) throw new Exception("Transcription file not found!");
+		
+		s = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
+		pos = s.indexOf(",");
+		if (pos==-1) mediaURL = s.trim();
+		else mediaURL = s.substring(0,pos).trim();
+		
+		configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY, null);
+		mediaPlayer = prefmngr.getValue(prefmngr.MEDIA_PLAYER_KEY, null);
+		
+		loadSpecificInitialState(transcriptFile, mediaURL, configName, mediaPlayer);		
+	}
+	
+	private void loadSpecificInitialState(File transcriptFile, String configName, String mediaName)
+	{
+		loadSpecificInitialState(transcriptFile, null, configName, mediaName);
+	}
+	
+	private void loadSpecificInitialState(File transcriptFile, String mediaURL, String configName, String mediaName)
+	{
+		String transcriptString = transcriptFile.getAbsolutePath();
+		prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+		
+		final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
+		int j;
+		for (j = 0; j < configurations.length; j++) {
+			if (configurations[j].getName().equals(configName))
+			{
+				qd.configure(configurations[j]);
+				break;
+			}
+		}
+
+		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
+		PanelPlayer mPlayer;
+		
+		for (j=0; j<moviePlayers.size(); j++)
+		{
+			mPlayer = (PanelPlayer) moviePlayers.get(j);
+			if (mPlayer.getIdentifyingName().equals(mediaName))
+			{
+				qd.setMediaPlayer(mPlayer);
+				break;
+			}
+		}
+		if (mediaURL==null)
+		{
+			qd.loadTranscript(transcriptFile);
+			makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+		}
+		else
+		{
+			qd.loadTranscript(transcriptFile, mediaURL);
+			makeRecentlyOpenedVideo(mediaURL);
+		}
+		makeRecentlyOpened(transcriptString);
+				
+	}
+	
+	public QDShell(int useWizard)
+	{
+		loadGenericInitialState();
+		
+		try
+		{
+			if (useWizard==0)
+			{
+				loadSpecificInitialStateFromDefaults();
+			}
+		}
+		catch (Exception e)
+		{
+			useWizard=1;
+		}
+		
+		if (useWizard==1)
+		{
+			// load wizard
+			loadSpecificInitialStateFromWizard();
+		}
+		setJMenuBar(getQDShellMenu());
+		setVisible(true);		
+	}
+	
+	public QDShell()
+	{
+		loadGenericInitialState();
+		
+		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1), pos;
+		
+		try
+		{
+			if (useWizard==-1)
+			{
+				loadSpecificInitialStateFromDefaults();
+			}
+		}
+		catch (Exception e)
+		{
+			useWizard=1;
+		}
+		
+		if (useWizard==1)
+		{
+			// load wizard
+			loadSpecificInitialStateFromWizard();
+		}
+		setJMenuBar(getQDShellMenu());
+		setVisible(true);
+	}
+
+	
+	public QDShell(File transcriptFile, String configName, String mediaName)
+	{
+		loadGenericInitialState();
+		// not loading wizard
+		
+		loadSpecificInitialState(transcriptFile, configName, mediaName);		
+
+		setJMenuBar(getQDShellMenu());
 		setVisible(true);
 	}
 
@@ -511,7 +623,7 @@ public class QDShell extends JFrame implements ItemListener
 		JMenuItem wizardItem = new JMenuItem(messages.getString("NewWizard"));
 		wizardItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new QDShell();
+				new QDShell(1);
 			}
 		});
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
