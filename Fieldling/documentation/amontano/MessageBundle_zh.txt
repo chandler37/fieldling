@@ -231,3 +231,4 @@ ChangesToInterface = 转换下一次打开QuillDriver时候的\n显示界面。
 High = 高
 Medium = 中
 Low = 低
+UseThisSettingsAsDefault = Use this settings as default?
