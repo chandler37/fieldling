@@ -121,10 +121,10 @@ NoBackup:
 Skip:
   pop $R0
   StrCpy $R1 '-cp "$INSTDIR\quilldriver-TIB.jar;$INSTDIR\Jskad.jar;$INSTDIR\xml-apis.jar;$INSTDIR\xercesImpl.jar;$INSTDIR\xalan.jar;$INSTDIR\jdom.jar;$INSTDIR\jaxen-full.jar;$INSTDIR\jaxen-jdom.jar;$INSTDIR\saxpath.jar;$INSTDIR\mail.jar;$INSTDIR\activation.jar" fieldling.quilldriver.QDShell'
-  WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open\command" "" '"$R0" $R1 "-read" "%1"'
+  WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open\command" "" '"$R0" $R1 "-THDLReadonly" "%1"'
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open" "" "Open with QuillDriver Tibetan"
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\edit" "" "Edit with QuillDriver Tibetan"
-  WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\edit\command" "" '"$R0" $R1 "-edit" "%1"'
+  WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\edit\command" "" '"$R0" $R1 "-THDLTranscription" "%1"'
 SectionEnd
 
 Section -InstallFonts
