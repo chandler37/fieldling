@@ -373,7 +373,6 @@ and Quicktime for Java.
   <jar href="lib_webstart/activation.jar"/>
 </resources>
 <resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3"/>
   <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/xml-apis.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
@@ -435,7 +434,6 @@ optimized for use with Tibetan script.
   <jar href="lib_webstart/activation.jar"/>
 </resources>
 <resources os="Mac OS X" arch="ppc">
-  <j2se version="1.3"/>
   <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <jar href="lib_webstart/Jskad.jar"/>
   <jar href="lib_webstart/xml-apis.jar"/>
