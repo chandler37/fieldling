@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" codebase="http://amontano-laptop:8080/qd/amontano"
+      href="QuillDriver-TIB.jnlp">
+<information>
+  <title>QuillDriver Tibetan</title>
+  <vendor>THDL</vendor>
+  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <description>
+QuillDriver is a tool for transcribing and annotating digital video files.
+Annotation files can be any well-formed XML, and supported media players include
+Java Media Framework (JMF) and Quicktime for Java. QuillDriver-TIBETAN has been
+optimized for use with Tibetan script.
+  </description>
+  <offline/>
+</information>
+<security>
+  <all-permissions/>
+</security>
+<resources>
+  <j2se version="1.4+"/>
+  <jar href="../lib_webstart/quilldriver-TIB.jar"/>
+  <jar href="../lib_webstart/Jskad.jar"/>
+  <jar href="../lib_webstart/xml-apis.jar"/>
+  <jar href="../lib_webstart/xercesImpl.jar"/>
+  <jar href="../lib_webstart/xalan.jar"/>
+  <jar href="../lib_webstart/jdom.jar"/>
+  <jar href="../lib_webstart/jaxen-full.jar"/>
+  <jar href="../lib_webstart/jaxen-jdom.jar"/>
+  <jar href="../lib_webstart/saxpath.jar"/> 
+  <jar href="../lib_webstart/mail.jar"/>
+  <jar href="../lib_webstart/activation.jar"/>
+</resources>
+<application-desc main-class="fieldling.quilldriver.QDShell"/>
+</jnlp>
+		
