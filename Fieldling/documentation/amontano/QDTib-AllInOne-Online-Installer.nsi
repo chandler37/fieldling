@@ -11,7 +11,7 @@
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
 !define QUICKTIME_INSTALLER "QuickTimeFullInstaller.exe"
 !define JRE_INSTALLER "jre-1_5_0_04-windows-i586-p.exe"
-!define JNLP_URL "http://amontano-laptop:8080/qd/amontano/QuillDriver-TIB-simple.jnlp"
+!define JNLP_URL "http://iris.lib.virginia.edu/tibet/tools/nightly/buildsQD/Fieldling/build/webapp/amontano/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -148,6 +148,32 @@ Section -InstallFonts
     WriteRegStr HKEY_LOCAL_MACHINE "$0" "TibetanMachineWeb8 (TrueType)" "timwn8.ttf"
     WriteRegStr HKEY_LOCAL_MACHINE "$0" "TibetanMachineWeb9 (TrueType)" "timwn9.ttf"    
   nofont:
+SectionEnd
+
+Section -WarningForConnection
+  StrCmp $LANGUAGE "1033" warningJNLP_eng
+  
+  ; warning in Chinese
+  MessageBox MB_OK \
+  'The installer has completed successfully! $\n$\n\
+  IMPORTANT: Internet connection is needed to run ${PRODUCT_NAME} for the first time.$\n\
+  This ensures that the most updated version of ${PRODUCT_NAME} will be installed on$\n\
+  your computer. Afterwards, no Internet connection will be required for running$\n\
+  ${PRODUCT_NAME}, although if one is detected the installation will automatically$\n\
+  check for new updates and install them automatically.'
+  Goto resume_after_warningJNLP
+  
+  warningJNLP_eng:
+  MessageBox MB_OK \
+  'The installer has completed successfully! $\n$\n\
+  IMPORTANT: Internet connection is needed to run ${PRODUCT_NAME} for the first time.$\n\
+  This ensures that the most updated version of ${PRODUCT_NAME} will be installed on$\n\
+  your computer. Afterwards, no Internet connection will be required for running$\n\
+  ${PRODUCT_NAME}, although if one is detected the installation will automatically$\n\
+  check for new updates and install them automatically.'
+    
+  resume_after_warningJNLP:
+
 SectionEnd
 
 Section -Post

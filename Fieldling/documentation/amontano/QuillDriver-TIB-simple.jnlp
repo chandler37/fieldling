@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0" codebase="http://amontano-laptop:8080/qd/amontano"
-      href="QuillDriver-TIB.jnlp">
+<jnlp spec="1.0" codebase="http://iris.lib.virginia.edu/tibet/tools/nightly/buildsQD/Fieldling/build/webapp/amontano"
+      href="QuillDriver-TIB-simple.jnlp">
 <information>
   <title>QuillDriver Tibetan</title>
   <vendor>THDL</vendor>
