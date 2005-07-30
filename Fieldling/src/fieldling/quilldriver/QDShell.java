@@ -77,7 +77,7 @@ public class QDShell extends JFrame implements ItemListener
 
 	private static void printSyntax()
 	{
-		System.out.println("Syntax: QDShell [-edit | -read  transcript-file]");
+		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
 	}
 	
 	public static void main(String[] args)
@@ -128,9 +128,9 @@ public class QDShell extends JFrame implements ItemListener
 			String option = args[0].substring(1);
 			String configName;
 			// for now only these two options are available. More to come...
-			if (!option.equals("THDLTranscription") || !option.equals("THDLReadonly"))
+			if (!option.equals("THDLTranscription") && !option.equals("THDLReadonly"))
 			{
-				System.out.println("Syntax error: invalid option!");
+				System.out.println("Syntax error: invalid option \"" + option + "\"!");
 				printSyntax();
 				return;
 			}
