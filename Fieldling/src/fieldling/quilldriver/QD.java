@@ -529,6 +529,7 @@ public class QD extends JDesktopPane {
 					if (value.startsWith("http:"))
 					{
 						player.loadMovie(new URL(value));
+                                                videoFrame.setTitle(value);
 						nomedia = false;
 					}
 					else
@@ -551,12 +552,14 @@ public class QD extends JDesktopPane {
 						}
 						if (mediaFile.exists()) { //open the actual file
 							player.loadMovie(mediaFile.toURL());
+                                                        videoFrame.setTitle(mediaFile.toString());
 							nomedia = false;
 						} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
 							String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							mediaFile = new File(PreferenceManager.media_directory, mediaName);
 							if (mediaFile.exists()) {
 								player.loadMovie(mediaFile.toURL());
+                                                                videoFrame.setTitle(mediaFile.toString());
 								nomedia = false;
 								//INSERT VIDEO NAME INTO DATA FILE
 							}
@@ -568,6 +571,7 @@ public class QD extends JDesktopPane {
                 if (videoUrl != null) {
                     try {
                         player.loadMovie(new URL(videoUrl));
+                        videoFrame.setTitle(videoUrl);
                         nomedia = false;
                     } catch (MalformedURLException murle) {murle.printStackTrace();}
                 } else {
@@ -576,6 +580,7 @@ public class QD extends JDesktopPane {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
+                                                        videoFrame.setTitle(mediaFile.toString());
 							String mediaString = mediaFile.getAbsolutePath();
 							PreferenceManager.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
@@ -598,11 +603,12 @@ public class QD extends JDesktopPane {
 			});
 			startTimer();
 
-			//give text frame title of video/transcript
+                        textFrame.setTitle(transcriptString); //title=name of transcript file
+			/*give text frame title of video/transcript
 			if (config.getProperty("qd.title") != null) {
 				Object obj = XMLUtilities.selectSingleDOMNode(editor.getXMLDocument().getDocumentElement(), config.getProperty("qd.title"), namespaces);
 				textFrame.setTitle(XMLUtilities.getTextForDOMNode(obj));
-			}
+			}*/
 			final TimeCodeView tcv = new TimeCodeView(player, tcp);
 			checkTimeTimer = new Timer(true);
 			checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
