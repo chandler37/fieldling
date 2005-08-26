@@ -25,6 +25,7 @@ import java.util.*;
 import javax.swing.*;
 
 import java.awt.event.*;
+
 import javax.swing.text.*;
 import javax.swing.text.rtf.*;
 import java.util.prefs.*;
@@ -32,6 +33,7 @@ import fieldling.quilldriver.PreferenceManager;
 import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
+@TIBETAN@ import org.thdl.tib.input.*;
 
 public class QDShell extends JFrame implements ItemListener
 {
@@ -39,10 +41,7 @@ public class QDShell extends JFrame implements ItemListener
 
 	 *  clean */
 
-	/*
-	 private final static JskadKeyboardManager keybdMgr
-	 = new JskadKeyboardManager(JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-	 */
+	 //private final static JskadKeyboardManager keybdMgr = new JskadKeyboardManager(JskadKeyboardFactory.getAllAvailableJskadKeyboards());
 
 	/** When opening a file, this is the only extension QuillDriver
 	 cares about.  This is case-insensitive. */
@@ -699,52 +698,54 @@ public class QDShell extends JFrame implements ItemListener
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
 		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-		bar.add(preferencesMenu);
+		bar.add(preferencesMenu);				
 		betaMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-		bar.add(betaMenu);
 		JMenu[] configMenus = qd.getConfiguredMenus();
 		for (int k = 0; k < configMenus.length; k++) {
 			configMenus[k].getPopupMenu().setLightWeightPopupEnabled(false);
 			bar.add(configMenus[k]);
 		}
+
+		@TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
+		@TIBETAN@JMenuItem[] keyboardItems = null;
+		@TIBETAN@try {
+		@TIBETAN@		keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+		@TIBETAN@}catch (Exception e) {}
+		@TIBETAN@if (keybdMgr != null) {
+		@TIBETAN@	ButtonGroup keyboardGroup = new ButtonGroup();
+		@TIBETAN@	keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+		@TIBETAN@	for (int i=0; i<keybdMgr.size(); i++) {
+		@TIBETAN@		final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+				//if (kbd.hasQuickRefFile()) {
+		@TIBETAN@		keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+		@TIBETAN@		keyboardItems[i].addActionListener(new ActionListener() {
+		@TIBETAN@			public void actionPerformed(ActionEvent e) {
+		@TIBETAN@				qd.changeKeyboard(kbd);
+		@TIBETAN@				prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
+		@TIBETAN@			}
+		@TIBETAN@		});
+		@TIBETAN@		keyboardGroup.add(keyboardItems[i]);
+		@TIBETAN@	}
+		@TIBETAN@}
+		@TIBETAN@if (keybdMgr != null) {
+		@TIBETAN@	String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
+		@TIBETAN@	int i;
+		@TIBETAN@	for (i=0; i<keybdMgr.size(); i++)
+		@TIBETAN@		if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
+		@TIBETAN@	if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
+		@TIBETAN@		keyboardItems[0].setSelected(true);
+		@TIBETAN@	else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
+		@TIBETAN@		keyboardItems[i].setSelected(true);
+		@TIBETAN@		qd.changeKeyboard(keybdMgr.elementAt(i));
+		@TIBETAN@	}
+		@TIBETAN@	JMenu keyboards = new JMenu(messages.getString("Keyboard"));
+		@TIBETAN@	for (int k=0; k<keyboardItems.length; k++)
+		@TIBETAN@		keyboards.add(keyboardItems[k]);
+		@TIBETAN@	bar.add(keyboards);
+		@TIBETAN@}
+				
+		bar.add(betaMenu);
 		return bar;
-		/*
-		 @TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
-		 @TIBETAN@JMenuItem[] keyboardItems = null;
-		 @TIBETAN@try {
-		 @TIBETAN@keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-		 @TIBETAN@}catch (Exception e) {}
-		 @TIBETAN@if (keybdMgr != null) {
-		 @TIBETAN@ButtonGroup keyboardGroup = new ButtonGroup();
-		 @TIBETAN@keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-		 @TIBETAN@for (int i=0; i<keybdMgr.size(); i++) {
-		 @TIBETAN@final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
-		 //if (kbd.hasQuickRefFile()) {
-		 @TIBETAN@keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-		 @TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
-		 @TIBETAN@public void actionPerformed(ActionEvent e) {
-		 @TIBETAN@qd.changeKeyboard(kbd);
-		 @TIBETAN@prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
-		 @TIBETAN@}
-		 @TIBETAN@});
-		 @TIBETAN@keyboardGroup.add(keyboardItems[i]);
-		 @TIBETAN@}
-		 @TIBETAN@}
-		 @TIBETAN@if (keybdMgr != null) {
-		 @TIBETAN@String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
-		 @TIBETAN@int i;
-		 @TIBETAN@for (i=0; i<keybdMgr.size(); i++)
-		 @TIBETAN@if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
-		 @TIBETAN@if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
-		 @TIBETAN@keyboardItems[0].setSelected(true);
-		 @TIBETAN@else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
-		 @TIBETAN@keyboardItems[i].setSelected(true);
-		 @TIBETAN@qd.changeKeyboard(keybdMgr.elementAt(i));
-		 @TIBETAN@}
-		 @TIBETAN@for (int k=0; k<keyboardItems.length; k++)
-		 @TIBETAN@preferencesMenu.add(keyboardItems[k]);
-		 @TIBETAN@}
-		 */
 	}
 
 	private void makeRecentlyOpened(String s) {
