@@ -36,7 +36,7 @@ import java.lang.reflect.*;
 import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
-import fieldling.quilldriver.QDShell;
+import fieldling.quilldriver.gui.QDShell;
 
 public class PreferenceManager extends JPanel {
 		//preference keys
@@ -97,7 +97,7 @@ public class PreferenceManager extends JPanel {
 		public PreferenceManager()
 		{
 			try {
-				Class qdClass = Class.forName("fieldling.quilldriver.QDShell");
+				Class qdClass = Class.forName("fieldling.quilldriver.PreferenceManager");
 				Class prefClass = Class.forName("java.util.prefs.Preferences");
 				Class[] userNodeArgTypes = new Class[] {Class.class};
 				Object[] userNodeArgs = new Object[] {qdClass};
