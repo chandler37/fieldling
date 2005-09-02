@@ -10,7 +10,13 @@
 
 <!-- Parameters are passed to QuillDriver and to the
      editing stylesheet. -->
-<!ELEMENT parameters (parameter+)>
+<!ELEMENT parameters (namespaces?, newtemplate, parameter+)>
+
+<!ELEMENT namespaces EMPTY>
+<!ATTLIST namespaces val CDATA #REQUIRED>
+
+<!ELEMENT newtemplate EMPTY>
+<!ATTLIST newtemplate val CDATA #REQUIRED>
 
 <!-- A parameter -->
 <!ELEMENT parameter EMPTY>
@@ -29,12 +35,12 @@
 
 <!-- Actions specify the set of allowable functions
      in QuillDriver -->		    
-<!ELEMENT actions (action-set+)>
+<!ELEMENT actions (action+)>
 
 <!-- An action set is just a grouping of actions.
      Each action set gets its own menu in the
      QuillDriver menu bar. -->
-<!ELEMENT action-set (action+)>
+<!--<!ELEMENT action-set (action+)>-->
 
 <!-- @attr name becomes the name of the menu on the menu bar -->
 <!ATTLIST action-set name CDATA #REQUIRED>

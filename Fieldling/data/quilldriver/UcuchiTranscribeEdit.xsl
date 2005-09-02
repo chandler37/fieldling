@@ -5,12 +5,8 @@
     xmlns:ucuchi="http://altiplano.emich.edu/ucuchi"
     xmlns:qd="http://altiplano.emich.edu/quilldriver"
     exclude-result-prefixes="qd ucuchi"
-    version="1.0">
-
-<!-- <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:scanner="xalan://org.thdl.tib.scanner.RemoteTibetanScanner"
-	exclude-result-prefixes="scanner" version="1.0"> -->
-
+    version="2.0">
+    
 <xsl:output indent="yes"/>
 
 <xsl:param name="qd.task" select="''"/>
@@ -22,9 +18,8 @@
 <xsl:param name="qd.rapidincrease" select=".250"/>
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
-<xsl:param name="speakers" select="''"/>
-
 <xsl:template name="make-speaker-id">
+        <xsl:param name="speakers"/>
         <xsl:param name="count"/>
         <xsl:variable name="try" select="concat('s', $count)"/>
         <xsl:choose>
@@ -41,45 +36,42 @@
 
 <xsl:template match="*">
     <xsl:choose> 
-            <!-- speaker management tasks -->
-            <xsl:when test="$qd.task='changeSpeaker'">
-                    <xsl:variable name="currentwho" select="@spid"/>
-                    <xsl:variable name="speakercount" select="count($speakers/ucuchi:SPEAKER)"/>
-                    <xsl:variable name="currentwhonum" select="count($speakers/ucuchi:SPEAKER[@id=$currentwho]/preceding-sibling::ucuchi:SPEAKER)"/>
-                    <xsl:choose>
-                        <xsl:when test="$currentwhonum+2 > $speakercount">
-                            <xsl:copy>
-                                <xsl:attribute name="spid">
-                                    <xsl:value-of select="$speakers/ucuchi:SPEAKER[position()=1]/@id"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                </xsl:attribute>
-                                <xsl:copy-of select="@qd:*"/>
-                                <xsl:copy-of select="child::*"/>
-                            </xsl:copy>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:copy>
-                                <xsl:attribute name="spid">
-                                    <xsl:value-of select="$speakers/ucuchi:SPEAKER[position()=$currentwhonum+2]/@id"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="id">
-                                    <xsl:value-of select="@id"/>
-                                </xsl:attribute>
-                                <xsl:copy-of select="@qd:*"/>
-                                <xsl:copy-of select="child::*"/>
-                            </xsl:copy>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
+                            <!-- speaker management tasks -->
+                            <xsl:when test="$qd.task='changeSpeaker'">
+                                    <xsl:variable name="speakers" select="ancestor-or-self::ucuchi:TEXT/ucuchi:META"/>
+                                    <xsl:variable name="currentwho" select="@spid"/>
+                                    <xsl:variable name="speakercount" select="count($speakers/ucuchi:SPEAKER)"/>
+                                    <xsl:variable name="currentwhonum" select="count($speakers/ucuchi:SPEAKER[@id=$currentwho]/preceding-sibling::ucuchi:SPEAKER)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$currentwhonum+2 > $speakercount">
+                                            <xsl:copy>
+                                                <xsl:attribute name="spid">
+                                                    <xsl:value-of select="$speakers/ucuchi:SPEAKER[position()=1]/@id"/>
+                                                </xsl:attribute>
+                                                <xsl:copy-of select="@qd:*" copy-namespaces="no"/>
+                                                <xsl:copy-of select="child::*" copy-namespaces="no"/>
+                                            </xsl:copy>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:copy>
+                                                <xsl:attribute name="spid">
+                                                    <xsl:value-of select="$speakers/ucuchi:SPEAKER[position()=$currentwhonum+2]/@id"/>
+                                                </xsl:attribute>
+                                                <xsl:copy-of select="@qd:*" copy-namespaces="no"/>
+                                                <xsl:copy-of select="child::*" copy-namespaces="no"/>
+                                            </xsl:copy>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
 				<xsl:when test="$qd.task='addSpeaker'">
+                                        <xsl:variable name="speakers" select="ancestor-or-self::ucuchi:TEXT/ucuchi:META"/>
 					<xsl:variable name="n" select="count(ucuchi:SPEAKER)+1"/>
 					<ucuchi:META>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<xsl:element name="ucuchi:SPEAKER">
 							<xsl:attribute name="id">
                                                                 <xsl:call-template name="make-speaker-id">
+                                                                        <xsl:with-param name="speakers" select="$speakers"/>
                                                                         <xsl:with-param name="count" select="$n"/>
                                                                 </xsl:call-template>
 							</xsl:attribute>
@@ -87,32 +79,21 @@
 						</xsl:element>
 					</ucuchi:META>
 				</xsl:when>
-                
-                <!-- id management: is this used?
-				<xsl:when test="$qd.task='computeIDs'">
-					<xsl:copy-of select="."/>
-				</xsl:when>
-                -->
 		
-                <!-- insertions and deletions -->
+                                <!-- insertions and deletions -->
 				<xsl:when test="$qd.task='removeNode'"/> <!-- delete current node -->
 				<xsl:when test="$qd.task='newClause'">
-                                        <xsl:copy-of select="."/>
-					<ucuchi:C id="{generate-id()}" spid="{@spid}" qd:t1="{@qd:t2}" qd:t2="{$qd.mediaduration}">
-						<ucuchi:S-F><xsl:text> </xsl:text></ucuchi:S-F>
+                                        <xsl:copy-of select="." copy-namespaces="no"/>
+					<ucuchi:C spid="{@spid}" qd:t1="{@qd:t2}" qd:t2="{$qd.mediaduration}">
+						<ucuchi:F><xsl:text> </xsl:text></ucuchi:F>
 					</ucuchi:C>
 				</xsl:when>
                 
-                <!-- time-coding tasks -->
+                                <!-- time-coding tasks -->
 				<xsl:when test="$qd.task='markStart'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:attribute name="qd:t1"><xsl:value-of select="$qd.currentmediatime"/></xsl:attribute>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:attribute name="qd:t1"><xsl:value-of select="$qd.currentmediatime"/></xsl:attribute>
 						<xsl:choose>
 							<xsl:when test="@qd:t2">
 								<xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
@@ -121,17 +102,12 @@
 								<xsl:attribute name="qd:t2"><xsl:value-of select="$qd.mediaduration"/></xsl:attribute>
 							</xsl:otherwise>
 						</xsl:choose>
-                        <xsl:copy-of select="*"/>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='markStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
                                                 <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.currentmediatime"/></xsl:attribute>
 						<xsl:choose>
 							<xsl:when test="@qd:t1">
@@ -141,221 +117,131 @@
 								<xsl:attribute name="qd:t1"><xsl:value-of select="0"/></xsl:attribute>
 							</xsl:otherwise>
 						</xsl:choose>
-                        <xsl:copy-of select="*"/>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='maximizeStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
-                        <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.mediaduration"/></xsl:attribute>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
+                                                <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.mediaduration"/></xsl:attribute>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='decreaseStart'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 - $qd.slowincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 - $qd.slowincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='rapidDecreaseStart'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 - $qd.rapidincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 - $qd.rapidincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='decreaseStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 - $qd.slowincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 - $qd.slowincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='rapidDecreaseStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 - $qd.rapidincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 - $qd.rapidincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='increaseStart'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 + $qd.slowincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 + $qd.slowincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='rapidIncreaseStart'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 + $qd.rapidincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1 + $qd.rapidincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='increaseStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 + $qd.slowincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 + $qd.slowincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='rapidIncreaseStop'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:if test="@qd:t1">
-                            <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:if test="@qd:t2">
-                            <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 + $qd.rapidincrease"/></xsl:attribute>
-                        </xsl:if>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:if test="@qd:t1">
+                                                    <xsl:attribute name="qd:t1"><xsl:value-of select="@qd:t1"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:if test="@qd:t2">
+                                                    <xsl:attribute name="qd:t2"><xsl:value-of select="@qd:t2 + $qd.rapidincrease"/></xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='qd.insertTimes'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:attribute name="qd:t1"><xsl:value-of select="$qd.start"/></xsl:attribute>
-                        <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.end"/></xsl:attribute>
-                        <xsl:copy-of select="*"/>
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:attribute name="qd:t1"><xsl:value-of select="$qd.start"/></xsl:attribute>
+                                                <xsl:attribute name="qd:t2"><xsl:value-of select="$qd.end"/></xsl:attribute>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$qd.task='zapTimes'">
 					<xsl:element name="ucuchi:C">
-						<xsl:if test="@spid">
-							<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-                        <xsl:copy-of select="*"/>
-					</xsl:element>
-				</xsl:when>
-				<!--
-				<xsl:when test="$qd.task='parseSentence'">
-					<xsl:element name="S">
-						<xsl:if test="@who">
-							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
-						</xsl:if>
-						<xsl:if test="@id">
-							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-						</xsl:if>
-						<xsl:apply-templates select="*[not(name(.)='W')]" />
-						<xsl:variable name="scan" select="scanner:new($dictURL)" />
-						<xsl:value-of select="scanner:scanBody($scan,FORM)" />
-						<xsl:apply-templates select="scanner:getAsXML($scan,false)" />
+						<xsl:attribute name="spid"><xsl:value-of select="@spid" /></xsl:attribute>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 
-				In order to do 'joinNextWord' and 'joinPreviousWord', we must
-				(a) transform the containing sentence; and (b) have a way to
-				identify the pivot word. Without word ids, the latter is not
-				possible until we can pass XML nodes as paramters, as well as
-				String values.
-				
-				<xsl:when test="$qd.task='joinNextWord'">
-					<W>
-						
-					</W>
-				</xsl:when>
-				-->
-				<!-- All I really need to do here is replace SOUNDFILE; however, QD has a bug
-				whereby it doesn't do transformations right on nodes that are not visually present. -->
-				<!--
-                <xsl:when test="$qd.task='fixMedia'">
-					<SOUNDFILE href="{$qd.mediaurlstring}"/>
-				</xsl:when>
-                -->
-                
 				<!-- default: just copy existing node -->
 				<xsl:otherwise>
-					<xsl:copy-of select="."/>
+					<xsl:copy-of select="." copy-namespaces="no"/>
 				</xsl:otherwise>
      </xsl:choose>
 </xsl:template>

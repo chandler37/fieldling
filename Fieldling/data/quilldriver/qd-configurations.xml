@@ -2,58 +2,24 @@
 <!DOCTYPE qd-configurations SYSTEM "qd-configuration-set.dtd">
 
 <qd-configurations>
-        <!-- These are view-only configurations -->
-        <configuration menu-name="UcuchiLive">
-            <config href="UcuchiViewConfig.xml"/>
-        </configuration>
-        
-        <!-- For transcribing Quechua transcripts -->
-        <configuration menu-name="TranscribeQuechua">
-            <config href="UcuchiTranscribeConfig.xml"/>
-            <edit href="UcuchiTranscribeEdit.xsl"/>
-            <new href="UcuchiTranscribeNew.xml"/>
-        </configuration>
-        
-		<configuration menu-name="THDLReadonly">
-			<config href="SavantConfig.xml"/>
-		</configuration>
-        
-        <!--
-        <configuration menu-name="Monguor Sample">
-            <config href="MonguorConfig.xml"/>
-        </configuration>
-        -->
-        
-		<!-- For transcribing and annotating videos using something like the LACITO-THDL DTD -->
+                <!-- For transcribing Quechua transcripts -->
+                <configuration menu-name="TranscribeQuechua">
+                    <config href="UcuchiTranscribeConfig.xml"/>
+                    <transformconfig href="DefaultConfigTransform.xsl"/>
+                    <edit href="UcuchiTranscribeEdit.xsl"/>
+                    <new href="UcuchiTranscribeNew.xml"/>
+                </configuration>
+                
+		<!-- For transcribing and annotating THDL videos using something like the LACITO-THDL DTD -->
 		<configuration menu-name="THDLTranscription">
 			<config href="TranscriptionConfig.xml"/>
+                        <transformconfig href="DefaultConfigTransform.xsl"/>
 			<edit href="TranscriptionEdit.xsl"/>
 			<new href="TranscriptionNew.xml"/>
 		</configuration>
-		
-        <!--	
-        <configuration menu-name="THDL Logging">
-			<config href="LoggingConfig.xml"/>
-			<edit href="LoggingEdit.xsl"/>
-			<new href="LoggingNew.xsl"/>
-		</configuration> -->
-		
-		
-		<!-- You cannot create new files with this configuration -->
-		<!--
-        <configuration menu-name="THDL Text Markup">
-			<config href="TextMarkupConfig.xml"/>
-			<edit href="TextMarkupEdit.xsl"/>
-		</configuration> 
-		-->
         
-		<!-- For time-coding word-lists, e.g. the MST chapter vocabulary --> 
-		<!--
-        <configuration menu-name="THDL Word List">
-			<config href="WordListConfig.xml"/>
-			<edit href="WordListEdit.xsl"/>
-			<new href="WordListNew.xsl"/>
+                <!-- View-only THDL mode -->
+		<configuration menu-name="THDLReadonly">
+			<config href="SavantConfig.xml"/>
 		</configuration>
-        -->
-        
 </qd-configurations>

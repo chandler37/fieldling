@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucuchi:TEXT xmlns:ucuchi="http://altiplano.emich.edu/ucuchi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:qd="http://altiplano.emich.edu/quilldriver" xsi:schemaLocation="http://altiplano.emich.edu/ucuchi QuechuaTranscript.xsd">
         <ucuchi:META>
-                <ucuchi:SPEAKER id="s1">PUT SPEAKER NAME HERE</ucuchi:SPEAKER>
+                <ucuchi:SPEAKER id="s1">SPEAKER NAME</ucuchi:SPEAKER>
         </ucuchi:META>
-        <ucuchi:C spid="s1" id="i0">
-                <ucuchi:S-F> </ucuchi:S-F>
+        <ucuchi:C spid="s1">
+                <ucuchi:F>SPEECH</ucuchi:F>
         </ucuchi:C>
 </ucuchi:TEXT>

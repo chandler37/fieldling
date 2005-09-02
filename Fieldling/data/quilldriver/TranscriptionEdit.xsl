@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
 
 <!-- <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns:scanner="xalan://org.thdl.tib.scanner.RemoteTibetanScanner"
@@ -17,10 +17,10 @@
 <xsl:param name="qd.rapidincrease" select=".250"/>
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
-<xsl:param name="speakers" select="''"/>
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
 <xsl:template name="make-speaker-id">
+        <xsl:param name="speakers"/>
         <xsl:param name="count"/>
         <xsl:variable name="try" select="concat('s', $count)"/>
         <xsl:choose>
@@ -37,14 +37,16 @@
 
 <xsl:template match="*">
 			<xsl:choose>
-                <!-- speaker management tasks -->
+                                <!-- speaker management tasks -->
 				<xsl:when test="$qd.task='addSpeaker'">
+                                        <xsl:variable name="speakers" select="ancestor-or-self::TEXT/HEADER"/>
 					<xsl:variable name="n" select="count(SPEAKER)+1"/>
 					<HEADER>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<xsl:element name="SPEAKER">
 							<xsl:attribute name="personId">
                                                                 <xsl:call-template name="make-speaker-id">
+                                                                        <xsl:with-param name="speakers" select="$speakers"/>
                                                                         <xsl:with-param name="count" select="$n"/>
                                                                 </xsl:call-template>
                                                         </xsl:attribute>
@@ -52,39 +54,40 @@
 						</xsl:element>
 					</HEADER>
 				</xsl:when>
-                <xsl:when test="$qd.task='changeSpeaker'">
-                    <xsl:variable name="currentwho" select="@who"/>
-                    <xsl:variable name="speakercount" select="count($speakers/SPEAKER)"/>
-                    <xsl:variable name="currentwhonum" select="count($speakers/SPEAKER[@personId=$currentwho]/preceding-sibling::SPEAKER)"/>
-                    <xsl:choose>
-                        <xsl:when test="$currentwhonum+2 > $speakercount">
-                            <xsl:copy>
-                                <xsl:attribute name="who">
-                                    <xsl:value-of select="$speakers/SPEAKER[position()=1]/@personId"/>
-                                </xsl:attribute>
-                                <xsl:copy-of select="child::*"/>
-                            </xsl:copy>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:copy>
-                                <xsl:attribute name="who">
-                                    <xsl:value-of select="$speakers/SPEAKER[position()=$currentwhonum+2]/@personId"/>
-                                </xsl:attribute>
-                                <xsl:copy-of select="child::*"/>
-                            </xsl:copy>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
+                                <xsl:when test="$qd.task='changeSpeaker'">
+                                    <xsl:variable name="speakers" select="ancestor-or-self::TEXT/HEADER"/>
+                                    <xsl:variable name="currentwho" select="@who"/>
+                                    <xsl:variable name="speakercount" select="count($speakers/SPEAKER)"/>
+                                    <xsl:variable name="currentwhonum" select="count($speakers/SPEAKER[@personId=$currentwho]/preceding-sibling::SPEAKER)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$currentwhonum+2 > $speakercount">
+                                            <xsl:copy copy-namespaces="no">
+                                                <xsl:attribute name="who">
+                                                    <xsl:value-of select="$speakers/SPEAKER[position()=1]/@personId"/>
+                                                </xsl:attribute>
+                                                <xsl:copy-of select="child::*" copy-namespaces="no"/>
+                                            </xsl:copy>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:copy copy-namespaces="no">
+                                                <xsl:attribute name="who">
+                                                    <xsl:value-of select="$speakers/SPEAKER[position()=$currentwhonum+2]/@personId"/>
+                                                </xsl:attribute>
+                                                <xsl:copy-of select="child::*" copy-namespaces="no"/>
+                                            </xsl:copy>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
                 
-                <!-- id management: is this used? -->
+                                <!-- id management: is this used? -->
 				<xsl:when test="$qd.task='computeIDs'">
-					<xsl:copy-of select="."/>
+					<xsl:copy-of select="." copy-namespaces="no"/>
 				</xsl:when>
                 
-                <!-- insertions and deletions -->
+                                <!-- insertions and deletions -->
 				<xsl:when test="$qd.task='removeNode'"/> <!-- removes current node -->
 				<xsl:when test="$qd.task='insertAfter'">
-                    <xsl:copy-of select="."/>
+                                        <xsl:copy-of select="." copy-namespaces="no"/>
 					<S who="{@who}">
 						<FORM type="transliteration"><xsl:text> </xsl:text></FORM>
 					</S>
@@ -93,7 +96,7 @@
 					<S who="{@who}">
 						<FORM type="transliteration"><xsl:text> </xsl:text></FORM>
 					</S>
-					<xsl:copy-of select="."/>
+					<xsl:copy-of select="." copy-namespaces="no"/>
 				</xsl:when>
 				<xsl:when test="$qd.task='insertTranslation'">
 					<xsl:element name="S">
@@ -103,16 +106,16 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*"/>
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<xsl:if test="not(TRANSL)">
 						    <TRANSL>
 							    <xsl:text> </xsl:text>
-                            </TRANSL>
+                                                    </TRANSL>
 						</xsl:if>
 					</xsl:element>
 				</xsl:when>
                 
-                <!-- time-coding tasks -->
+                                <!-- time-coding tasks -->
 				<xsl:when test="$qd.task='markStart'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -121,7 +124,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{$qd.currentmediatime}" end="{AUDIO/@end}" />
@@ -140,7 +143,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{AUDIO/@start}" end="{$qd.currentmediatime}" />
@@ -159,7 +162,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:choose>
 							<xsl:when test="AUDIO">
 								<AUDIO start="{AUDIO/@start}" end="{$qd.mediaduration}" />
@@ -175,7 +178,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start + $qd.slowincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -189,7 +192,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start + $qd.rapidincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -203,7 +206,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.slowincrease}" />
 						</xsl:if>
@@ -217,7 +220,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end + $qd.rapidincrease}" />
 						</xsl:if>
@@ -231,7 +234,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start - $qd.slowincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -245,7 +248,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start - $qd.rapidincrease}" end="{AUDIO/@end}" />
 						</xsl:if>
@@ -259,7 +262,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.slowincrease}" />
 						</xsl:if>
@@ -273,7 +276,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<xsl:if test="AUDIO">
 							<AUDIO start="{AUDIO/@start}" end="{AUDIO/@end - $qd.rapidincrease}" />
 						</xsl:if>
@@ -287,7 +290,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 						<AUDIO start="{$qd.start}" end="{$qd.end}" />
 					</xsl:element>
 				</xsl:when>
@@ -299,7 +302,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]"/>
+						<xsl:copy-of select="*[not(local-name(.)='AUDIO')]" copy-namespaces="no"/>
 					</xsl:element>
 				</xsl:when>
 				<!--
@@ -331,7 +334,7 @@
 				</xsl:when>
 				-->
                 
-                <!-- annotation tasks -->
+                                <!-- annotation tasks -->
 				<xsl:when test="$qd.task='addGeneral'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
@@ -340,7 +343,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="general"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -352,7 +355,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="lexical"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -364,7 +367,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="grammatical"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -376,7 +379,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="pronunciation"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -388,7 +391,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="interpretive"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -400,7 +403,7 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="sociolinguistic"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
@@ -412,21 +415,21 @@
 						<xsl:if test="@id">
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
-						<xsl:copy-of select="*" />
+						<xsl:copy-of select="*" copy-namespaces="no"/>
 						<NOTE type="cultural"><xsl:text> </xsl:text></NOTE>
 					</xsl:element>
 				</xsl:when>
                 
-                <!-- media related tasks -->
+                                <!-- media related tasks -->
 				<!-- All I really need to do here is replace SOUNDFILE; however, QD has a bug
 				whereby it doesn't do transformations right on nodes that are not visually present. -->
 				<xsl:when test="$qd.task='fixMedia'">
 					<SOUNDFILE href="{$qd.mediaurlstring}"/>
 				</xsl:when>
                 
-                <!-- default: just copy existing node -->
+                                <!-- default: just copy existing node -->
 				<xsl:otherwise>
-					<xsl:copy-of select="."/>
+					<xsl:copy-of select="." copy-namespaces="no"/>
 				</xsl:otherwise>
 			</xsl:choose>
 </xsl:template>

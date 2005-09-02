@@ -14,7 +14,7 @@
 <!-- Sets parameters relevant for this particular
      configuration, like the location and name of
      the configuration file. -->
-<!ELEMENT configuration (config,edit?,new?)>
+<!ELEMENT configuration (config,transformconfig?,edit?,new?)>
 
 <!-- @attr menu-name the identifying name of this configuration,
      which will appear as a menu item on the QuillDriver menu bar. -->
@@ -23,9 +23,13 @@
 <!-- Contains the location of the configuration file. -->
 <!ELEMENT config EMPTY>
 
+<!ELEMENT transformconfig EMPTY>
+
 <!-- @attr href the name of the xml configuration file,
      relative to the 'data/quilldriver' directory -->
 <!ATTLIST config href CDATA #REQUIRED>
+
+<!ATTLIST transformconfig href CDATA #REQUIRED>
 
 <!-- Contains the location of the editing transformation file,
      if there is one (i.e. if this configuration is not just
