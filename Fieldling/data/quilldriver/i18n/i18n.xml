@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE all-messages [
+<!ELEMENT all-messages (message*)>
+<!ELEMENT message (text*)>
+<!ATTLIST message id ID #REQUIRED>
+<!ELEMENT text (#PCDATA)>
+<!ATTLIST text lang CDATA #REQUIRED>
+]>
+<all-messages>
+  <message id="About">
+    <text lang="en">About</text>
+    <text lang="zh">关于</text>
+  </message>
+  <message id="AboutQuillDriver">
+    <text lang="en">About QuillDriver</text>
+    <text lang="zh">关于QuillDriver</text>
+  </message>
+  <message id="Add">
+    <text lang="en">Add</text>
+    <text lang="zh">添加</text>
+  </message>
+  <message id="AddCulturalNote">
+    <text lang="en">Add Cultural Note</text>
+    <text lang="zh">添加文化注释</text>
+  </message>
+  <message id="AddGeneralNote">
+    <text lang="en">Add General Note</text>
+    <text lang="zh">添加一般注释</text>
+  </message>
+  <message id="AddGrammaticalNote">
+    <text lang="en">Add Grammatical Note</text>
+    <text lang="zh">添加语法注释</text>
+  </message>
+  <message id="AddInterpretiveNote">
+    <text lang="en">Add Interpretive Note</text>
+    <text lang="zh">添加说明</text>
+  </message>
+  <message id="AddLexicalNote">
+    <text lang="en">Add Lexical Note</text>
+    <text lang="zh">添加词语注释</text>
+  </message>
+  <message id="AddPronunciationNote">
+    <text lang="en">Add Pronunciation  Note</text>
+    <text lang="zh">添加读法注释</text>
+  </message>
+  <message id="AddSociolinguisticNote">
+    <text lang="en">Add Sociolinguistic Note</text>
+    <text lang="zh">添加口语注释</text>
+  </message>
+  <message id="AddSpeaker">
+    <text lang="en">Add Speaker</text>
+    <text lang="zh">添加声音</text>
+  </message>
+  <message id="AdjustTimeCode">
+    <text lang="en">Adjust Time Code</text>
+    <text lang="zh">调整速度</text>
+  </message>
+  <message id="AffectedModule">
+    <text lang="en">Affected module:</text>
+    <text lang="zh">外观：</text>
+  </message>
+  <message id="AllFiles">
+    <text lang="en">All Files</text>
+    <text lang="zh">所有文件</text>
+  </message>
+  <message id="Allowed">
+    <text lang="en">Allowed</text>
+    <text lang="zh">允许</text>
+  </message>
+  <message id="Annotate">
+    <text lang="en">Annotate</text>
+    <text lang="zh">注释</text>
+  </message>
+  <message id="AppendDivision">
+    <text lang="en">Append Division</text>
+    <text lang="zh">添加分界线</text>
+  </message>
+  <message id="Audio">
+    <text lang="en">Audio</text>
+    <text lang="zh">声音</text>
+  </message>
+  <message id="AUDIO">
+    <text lang="en">AUDIO</text>
+    <text lang="zh">声音</text>
+  </message>
+  <message id="Bottom">
+    <text lang="en">Bottom</text>
+    <text lang="zh">底部</text>
+  </message>
+  <message id="Bug">
+    <text lang="en">Bug</text>
+    <text lang="zh">程序错误</text>
+  </message>
+  <message id="Cancel">
+    <text lang="en">Cancel</text>
+    <text lang="zh">取消</text>
+  </message>
+  <message id="ChangeSpeaker">
+    <text lang="en">Change Speaker</text>
+    <text lang="zh">改变声音</text>
+  </message>
+  <message id="CheckIn">
+    <text lang="en">Check In</text>
+    <text lang="zh">登记</text>
+  </message>
+  <message id="Chinese">
+    <text lang="en">Chinese</text>
+    <text lang="zh">汉文</text>
+  </message>
+  <message id="ChooseOne">
+    <text lang="en">Choose an option</text>
+    <text lang="zh">选择一个择项</text>
+  </message>
+  <message id="Close">
+    <text lang="en">Close</text>
+    <text lang="zh">关闭</text>
+  </message>
+  <message id="ColorInHex">
+    <text lang="en">Color in hex [c.f. http://www.hypersolutions.org/pages/rgbhex.html]:</text>
+    <text lang="zh">十六进制颜色值[c.f. http://www.hypersolutions.org/pages/rgbhex.html]：</text>
+  </message>
+  <message id="Copy">
+    <text lang="en">Copy</text>
+    <text lang="zh">复制</text>
+  </message>
+  <message id="Current">
+    <text lang="en">Current</text>
+    <text lang="zh">当前</text>
+  </message>
+  <message id="CurrentPlayable">
+    <text lang="en">Current Playable</text>
+    <text lang="zh">当前可播放的</text>
+  </message>
+  <message id="Cut">
+    <text lang="en">Cut</text>
+    <text lang="zh">剪切</text>
+  </message>
+  <message id="DecreaseStartTime">
+    <text lang="en">Decrease Start Time</text>
+    <text lang="zh">减少开始时间</text>
+  </message>
+  <message id="DecreaseStopTime">
+    <text lang="en">Decrease Stop Time</text>
+    <text lang="zh">减少停止时间</text>
+  </message>
+  <message id="DeleteDivision">
+    <text lang="en">Delete Division</text>
+    <text lang="zh">删除分界线</text>
+  </message>
+  <message id="DeleteClause">
+    <text lang="en">Delete Clause</text>
+    <text lang="zh">删除子句</text>
+  </message>
+  <message id="DeleteNote">
+    <text lang="en">Delete Note</text>
+    <text lang="zh">删除注释</text>
+  </message>
+  <message id="DeleteSentence">
+    <text lang="en">Delete Sentence</text>
+    <text lang="zh">删除句子</text>
+  </message>
+  <message id="DeleteSpeaker">
+    <text lang="en">Delete Speaker</text>
+    <text lang="zh">删除声音</text>
+  </message>
+  <message id="DeleteTranslation">
+    <text lang="en">Delete Translation</text>
+    <text lang="zh">删除翻译</text>
+  </message>
+  <message id="DESC">
+    <text lang="en">DESC</text>
+    <text lang="zh">除去</text>
+  </message>
+  <message id="Disallowed">
+    <text lang="en">Disallowed</text>
+    <text lang="zh">不能接受</text>
+  </message>
+  <message id="Display">
+    <text lang="en">Display...</text>
+    <text lang="zh">显示…</text>
+  </message>
+  <message id="Edit">
+    <text lang="en">Edit</text>
+    <text lang="zh">编辑</text>
+  </message>
+  <message id="EditSpeakerInfo">
+    <text lang="en">Edit speaker info</text>
+    <text lang="zh">编辑扬声器信息</text>
+  </message>
+  <message id="EmailAddress">
+    <text lang="en">Email Address</text>
+    <text lang="zh">电子邮件地址</text>
+  </message>
+  <message id="English">
+    <text lang="en">English</text>
+    <text lang="zh">英文 (English)</text>
+  </message>
+  <message id="EnglishOnly">
+    <text lang="en">English Only</text>
+    <text lang="zh">只显示英文</text>
+  </message>
+  <message id="EnterEmail">
+    <text lang="en">&lt;Enter Email&gt;</text>
+    <text lang="zh">&lt;输入邮件地址&gt;</text>
+  </message>
+  <message id="EnterMailServer">
+    <text lang="en">&lt;Enter Mail Server&gt;</text>
+    <text lang="zh">&lt;输入邮件服务器&gt;</text>
+  </message>
+  <message id="EnterName">
+    <text lang="en">&lt;Enter name&gt;</text>
+    <text lang="zh">&lt;输入姓名&gt;</text>
+  </message>
+  <message id="EnterNewSpeakerInfo">
+    <text lang="en">Enter new speaker info</text>
+    <text lang="zh">输入新的扬声器信息</text>
+  </message>
+  <message id="Face">
+    <text lang="en">Face</text>
+    <text lang="zh">面</text>
+  </message>
+  <message id="FaceColon">
+    <text lang="en">Face:</text>
+    <text lang="zh">面：</text>
+  </message>
+  <message id="FeatureRequest">
+    <text lang="en">Feature Request</text>
+    <text lang="zh">特殊请求</text>
+  </message>
+  <message id="Feedback">
+    <text lang="en">Feedback</text>
+    <text lang="zh">反馈</text>
+  </message>
+  <message id="FeedbackToDevelopers">
+    <text lang="en">Feedback to Developers</text>
+    <text lang="zh">返回给开发者</text>
+  </message>
+  <message id="File">
+    <text lang="en">File</text>
+    <text lang="zh">文件</text>
+  </message>
+  <message id="FileNameColon">
+    <text lang="en">File name:</text>
+    <text lang="zh">文件名：</text>
+  </message>
+  <message id="Filesoftype">
+    <text lang="en">Files of type:</text>
+    <text lang="zh">文件类型：</text>
+  </message>
+  <message id="FindHeading">
+    <text lang="en">Search</text>
+    <text lang="zh">搜索</text>
+  </message>
+  <message id="FindNextYesNo">
+    <text lang="en">Find next</text>
+    <text lang="zh">查找下一个</text>
+  </message>
+  <message id="FindReplaceHeading">
+    <text lang="en">Search and Replace</text>
+    <text lang="zh">搜索和替换</text>
+  </message>
+  <message id="FindSpeaker">
+    <text lang="en">Find speaker</text>
+    <text lang="zh">查找扬声器</text>
+  </message>
+  <message id="FindText">
+    <text lang="en">Find text</text>
+    <text lang="zh">查找文本</text>
+  </message>
+  <message id="FindTime">
+    <text lang="en">Find time</text>
+    <text lang="zh">查找时间</text>
+  </message>
+  <message id="FindWhat">
+    <text lang="en">Find what</text>
+    <text lang="zh">查找什么</text>
+  </message>
+  <message id="FixMedia">
+    <text lang="en">Fix Media</text>
+    <text lang="zh">修复媒体</text>
+  </message>
+  <message id="Font">
+    <text lang="en">Font:</text>
+    <text lang="zh">字体：</text>
+  </message>
+  <message id="FontAndStylePreferences">
+    <text lang="en">Font and Style Preferences</text>
+    <text lang="zh">字体和格式参数</text>
+  </message>
+  <message id="GotoEnd">
+    <text lang="en">Goto End</text>
+    <text lang="zh">到末尾处</text>
+  </message>
+  <message id="GotoNextLine">
+    <text lang="en">Go to Next Line</text>
+    <text lang="zh">到下一行</text>
+  </message>
+  <message id="GotoPreviousLine">
+    <text lang="en">Go to Previous Line</text>
+    <text lang="zh">到前一行</text>
+  </message>
+  <message id="GotoStart ">
+    <text lang="en">Goto Start</text>
+    <text lang="zh">到开始处</text>
+  </message>
+  <message id="Help">
+    <text lang="en">Help</text>
+    <text lang="zh">帮助</text>
+  </message>
+  <message id="HighlightPosition">
+    <text lang="en">Highlight position:</text>
+    <text lang="zh">加亮位置：</text>
+  </message>
+  <message id="HighlightRelatedPreferences">
+    <text lang="en">Highlight-Related Preferences</text>
+    <text lang="zh">加亮选项参数</text>
+  </message>
+  <message id="Icon">
+    <text lang="en">icon</text>
+    <text lang="zh">图标</text>
+  </message>
+  <message id="In">
+    <text lang="en">Start</text>
+    <text lang="zh">开始</text>
+  </message>
+  <message id="IncreaseStartTime">
+    <text lang="en">Increase Start Time</text>
+    <text lang="zh">增加开始时间</text>
+  </message>
+  <message id="IncreaseStopTime">
+    <text lang="en">Increase Stop Time</text>
+    <text lang="zh">增加结束时间</text>
+  </message>
+  <message id="InfoLong">
+    <text lang="en">Information</text>
+    <text lang="zh">信息</text>
+  </message>
+  <message id="InfoShort">
+    <text lang="en">Info</text>
+    <text lang="zh">信息</text>
+  </message>
+  <message id="Inquiry">
+    <text lang="en">Inquiry</text>
+    <text lang="zh">调查</text>
+  </message>
+  <message id="InsertAfter">
+    <text lang="en">Insert After</text>
+    <text lang="zh">行前插入</text>
+  </message>
+  <message id="InsertBefore">
+    <text lang="en">Insert Before</text>
+    <text lang="zh">行后插入</text>
+  </message>
+  <message id="InsertDivisionAfter">
+    <text lang="en">Insert Division After</text>
+    <text lang="zh">后面插入分界线</text>
+  </message>
+  <message id="InsertDivisionBefore">
+    <text lang="en">Insert Division Before</text>
+    <text lang="zh">前面插入分界线</text>
+  </message>
+  <message id="InsertOneTime">
+    <text lang="en">Insert a time</text>
+    <text lang="zh">插入时间</text>
+  </message>
+  <message id="InsertSpeaker">
+    <text lang="en">Insert speaker</text>
+    <text lang="zh">插入声音</text>
+  </message>
+  <message id="InsertTranslation">
+    <text lang="en">Insert Translation</text>
+    <text lang="zh">插入翻译</text>
+  </message>
+  <message id="InsertTwoTimes">
+    <text lang="en">Insert two times</text>
+    <text lang="zh">插入两个时间值</text>
+  </message>
+  <message id="Interface">
+    <text lang="en">Interface</text>
+    <text lang="zh">界面</text>
+  </message>
+  <message id="JavaMediaFramework">
+    <text lang="en">Java Media Framework</text>
+    <text lang="zh">Java媒体播放器</text>
+  </message>
+  <message id="JumpAhead10Lines">
+    <text lang="en">Jump Ahead 10 Lines</text>
+    <text lang="zh">往前跳10行</text>
+  </message>
+  <message id="JumpBack10Lines">
+    <text lang="en">Jump Back 10 Lines</text>
+    <text lang="zh">往后跳10行</text>
+  </message>
+  <message id="Keyboard">
+    <text lang="en">Keyboard</text>
+    <text lang="zh">键盘</text>
+  </message>
+  <message id="KeyboardInputMethod">
+    <text lang="en">Keyboard Input Method</text>
+    <text lang="zh">键盘输入方法</text>
+  </message>
+  <message id="Language">
+    <text lang="en">Language:</text>
+    <text lang="zh">语言：</text>
+  </message>
+  <message id="MarkStartAndStop">
+    <text lang="en">Mark Start and Stop</text>
+    <text lang="zh">开始和结束标志</text>
+  </message>
+  <message id="MarkStartTime">
+    <text lang="en">Mark Start Time</text>
+    <text lang="zh">开始时间标志</text>
+  </message>
+  <message id="MarkStopTime">
+    <text lang="en">Mark Stop Time</text>
+    <text lang="zh">停止时间标志</text>
+  </message>
+  <message id="MaximizeStop">
+    <text lang="en">Maximize Stop</text>
+    <text lang="zh">最多时间</text>
+  </message>
+  <message id="MediaColon">
+    <text lang="en">Media:</text>
+    <text lang="zh">媒体：</text>
+  </message>
+  <message id="MediaPlayer">
+    <text lang="en">Media Player</text>
+    <text lang="zh">媒体播放器</text>
+  </message>
+  <message id="Metadata">
+    <text lang="en">Metadata</text>
+    <text lang="zh">元数据</text>
+  </message>
+  <message id="Middle">
+    <text lang="en">Middle</text>
+    <text lang="zh">中</text>
+  </message>
+  <message id="Mode">
+    <text lang="en">Mode</text>
+    <text lang="zh">模式</text>
+  </message>
+  <message id="MultipleHighlightPolicy">
+    <text lang="en">Multiple highlight policy:</text>
+    <text lang="zh">多重加亮方式：</text>
+  </message>
+  <message id="Name">
+    <text lang="en">Name</text>
+    <text lang="zh">姓名</text>
+  </message>
+  <message id="NameColon">
+    <text lang="en">Name:</text>
+    <text lang="zh">姓名：</text>
+  </message>
+  <message id="Navigate">
+    <text lang="en">Navigate</text>
+    <text lang="zh">导航</text>
+  </message>
+  <message id="New">
+    <text lang="en">New</text>
+    <text lang="zh">新建</text>
+  </message>
+  <message id="NewClause">
+    <text lang="en">New Clause</text>
+    <text lang="zh">新子句</text>
+  </message>
+  <message id="NewProject">
+    <text lang="en">New Project</text>
+    <text lang="zh">新项目</text>
+  </message>
+  <message id="NewTranscriptText">
+    <text lang="en">Create a new transcript</text>
+    <text lang="zh">建立新的文本</text>
+  </message>
+  <message id="NewWizard">
+    <text lang="en">New Wizard</text>
+    <text lang="zh">新界面</text>
+  </message>
+  <message id="Next">
+    <text lang="en">Next</text>
+    <text lang="zh">下一个</text>
+  </message>
+  <message id="NextPlayable">
+    <text lang="en">Next Playable</text>
+    <text lang="zh">下一个可播放的</text>
+  </message>
+  <message id="NextSentence">
+    <text lang="en">Next Sentence</text>
+    <text lang="zh">下一句</text>
+  </message>
+  <message id="NoMedia">
+    <text lang="en">No media</text>
+    <text lang="zh">没有媒体</text>
+  </message>
+  <message id="NonTibetanFontAndSize">
+    <text lang="en">Non-Tibetan Font and Size</text>
+    <text lang="zh">非藏文的字体及其大小</text>
+  </message>
+  <message id="NoReplace">
+    <text lang="en">Don't replace</text>
+    <text lang="zh">不能替换</text>
+  </message>
+  <message id="NOTE">
+    <text lang="en">NOTE</text>
+    <text lang="zh">注释</text>
+  </message>
+  <message id="NotesOnly">
+    <text lang="en">Notes Only</text>
+    <text lang="zh">仅备注</text>
+  </message>
+  <message id="NoTranscript">
+    <text lang="en">No transcript</text>
+    <text lang="zh">没有文本</text>
+  </message>
+  <message id="Ok">
+    <text lang="en">Ok</text>
+    <text lang="zh">确定</text>
+  </message>
+  <message id="Open">
+    <text lang="en">Open</text>
+    <text lang="zh">打开</text>
+  </message>
+  <message id="OpenExisting">
+    <text lang="en">Open an existing transcript</text>
+    <text lang="zh">打开已有文本</text>
+  </message>
+  <message id="OpenMediaFile">
+    <text lang="en">Open Media from File</text>
+    <text lang="zh">打开媒体文件</text>
+  </message>
+  <message id="OpenMediaURL">
+    <text lang="en">Open Media from URL</text>
+    <text lang="zh">打开媒体网址</text>
+  </message>
+  <message id="OpenTranscript">
+    <text lang="en">Open Transcript</text>
+    <text lang="zh">打开文本</text>
+  </message>
+  <message id="Out">
+    <text lang="en">Stop</text>
+    <text lang="zh">停止</text>
+  </message>
+  <message id="OutgoingMailServer">
+    <text lang="en">Outgoing Mail Server</text>
+    <text lang="zh">邮件服务器提供者</text>
+  </message>
+  <message id="Password">
+    <text lang="en">Password</text>
+    <text lang="zh">口令</text>
+  </message>
+  <message id="Paste">
+    <text lang="en">Paste</text>
+    <text lang="zh">粘贴</text>
+  </message>
+  <message id="Pause">
+    <text lang="en">Pause</text>
+    <text lang="zh">暂停</text>
+  </message>
+  <message id="Play">
+    <text lang="en">Play</text>
+    <text lang="zh">播放</text>
+  </message>
+  <message id="PlayBack">
+    <text lang="en">Play Back</text>
+    <text lang="zh">回放</text>
+  </message>
+  <message id="PlayCurrentLine">
+    <text lang="en">Play Current</text>
+    <text lang="zh">播放当前的</text>
+  </message>
+  <message id="PlayEndofCurrent">
+    <text lang="en">Play End of Current</text>
+    <text lang="zh">播放至当前末尾</text>
+  </message>
+  <message id="PlayEndofCurrentLine">
+    <text lang="en">Play End of Current Line</text>
+    <text lang="zh">从当前行播放到末尾</text>
+  </message>
+  <message id="PlayNext ">
+    <text lang="en">Play Next</text>
+    <text lang="zh">播放下一个</text>
+  </message>
+  <message id="PlayNextLine">
+    <text lang="en">Play Next Line</text>
+    <text lang="zh">播放下一行</text>
+  </message>
+  <message id="PlayPause">
+    <text lang="en">Play/Pause</text>
+    <text lang="zh">播放/暂停</text>
+  </message>
+  <message id="PlayPrevious">
+    <text lang="en">Play Previous</text>
+    <text lang="zh">播放前一个</text>
+  </message>
+  <message id="PlayPreviousLine">
+    <text lang="en">Play Previous Line</text>
+    <text lang="zh">播放前一行</text>
+  </message>
+  <message id="PlaySegment">
+    <text lang="en">Play Segment</text>
+    <text lang="zh">播放一段</text>
+  </message>
+  <message id="PlayVinusValue">
+    <text lang="en">Play minus value (in milliseconds)</text>
+    <text lang="zh">播放时间值（按毫秒）</text>
+  </message>
+  <message id="Preferences">
+    <text lang="en">Preferences</text>
+    <text lang="zh">参数选择</text>
+  </message>
+  <message id="Previous">
+    <text lang="en">Previous</text>
+    <text lang="zh">前一个</text>
+  </message>
+  <message id="PreviousPlayable">
+    <text lang="en">Previous Playable</text>
+    <text lang="zh">前一个可播放的</text>
+  </message>
+  <message id="PreviousSentence">
+    <text lang="en">Previous Sentence</text>
+    <text lang="zh">前一句</text>
+  </message>
+  <message id="Priority">
+    <text lang="en">Priority:</text>
+    <text lang="zh">优先权：</text>
+  </message>
+  <message id="Project">
+    <text lang="en">Project</text>
+    <text lang="zh">项目</text>
+  </message>
+  <message id="ProjectDetails">
+    <text lang="en">Project Details</text>
+    <text lang="zh">项目详细资料</text>
+  </message>
+  <message id="QDFileFormat">
+    <text lang="en">QD File Format (</text>
+    <text lang="zh">QD文件格式（</text>
+  </message>
+  <message id="QuechuaAndEnglish">
+    <text lang="en">Quechua And English</text>
+    <text lang="zh">盖丘亚语和英文</text>
+  </message>
+  <message id="QuechuaOnly">
+    <text lang="en">Quechua Only</text>
+    <text lang="zh">只显示盖丘亚语</text>
+  </message>
+  <message id="QuicktimeforJava">
+    <text lang="en">Quicktime for Java</text>
+    <text lang="zh">用于Java的Quicktime播放器</text>
+  </message>
+  <message id="QuillDriverTIBETAN">
+    <text lang="en">QuillDriver-TIBETAN</text>
+    <text lang="zh">QuillDriver-藏语</text>
+  </message>
+  <message id="Quit">
+    <text lang="en">Quit</text>
+    <text lang="zh">结束</text>
+  </message>
+  <message id="RapidDecreaseStart">
+    <text lang="en">Rapid Decrease Start</text>
+    <text lang="zh">快速减少开始时</text>
+  </message>
+  <message id="RapidDecreaseStop">
+    <text lang="en">Rapid Decrease Stop</text>
+    <text lang="zh">快速减少停止时间</text>
+  </message>
+  <message id="RapidDncreaseDecreaseValue">
+    <text lang="en">Rapid increase/decrease value (in milliseconds)</text>
+    <text lang="zh">加快/减慢（按毫秒）</text>
+  </message>
+  <message id="RapidIncreaseStart">
+    <text lang="en">Rapid Increase Start</text>
+    <text lang="zh">快速增加开始时</text>
+  </message>
+  <message id="RapidIncreaseStop">
+    <text lang="en">Rapid Increase Stop</text>
+    <text lang="zh">快速增加结束时</text>
+  </message>
+  <message id="ReadOnly">
+    <text lang="en">Read-only</text>
+    <text lang="zh">只读</text>
+  </message>
+  <message id="Remove">
+    <text lang="en">Remove</text>
+    <text lang="zh">删除</text>
+  </message>
+  <message id="Replace">
+    <text lang="en">Replace</text>
+    <text lang="zh">替换</text>
+  </message>
+  <message id="ReplaceAll">
+    <text lang="en">Replace all</text>
+    <text lang="zh">全部替换</text>
+  </message>
+  <message id="ReplaceQ">
+    <text lang="en">Replace?</text>
+    <text lang="zh">替换吗？</text>
+  </message>
+  <message id="ReplaceText">
+    <text lang="en">Replace text</text>
+    <text lang="zh">替换文本</text>
+  </message>
+  <message id="ReplaceWith">
+    <text lang="en">Replace with</text>
+    <text lang="zh">一起替换</text>
+  </message>
+  <message id="Save">
+    <text lang="en">Save</text>
+    <text lang="zh">保存</text>
+  </message>
+  <message id="SaveAs">
+    <text lang="en">Save as</text>
+    <text lang="zh">保存到</text>
+  </message>
+  <message id="SaveCurrent">
+    <text lang="en">Save the current transcript</text>
+    <text lang="zh">保存当前文本</text>
+  </message>
+  <message id="SaveTranscript">
+    <text lang="en">Save Annotation As</text>
+    <text lang="zh">保存注释到</text>
+  </message>
+  <message id="SaveTranscriptAs">
+    <text lang="en">Save Transcript As</text>
+    <text lang="zh">保存文本到</text>
+  </message>
+  <message id="Search">
+    <text lang="en">Search</text>
+    <text lang="zh">搜寻</text>
+  </message>
+  <message id="SeekEnd">
+    <text lang="en">Seek End</text>
+    <text lang="zh">寻找末尾</text>
+  </message>
+  <message id="SeekNext">
+    <text lang="en">Seek Next</text>
+    <text lang="zh">往后寻找</text>
+  </message>
+  <message id="SeekPrevious">
+    <text lang="en">Seek Previous</text>
+    <text lang="zh">往前寻找</text>
+  </message>
+  <message id="SeekStart">
+    <text lang="en">Seek Start</text>
+    <text lang="zh">寻找开始</text>
+  </message>
+  <message id="SelectAll">
+    <text lang="en">Select all</text>
+    <text lang="zh">全部搜寻</text>
+  </message>
+  <message id="SelectConfiguration">
+    <text lang="en">Select configuration</text>
+    <text lang="zh">选择配置</text>
+  </message>
+  <message id="SelectDataSource">
+    <text lang="en">Select data source</text>
+    <text lang="zh">选择数据源</text>
+  </message>
+  <message id="SelectMedia">
+    <text lang="en">Select Media</text>
+    <text lang="zh">选择媒体</text>
+  </message>
+  <message id="SelectMode">
+    <text lang="en">Select Mode:</text>
+    <text lang="zh">选择模式：</text>
+  </message>
+  <message id="SelectVideoPlayer">
+    <text lang="en">Select video player</text>
+    <text lang="zh">选择视频播放器</text>
+  </message>
+  <message id="ShowEverything">
+    <text lang="en">Show Everything</text>
+    <text lang="zh">显示所有</text>
+  </message>
+  <message id="SlowIncreaseDecreaseValue">
+    <text lang="en">Slow increase/decrease value (in milliseconds)</text>
+    <text lang="zh">微调增减值</text>
+  </message>
+  <message id="Speakers">
+    <text lang="en">Speakers</text>
+    <text lang="zh">扬声器</text>
+  </message>
+  <message id="StartFromBeginning">
+    <text lang="en">You've reached the end of the document. Do you want to continue searching from the beginning?</text>
+    <text lang="zh">你已经到达文本末尾，是否继续从头查找？</text>
+  </message>
+  <message id="SupportedMediaError">
+    <text lang="en">Consult your THDL documentation and install a supported media player.</text>
+    <text lang="zh">请参考THDL文档并安装媒体播放器。</text>
+  </message>
+  <message id="SuppressTimes">
+    <text lang="en">Hide times</text>
+    <text lang="zh">隐藏时间</text>
+  </message>
+  <message id="SureDeleteSpeaker">
+    <text lang="en">Are you sure you want to delete this speaker?</text>
+    <text lang="zh">你确实要删除这个声音吗？</text>
+  </message>
+  <message id="SurroundwithPageLineBreaks">
+    <text lang="en">Surround with Page-Line Breaks</text>
+    <text lang="zh">包围超出页面界线</text>
+  </message>
+  <message id="TextFound">
+    <text lang="en">Text found.</text>
+    <text lang="zh">文本查找。</text>
+  </message>
+  <message id="THDLReadonly">
+    <text lang="en">THDL Read-only</text>
+    <text lang="zh">只读THDL</text>
+  </message>
+  <message id="THDLTranscription">
+    <text lang="en">THDL Transcription</text>
+    <text lang="zh">文本THDL</text>
+  </message>
+  <message id="Tibetan">
+    <text lang="en">tibetan</text>
+    <text lang="zh">藏文</text>
+  </message>
+  <message id="TibetanAndEnglish">
+    <text lang="en">Tibetan and English</text>
+    <text lang="zh">藏文和英文</text>
+  </message>
+  <message id="TibetanFontSize">
+    <text lang="en">Tibetan Font Size</text>
+    <text lang="zh">藏文字体大小</text>
+  </message>
+  <message id="TibetanOnly">
+    <text lang="en">Tibetan Only</text>
+    <text lang="zh">只显示藏文</text>
+  </message>
+  <message id="TimeCode">
+    <text lang="en">Time Code</text>
+    <text lang="zh">时间参数</text>
+  </message>
+  <message id="TimeCoding">
+    <text lang="en">Time Coding...</text>
+    <text lang="zh">时间参数…</text>
+  </message>
+  <message id="TimeCodingPreferences">
+    <text lang="en">Time Coding Preferences</text>
+    <text lang="zh">时间参数选择</text>
+  </message>
+  <message id="TitleColon">
+    <text lang="en">Title:</text>
+    <text lang="zh">标题：</text>
+  </message>
+  <message id="TranscribeQuechua">
+    <text lang="en">Transcribe Quechua</text>
+    <text lang="zh">Quechua文本</text>
+  </message>
+  <message id="TranscriberName">
+    <text lang="en">Transcriber Name</text>
+    <text lang="zh">文本名</text>
+  </message>
+  <message id="TranscriberTask">
+    <text lang="en">Transcriber Task</text>
+    <text lang="zh">文本任务</text>
+  </message>
+  <message id="Transcript">
+    <text lang="en">Transcript</text>
+    <text lang="zh">文本</text>
+  </message>
+  <message id="TranscriptColon">
+    <text lang="en">Transcript:</text>
+    <text lang="zh">文本：</text>
+  </message>
+  <message id="TranscriptionAndNotes">
+    <text lang="en">Transcription and Notes</text>
+    <text lang="zh">文本和注释</text>
+  </message>
+  <message id="TranscriptionOnly">
+    <text lang="en">Transcription Only</text>
+    <text lang="zh">只有文本</text>
+  </message>
+  <message id="TranslationOnly">
+    <text lang="en">Translation Only</text>
+    <text lang="zh">只有翻译</text>
+  </message>
+  <message id="TypeMediaURL">
+    <text lang="en">Enter the URL of the media you want to open:</text>
+    <text lang="zh">输入你要打开的媒体网址：</text>
+  </message>
+  <message id="TypeMessageHere">
+    <text lang="en">Type Message Here</text>
+    <text lang="zh">在此输入信息</text>
+  </message>
+  <message id="TypeNewTitleColon">
+    <text lang="en">Type new title:</text>
+    <text lang="zh">输入新的标题：</text>
+  </message>
+  <message id="TypeofFeedback">
+    <text lang="en">Type of feedback:</text>
+    <text lang="zh">反馈类型：</text>
+  </message>
+  <message id="UcuchiLive">
+    <text lang="en">Ucuchi Live</text>
+    <text lang="zh">Ucuchi直播</text>
+  </message>
+  <message id="Video">
+    <text lang="en">Video</text>
+    <text lang="zh">视频</text>
+  </message>
+  <message id="View">
+    <text lang="en">View</text>
+    <text lang="zh">视图</text>
+  </message>
+  <message id="WantSave">
+    <text lang="en">Do you want to save this transcript?</text>
+    <text lang="zh">你要保存这个文本吗？</text>
+  </message>
+  <message id="Warning">
+    <text lang="en">Warning!</text>
+    <text lang="zh">警告！</text>
+  </message>
+  <message id="WhatToDo">
+    <text lang="en">What do you want to do?</text>
+    <text lang="zh">你要做什么？</text>
+  </message>
+  <message id="WylieAndEnglish">
+    <text lang="en">Wylie and English</text>
+    <text lang="zh">拉丁转写和英文</text>
+  </message>
+  <message id="ZapTimeCodes">
+    <text lang="en">Zap Time Codes</text>
+    <text lang="zh">激活时间码</text>
+  </message>
+  <message id="ChangesToInterface">
+    <text lang="en">Changes to the interface will show up\nthe next time you open QuillDriver.</text>
+    <text lang="zh">转换下一次打开QuillDriver时候的\n显示界面。</text>
+  </message>
+  <message id="High">
+    <text lang="en">High</text>
+    <text lang="zh">高</text>
+  </message>
+  <message id="Medium">
+    <text lang="en">Medium</text>
+    <text lang="zh">中</text>
+  </message>
+  <message id="Low">
+    <text lang="en">Low</text>
+    <text lang="zh">低</text>
+  </message>
+  <message id="UseTheseSettingsAsDefault">
+    <text lang="en">Use these settings as default?</text>
+    <text lang="zh">使用这些设定为缺省值？</text>
+  </message>
+</all-messages>
+
