@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 21-Jun-2005"
+!define PRODUCT_VERSION "Version 5-Sep-2005"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -70,19 +70,24 @@ Section "MainSection" SEC01
   call getQTJava
   
   SetOutPath "$INSTDIR"
-  File "..\..\build\webapp\lib_webstart\xml-apis.jar"
-  File "..\..\build\webapp\lib_webstart\xercesImpl.jar"
-  File "..\..\build\webapp\lib_webstart\xalan.jar"
-  File "..\..\build\webapp\lib_webstart\saxpath.jar"
-  File "..\..\build\webapp\lib_webstart\quilldriver-TIB.jar"
-  File "..\..\build\webapp\lib_webstart\quilldriver.jar"
-  File "..\..\build\webapp\lib_webstart\mediaplayer.jar"
-  File "..\..\build\webapp\lib_webstart\mail.jar"
-  File "..\..\build\webapp\lib_webstart\Jskad.jar"
-  File "..\..\build\webapp\lib_webstart\jdom.jar"
-  File "..\..\build\webapp\lib_webstart\jaxen-jdom.jar"
+  ; File "..\..\build\webapp\lib_webstart\activation.jar"
+  File "..\..\build\webapp\lib_webstart\core-renderer.jar"
+  File "..\..\build\webapp\lib_webstart\cssparser-0-9-4-fs.jar"
   File "..\..\build\webapp\lib_webstart\jaxen-full.jar"
-  File "..\..\build\webapp\lib_webstart\activation.jar"
+  ; File "..\..\build\webapp\lib_webstart\jaxen-jdom.jar"
+  File "..\..\build\webapp\lib_webstart\jdom.jar"
+  File "..\..\build\webapp\lib_webstart\Jskad.jar"
+  File "..\..\build\webapp\lib_webstart\mail.jar"
+  File "..\..\build\webapp\lib_webstart\quilldriver-TIB.jar"
+  File "..\..\build\webapp\lib_webstart\saxon8.jar"
+  File "..\..\build\webapp\lib_webstart\saxon8-dom.jar"
+  ; File "..\..\build\webapp\lib_webstart\saxon8-jdom.jar"
+  File "..\..\build\webapp\lib_webstart\saxon8-xpath.jar"
+  ; File "..\..\build\webapp\lib_webstart\saxpath.jar"
+  ; File "..\..\build\webapp\lib_webstart\xalan.jar"
+  File "..\..\build\webapp\lib_webstart\xercesImpl.jar"
+  ; File "..\..\build\webapp\lib_webstart\xml-apis.jar"
+  
   File "QuillDriver.ico"
 
 ; Shortcuts
@@ -96,7 +101,10 @@ Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
-  StrCpy $R1 '-cp quilldriver-TIB.jar;Jskad.jar;xml-apis.jar;xercesImpl.jar;xalan.jar;jdom.jar;jaxen-full.jar;jaxen-jdom.jar;saxpath.jar;mail.jar;activation.jar fieldling.quilldriver.QDShell'
+  StrCpy $R1 '-cp core-renderer.jar;cssparser-0-9-4-fs.jar;jaxen-full.jar;jdom.jar;Jskad.jar;mail.jar;quilldriver-TIB.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell'
+  
+
+  
   push $R0
   
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" "$R1" "$INSTDIR\QuillDriver.ico"
@@ -120,7 +128,11 @@ NoBackup:
   WriteRegStr HKCR "QuillDriverTibetan.qdt\DefaultIcon" "" "$INSTDIR\QuillDriver.ico"
 Skip:
   pop $R0
-  StrCpy $R1 '-cp "$INSTDIR\quilldriver-TIB.jar;$INSTDIR\Jskad.jar;$INSTDIR\xml-apis.jar;$INSTDIR\xercesImpl.jar;$INSTDIR\xalan.jar;$INSTDIR\jdom.jar;$INSTDIR\jaxen-full.jar;$INSTDIR\jaxen-jdom.jar;$INSTDIR\saxpath.jar;$INSTDIR\mail.jar;$INSTDIR\activation.jar" fieldling.quilldriver.QDShell'
+  StrCpy $R1 '-cp "$INSTDIR\core-renderer.jar;$INSTDIR\cssparser-0-9-4-fs.jar;$INSTDIR\jaxen-full.jar;$INSTDIR\jdom.jar;$INSTDIR\Jskad.jar;$INSTDIR\mail.jar;$INSTDIR\quilldriver-TIB.jar;$INSTDIR\saxon8.jar;$INSTDIR\saxon8-dom.jar;$INSTDIR\saxon8-xpath.jar;$INSTDIR\xercesImpl.jar" fieldling.quilldriver.gui.QDShell'
+
+
+
+
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open\command" "" '"$R0" $R1 "-THDLReadonly" "%1"'
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open" "" "Open with QuillDriver Tibetan"
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\edit" "" "Edit with QuillDriver Tibetan"
@@ -350,19 +362,25 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk"
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\activation.jar"
+
+  ; Delete "$INSTDIR\activation.jar"
+  Delete "$INSTDIR\core-renderer.jar"
+  Delete "$INSTDIR\cssparser-0-9-4-fs.jar"
   Delete "$INSTDIR\jaxen-full.jar"
-  Delete "$INSTDIR\jaxen-jdom.jar"
+  ; Delete "$INSTDIR\jaxen-jdom.jar"
   Delete "$INSTDIR\jdom.jar"
   Delete "$INSTDIR\Jskad.jar"
   Delete "$INSTDIR\mail.jar"
-  Delete "$INSTDIR\mediaplayer.jar"
-  Delete "$INSTDIR\quilldriver.jar"
   Delete "$INSTDIR\quilldriver-TIB.jar"
-  Delete "$INSTDIR\saxpath.jar"
-  Delete "$INSTDIR\xalan.jar"
+  Delete "$INSTDIR\saxon8.jar"
+  Delete "$INSTDIR\saxon8-dom.jar"
+  ; Delete "$INSTDIR\saxon8-jdom.jar"
+  Delete "$INSTDIR\saxon8-xpath.jar"
+  ; Delete "$INSTDIR\saxpath.jar"
+  ; Delete "$INSTDIR\xalan.jar"
   Delete "$INSTDIR\xercesImpl.jar"
-  Delete "$INSTDIR\xml-apis.jar"
+  ; Delete "$INSTDIR\xml-apis.jar"
+
   Delete "$INSTDIR\QuillDriver.ico"
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall QuillDriver.lnk"
