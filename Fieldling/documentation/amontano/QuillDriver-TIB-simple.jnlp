@@ -18,23 +18,23 @@ optimized for use with Tibetan script.
 </security>
 <resources>
   <j2se version="1.4+"/>
-  <jar href="../lib_webstart/quilldriver-TIB.jar"/>
-  <jar href="../lib_webstart/Jskad.jar"/>
-  <jar href="../lib_webstart/xml-apis.jar"/>
-  <jar href="../lib_webstart/xercesImpl.jar"/>
+  <!-- <jar href="../lib_webstart/activation.jar"/> -->
   <jar href="../lib_webstart/core-renderer.jar"/>
   <jar href="../lib_webstart/cssparser-0-9-4-fs.jar"/>
+  <jar href="../lib_webstart/jaxen-full.jar"/>
+  <!-- <jar href="../lib_webstart/jaxen-jdom.jar"/> -->
+  <jar href="../lib_webstart/jdom.jar"/>
+  <jar href="../lib_webstart/mail.jar"/>
+  <jar href="../lib_webstart/quilldriver-TIB.jar"/>
+  <jar href="../lib_webstart/Jskad.jar"/>
   <jar href="../lib_webstart/saxon8-dom.jar"/>
-  <jar href="../lib_webstart/saxon8-jdom.jar"/>
+  <!-- <jar href="../lib_webstart/saxon8-jdom.jar"/> -->
   <jar href="../lib_webstart/saxon8-xpath.jar"/>
   <jar href="../lib_webstart/saxon8.jar"/>
+  <!-- <jar href="../lib_webstart/saxpath.jar"/> -->
   <jar href="../lib_webstart/xalan.jar"/>
-  <jar href="../lib_webstart/jdom.jar"/>
-  <jar href="../lib_webstart/jaxen-full.jar"/>
-  <jar href="../lib_webstart/jaxen-jdom.jar"/>
-  <jar href="../lib_webstart/saxpath.jar"/> 
-  <jar href="../lib_webstart/mail.jar"/>
-  <jar href="../lib_webstart/activation.jar"/>
+  <jar href="../lib_webstart/xercesImpl.jar"/>
+  <!-- <jar href="../lib_webstart/xml-apis.jar"/> -->
 </resources>
 <application-desc main-class="fieldling.quilldriver.gui.QDShell"/>
 </jnlp>		
