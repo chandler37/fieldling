@@ -30,17 +30,17 @@
 			</tag>
 			<tag name="AUDIO" visible="false" visiblecontents="false"/>
 			<tagview name="TibetanOnly" keystroke="F1">
-				<tag name="S" visible="true" displayas="@who">
+				<tag name="S" visible="true" displayas="id(./@who)" tibetan="true">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
-				<tag name="FORM" visible="true" tibetan="true" icon="play.gif">
+				<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
 					<attribute name="type" visible="false"/>
 				</tag>
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="EnglishOnly" keystroke="F2">
-				<tag name="S" visible="true" displayas="@who">
+				<tag name="S" visible="true" displayas="id(./@who)">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
@@ -50,7 +50,7 @@
 				</tag>
 			</tagview>
 			<tagview name="TibetanAndEnglish" keystroke="F3">
-				<tag name="S" visible="true" displayas="@who">
+				<tag name="S" visible="true" displayas="id(./@who)" tibetan="true">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
@@ -60,7 +60,7 @@
 				<tag name="TRANSL" visible="false"/>
 			</tagview>
 			<tagview name="WylieAndEnglish" keystroke="F4">
-				<tag name="S" visible="true" displayas="@who">
+				<tag name="S" visible="true" displayas="id(./@who)">
 					<attribute name="id" visible="false"/>
 					<attribute name="who" visible="false"/>
 				</tag>
