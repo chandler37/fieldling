@@ -22,6 +22,12 @@ optimized for use with Tibetan script.
   <jar href="../lib_webstart/Jskad.jar"/>
   <jar href="../lib_webstart/xml-apis.jar"/>
   <jar href="../lib_webstart/xercesImpl.jar"/>
+  <jar href="../lib_webstart/core-renderer.jar"/>
+  <jar href="../lib_webstart/cssparser-0-9-4-fs.jar"/>
+  <jar href="../lib_webstart/saxon8-dom.jar"/>
+  <jar href="../lib_webstart/saxon8-jdom.jar"/>
+  <jar href="../lib_webstart/saxon8-xpath.jar"/>
+  <jar href="../lib_webstart/saxon8.jar"/>
   <jar href="../lib_webstart/xalan.jar"/>
   <jar href="../lib_webstart/jdom.jar"/>
   <jar href="../lib_webstart/jaxen-full.jar"/>
@@ -30,6 +36,5 @@ optimized for use with Tibetan script.
   <jar href="../lib_webstart/mail.jar"/>
   <jar href="../lib_webstart/activation.jar"/>
 </resources>
-<application-desc main-class="fieldling.quilldriver.QDShell"/>
-</jnlp>
-		
+<application-desc main-class="fieldling.quilldriver.gui.QDShell"/>
+</jnlp>		
