@@ -16,6 +16,8 @@ import javax.xml.xpath.*;
 import fieldling.quilldriver.xml.*;
 import org.jdom.*;
 import org.xml.sax.SAXException;
+import javax.xml.XMLConstants;
+import javax.xml.validation.*;
 
 public class Configuration
 {
@@ -25,6 +27,8 @@ public class Configuration
     URL editURL = null;
     URL newURL = null;
     String newTemplate;
+    String[] schemaList = null;
+    String schemaListAsString = null;
     boolean isConfigured = false;
     TagInfo[] tagInfo;
     Map parameters;
@@ -67,6 +71,9 @@ public class Configuration
             newTemplate = new String();
         else
             newTemplate = newTemplateParam.getAttributeValue("val");
+        org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
+        if (schemaParam != null)
+            schemaList = schemaParam.getAttributeValue("val").split("\\s");
         org.jdom.Element namespaceParam = parameterSet.getChild("namespaces");
         String nsValue;
         if (namespaceParam == null) nsValue = new String();
@@ -107,6 +114,60 @@ public class Configuration
     }
     public String getName() {
 	return name;
+    }
+    public String getSchemaListAsString() {
+        return schemaListAsString;
+    }
+    public DocumentBuilder getDocumentBuilder(DocumentBuilderFactory factory) throws ParserConfigurationException {
+                            /* Using JAXP you can instruct the parser to validate against XML Schema only. 
+                            The JAXP 1.3 Validation API allows you to build an in-memory representation 
+                            of an XML Schema which you can then set on a parser factory. Parsers created 
+                            from the factory will validate documents using the schema object you specified.
+                            It is also possible to configure a SAX parser or DocumentBuilder to validate 
+                            against XML Schema only (http://xml.apache.org/xerces2-j/faq-pcfp.html#faq-4*).
+                            However, if you do this, at least with Xerces-2 Java, XML ids are not properly
+                            recognized, with the effect that the id() and getElementsById() functions won't work. 
+                            For these functions to work, make sure the validation feature and the schema feature are 
+                            turned on before you parse a document. And, note that setting these features is
+                            incompatible with setting a Schema for a document. See
+                                http://xml.apache.org/xerces2-j/faq-dom.html#faq-13*/
+                           factory.setNamespaceAware(true);
+                           factory.setFeature("http://xml.org/sax/features/validation", true);
+                           factory.setFeature("http://apache.org/xml/features/validation/schema", true);
+                           factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
+                            /* The syntax for the http://apache.org/xml/properties/schema/external-schemaLocation 
+                               property is the same as for schemaLocation attributes in instance 
+                               documents: e.g, "http://www.example.com file_name.xsd". The user 
+                               can specify more than one XML Schema in the list. The 
+                               http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation 
+                               property allows the user to specify an XML Schema with no namespace. 
+                               The syntax is a same as for the noNamespaceSchemaLocation attribute 
+                               that may occur in an instance document: e.g."file_name.xsd". The user
+                               may specify only one XML Schema. For more information see:
+                                        http://xml.apache.org/xerces2-j/properties.html */
+                           if (schemaList != null) {
+                               if (schemaList.length==1) { //then dealing with external-noNamespaceSchemaLocation
+                                   URL schemaUrl = Configuration.this.getClass().getClassLoader().getResource(schemaList[0]);
+                                   factory.setAttribute("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", schemaUrl.toString());
+                                   schemaListAsString = schemaUrl.toString();
+                               } else { //dealing with external-schemaLocation
+                                   schemaListAsString = new String();
+                                   StringBuffer property = new StringBuffer();
+                                   for (int i=0; i<schemaList.length; i=i+2) {
+                                       if (i>0) {
+                                           property.append(' ');
+                                           schemaListAsString += " ";
+                                       }
+                                       property.append(schemaList[i]);
+                                       property.append(' ');
+                                       URL schemaUrl = Configuration.this.getClass().getClassLoader().getResource(schemaList[i+1]);
+                                       property.append(schemaUrl.toString());
+                                       schemaListAsString += schemaUrl.toString();
+                                   }
+                                   factory.setAttribute("http://apache.org/xml/properties/schema/external-schemaLocation", property.toString());
+                               }
+                           }
+                           return factory.newDocumentBuilder();
     }
     public String getNewTemplate() {
         if (isConfigured)
