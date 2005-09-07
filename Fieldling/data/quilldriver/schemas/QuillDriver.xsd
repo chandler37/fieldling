@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://altiplano.emich.edu/quilldriver"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified">
+     
+     <!-- perhaps these attributes should be restricted
+       to valid time values using regular expressions -->
+    <xsd:attribute name="t1" type="xsd:string"/>
+    <xsd:attribute name="t2" type="xsd:string"/>
+  
+</xsd:schema>

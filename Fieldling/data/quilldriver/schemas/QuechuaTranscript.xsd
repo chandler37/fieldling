@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://altiplano.emich.edu/ucuchi"
+     xmlns:ucuchi="http://altiplano.emich.edu/ucuchi"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified">
+     
+     <xsd:import namespace="http://altiplano.emich.edu/quilldriver"
+         schemaLocation="QuillDriver.xsd"/>
+	 
+  <!-- definition of simple type elements --> 
+  <xsd:element name="COMMENT" type="xsd:string"/>
+  <xsd:element name="TRANSL" type="xsd:string"/>
+  <xsd:element name="F" type="xsd:string"/>
+  <xsd:element name="G" type="xsd:string"/>
+  
+  <!-- should be same as F, but QD would then treat all Fs the same! 
+  <xsd:element name="S-F" type="xsd:string"/>-->
+  
+  <!-- definition of complex type elements -->
+  <xsd:element name="TEXT">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:META" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="ucuchi:C" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="META">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:SPEAKER" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="SPEAKER">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="id" type="xsd:ID" use="required"/>
+	</xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="S">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:C" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="C">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:COMMENT" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
+        <!--<xsd:element ref="ucuchi:S-F" minOccurs="0" maxOccurs="1"/>-->
+        <xsd:element ref="ucuchi:TRANSL" minOccurs="0" maxOccurs="1"/>
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element ref="ucuchi:W"/>
+	  <xsd:element ref="ucuchi:PAUSE"/>
+	  <xsd:element ref="ucuchi:GOD-KNOWS"/>
+	  <xsd:element ref="ucuchi:TRANS"/>
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+      <xsd:attribute name="spid" type="xsd:IDREF" use="required"/>
+      <xsd:anyAttribute namespace="http://altiplano.emich.edu/quilldriver"
+          processContents="strict"/> <!-- or processContents could be "skip" or "lax" --> 
+    </xsd:complexType>
+  </xsd:element>
+
+    <xsd:element name="W">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
+	<xsd:element ref="ucuchi:M" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="M">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="ucuchi:G" minOccurs="1" maxOccurs="1"/>
+      </xsd:sequence>
+      <xsd:attribute name="type" default="root">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+	    <xsd:enumeration value="root"/>
+	    <xsd:enumeration value="suffix"/>
+	  </xsd:restriction>
+	</xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="PAUSE">
+    <xsd:complexType>
+      <xsd:attribute name="duration" default="long">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="short"/>
+            <xsd:enumeration value="medium"/>
+            <xsd:enumeration value="long"/>
+	  </xsd:restriction>
+	</xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TRANS">
+    <xsd:complexType>
+      <xsd:attribute name="type">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="."/>
+            <xsd:enumeration value=","/>
+	    <xsd:enumeration value="?"/>
+	  </xsd:restriction>
+	</xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GOD-KNOWS"/>
+
+</xsd:schema>
