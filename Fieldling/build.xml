@@ -216,6 +216,9 @@ a version optimized for use with Tibetan script.
                 <copy file="${temp.dir}/keep/QdResources_en.properties" tofile="${temp.dir}/keep/QdResources.properties"/>
                         
                 <!-- copy associated unicode resources -->
+                <copy todir="${unicode.classes}">
+                        <fileset dir="${data.dir}/quilldriver/schemas"/>
+                </copy>
 		<copy todir="${unicode.classes}">
 			<fileset dir="${data.dir}/quilldriver">
 				<include name="*.xsl"/>
@@ -257,6 +260,9 @@ a version optimized for use with Tibetan script.
 		</javac>
 		
 		<!-- copy associated Tibetan resources -->
+                <copy todir="${tibetan.classes}">
+                        <fileset dir="${data.dir}/quilldriver/schemas"/>
+                </copy>
 		<copy todir="${tibetan.classes}">
 			<fileset dir="${data.dir}/quilldriver">
 				<include name="*.xsl"/>
