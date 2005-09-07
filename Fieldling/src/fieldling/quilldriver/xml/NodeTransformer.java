@@ -50,11 +50,26 @@ public class NodeTransformer {
         parentNode.replaceChild(replaceFrag, sourceNode);
         return firstReplacementNode;
     }
-    public static void revalidate(Document doc, DOMErrorHandler handler) {
-            //note: DOM3 revalidation not possible against DTDs
+    public static void revalidate(Document doc, String schemaList, DOMErrorHandler handler) {
+            /* DOM revalidation is supported via W3C DOM Level 3 Core 
+            Document.normalizeDocument(). Note: This release only supports 
+            revalidation against XML Schemas. Revalidation against DTDs or 
+            any other schema type is not implemented. To revalidate the document 
+            you need:
+                * Create the DOMParser.
+                * Retrieve DOMConfiguration from the Document, and set validate feature to true.
+                * Provide XML Schemas (agains which validation should occur) by either setting 
+                xsi:schemaLocation / xsi:noSchemaLocation attributes on the documentElement, or 
+                by setting schema-location parameter on the DOMConfiguration.
+                * Relative URIs for the schema documents will be resolved relative to the documentURI 
+                (which should be set). Otherwise, you can implement your own LSResourceResolver and 
+                set it via resource-resolver on the DOMConfiguration. 
+            For more details, see
+                http://xml.apache.org/xerces2-j/faq-dom.html#faq-9 */
             DOMConfiguration config = doc.getDomConfig();
             config.setParameter("error-handler", handler);
             config.setParameter("schema-type", "http://www.w3.org/2001/XMLSchema");
+            config.setParameter("schema-location", schemaList);
             config.setParameter("validate", Boolean.TRUE);
             doc.normalizeDocument(); //revalidate against schema
     }
