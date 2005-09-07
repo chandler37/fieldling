@@ -825,123 +825,75 @@ public class QDShell extends JFrame implements ItemListener
 	}
 
 	private void getTimeCodePreferences() {
-
 		//allows user to change slow adjust, rapid adjust, and play minus parameters
-
 		JPanel slowAdjustPanel = new JPanel(new BorderLayout());
-
 		slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
 				.getString("SlowIncreaseDecreaseValue")));
-
 		JTextField slowAdjustField = new JTextField(String
 				.valueOf(prefmngr.slow_adjust));
-
 		slowAdjustField.setPreferredSize(new Dimension(240, 30));
-
 		slowAdjustPanel.add(slowAdjustField);
-
 		JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
-
 		rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
 				.getString("RapidDncreaseDecreaseValue")));
-
 		JTextField rapidAdjustField = new JTextField(String
 				.valueOf(prefmngr.rapid_adjust));
-
 		rapidAdjustField.setPreferredSize(new Dimension(240, 30));
-
 		rapidAdjustPanel.add(rapidAdjustField);
-
 		JPanel playMinusPanel = new JPanel(new BorderLayout());
-
 		playMinusPanel.setBorder(BorderFactory.createTitledBorder(messages
 				.getString("PlayVinusValue")));
-
 		JTextField playMinusField = new JTextField(String
 				.valueOf(prefmngr.play_minus));
-
 		playMinusField.setPreferredSize(new Dimension(240, 30));
-
 		playMinusPanel.add(playMinusField);
-
 		JPanel preferencesPanel = new JPanel();
-
 		preferencesPanel.setLayout(new GridLayout(3, 1));
-
 		preferencesPanel.add(slowAdjustPanel);
-
 		preferencesPanel.add(rapidAdjustPanel);
-
 		preferencesPanel.add(playMinusPanel);
-
 		JOptionPane pane = new JOptionPane(preferencesPanel);
-
 		JDialog dialog = pane.createDialog(this, messages
 				.getString("TimeCodingPreferences"));
-
 		// This returns only when the user has closed the dialog
-
 		dialog.show();
-
 		int old_slow_adjust = prefmngr.slow_adjust;
-
 		try {
-
 			prefmngr.slow_adjust = Integer.parseInt(slowAdjustField.getText());
-
 		} catch (NumberFormatException ne) {
-
 		}
-
 		int old_rapid_adjust = prefmngr.rapid_adjust;
-
 		try {
-
 			prefmngr.rapid_adjust = Integer
 					.parseInt(rapidAdjustField.getText());
-
 		} catch (NumberFormatException ne) {
-
 		}
-
 		int old_play_minus = prefmngr.play_minus;
-
 		try {
-
 			prefmngr.play_minus = Integer.parseInt(playMinusField.getText());
-
 		} catch (NumberFormatException ne) {
-
 		}
-
 		// note: if these become negative numbers no error
-
 		if (old_slow_adjust != prefmngr.slow_adjust)
 			prefmngr.setInt(prefmngr.SLOW_ADJUST_KEY, prefmngr.slow_adjust);
-
 		if (old_rapid_adjust != prefmngr.rapid_adjust)
 			prefmngr.setInt(prefmngr.RAPID_ADJUST_KEY, prefmngr.rapid_adjust);
-
 		if (old_play_minus != prefmngr.play_minus)
 			prefmngr.setInt(prefmngr.PLAY_MINUS_KEY, prefmngr.play_minus);
-
 	}
-	
 	public void itemStateChanged(ItemEvent e)
 	{
 		needsToRestart = true;
 		if (e.getSource()==defaultLanguage)
 			updateSupportedFonts();
 	}
-	
 	private void updateSupportedFonts()
 	{
 		int i;
 		String [] fontNames = I18n.getSupportedFonts(defaultLanguage.getSelectedIndex());
 		DefaultComboBoxModel model = new DefaultComboBoxModel(fontNames);
 		supportedFonts.setModel(model);
-		String defaultFont;
-		
+		String defaultFont;	
 		/* if there is no default language font set for Quilldriver,
 		 * use the system default font.
 		 */ 
@@ -949,18 +901,15 @@ public class QDShell extends JFrame implements ItemListener
 			defaultFont = ((Font)UIManager.get("Label.font")).getFamily();
 		else
 			defaultFont = PreferenceManager.default_interface_font;
-		
 		for (i=0; i<fontNames.length; i++)
 			if (fontNames[i].equals(defaultFont))
 			{
 				supportedFonts.setSelectedIndex(i);
 				break;
 			}
-		
 		if (i>=fontNames.length)
 			supportedFonts.setSelectedIndex(0);
 	}
-
 	private void getDisplayPreferences() {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames;

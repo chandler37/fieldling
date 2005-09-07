@@ -98,24 +98,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	}
 	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
-		try {
-                        /* I use the xerces-2-java parser because, to my knowledge, it is the only parser that supports
-                        DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
-                        after each call to NodeTransformer, without reloading the entire document. See.
-                                 http://xml.apache.org/xerces2-j/faq-dom.html#faq-9*/
-                        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                        dbf.setNamespaceAware(true);
-                        dbf.setValidating(true);
-                        dbf.setAttribute("http://apache.org/xml/features/validation/schema", Boolean.TRUE);
-                        docBuilder = dbf.newDocumentBuilder();
-                        /*handler = new SAXValidator();
-                        docBuilder.setErrorHandler(handler);
-                } catch (SAXException saxe) {
-                        saxe.printStackTrace();*/
-		} catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		}
 	}
 	private void setupGUI() {
  		setBackground(new JFrame().getBackground());
@@ -256,9 +238,18 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		}
 		try {
                         org.w3c.dom.Document xmlDoc = null;
-                        try {
+                        try {                       
+                            /* I use the xerces-2-java parser because, to my knowledge, it is the only parser that supports
+                            DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
+                            after each call to NodeTransformer, without reloading the entire document. See.
+                                     http://xml.apache.org/xerces2-j/faq-dom.html#faq-9*/
+                            System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+                            DocumentBuilder docBuilder = configuration.getDocumentBuilder(DocumentBuilderFactory.newInstance());
                             xmlDoc = docBuilder.parse(transcriptString);
-                            //LOGGINGSystem.out.println(file.toString() + " is well-formed");
+                           /* handler = new SAXValidator();
+                            docBuilder.setErrorHandler(handler);*/
+                        } catch (ParserConfigurationException pce) {
+                            pce.printStackTrace();
                         } catch (org.xml.sax.SAXException saxe) {
                             saxe.printStackTrace();
                             return false;
@@ -635,9 +626,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                     Map xslParameters = getParametersForTransform(domContextNode);
                     xslParameters.put("qd.task", task);
                     Node firstNodeAfterReplacement = domNode.getNextSibling();
-                    NodeTransformer.revalidate(domNode.getOwnerDocument(), this);
                     Node firstNodeInReplacement = NodeTransformer.transformAndReplaceNode(domNode, configuration.getTranscriptTransformer(), xslParameters);
-                    NodeTransformer.revalidate(domNode.getOwnerDocument(), this);
+                    NodeTransformer.revalidate(domNode.getOwnerDocument(), configuration.getSchemaListAsString(), this);
                     editor.replaceNode(domNode, firstNodeInReplacement, firstNodeAfterReplacement);
                     hp.refresh();
                     player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
