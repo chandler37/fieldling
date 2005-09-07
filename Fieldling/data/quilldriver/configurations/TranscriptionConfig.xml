@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <qd-configuration>
                 <parameters>
-                        <newtemplate val="'TranscriptionNew.xml'"/>
+                        <xmlschema val="TibetanTranscript.xsd"/>
+                        <newtemplate val="TranscriptionNew.xml"/>
                         <parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
                         <parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
                         <parameter name="qd.timealignednodes" val="//*[AUDIO]"/>
