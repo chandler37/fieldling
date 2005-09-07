@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <qd-configuration>
 	<parameters>
+		<xmlschema val="TibetanTranscript.xsd"/>
 		<parameter name="qd.root.element" val="TEXT" type="text"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
