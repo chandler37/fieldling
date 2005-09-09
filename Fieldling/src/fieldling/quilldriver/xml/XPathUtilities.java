@@ -12,8 +12,10 @@ public class XPathUtilities {
 
         public static XPathFactory getXPathFactoryForDOM() {
             if (xpathFactoryForDOM == null) {
-                /* the following more general code should work, but it doesn't. see http://sourceforge.net/forum/message.php?msg_id=2957596
                 System.setProperty("javax.xml.xpath.XPathFactory", "net.sf.saxon.xpath.XPathFactoryImpl");
+                /* The following more general code should work, but it doesn't.
+                See the code within the following post:
+                        http://sourceforge.net/forum/message.php?msg_id=2957596
                 try {
                     javax.xml.xpath.XPathFactory xpathFactory = javax.xml.xpath.XPathFactory.newInstance(javax.xml.xpath.XPathConstants.DOM_OBJECT_MODEL); //DOESN'T LOCATE SAXON!!
                 } catch (javax.xml.xpath.XPathFactoryConfigurationException xpfce) {
@@ -50,7 +52,12 @@ public class XPathUtilities {
             if (domNode == null)
                 return null;
             try { /* see note below about casting to VirtualNode and getting the underlying node */
-                return (List)xpe.evaluate(domNode, XPathConstants.NODESET);
+                org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList)xpe.evaluate(domNode, XPathConstants.NODESET);
+                List nodesAsList = new LinkedList();
+                for (int i=0; i<nodeList.getLength(); i++)
+                    nodesAsList.add(nodeList.item(i));
+                return nodesAsList;
+                //return (List)xpe.evaluate(domNode, XPathConstants.NODESET);
                 /*List foundNodes = new LinkedList();
                 Iterator itty = ((List)xpe.evaluate(domNode, XPathConstants.NODESET)).iterator();
                 while (itty.hasNext()) {
@@ -71,10 +78,13 @@ public class XPathUtilities {
                 in saxon-b 8.5, you've got to first first cast to a VirtualNode and then get the underlying DOM node
                 from that. I guess this is a bug that will be fixed--see the thread at
                       http://sourceforge.net/mailarchive/message.php?msg_id=12547183 */ 
-                net.sf.saxon.om.VirtualNode vNode = (net.sf.saxon.om.VirtualNode)xpe.evaluate(domNode, XPathConstants.NODE);
+                /*net.sf.saxon.om.VirtualNode vNode = (net.sf.saxon.om.VirtualNode)xpe.evaluate(domNode, XPathConstants.NODE);
                 if (vNode == null) //if the node isn't found, i guess
                     return null;
-                return (org.w3c.dom.Node)vNode.getUnderlyingNode();
+                return (org.w3c.dom.Node)vNode.getUnderlyingNode();*/
+                /* Update (9-9-05): I just upgraded to Saxon 8.5.1, and now this problem has gone away. */
+                org.w3c.dom.Node vNode = (org.w3c.dom.Node)xpe.evaluate(domNode, XPathConstants.NODE);
+                return vNode;
             } catch (XPathExpressionException xpee) {
                 xpee.printStackTrace();
                 return null;

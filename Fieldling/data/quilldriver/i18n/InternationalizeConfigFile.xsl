@@ -13,9 +13,11 @@
 <!ATTLIST message id ID #REQUIRED>
 <!ELEMENT text (#PCDATA)>
 <!ATTLIST text lang CDATA #REQUIRED>
-<!ELEMENT parameters (namespaces?, newtemplate, parameter+)>
+<!ELEMENT parameters (namespaces?, xmlschema?, newtemplate, parameter+)>
 <!ELEMENT namespaces EMPTY>
 <!ATTLIST namespaces val CDATA #REQUIRED>
+<!ELEMENT xmlschema EMPTY>
+<!ATTLIST xmlschema val CDATA #REQUIRED>
 <!ELEMENT newtemplate EMPTY>
 <!ATTLIST newtemplate val CDATA #REQUIRED>
 <!ELEMENT parameter EMPTY>
@@ -24,14 +26,15 @@
 		    type CDATA #IMPLIED
 		    >
 <!ELEMENT actions (action+)>
-<!ATTLIST action-set name CDATA #REQUIRED>
-<!ELEMENT action EMPTY>
+<!ELEMENT action (helptext?)>
 <!ATTLIST action name IDREF #REQUIRED
                  keystroke CDATA #REQUIRED
 		 node CDATA #IMPLIED
-         move CDATA "true"
+                 move CDATA "true"
 		 qd-command CDATA #IMPLIED
 		 xsl-task CDATA #IMPLIED>
+<!ELEMENT helptext EMPTY>
+<!ATTLIST helptext ref IDREF #REQUIRED>
 <!ELEMENT rendering-instructions (tag | tagview )*>
 <!ELEMENT tagview (tag+)>
 <!ATTLIST tagview name CDATA #REQUIRED

@@ -36,7 +36,7 @@
                             <xsl:text>)</xsl:text>
                     </dt>
                     <dd>
-                            <xsl:value-of select="helptext"/>
+                            <xsl:value-of select="id(helptext/@ref)/text[@lang=$language]"/>
                     </dd>
                 </xsl:for-each>
         </dl>

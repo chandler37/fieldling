@@ -943,5 +943,477 @@
     <text lang="en">Use these settings as default?</text>
     <text lang="zh">使用这些设定为缺省值？</text>
   </message>
+  <message id="help1">
+    <text lang="en">
+        Plays the video if it is stopped; pauses it otherwise.
+    </text>
+    <text lang="zh">
+        Plays the video if it is stopped; pauses it otherwise.
+    </text>
+  </message>
+  <message id="help2">
+    <text lang="en">
+        Rewinds the video by a specified decrement without stopping it.
+        The decrement is determined by QuillDriver's "Play minus" value,
+        which is one of QuillDriver's user preferences. For example, if the
+        "Play minus" parameter value is 1,000 (one thousand milliseconds),
+        then the video will rewind by one second while still playing.
+    </text>
+    <text lang="zh">
+        Rewinds the video by a specified decrement without stopping it.
+        The decrement is determined by QuillDriver's "Play minus" value,
+        which is one of QuillDriver's user preferences. For example, if the
+        "Play minus" value is 1,000 (one thousand milliseconds),
+        then the video will rewind by one second while still playing.
+    </text>
+  </message>
+  <message id="help3">
+    <text lang="en">
+        Plays the next transcription line that has start and end time
+        codes associated with it.
+    </text>
+    <text lang="zh">
+        Plays the next transcription line that has start and end time
+        codes associated with it.
+    </text>
+  </message>
+  <message id="help4">
+    <text lang="en">
+        Plays the currently selected transcription line.
+    </text>
+    <text lang="zh">
+        Plays the currently selected transcription line.
+    </text>
+  </message>
+  <message id="help5">
+    <text lang="en">
+        Plays the end of the current transcription line. Again, how much 
+        constitutes the "end" of the line is determined by the "Play minus"
+        value. If the "Play minus" value is 1,000, then this will play the
+        final second of the current line. By using this function, you don't
+        have to listen to the entirety of a transcription line when checking
+        or editing its end time code.
+    </text>
+    <text lang="zh">
+        Plays the end of the current transcription line. Again, how much 
+        constitutes the "end" of the line is determined by the "Play minus"
+        value. If the "Play minus" value is 1,000, then this will play the
+        final second of the current line. By using this function, you don't
+        have to listen to the entirety of a transcription line when checking
+        or editing its end time code.
+    </text>
+  </message>
+  <message id="help6">
+    <text lang="en">
+        Plays the previous transcription line.
+    </text>
+    <text lang="zh">
+        Plays the previous transcription line.
+    </text>
+  </message>
+  <message id="help7">
+    <text lang="en">
+        Moves the editing cursor to the next transcription
+        line, without playing it.
+    </text>
+    <text lang="zh">
+        Moves the editing cursor to the next transcription
+        line, without playing it.
+    </text>
+  </message>
+  <message id="help8">
+    <text lang="en">
+        Moves the editing cursor to the previous transcription
+        line, without playing it.
+    </text>
+    <text lang="zh">
+        Moves the editing cursor to the previous transcription
+        line, without playing it.
+    </text>
+  </message>
+  <message id="help9">
+    <text lang="en">
+        Adds a new speaker slot to the metadata at the beginning
+        of the transcript.
+    </text>
+    <text lang="zh">
+        Adds a new speaker slot to the metadata at the beginning
+        of the transcript.
+    </text>
+  </message>
+  <message id="help10">
+    <text lang="en">
+        If your cursor is located on a speaker name within the
+        metadata at the beginning of the transcript, then this will
+        delete that speaker from the metadata. CAUTION: This
+        does not delete any references to the speaker within the
+        transcript itself. If you have actually assigned transcription
+        lines to this speaker, then you should first delete those
+        transcription lines before deleting the speaker in the 
+        metadata.
+    </text>
+    <text lang="zh">
+        If your cursor is located on a speaker name within the
+        metadata at the beginning of the transcript, then this will
+        delete that speaker from the metadata. CAUTION: This
+        does not delete any references to the speaker within the
+        transcript itself. If you have actually assigned transcription
+        lines to this speaker, then you should first delete those
+        transcription lines before deleting the speaker in the 
+        metadata.
+    </text>
+  </message>
+  <message id="help11">
+    <text lang="en">
+        Changes the speaker assigned to the current transcription
+        line. This works by cycling through the speakers one by one.
+        Thus, to change from the first speaker in the metadata to the
+        fourth speaker, you must first change to the second and then
+        to the third speaker. Using this function to change speakers
+        is efficient only when there are a relatively small number
+        of speakers.
+    </text>
+    <text lang="zh">
+        Changes the speaker assigned to the current transcription
+        line. This works by cycling through the speakers one by one.
+        Thus, to change from the first speaker in the metadata to the
+        fourth speaker, you must first change to the second and then
+        to the third speaker. Using this function to change speakers
+        is efficient only when there are a relatively small number
+        of speakers.
+    </text>
+  </message>
+  <message id="help12">
+    <text lang="en">
+        Assigns the start time for the current transcription line to the
+        current media time. Can be used if the media is playing or if
+        it is paused.
+    </text>
+    <text lang="zh">
+        Assigns the start time for the current transcription line to the
+        current media time. Can be used if the media is playing or if
+        it is paused.
+    </text>
+  </message>
+  <message id="help13">
+    <text lang="en">
+        Assigns the end time for the current transcription line to the
+        current media time. Can be used if the media is playing or if
+        it is paused.
+    </text>
+    <text lang="zh">
+        Assigns the end time for the current transcription line to the
+        current media time. Can be used if the media is playing or if
+        it is paused.
+    </text>
+  </message>
+  <!-- <message id="help14">
+    <text lang="en">
+        Assigns the start and end times for the current transcription
+        line to the two times shown in QuillDriver's "In" and "Out"
+        fields. This function is present for those who wish to manually
+        adjust the "In" and "Out" times.
+    </text>
+    <text lang="zh">
+        Assigns the start and end times for the current transcription
+        line to the two times shown in QuillDriver's "In" and "Out"
+        fields. This function is present for those who wish to manually
+        adjust the "In" and "Out" times.
+    </text>
+  </message>-->
+  <message id="help15">
+    <text lang="en">
+        Zaps away the start and end times for the current transcription
+        line, by assigning both to -1, the "has no time code" value. 
+        This function is used to time code a line from scratch, in those 
+        cases, for example, where the existing time codes are completely 
+        inaccurate.
+    </text>
+    <text lang="zh">
+        Zaps away the start and end times for the current transcription
+        line, by assigning both to -1, the "has no time code" value. 
+        This function is used to time code a line from scratch, in those 
+        cases, for example, where the existing time codes are completely 
+        inaccurate.
+    </text>
+  </message>
+  <message id="help16">
+    <text lang="en">
+        Increases the start time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to increase the start time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+    <text lang="zh">
+        Increases the start time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to increase the start time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+  </message>
+  <message id="help17">
+    <text lang="en">
+        Increases the start time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the start time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+    <text lang="zh">
+        Increases the start time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the start time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+  </message>
+  <message id="help18">
+    <text lang="en">
+        Decreases the start time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to decrease the start time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+    <text lang="zh">
+        Decreases the start time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to decrease the start time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+  </message>
+  <message id="help19">
+    <text lang="en">
+        Decreases the start time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to decrease the start time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+    <text lang="zh">
+        Decreases the start time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to decrease the start time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+  </message>
+  <message id="help20">
+    <text lang="en">
+        Increases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the end time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+    <text lang="zh">
+        Increases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the end time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+  </message>
+  <message id="help21">
+    <text lang="en">
+        Increases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the end time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+    <text lang="zh">
+        Increases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to increase the end time by a large amount.
+        This value is a QuillDriver user preference, so you can
+        change it.
+    </text>
+  </message>
+  <message id="help22">
+    <text lang="en">
+        Assigns the end time of the current transcription line to the
+        end of the media. Use this when you want to redo the end
+        time code for a line.
+    </text>
+    <text lang="zh">
+        Assigns the end time of the current transcription line to the
+        end of the media. Use this when you want to redo the end
+        time code for a line.
+    </text>
+  </message>
+  <message id="help23">
+    <text lang="en">
+        Decreases the end time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to decrease the end time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+    <text lang="zh">
+        Decreases the end time of the current transcription line
+        by the "Slow Increase/Decrease" value.
+        Use this function to decrease the end time by a small amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+  </message>
+  <message id="help24">
+    <text lang="en">
+        Decreases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to decrease the end time by a large amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+    <text lang="zh">
+        Decreases the end time of the current transcription line
+        by the "Rapid Increase/Decrease" value.
+        Use this function to decrease the end time by a large amount.
+        This value is a QuillDriver user preference, so you can change it.
+    </text>
+  </message>
+  <message id="help26">
+    <text lang="en">
+        Deletes the currently selected transcription line.
+    </text>
+    <text lang="zh">
+        Deletes the currently selected transcription line.
+    </text>
+  </message>
+  <message id="help27">
+    <text lang="en">
+        Inserts a new transcription line after the current
+        transcription line. If this line has a different speaker
+        from the previous line, then you must change the
+        speaker for the line.
+    </text>
+    <text lang="zh">
+        Inserts a new transcription line after the current
+        transcription line. If this line has a different speaker
+        from the previous line, then you must change the
+        speaker for the line.
+    </text>
+  </message>
+  <message id="help28">
+    <text lang="en">
+        Inserts a new transcription line before the current
+        transcription line.
+    </text>
+    <text lang="zh">
+        Inserts a new transcription line before the current
+        transcription line.
+    </text>
+  </message>
+  <message id="help30">
+    <text lang="en">
+        Inserts a translation slot for the current transcription
+        line.
+    </text>
+    <text lang="zh">
+        Inserts a translation slot for the current transcription
+        line.
+    </text>
+  </message>
+  <message id="help31">
+    <text lang="en">
+        Deletes the translation for the current transcription line.
+    </text>
+    <text lang="zh">
+        Deletes the translation for the current transcription line.
+    </text>
+  </message>
+  <message id="help32">
+    <text lang="en">
+        Changes the current media time to the start time of
+        the current transcription line.
+    </text>
+    <text lang="zh">
+        Changes the current media time to the start time of
+        the current transcription line.
+    </text>
+  </message>
+  <message id="help33">
+    <text lang="en">
+        Changes the current media time to the end time of
+        the current transcription line.
+    </text>
+    <text lang="zh">
+        Changes the current media time to the end time of
+        the current transcription line.
+    </text>
+  </message>
+  <message id="help34">
+    <text lang="en">
+        Inserts a reference to the current media file into the
+        transcript, so that when you next open this transcript,
+        this video opens up, too.
+    </text>
+    <text lang="zh">
+        Inserts a reference to the current media file into the
+        transcript, so that when you next open this transcript,
+        this video opens up, too.
+    </text>
+  </message>
+  <message id="help35">
+    <text lang="en">
+        Adds a general note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a general note to the current transcription line.
+    </text>
+  </message>
+  <message id="help36">
+    <text lang="en">
+        Adds a lexical note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a lexical note to the current transcription line.
+    </text>
+  </message>
+  <message id="help37">
+    <text lang="en">
+        Adds a grammatical note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a grammatical note to the current transcription line.
+    </text>
+  </message>
+  <message id="help38">
+    <text lang="en">
+        Adds a pronunciation note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a pronunciation note to the current transcription line.
+    </text>
+  </message>
+  <message id="help39">
+    <text lang="en">
+        Adds an interpretive note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds an interpretive note to the current transcription line.
+    </text>
+  </message>
+  <message id="help40">
+    <text lang="en">
+        Adds a sociolinguistic note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a sociolinguistic note to the current transcription line.
+    </text>
+  </message>
+  <message id="help41">
+    <text lang="en">
+        Adds a cultural note to the current transcription line.
+    </text>
+    <text lang="zh">
+        Adds a cultural note to the current transcription line.
+    </text>
+  </message>
+  <message id="help42">
+    <text lang="en">
+        Deletes the currently selected note.
+    </text>
+    <text lang="zh">
+        Deletes the currently selected note.
+    </text>
+  </message>
 </all-messages>
 

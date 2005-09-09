@@ -7,35 +7,84 @@
                     <parameter name="qd.root.element" val="ucuchi:TEXT"/>
                 </parameters>
                 <actions>
-                        <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause"/>
-			<action name="PlayBack" keystroke="control QUOTE" node="." move="false" qd-command="playBack"/>
-			<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode"/>
-			<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playNode"/>
-			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playEdge"/>
-			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode"/>
-			<action name="GotoNextLine" keystroke="control DOWN" node="following::ucuchi:C"/>
-			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C"/>
-
-			<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::ucuchi:TEXT/ucuchi:META" xsl-task="addSpeaker"/>
-			<action name="DeleteSpeaker" keystroke="control K" node="ancestor-or-self::ucuchi:SPEAKER" xsl-task="removeNode"/>
-                        <action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="changeSpeaker"/>
-
-			<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::ucuchi:C" xsl-task="markStart"/>
-			<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::ucuchi:C" xsl-task="markStop" qd-command="stopMedia"/>
-			<action name="MarkStartAndStop" keystroke="control shift QUOTE" node="ancestor-or-self::ucuchi:C" xsl-task="qd.insertTimes"/>
-			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="zapTimes"/>
-			<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStart"/>
-			<action name="RapidIncreaseStart" keystroke="alt control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStart"/>
-			<action name="DecreaseStartTime" keystroke="control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStart"/>
-			<action name="RapidDecreaseStart" keystroke="alt control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStart"/>
-			<action name="IncreaseStopTime" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStop"/>
-			<action name="RapidIncreaseStop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStop"/>
-			<action name="MaximizeStop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="maximizeStop"/>
-			<action name="DecreaseStopTime" keystroke="control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStop"/>
-			<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStop"/>
-
-			<action name="NewClause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause"/>
-			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode"/>
+                        <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
+                                <helptext ref="help1"/>
+                        </action>
+			<action name="PlayBack" keystroke="control QUOTE" node="." move="false" qd-command="playBack">
+                                <helptext ref="help2"/>
+                        </action>
+			<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode">
+                                <helptext ref="help3"/>
+                        </action>
+			<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playNode">
+                                <helptext ref="help4"/>
+                        </action>
+			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playEdge">
+                                <helptext ref="help5"/>
+                        </action>
+			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode">
+                                <helptext ref="help6"/>
+                        </action>
+			<action name="GotoNextLine" keystroke="control DOWN" node="following::ucuchi:C">
+                                <helptext ref="help7"/>
+                        </action>
+			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C">
+                                <helptext ref="help8"/>
+                        </action>
+			<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::ucuchi:TEXT/ucuchi:META" xsl-task="addSpeaker">
+                                <helptext ref="help9"/>
+                        </action>
+			<action name="DeleteSpeaker" keystroke="control K" node="ancestor-or-self::ucuchi:SPEAKER" xsl-task="removeNode">
+                                <helptext ref="help10"/>
+                        </action>
+                        <action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="changeSpeaker">
+                                <helptext ref="help11"/>
+                        </action>
+			<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::ucuchi:C" xsl-task="markStart">
+                                <helptext ref="help12"/>
+                        </action>
+			<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::ucuchi:C" xsl-task="markStop" qd-command="stopMedia">
+                                <helptext ref="help13"/>
+                        </action>
+			<!--<action name="MarkStartAndStop" keystroke="control shift QUOTE" node="ancestor-or-self::ucuchi:C" xsl-task="qd.insertTimes">
+                                <helptext ref="help14"/>
+                        </action>-->
+			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="zapTimes">
+                                <helptext ref="help15"/>
+                        </action>
+			<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStart">
+                                <helptext ref="help16"/>
+                        </action>
+			<action name="RapidIncreaseStart" keystroke="alt control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStart">
+                                <helptext ref="help17"/>
+                        </action>
+			<action name="DecreaseStartTime" keystroke="control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStart">
+                                <helptext ref="help18"/>
+                        </action>
+			<action name="RapidDecreaseStart" keystroke="alt control MINUS" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStart">
+                                <helptext ref="help19"/>
+                        </action>
+			<action name="IncreaseStopTime" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStop">
+                                <helptext ref="help20"/>
+                        </action>
+			<action name="RapidIncreaseStop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidIncreaseStop">
+                                <helptext ref="help21"/>
+                        </action>
+			<action name="MaximizeStop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="maximizeStop">
+                                <helptext ref="help22"/>
+                        </action>
+			<action name="DecreaseStopTime" keystroke="control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="decreaseStop">
+                                <helptext ref="help23"/>
+                        </action>
+			<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStop">
+                                <helptext ref="help24"/>
+                        </action>
+			<action name="NewClause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause">
+                                <helptext ref="help27"/>
+                        </action>
+			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode">
+                                <helptext ref="help27"/>
+                        </action>
                 </actions>
 		<rendering-instructions>
 			<tag name="ucuchi:TEXT" visible="false"/>

@@ -891,7 +891,8 @@ upAction, writableAction
                        in saxon-b 8.5, you've got to first first cast to a VirtualNode and then get the underlying DOM node
                        from that. i guess this is a bug that will be fixed--see the thread at
                        http://sourceforge.net/mailarchive/message.php?msg_id=12547183 */ 
-                        Object moveTo = ((net.sf.saxon.om.VirtualNode)nodeSelector.evaluate(context, XPathConstants.NODE)).getUnderlyingNode();
+                       //Object moveTo = ((net.sf.saxon.om.VirtualNode)nodeSelector.evaluate(context, XPathConstants.NODE)).getUnderlyingNode(); 
+                        Object moveTo = nodeSelector.evaluate(context, XPathConstants.NODE);
                         if (k == 100) return null; //FIXME -- prevents a potential endless loop
                         if (getStartOffsetForNode(moveTo) > -1) {
                             return moveTo;
