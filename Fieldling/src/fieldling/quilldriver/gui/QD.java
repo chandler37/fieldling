@@ -615,15 +615,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
             editor.fireEndEditEvent();
             editor.setEditabilityTracker(false);
             try {
-                       /* we'd like to just evaluate the xpath expression and get a DOM node back. however, unfortunately,
-                       in saxon-b 8.5, you've got to first first cast to a VirtualNode and then get the underlying DOM node
-                       from that. i guess this is a bug that will be fixed--see the thread at
-                       http://sourceforge.net/mailarchive/message.php?msg_id=12547183 */ 
-                /*Object domNodeAsObj = ((net.sf.saxon.om.VirtualNode)nodeSelector.evaluate(domContextNode, XPathConstants.NODE)).getUnderlyingNode();
-                if (!(domNodeAsObj instanceof org.w3c.dom.Node)) return;
-                org.w3c.dom.Node domNode =  (org.w3c.dom.Node)domNodeAsObj;*/
-                
-                //just upgraded to Saxon 8.5.1: above problem disappears
                 org.w3c.dom.Node domNode = (org.w3c.dom.Node)nodeSelector.evaluate(domContextNode, XPathConstants.NODE);
                 try {
                     Map xslParameters = getParametersForTransform(domContextNode);
