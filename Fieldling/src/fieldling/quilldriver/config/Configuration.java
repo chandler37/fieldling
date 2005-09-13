@@ -48,8 +48,9 @@ public class Configuration
             String prefix = configString.substring(0, configString.length()-4);
             Locale[] localesToTry = fieldling.util.I18n.getLocalesUpToFallback(fieldling.util.I18n.getLocale(), new Locale("en"));
             for (int i=0; i<localesToTry.length && helpURL == null; i++) {
-                helpURL = loader.getResource(prefix + "_" + localesToTry[i].toString() + ".html");
-                System.out.println(prefix + "_" + localesToTry[i].toString() + ".html"); //LOGGING
+                String urlToTry = prefix + "_" + localesToTry[i].toString() + ".html";
+                helpURL = loader.getResource(urlToTry);
+                System.out.println(urlToTry); //LOGGING
             }
         }
 	if (editElem != null)
