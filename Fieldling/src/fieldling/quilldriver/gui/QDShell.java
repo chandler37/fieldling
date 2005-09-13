@@ -87,7 +87,6 @@ public class QDShell extends JFrame implements ItemListener
 		try 
 		{
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
-			Locale locale;
 			/* I am using saxon-b 8.x as my Transformer for two reasons:
                         (1) It supports XSLT 2.0, which is handy
                         (2) Unlike xalan, it has the nice feature that if you transform a node, 

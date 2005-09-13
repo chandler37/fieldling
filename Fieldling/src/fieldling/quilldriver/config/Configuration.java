@@ -45,14 +45,12 @@ public class Configuration
 	if (configElem != null) {
             String configString = configElem.getAttributeValue("href");
 	    configURL = loader.getResource(configString);
-            String suffix;
-            String lang = fieldling.util.I18n.getLocale().getLanguage();
-            if (lang.equals(""))
-                suffix = new String();
-            else
-                suffix = "_" +lang;
             String prefix = configString.substring(0, configString.length()-4);
-            helpURL = loader.getResource(prefix + suffix + ".html");
+            Locale[] localesToTry = fieldling.util.I18n.getLocalesUpToFallback(fieldling.util.I18n.getLocale(), new Locale("en"));
+            for (int i=0; i<localesToTry.length && helpURL == null; i++) {
+                helpURL = loader.getResource(prefix + "_" + localesToTry[i].toString() + ".html");
+                System.out.println(prefix + "_" + localesToTry[i].toString() + ".html"); //LOGGING
+            }
         }
 	if (editElem != null)
 	    editURL = loader.getResource(editElem.getAttributeValue("href"));
