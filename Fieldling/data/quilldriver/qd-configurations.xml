@@ -7,7 +7,6 @@
                     <config href="UcuchiTranscribeConfig.xml"/>
                     <transformconfig href="DefaultConfigTransform.xsl"/>
                     <edit href="UcuchiTranscribeEdit.xsl"/>
-                    <new href="UcuchiTranscribeNew.xml"/>
                 </configuration>
                 
 		<!-- For transcribing and annotating THDL videos using something like the LACITO-THDL DTD -->
@@ -15,7 +14,6 @@
 			<config href="TranscriptionConfig.xml"/>
                         <transformconfig href="DefaultConfigTransform.xsl"/>
 			<edit href="TranscriptionEdit.xsl"/>
-			<new href="TranscriptionNew.xml"/>
 		</configuration>
         
                 <!-- View-only THDL mode -->

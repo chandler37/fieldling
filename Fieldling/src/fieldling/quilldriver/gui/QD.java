@@ -567,8 +567,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                     tre.printStackTrace();
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
-                } catch (org.jdom.JDOMException jdome) {
-                    jdome.printStackTrace();
                 } catch (javax.xml.parsers.ParserConfigurationException pce) {
                     pce.printStackTrace();
                 } catch (org.xml.sax.SAXException saxe) {
@@ -669,8 +667,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
             parameters.put("qd.mediaduration", String.valueOf(endTime));
             float slowInc = (float)PreferenceManager.slow_adjust;
             float rapidInc = (float)PreferenceManager.rapid_adjust;
-            parameters.put("qd.slowincrease", String.valueOf(slowInc/1000));
-            parameters.put("qd.rapidincrease", String.valueOf(rapidInc/1000));
+            parameters.put("qd.slowincrease", new Float(slowInc/1000));
+            parameters.put("qd.rapidincrease", new Float(rapidInc/1000));
             //send the name of the current media URL
             parameters.put("qd.mediaurlstring", player.getMediaURL().toString());
             return parameters;

@@ -347,7 +347,9 @@ public class QDShell extends JFrame implements ItemListener
 					String command = selectedRb.getActionCommand();
 					if (command.equals(messages.getString("NewTranscriptText"))) {
 						// File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
+                                                System.out.println("New Template = " + qd.configuration.getNewTemplate());
 						URL newTemplateURL = QDShell.this.getClass().getClassLoader().getResource(qd.configuration.getNewTemplate());
+                                                System.out.println(newTemplateURL.toString());
 						if (newTemplateURL == null)
 							System.exit(0); //FIX
 						/*if (!newTemplateFile.exists())

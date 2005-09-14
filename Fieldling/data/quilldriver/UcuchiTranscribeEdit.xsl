@@ -84,9 +84,18 @@
 				<xsl:when test="$qd.task='removeNode'"/> <!-- delete current node -->
 				<xsl:when test="$qd.task='newClause'">
                                         <xsl:copy-of select="." copy-namespaces="no"/>
-					<ucuchi:C spid="{@spid}" qd:t1="{@qd:t2}" qd:t2="{$qd.mediaduration}">
-						<ucuchi:F><xsl:text> </xsl:text></ucuchi:F>
-					</ucuchi:C>
+                                        <xsl:choose>
+                                                <xsl:when test="@qd:t2">
+                                                    <ucuchi:C spid="{@spid}" qd:t1="{@qd:t2}" qd:t2="{$qd.mediaduration}">
+                                                            <ucuchi:F><xsl:text> </xsl:text></ucuchi:F>
+                                                    </ucuchi:C>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <ucuchi:C spid="{@spid}">
+                                                            <ucuchi:F><xsl:text> </xsl:text></ucuchi:F>
+                                                    </ucuchi:C>
+                                                </xsl:otherwise>
+                                        </xsl:choose>
 				</xsl:when>
                 
                                 <!-- time-coding tasks -->

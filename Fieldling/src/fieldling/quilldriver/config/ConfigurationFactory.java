@@ -26,7 +26,13 @@ public class ConfigurationFactory
 		Iterator it = tagOptions.iterator();
 		while (it.hasNext()) {
 		    Element e = (Element) it.next();
-		    config[i] = new Configuration(e, loader);
+                    try {
+                        config[i] = new Configuration(e, loader);
+                    } catch (JDOMException jdome) {
+                        jdome.printStackTrace();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
 		    i++;
 		}
 	    }

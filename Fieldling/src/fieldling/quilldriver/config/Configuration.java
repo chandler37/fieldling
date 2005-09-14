@@ -22,10 +22,9 @@ import javax.xml.validation.*;
 public class Configuration
 {
     String name = null;
-    URL configURL = null;
+    org.jdom.Document configDoc = null;
     URL helpURL = null;
     URL editURL = null;
-    URL newURL = null;
     String newTemplate;
     String[] schemaList = null;
     String schemaListAsString = null;
@@ -37,14 +36,19 @@ public class Configuration
     org.jdom.Namespace[] namespaces;
     org.w3c.dom.Document docDoc = null;
     
-    Configuration(Element e, ClassLoader loader) {
+    Configuration(Element e, ClassLoader loader) throws JDOMException, IOException {
 	name = e.getAttributeValue("menu-name");
 	Element configElem = e.getChild("config");
 	Element editElem = e.getChild("edit");
-	Element newElem = e.getChild("new");
 	if (configElem != null) {
             String configString = configElem.getAttributeValue("href");
-	    configURL = loader.getResource(configString);
+            org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
+            configDoc = builder.build(loader.getResource(configString));
+            org.jdom.Element newTemplateParam = configDoc.getRootElement().getChild("parameters").getChild("newtemplate");
+            if (newTemplateParam == null)
+                newTemplate = new String();
+            else
+                newTemplate = newTemplateParam.getAttributeValue("val");
             String prefix = configString.substring(0, configString.length()-4);
             Locale[] localesToTry = fieldling.util.I18n.getLocalesUpToFallback(fieldling.util.I18n.getLocale(), new Locale("en"));
             for (int i=0; i<localesToTry.length && helpURL == null; i++) {
@@ -55,21 +59,12 @@ public class Configuration
         }
 	if (editElem != null)
 	    editURL = loader.getResource(editElem.getAttributeValue("href"));
-	if (newElem != null)
-	    newURL = loader.getResource(newElem.getAttributeValue("href"));
     }
-    public void configure(Map defaultProperties) throws TransformerException, IOException, JDOMException, ParserConfigurationException, SAXException {
+    public void configure(Map defaultProperties) throws IOException, TransformerException, ParserConfigurationException, SAXException {
         docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
-	org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
-	org.jdom.Document cDoc = builder.build(configURL);
-	org.jdom.Element cRoot = cDoc.getRootElement();
+	org.jdom.Element cRoot = configDoc.getRootElement();
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild("rendering-instructions"));
 	org.jdom.Element parameterSet = cRoot.getChild("parameters");
-        org.jdom.Element newTemplateParam = cRoot.getChild("newtemplate");
-        if (newTemplateParam == null)
-            newTemplate = new String();
-        else
-            newTemplate = newTemplateParam.getAttributeValue("val");
         org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
         if (schemaParam != null)
             schemaList = schemaParam.getAttributeValue("val").split("\\s");
