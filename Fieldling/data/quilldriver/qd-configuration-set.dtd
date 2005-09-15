@@ -3,50 +3,8 @@
      'data/quilldriver/qd-configurations.xml'.
      When QuillDriver starts up, it reads this
      file to determine the set of available 
-     configurations.
-     
-     @title QD-configuration-set
-     @root qd-configurations -->
-
-<!-- The root element for this DTD. -->
+     configurations. -->
 <!ELEMENT qd-configurations (configuration+)>
-
-<!-- Sets parameters relevant for this particular
-     configuration, like the location and name of
-     the configuration file. -->
-<!ELEMENT configuration (config,transformconfig?,edit?,new?)>
-
-<!-- @attr menu-name the identifying name of this configuration,
-     which will appear as a menu item on the QuillDriver menu bar. -->
+<!ELEMENT configuration EMPTY>
 <!ATTLIST configuration menu-name CDATA #REQUIRED>
-
-<!-- Contains the location of the configuration file. -->
-<!ELEMENT config EMPTY>
-
-<!ELEMENT transformconfig EMPTY>
-
-<!-- @attr href the name of the xml configuration file,
-     relative to the 'data/quilldriver' directory -->
-<!ATTLIST config href CDATA #REQUIRED>
-
-<!ATTLIST transformconfig href CDATA #REQUIRED>
-
-<!-- Contains the location of the editing transformation file,
-     if there is one (i.e. if this configuration is not just
-     read-only). -->
-<!ELEMENT edit EMPTY>
-
-<!-- @attr href the name of the editing transformation file,
-     relative to the 'data/quilldriver' directory -->
-<!ATTLIST edit href CDATA #REQUIRED>
-
-<!-- Contains the location of the new transcript file,
-     which is an XSL template file that tells QuillDriver
-     what to do if the user chooses 'File-New' from the menu.
-     If this element is not present, then there will be no
-     'File-New' menu item. -->
-<!ELEMENT new EMPTY>
-
-<!-- @attr href the name of the new template xsl file,
-     relative to the 'data/quilldriver' directory -->
-<!ATTLIST new href CDATA #REQUIRED>
+<!ATTLIST configuration href CDATA #REQUIRED>

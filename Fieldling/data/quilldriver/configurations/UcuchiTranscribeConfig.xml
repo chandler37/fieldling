@@ -4,6 +4,7 @@
                     <namespaces val="ucuchi http://altiplano.emich.edu/ucuchi"/>
                     <xmlschema val="http://altiplano.emich.edu/ucuchi QuechuaTranscript.xsd"/>
                     <newtemplate val="UcuchiTranscribeNew.xml"/>
+                    <xsltransform val="UcuchiTranscribeEdit.xsl"/>
                     <parameter name="qd.root.element" val="ucuchi:TEXT"/>
                 </parameters>
                 <actions>

@@ -13,7 +13,7 @@
 <!ATTLIST message id ID #REQUIRED>
 <!ELEMENT text (#PCDATA)>
 <!ATTLIST text lang CDATA #REQUIRED>
-<!ELEMENT parameters (namespaces?, xmlschema?, newtemplate, parameter+)>
+<!ELEMENT parameters (namespaces?, xmlschema?, newtemplate?, xsltransform?, parameter+)>
 <!ELEMENT namespaces EMPTY>
 <!ATTLIST namespaces val CDATA #REQUIRED>
 <!ELEMENT xmlschema EMPTY>

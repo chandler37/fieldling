@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE qd-configurations SYSTEM "qd-configuration-set.dtd">
-
 <qd-configurations>
-                <!-- For transcribing Quechua transcripts -->
-                <configuration menu-name="TranscribeQuechua">
-                    <config href="UcuchiTranscribeConfig.xml"/>
-                    <transformconfig href="DefaultConfigTransform.xsl"/>
-                    <edit href="UcuchiTranscribeEdit.xsl"/>
-                </configuration>
-                
-		<!-- For transcribing and annotating THDL videos using something like the LACITO-THDL DTD -->
-		<configuration menu-name="THDLTranscription">
-			<config href="TranscriptionConfig.xml"/>
-                        <transformconfig href="DefaultConfigTransform.xsl"/>
-			<edit href="TranscriptionEdit.xsl"/>
-		</configuration>
-        
-                <!-- View-only THDL mode -->
-		<configuration menu-name="THDLReadonly">
-			<config href="SavantConfig.xml"/>
-		</configuration>
+                <configuration menu-name="TranscribeQuechua" href="UcuchiTranscribeConfig.xml"/>
+		<configuration menu-name="THDLTranscription" href="TranscriptionConfig.xml"/>
+		<configuration menu-name="THDLReadonly" href="SavantConfig.xml"/>
 </qd-configurations>

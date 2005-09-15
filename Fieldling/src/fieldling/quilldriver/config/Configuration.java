@@ -21,6 +21,15 @@ import javax.xml.validation.*;
 
 public class Configuration
 {
+    static final String XML_SCHEMA_ELEMENT_NAME = "xmlschema";
+    static final String NAMESPACES_ELEMENT_NAME = "namespaces";
+    static final String NEW_TEMPLATE_ELEMENT_NAME = "newtemplate";
+    static final String XSL_TRANSFORM_ELEMENT_NAME = "xsltransform";
+    static final String ALL_PARAMETERS_ELEMENT_NAME = "parameters";
+    static final String ONE_PARAMETER_ELEMENT_NAME = "parameter";
+    static final String RENDERING_ROOT_ELEMENT_NAME = "rendering-instructions";
+    
+    
     String name = null;
     org.jdom.Document configDoc = null;
     URL helpURL = null;
@@ -38,37 +47,33 @@ public class Configuration
     
     Configuration(Element e, ClassLoader loader) throws JDOMException, IOException {
 	name = e.getAttributeValue("menu-name");
-	Element configElem = e.getChild("config");
-	Element editElem = e.getChild("edit");
-	if (configElem != null) {
-            String configString = configElem.getAttributeValue("href");
-            org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
-            configDoc = builder.build(loader.getResource(configString));
-            org.jdom.Element newTemplateParam = configDoc.getRootElement().getChild("parameters").getChild("newtemplate");
-            if (newTemplateParam == null)
-                newTemplate = new String();
-            else
-                newTemplate = newTemplateParam.getAttributeValue("val");
-            String prefix = configString.substring(0, configString.length()-4);
-            Locale[] localesToTry = fieldling.util.I18n.getLocalesUpToFallback(fieldling.util.I18n.getLocale(), new Locale("en"));
-            for (int i=0; i<localesToTry.length && helpURL == null; i++) {
+        String configString = e.getAttributeValue("href");
+        org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
+        configDoc = builder.build(loader.getResource(configString));
+        org.jdom.Element parameterElement = configDoc.getRootElement().getChild(ALL_PARAMETERS_ELEMENT_NAME);
+        org.jdom.Element newTemplateParam = parameterElement.getChild(NEW_TEMPLATE_ELEMENT_NAME);
+        if (newTemplateParam == null) newTemplate = new String();
+        else newTemplate = newTemplateParam.getAttributeValue("val");
+        String prefix = configString.substring(0, configString.length()-4);
+        Locale[] localesToTry = fieldling.util.I18n.getLocalesUpToFallback(fieldling.util.I18n.getLocale(), new Locale("en"));
+        for (int i=0; i<localesToTry.length && helpURL == null; i++) {
                 String urlToTry = prefix + "_" + localesToTry[i].toString() + ".html";
                 helpURL = loader.getResource(urlToTry);
                 System.out.println(urlToTry); //LOGGING
-            }
         }
+        org.jdom.Element editElem = parameterElement.getChild(XSL_TRANSFORM_ELEMENT_NAME);
 	if (editElem != null)
-	    editURL = loader.getResource(editElem.getAttributeValue("href"));
+	    editURL = loader.getResource(editElem.getAttributeValue("val"));
     }
     public void configure(Map defaultProperties) throws IOException, TransformerException, ParserConfigurationException, SAXException {
         docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
 	org.jdom.Element cRoot = configDoc.getRootElement();
-        tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild("rendering-instructions"));
-	org.jdom.Element parameterSet = cRoot.getChild("parameters");
-        org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
+        tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
+	org.jdom.Element parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
+        org.jdom.Element schemaParam = parameterSet.getChild(XML_SCHEMA_ELEMENT_NAME);
         if (schemaParam != null)
             schemaList = schemaParam.getAttributeValue("val").split("\\s");
-        org.jdom.Element namespaceParam = parameterSet.getChild("namespaces");
+        org.jdom.Element namespaceParam = parameterSet.getChild(NAMESPACES_ELEMENT_NAME);
         String nsValue;
         if (namespaceParam == null) nsValue = new String();
         else nsValue = namespaceParam.getAttributeValue("val");
@@ -79,7 +84,7 @@ public class Configuration
             tagInfo[i].useNamespaces(namespaces);
         XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(namespaces);
         parameters = new HashMap(defaultProperties);
-	List parameterList = parameterSet.getChildren("parameter");
+	List parameterList = parameterSet.getChildren(ONE_PARAMETER_ELEMENT_NAME);
         Iterator it = parameterList.iterator();
         while (it.hasNext()) {
             org.jdom.Element e = (org.jdom.Element)it.next();

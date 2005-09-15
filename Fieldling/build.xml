@@ -225,6 +225,8 @@ a version optimized for use with Tibetan script.
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 			</fileset>
+                        <fileset dir="${data.dir}/quilldriver/xsltransforms"/>
+                        <fileset dir="${data.dir}/quilldriver/newtemplates"/>
                         <fileset dir="${temp.dir}/keep"/>
                         <fileset dir="${doc.dir}">
                             <include name="changelog.txt"/>
@@ -269,6 +271,8 @@ a version optimized for use with Tibetan script.
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 			</fileset>
+                        <fileset dir="${data.dir}/quilldriver/xsltransforms"/>
+                        <fileset dir="${data.dir}/quilldriver/newtemplates"/>
                         <fileset dir="${temp.dir}/keep"/>
                         <fileset dir="${doc.dir}">
                             <include name="changelog.txt"/>
