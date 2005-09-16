@@ -338,8 +338,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						{
 							try
 							{
-                                //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-                                transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+                                                                //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+                                                                transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 								String transcriptAbs = transcriptFile.getAbsolutePath();
 								mediaFile = new File(transcriptAbs.substring(0,transcriptAbs.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
 							}
@@ -562,6 +562,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		if (transcriptFile != null) return false;
 		try {
                     configuration.configure(qdDefaultProperties);
+                    if (configuration.getJMenuBar() != null)
+                        textFrame.setJMenuBar(configuration.getJMenuBar());
                     this.configuration = configuration;
                 } catch (TransformerException tre) {
                     tre.printStackTrace();
@@ -580,30 +582,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 Iterator itty = actionProfiles.values().iterator();
                 while (itty.hasNext()) {
                     final Configuration.QdActionDescription qdActionDesc = (Configuration.QdActionDescription)itty.next();
-                    Action keyAction;
-                    if (qdActionDesc.getXSLTask() == null) { //no xsl transform
-                        keyAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent e) {
-                                if (qdActionDesc.getNodeSelector() != null) {
-                                    editor.fireEndEditEvent();
-                                    Object moveTo = editor.getNextVisibleNode(editor.getTextPane().getCaret().getMark(), qdActionDesc.getNodeSelector());
-                                    editor.getTextPane().requestFocus();
-                                    if (qdActionDesc.shouldMove())
-                                        editor.getTextPane().setCaretPosition(editor.getStartOffsetForNode(moveTo));
-                                    if (qdActionDesc.getCommand() != null) executeCommand(qdActionDesc.getCommand());
-                                }
-                            }
-                        };
-                    } else { //xsl transform
-                        keyAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent e) {
-                                if (qdActionDesc.getCommand() != null) executeCommand(qdActionDesc.getCommand());
-                                transformTranscript(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
-                            }
-                        };
-                        if (qdActionDesc.getXSLTask().equals("qd.insertTimes"))
-                            insertTimesAction = keyAction;
-                    }
+                    Action keyAction = Configuration.getActionForActionDescription(qdActionDesc);
+                    if (qdActionDesc.getXSLTask() != null && qdActionDesc.getXSLTask().equals("qd.insertTimes"))
+                        insertTimesAction = keyAction;
                     keyActions.put(qdActionDesc.getKeyboardShortcut(), keyAction); //eventually to be registered with transcript's JTextPane
                 }
                 currentTagInfo = tagInfo[0];

@@ -678,22 +678,6 @@ public class QDShell extends JFrame implements ItemListener
 		preferencesMenu.add(fontItem);
 		preferencesMenu.add(timeCodeItem);
 
-		//Help menu
-                JMenuItem shortcutsItem = new JMenuItem("Keyboard Shortcuts");
-                shortcutsItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (qd != null) {
-                            org.xhtmlrenderer.simple.XHTMLPanel panel = new org.xhtmlrenderer.simple.XHTMLPanel();
-                            panel.setDocument(qd.configuration.getHelpDocument());
-                            JScrollPane scrollPane =new JScrollPane(panel);
-                            JFrame frame = new JFrame();
-                            frame.getContentPane().add(scrollPane);
-                            frame.pack();
-                            frame.setSize(400,400);
-                            frame.setVisible(true);
-                        }
-                    }
-                });
 		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -715,7 +699,6 @@ public class QDShell extends JFrame implements ItemListener
 			ioe.printStackTrace();
 		}
 		JMenu betaMenu = new JMenu(messages.getString("Help"));
-                betaMenu.add(shortcutsItem);
 		betaMenu.add(aboutItem);
 		betaMenu.add(feedbackItem);
 

@@ -7,7 +7,13 @@
                     <xsltransform val="UcuchiTranscribeEdit.xsl"/>
                     <parameter name="qd.root.element" val="ucuchi:TEXT"/>
                 </parameters>
+                <menus>
+                        <menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine GotoNextLine GotoPreviousLine"/>
+                        <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker NewClause DeleteClause"/>
+                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
+                </menus>
                 <actions>
+                        <!-- browse menu -->
                         <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
                                 <helptext ref="help1"/>
                         </action>
@@ -32,6 +38,8 @@
 			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C">
                                 <helptext ref="help8"/>
                         </action>
+                        
+                        <!-- edit menu -->
 			<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::ucuchi:TEXT/ucuchi:META" xsl-task="addSpeaker">
                                 <helptext ref="help9"/>
                         </action>
@@ -41,17 +49,19 @@
                         <action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::ucuchi:C" xsl-task="changeSpeaker">
                                 <helptext ref="help11"/>
                         </action>
+			<action name="NewClause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause">
+                                <helptext ref="help27"/>
+                        </action>
+			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode">
+                                <helptext ref="help27"/>
+                        </action>
+                        
+                        <!-- timecode menu -->
 			<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::ucuchi:C" xsl-task="markStart">
                                 <helptext ref="help12"/>
                         </action>
 			<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::ucuchi:C" xsl-task="markStop" qd-command="stopMedia">
                                 <helptext ref="help13"/>
-                        </action>
-			<!--<action name="MarkStartAndStop" keystroke="control shift QUOTE" node="ancestor-or-self::ucuchi:C" xsl-task="qd.insertTimes">
-                                <helptext ref="help14"/>
-                        </action>-->
-			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="zapTimes">
-                                <helptext ref="help15"/>
                         </action>
 			<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::ucuchi:C" xsl-task="increaseStart">
                                 <helptext ref="help16"/>
@@ -80,11 +90,8 @@
 			<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::ucuchi:C" xsl-task="rapidDecreaseStop">
                                 <helptext ref="help24"/>
                         </action>
-			<action name="NewClause" keystroke="control M" node="ancestor-or-self::ucuchi:C" xsl-task="newClause">
-                                <helptext ref="help27"/>
-                        </action>
-			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode">
-                                <helptext ref="help27"/>
+			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::ucuchi:C" xsl-task="zapTimes">
+                                <helptext ref="help15"/>
                         </action>
                 </actions>
 		<rendering-instructions>

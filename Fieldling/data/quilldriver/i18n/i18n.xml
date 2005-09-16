@@ -451,10 +451,6 @@
     <text lang="en">Name:</text>
     <text lang="zh">姓名：</text>
   </message>
-  <message id="Navigate">
-    <text lang="en">Navigate</text>
-    <text lang="zh">导航</text>
-  </message>
   <message id="New">
     <text lang="en">New</text>
     <text lang="zh">新建</text>
@@ -826,10 +822,6 @@
   <message id="TibetanOnly">
     <text lang="en">Tibetan Only</text>
     <text lang="zh">只显示藏文</text>
-  </message>
-  <message id="TimeCode">
-    <text lang="en">Time Code</text>
-    <text lang="zh">时间参数</text>
   </message>
   <message id="TimeCoding">
     <text lang="en">Time Coding...</text>
@@ -1414,6 +1406,18 @@
     <text lang="zh">
         Deletes the currently selected note.
     </text>
+  </message>
+  <message id="BrowseMenu">
+    <text lang="en">Navigate</text>
+    <text lang="zh">导航</text>
+  </message>
+  <message id="EditMenu">
+    <text lang="en">Edit</text>
+    <text lang="zh">编辑</text>
+  </message>
+  <message id="TimeCodeMenu">
+    <text lang="en">Time Code</text>
+    <text lang="zh">时间参数</text>
   </message>
 </all-messages>
 

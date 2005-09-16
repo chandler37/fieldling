@@ -5,6 +5,10 @@ package fieldling.quilldriver.config;
 
 import java.net.*;
 import java.util.*;
+import java.util.List;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import java.io.IOException;
 import javax.swing.KeyStroke;
 import org.jdom.Element;
@@ -13,6 +17,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import javax.xml.xpath.*;
+import fieldling.quilldriver.gui.QD;
 import fieldling.quilldriver.xml.*;
 import org.jdom.*;
 import org.xml.sax.SAXException;
@@ -28,8 +33,12 @@ public class Configuration
     static final String ALL_PARAMETERS_ELEMENT_NAME = "parameters";
     static final String ONE_PARAMETER_ELEMENT_NAME = "parameter";
     static final String RENDERING_ROOT_ELEMENT_NAME = "rendering-instructions";
+    static final String ALL_MENUS_ELEMENT_NAME = "menus";
+    static final String ONE_MENU_ELEMENT_NAME = "menu";
     
+    static Map actionNameToActionDescription = new HashMap();
     
+    JMenuBar jBar = null;
     String name = null;
     org.jdom.Document configDoc = null;
     URL helpURL = null;
@@ -104,6 +113,7 @@ public class Configuration
                 e.getAttributeValue("node"), e.getAttributeValue("move"), 
                 e.getAttributeValue("qd-command"), e.getAttributeValue("xsl-task")));
         }
+        setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME));
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         if (canEdit())
             transformer = transformerFactory.newTransformer(new StreamSource(editURL.openStream()));
@@ -220,6 +230,37 @@ public class Configuration
         }
         return namespaces;
     }
+    private void setJMenuBar(org.jdom.Element allMenus) {
+        if (allMenus == null) return;
+        ResourceBundle messages = fieldling.util.I18n.getResourceBundle();
+        jBar = new JMenuBar();
+        List menuElems = allMenus.getChildren(ONE_MENU_ELEMENT_NAME);
+        JMenu[] jMenu = new JMenu[menuElems.size()];
+        Iterator itty = menuElems.iterator();
+        int i=0;
+        while (itty.hasNext()) {
+            org.jdom.Element elem = (org.jdom.Element)itty.next();
+            jMenu[i] = new JMenu(messages.getString(elem.getAttributeValue("name")));
+            jMenu[i].getPopupMenu().setLightWeightPopupEnabled(false);
+            String[] menuItems = elem.getAttributeValue("contains").split(" ");
+            for (int j=0; j<menuItems.length; j++) {
+                QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
+                final Action menuAction = getActionForActionDescription(actDesc);
+                JMenuItem jItem = new JMenuItem(messages.getString(menuItems[j]));
+                jItem.setAccelerator(actDesc.getKeyboardShortcut());
+                jItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        menuAction.actionPerformed(ae);
+                    }
+                });
+                jMenu[i].add(jItem);
+            }
+            jBar.add(jMenu[i]);
+        }
+    }
+    public JMenuBar getJMenuBar() {
+        return jBar;
+    }
                                      /*I added the boolean move parameter to actions in the
                                     configuration files because while for some actions, like 
                                     "Go to Next", you want the cursor to move (say, to the next
@@ -246,6 +287,7 @@ public class Configuration
                 xpe.printStackTrace();
                 this.nodeSelector = null;
             }
+            actionNameToActionDescription.put(this.name, this);
         }
         public String getName() {
             return name;
@@ -265,6 +307,115 @@ public class Configuration
         public boolean shouldMove() {
             return move;
         }
-    }
-}
+    }        
+        public static QdActionDescription getActionDescriptionForActionName(String name) {
+            return (QdActionDescription)actionNameToActionDescription.get(name);
+        }
+        public static Action getActionForActionDescription(final QdActionDescription qdActionDesc) {
+                Action keyAction;
+                if (qdActionDesc.getXSLTask() == null) { //no xsl transform
+                        keyAction = new AbstractAction() {
+                            public void actionPerformed(ActionEvent e) {
+                                Object source = e.getSource();
+                                if (!(source instanceof Component)) {
+                                    System.out.println("no component for event--what to do?");
+                                    return;
+                                }
+                                QD qd = getQdParentForComponent((Component)source);
+                                if (qd == null) {
+                                    System.out.println("can't find any QD parent");
+                                    return;
+                                }
+                                if (qdActionDesc.getNodeSelector() != null) {
+                                    qd.getEditor().fireEndEditEvent();
+                                    Object moveTo = qd.getEditor().getNextVisibleNode(qd.getEditor().getTextPane().getCaret().getMark(), qdActionDesc.getNodeSelector());
+                                    qd.getEditor().getTextPane().requestFocus();
+                                    if (qdActionDesc.shouldMove())
+                                        qd.getEditor().getTextPane().setCaretPosition(qd.getEditor().getStartOffsetForNode(moveTo));
+                                    if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
+                                }
+                            }
+                        };
+                    } else { //xsl transform
+                        keyAction = new AbstractAction() {
+                            public void actionPerformed(ActionEvent e) {
+                                Object source = e.getSource();
+                                if (!(source instanceof Component)) {
+                                    System.out.println("no component for event--what to do?");
+                                    return;
+                                }
+                                QD qd = getQdParentForComponent((Component)source);
+                                if (qd == null) {
+                                    System.out.println("can't find any QD parent");
+                                    return;
+                                }
+                                if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
+                                qd.transformTranscript(qd.getEditor().getNodeForOffset(qd.getEditor().getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
+                            }
+                        };
+                    }
+                    return keyAction;
+        }
+                /*
+         * Get the top most component for a given component
+         */
+         public static QD getQdParentForComponent(Component comp) {
+            if (comp instanceof QD) return (QD)comp;
+            Component tcomp = comp;
+            MenuElement mi;
+            if (comp instanceof MenuElement) {
+                if (comp instanceof JPopupMenu) {
+                    tcomp = ((JPopupMenu)comp).getInvoker();
+                } else {
+                    tcomp = ((MenuElement)comp).getComponent();
+                }
+            }
+            Component parent = tcomp.getParent();
+            if (parent instanceof QD) return (QD)parent;
+            if (parent instanceof MenuElement) {
+                if (parent instanceof JPopupMenu) {
+                    parent = ((JPopupMenu)parent).getInvoker();
+                } else {
+                    parent = ((MenuElement)parent).getComponent();
+                }
+            }
+            if (parent instanceof QD) return (QD)parent;
+            while (parent != null) {
+                tcomp = parent;
+                parent = tcomp.getParent();
+                if (parent instanceof QD) return (QD)parent;
+                if (parent instanceof MenuElement) {
+                    if (parent instanceof JPopupMenu) {
+                        parent = ((JPopupMenu)parent).getInvoker();
+                    } else {
+                        parent = ((MenuElement)parent).getComponent();
+                    }
+                }
+            }
+            if (tcomp instanceof QD) return (QD)tcomp;
+            else return null;
+        }
 
+        /*
+         * Get the top most component for a given MenuItem.
+         * This is a little tricky
+         */
+ /*       public static QD getQdParentForMenuItem(MenuItem mi) {
+            MenuContainer tmcont = mi.getParent();;
+            MenuContainer parent = tmcont;
+            while (parent != null) {
+                if (parent instanceof Component) {
+                    break;
+                }
+                tmcont = parent;
+                parent = ((MenuComponent)tmcont).getParent();
+            }
+
+            if (parent == null) {
+                return null;
+            }
+            QD qd = getQdParentForComponent((Component) parent);
+            return qd;
+        }
+        */
+}

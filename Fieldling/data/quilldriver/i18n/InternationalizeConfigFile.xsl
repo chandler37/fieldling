@@ -7,7 +7,7 @@
         <xsl:template match="/">
                 <xsl:text disable-output-escaping="yes"><![CDATA[
 <!DOCTYPE qd-configuration [
-<!ELEMENT qd-configuration (all-messages, parameters, actions, rendering-instructions?)>
+<!ELEMENT qd-configuration (all-messages, parameters, menus?, actions, rendering-instructions?)>
 <!ELEMENT all-messages (message*)>
 <!ELEMENT message (text*)>
 <!ATTLIST message id ID #REQUIRED>
@@ -25,6 +25,10 @@
                     val CDATA #REQUIRED
 		    type CDATA #IMPLIED
 		    >
+<!ELEMENT menus (menu+)>
+<!ELEMENT menu EMPTY>
+<!ATTLIST menu name IDREF #REQUIRED
+                        contains IDREFS #REQUIRED>
 <!ELEMENT actions (action+)>
 <!ELEMENT action (helptext?)>
 <!ATTLIST action name IDREF #REQUIRED

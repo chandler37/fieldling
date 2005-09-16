@@ -11,7 +11,13 @@
                         <parameter name="qd.nodeends" val="AUDIO/@end"/>
                         <parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
                 </parameters>
+                <menus>
+                        <menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
+                        <menu name="EditMenu" contains="InsertAfter InsertBefore DeleteSentence InsertTranslation DeleteTranslation AddSpeaker DeleteSpeaker ChangeSpeaker FixMedia AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
+                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/> 
+                </menus>
 	        <actions>
+                        <!-- browse menu -->
 			<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
                                 <helptext ref="help1"/>
                         </action>
@@ -36,6 +42,29 @@
 			<action name="PreviousSentence" keystroke="control UP" node="preceding::S">
                                 <helptext ref="help8"/>
                         </action>
+			<action name="GotoStart" keystroke="control L" node="ancestor-or-self::S" qd-command="seekStart">
+                                <helptext ref="help32"/>
+                        </action>
+			<action name="GotoEnd" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="seekEnd">
+                                <helptext ref="help33"/>
+                        </action>
+                        
+                        <!-- edit menu -->
+			<action name="InsertAfter" keystroke="control M" node="ancestor-or-self::S" xsl-task="insertAfter">
+                                <helptext ref="help27"/>
+                        </action>
+			<action name="InsertBefore" keystroke="control B" node="ancestor-or-self::S" xsl-task="insertBefore">
+                                <helptext ref="help28"/>
+                        </action>
+			<action name="DeleteSentence" keystroke="control R" node="ancestor-or-self::S" xsl-task="removeNode">
+                                <helptext ref="help29"/>
+                        </action>
+			<action name="InsertTranslation" keystroke="control T" node="ancestor-or-self::S" xsl-task="insertTranslation">
+                                <helptext ref="help30"/>
+                        </action>
+			<action name="DeleteTranslation" keystroke="control alt T" node="ancestor-or-self::TRANSL" xsl-task="removeNode">
+                                <helptext ref="help31"/>
+                        </action>
 			<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::TEXT/HEADER" xsl-task="addSpeaker">
                                 <helptext ref="help9"/>
                         </action>
@@ -45,17 +74,40 @@
 			<action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::S" xsl-task="changeSpeaker">
                                 <helptext ref="help11"/>
                         </action>
+                        <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia">
+                                <helptext ref="help34"/>
+                        </action>
+			<action name="AddGeneralNote" keystroke="alt N" node="ancestor-or-self::S" xsl-task="addGeneral">
+                                <helptext ref="help35"/>
+                        </action>
+			<action name="AddLexicalNote" keystroke="alt L" node="ancestor-or-self::S" xsl-task="addLexical">
+                                <helptext ref="help36"/>
+                        </action>
+			<action name="AddGrammaticalNote" keystroke="alt G" node="ancestor-or-self::S" xsl-task="addGrammatical">
+                                <helptext ref="help37"/>
+                        </action>
+			<action name="AddPronunciationNote" keystroke="alt P" node="ancestor-or-self::S" xsl-task="addPronunciation">
+                                <helptext ref="help38"/>
+                        </action>
+			<action name="AddInterpretiveNote" keystroke="alt I" node="ancestor-or-self::S" xsl-task="addInterpretive">
+                                <helptext ref="help39"/>
+                        </action>
+			<action name="AddSociolinguisticNote" keystroke="alt S" node="ancestor-or-self::S" xsl-task="addSociolinguistic">
+                                <helptext ref="help40"/>
+                        </action>
+			<action name="AddCulturalNote" keystroke="alt C" node="ancestor-or-self::S" xsl-task="addCultural">
+                                <helptext ref="help41"/>
+                        </action>
+			<action name="DeleteNote" keystroke="alt D" node="ancestor-or-self::NOTE" xsl-task="removeNode">
+                                <helptext ref="help42"/>
+                        </action>
+                        
+                        <!-- timecode menu -->
 			<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::S" xsl-task="markStart">
                                 <helptext ref="help12"/>
                         </action>
 			<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::S" xsl-task="markStop" qd-command="stopMedia">
                                 <helptext ref="help13"/>
-                        </action>
-			<!--<action name="MarkStartAndStop" keystroke="control shift QUOTE" node="ancestor-or-self::S" xsl-task="qd.insertTimes">
-                                <helptext ref="help14"/>
-                        </action>-->
-			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::S" xsl-task="zapTimes">
-                                <helptext ref="help15"/>
                         </action>
 			<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::S" xsl-task="increaseStart">
                                 <helptext ref="help16"/>
@@ -84,53 +136,8 @@
 			<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::S" xsl-task="rapidDecreaseStop">
                                 <helptext ref="help24"/>
                         </action>
-			<action name="InsertAfter" keystroke="control M" node="ancestor-or-self::S" xsl-task="insertAfter">
-                                <helptext ref="help27"/>
-                        </action>
-			<action name="InsertBefore" keystroke="control B" node="ancestor-or-self::S" xsl-task="insertBefore">
-                                <helptext ref="help28"/>
-                        </action>
-			<action name="DeleteSentence" keystroke="control R" node="ancestor-or-self::S" xsl-task="removeNode">
-                                <helptext ref="help29"/>
-                        </action>
-			<action name="InsertTranslation" keystroke="control T" node="ancestor-or-self::S" xsl-task="insertTranslation">
-                                <helptext ref="help30"/>
-                        </action>
-			<action name="DeleteTranslation" keystroke="control alt T" node="ancestor-or-self::TRANSL" xsl-task="removeNode">
-                                <helptext ref="help31"/>
-                        </action>
-			<action name="GotoStart" keystroke="control L" node="ancestor-or-self::S" qd-command="seekStart">
-                                <helptext ref="help32"/>
-                        </action>
-			<action name="GotoEnd" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="seekEnd">
-                                <helptext ref="help33"/>
-                        </action>
-			<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia">
-                                <helptext ref="help34"/>
-                        </action>
-			<action name="AddGeneralNote" keystroke="alt N" node="ancestor-or-self::S" xsl-task="addGeneral">
-                                <helptext ref="help35"/>
-                        </action>
-			<action name="AddLexicalNote" keystroke="alt L" node="ancestor-or-self::S" xsl-task="addLexical">
-                                <helptext ref="help36"/>
-                        </action>
-			<action name="AddGrammaticalNote" keystroke="alt G" node="ancestor-or-self::S" xsl-task="addGrammatical">
-                                <helptext ref="help37"/>
-                        </action>
-			<action name="AddPronunciationNote" keystroke="alt P" node="ancestor-or-self::S" xsl-task="addPronunciation">
-                                <helptext ref="help38"/>
-                        </action>
-			<action name="AddInterpretiveNote" keystroke="alt I" node="ancestor-or-self::S" xsl-task="addInterpretive">
-                                <helptext ref="help39"/>
-                        </action>
-			<action name="AddSociolinguisticNote" keystroke="alt S" node="ancestor-or-self::S" xsl-task="addSociolinguistic">
-                                <helptext ref="help40"/>
-                        </action>
-			<action name="AddCulturalNote" keystroke="alt C" node="ancestor-or-self::S" xsl-task="addCultural">
-                                <helptext ref="help41"/>
-                        </action>
-			<action name="DeleteNote" keystroke="alt D" node="ancestor-or-self::NOTE" xsl-task="removeNode">
-                                <helptext ref="help42"/>
+			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::S" xsl-task="zapTimes">
+                                <helptext ref="help15"/>
                         </action>
                 </actions>
 		<rendering-instructions>
