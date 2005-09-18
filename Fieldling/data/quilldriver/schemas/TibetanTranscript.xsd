@@ -52,6 +52,7 @@
         <xsd:choice>
                 <xsd:element ref="FORM"/>
                 <xsd:element ref="TRANSL"/>
+                <xsd:element ref="TRANSL_ZH"/>
                 <xsd:element ref="AUDIO"/>
         </xsd:choice>
   </xsd:group>
@@ -65,6 +66,15 @@
         </xsd:complexType>
   </xsd:element>
   <xsd:element name="TRANSL">
+        <xsd:complexType>
+                <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                                <xsd:attribute name="lang" type="xsd:language" use="optional"/>
+                        </xsd:extension>
+                </xsd:simpleContent> 
+        </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="TRANSL_ZH">
         <xsd:complexType>
                 <xsd:simpleContent>
                         <xsd:extension base="xsd:string">

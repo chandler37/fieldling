@@ -163,9 +163,13 @@
     <text lang="en">Delete Speaker</text>
     <text lang="zh">删除声音</text>
   </message>
-  <message id="DeleteTranslation">
-    <text lang="en">Delete Translation</text>
-    <text lang="zh">删除翻译</text>
+  <message id="DeleteTranslation_EN">
+    <text lang="en">Delete English Translation</text>
+    <text lang="zh">删除英文翻译</text>
+  </message>
+  <message id="DeleteTranslation_ZH">
+    <text lang="en">Delete Chinese Translation</text>
+    <text lang="zh">删除中文翻译</text>
   </message>
   <message id="DESC">
     <text lang="en">DESC</text>
@@ -199,6 +203,7 @@
     <text lang="en">English Only</text>
     <text lang="zh">只显示英文</text>
   </message>
+  
   <message id="EnterEmail">
     <text lang="en">&lt;Enter Email&gt;</text>
     <text lang="zh">&lt;输入邮件地址&gt;</text>
@@ -367,9 +372,13 @@
     <text lang="en">Insert speaker</text>
     <text lang="zh">插入声音</text>
   </message>
-  <message id="InsertTranslation">
-    <text lang="en">Insert Translation</text>
-    <text lang="zh">插入翻译</text>
+  <message id="InsertTranslation_EN">
+    <text lang="en">Insert English Translation</text>
+    <text lang="zh">插入英文翻译</text>
+  </message>
+  <message id="InsertTranslation_ZH">
+    <text lang="en">Insert Chinese Translation</text>
+    <text lang="zh">插入中文翻译</text>
   </message>
   <message id="InsertTwoTimes">
     <text lang="en">Insert two times</text>
@@ -488,8 +497,8 @@
     <text lang="zh">没有媒体</text>
   </message>
   <message id="NonTibetanFontAndSize">
-    <text lang="en">Non-Tibetan Font and Size</text>
-    <text lang="zh">非藏文的字体及其大小</text>
+    <text lang="en">Font and Size</text>
+    <text lang="zh">字体及其大小</text>
   </message>
   <message id="NoReplace">
     <text lang="en">Don't replace</text>
@@ -863,9 +872,13 @@
     <text lang="en">Transcription Only</text>
     <text lang="zh">只有文本</text>
   </message>
-  <message id="TranslationOnly">
-    <text lang="en">Translation Only</text>
-    <text lang="zh">只有翻译</text>
+  <message id="Translation_ENOnly">
+    <text lang="en">English Translation Only</text>
+    <text lang="zh">只有英文翻译</text>
+  </message>
+  <message id="Translation_ZHOnly">
+    <text lang="en">Chinese Translation Only</text>
+    <text lang="zh">只有中文翻译</text>
   </message>
   <message id="TypeMediaURL">
     <text lang="en">Enter the URL of the media you want to open:</text>
@@ -1295,20 +1308,20 @@
   </message>
   <message id="help30">
     <text lang="en">
-        Inserts a translation slot for the current transcription
+        Inserts a english translation slot for the current transcription
         line.
     </text>
     <text lang="zh">
-        Inserts a translation slot for the current transcription
+        Inserts a englilsh translation slot for the current transcription
         line.
     </text>
   </message>
   <message id="help31">
     <text lang="en">
-        Deletes the translation for the current transcription line.
+        Deletes the english translation for the current transcription line.
     </text>
     <text lang="zh">
-        Deletes the translation for the current transcription line.
+        Deletes the english translation for the current transcription line.
     </text>
   </message>
   <message id="help32">
@@ -1406,6 +1419,18 @@
     <text lang="zh">
         Deletes the currently selected note.
     </text>
+  </message>
+  <message id="help43">
+    <text lang="en">
+        Inserts a chinese translation slot for the current transcription.
+    </text>
+    <text lang="zh">Inserts a chinese translation slot for the current transcription.</text>
+  </message>
+  <message id="help44">
+    <text lang="en">
+        Deletes a chinese translation slot for the current transcription. 中文。
+    </text>
+    <text lang="zh"> Deletes a chinese translation slot for the current transcription.</text>
   </message>
   <message id="BrowseMenu">
     <text lang="en">Navigate</text>

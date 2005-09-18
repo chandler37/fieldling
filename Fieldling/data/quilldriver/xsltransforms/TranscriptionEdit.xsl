@@ -17,6 +17,7 @@
 <xsl:param name="qd.rapidincrease" select=".250"/>
 <xsl:param name="qd.mediaurlstring" select="''"/>
 
+
 <!-- <xsl:param name="dictURL" select="'http://iris.lib.virginia.edu/tibetan/servlet/org.thdl.tib.scanner.RemoteScannerFilter'"/> -->
 
 <xsl:template name="make-speaker-id">
@@ -98,7 +99,7 @@
 					</S>
 					<xsl:copy-of select="." copy-namespaces="no"/>
 				</xsl:when>
-				<xsl:when test="$qd.task='insertTranslation'">
+				<xsl:when test="$qd.task='insertTranslation_EN'">
 					<xsl:element name="S">
 						<xsl:if test="@who">
 							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
@@ -107,14 +108,34 @@
 							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 						</xsl:if>
 						<xsl:copy-of select="*" copy-namespaces="no"/>
-						<xsl:if test="not(TRANSL)">
+                    
+                                                <xsl:if test="not(TRANSL)">
 						    <TRANSL>
-							    <xsl:text> </xsl:text>
+                                                 	    <xsl:text> </xsl:text>
                                                     </TRANSL>
 						</xsl:if>
+                                                
 					</xsl:element>
 				</xsl:when>
-                
+               
+                               <xsl:when test="$qd.task='insertTranslation_ZH'">
+					<xsl:element name="S">
+						<xsl:if test="@who">
+							<xsl:attribute name="who"><xsl:value-of select="@who" /></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:copy-of select="*" copy-namespaces="no"/>
+						<xsl:if test="not(TRANSL_ZH)">
+						    <TRANSL_ZH>
+							    <xsl:text> </xsl:text>
+                                                    </TRANSL_ZH>
+						</xsl:if>
+                                                
+					</xsl:element>
+				</xsl:when>
+                              
                                 <!-- time-coding tasks -->
 				<xsl:when test="$qd.task='markStart'">
 					<xsl:element name="S">

@@ -39,6 +39,7 @@
 					<attribute name="type" visible="false"/>
 				</tag>
 				<tag name="TRANSL" visible="false" visiblecontents="false"/>
+                                <tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 			</tagview>
 			<tagview name="EnglishOnly" keystroke="F2">
 				<tag name="S" visible="true" displayas="id(./@who)">

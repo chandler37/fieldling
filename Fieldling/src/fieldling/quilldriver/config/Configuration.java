@@ -74,12 +74,24 @@ public class Configuration
 	if (editElem != null)
 	    editURL = loader.getResource(editElem.getAttributeValue("val"));
     }
+   
+
     public void configure(Map defaultProperties) throws IOException, TransformerException, ParserConfigurationException, SAXException {
         docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
 	org.jdom.Element cRoot = configDoc.getRootElement();
+        tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild("rendering-instructions"));
+	org.jdom.Element parameterSet = cRoot.getChild("parameters");
+        org.jdom.Element newTemplateParam = cRoot.getChild("newtemplate");
+        if (newTemplateParam == null)
+            newTemplate = new String();
+        else
+            newTemplate = newTemplateParam.getAttributeValue("val");
+        org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
+
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
-	org.jdom.Element parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
-        org.jdom.Element schemaParam = parameterSet.getChild(XML_SCHEMA_ELEMENT_NAME);
+	parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
+        schemaParam = parameterSet.getChild(XML_SCHEMA_ELEMENT_NAME);
+
         if (schemaParam != null)
             schemaList = schemaParam.getAttributeValue("val").split("\\s");
         org.jdom.Element namespaceParam = parameterSet.getChild(NAMESPACES_ELEMENT_NAME);

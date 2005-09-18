@@ -31,7 +31,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.text.*;
-import javax.swing.text.rtf.*;
+import javax.swing.text.rtf.*; 
 import java.lang.reflect.*;
 import fieldling.mediaplayer.*;
 import fieldling.util.I18n;
