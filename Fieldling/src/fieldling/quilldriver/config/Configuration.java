@@ -169,8 +169,8 @@ public class Configuration
                            if (schemaList != null) {
                                if (schemaList.length==1) { //then dealing with external-noNamespaceSchemaLocation
                                    URL schemaUrl = Configuration.this.getClass().getClassLoader().getResource(schemaList[0]);
-                                   factory.setAttribute("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", schemaUrl.toString());
                                    schemaListAsString = schemaUrl.toString();
+                                   factory.setAttribute("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", schemaListAsString);
                                } else { //dealing with external-schemaLocation
                                    schemaListAsString = new String();
                                    StringBuffer property = new StringBuffer();
