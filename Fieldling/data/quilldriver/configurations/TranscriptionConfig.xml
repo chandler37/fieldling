@@ -62,13 +62,13 @@
 			<action name="InsertTranslation_EN" keystroke="control T" node="ancestor-or-self::S" xsl-task="insertTranslation_EN">
                                 <helptext ref="help30"/>
                         </action>
-                        <action name="InsertTranslation_ZH" keystroke="control C" node="ancestor-or-self::S" xsl-task="insertTranslation_ZH">
+                        <action name="InsertTranslation_ZH" keystroke="control H" node="ancestor-or-self::S" xsl-task="insertTranslation_ZH">
                                 <helptext ref="help43"/>
                         </action>
 			<action name="DeleteTranslation_EN" keystroke="control alt T" node="ancestor-or-self::TRANSL" xsl-task="removeNode">
                                 <helptext ref="help31"/>
                         </action>
-                        <action name="DeleteTranslation_ZH" keystroke="control alt C" node="ancestor-or-self::TRANSL_ZH" xsl-task="removeNode">
+                        <action name="DeleteTranslation_ZH" keystroke="control alt H" node="ancestor-or-self::TRANSL_ZH" xsl-task="removeNode">
                                 <helptext ref="help44"/>
                         </action>
 			<action name="GotoStart" keystroke="control L" node="ancestor-or-self::S" qd-command="seekStart">
