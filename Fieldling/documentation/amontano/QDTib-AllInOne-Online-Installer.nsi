@@ -11,7 +11,7 @@
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
 !define QUICKTIME_INSTALLER "QuickTimeFullInstaller.exe"
 !define JRE_INSTALLER "jre-1_5_0_04-windows-i586-p.exe"
-!define JNLP_URL "http://iris.lib.virginia.edu/tibet/tools/nightly/buildsQD/Fieldling/build/webapp/amontano/QuillDriver-TIB-simple.jnlp"
+!define JNLP_URL "http://orion.lib.virginia.edu/thdl/tools/nightly/buildsQD/Fieldling/build/webapp/amontano/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"

@@ -453,7 +453,7 @@ and Quicktime for Java.
 <information>
   <title>QuillDriver-TIBETAN]]>${jnlp.app.suffix}<![CDATA[</title>
   <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <homepage href="http://orion.lib.virginia.edu/thdl/tools/quilldriver" />
   <description>
 QuillDriver is a tool for transcribing and annotating digital video files.
 Annotation files can be any well-formed XML, and supported media players include

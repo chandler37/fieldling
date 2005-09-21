@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0" codebase="http://iris.lib.virginia.edu/tibet/tools/nightly/buildsQD/Fieldling/build/webapp/amontano"
+<jnlp spec="1.0" codebase="http://orion.lib.virginia.edu/thdl/tools/nightly/buildsQD/Fieldling/build/webapp/amontano"
       href="QuillDriver-TIB-simple.jnlp">
 <information>
   <title>QuillDriver Tibetan</title>
   <vendor>THDL</vendor>
-  <homepage href="http://iris.lib.virginia.edu/tibet/tools/quilldriver" />
+  <homepage href="http://orion.lib.virginia.edu/thdl/tools/quilldriver" />
   <description>
 QuillDriver is a tool for transcribing and annotating digital video files.
 Annotation files can be any well-formed XML, and supported media players include
