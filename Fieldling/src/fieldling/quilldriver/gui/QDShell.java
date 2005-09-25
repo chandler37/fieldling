@@ -53,6 +53,8 @@ public class QDShell extends JFrame implements ItemListener
 	ResourceBundle messages = null;
 
 	QD qd = null;
+	Container contentPane;
+	boolean hasLoadedTranscript;
 
 	PreferenceManager prefmngr = new fieldling.quilldriver.PreferenceManager();
 
@@ -202,13 +204,13 @@ public class QDShell extends JFrame implements ItemListener
 			}
 			
 			// load by default?
-			boolean useDefaultSettings = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1)==-1;
-			JCheckBox useAsDefault = new JCheckBox(messages.getString("UseTheseSettingsAsDefault"), useDefaultSettings);
-			useAsDefault.addItemListener(new ItemListener()
+			boolean useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1)==1;
+			JCheckBox openWizardAutomatically = new JCheckBox(messages.getString("AutomaticallyOpenDialogBox"), useWizard);
+			openWizardAutomatically.addItemListener(new ItemListener()
 			{
 				public void itemStateChanged(ItemEvent e) 
 				{
-					prefmngr.setInt(prefmngr.USE_WIZARD_KEY, e.getStateChange()==e.SELECTED?-1:1);
+					prefmngr.setInt(prefmngr.USE_WIZARD_KEY, e.getStateChange()==e.SELECTED?1:-1);
 				}				
 			});
 
@@ -324,7 +326,6 @@ public class QDShell extends JFrame implements ItemListener
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Wizard.this.hide();
-					System.exit(0);
 				}
 			});
 
@@ -347,9 +348,9 @@ public class QDShell extends JFrame implements ItemListener
 					String command = selectedRb.getActionCommand();
 					if (command.equals(messages.getString("NewTranscriptText"))) {
 						// File newTemplateFile = new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home")) + qd.newTemplateFileName);
-                                                System.out.println("New Template = " + qd.configuration.getNewTemplate());
+						System.out.println("New Template = " + qd.configuration.getNewTemplate());
 						URL newTemplateURL = QDShell.this.getClass().getClassLoader().getResource(qd.configuration.getNewTemplate());
-                                                System.out.println(newTemplateURL.toString());
+						System.out.println(newTemplateURL.toString());
 						if (newTemplateURL == null)
 							System.exit(0); //FIX
 						/*if (!newTemplateFile.exists())
@@ -357,22 +358,22 @@ public class QDShell extends JFrame implements ItemListener
                                                         
 						File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
                                                 
-                                                try {
-                                                    InputStream in = newTemplateURL.openStream();
-                                                    OutputStream out = new FileOutputStream(saveAsFile);
-                                                    // Transfer bytes from in to out
-                                                    byte[] buf = new byte[1024];
-                                                    int len;
-                                                    while ((len = in.read(buf)) > 0) {
-                                                        out.write(buf, 0, len);
-                                                    }
-                                                    in.close();
-                                                    out.close();
-                                                } catch (IOException ioe) {
-                                                    ioe.printStackTrace();
-                                                }
-                                                
-                                                qd.loadTranscript(saveAsFile);
+                        try {
+                            InputStream in = newTemplateURL.openStream();
+                            OutputStream out = new FileOutputStream(saveAsFile);
+                            // Transfer bytes from in to out
+                            byte[] buf = new byte[1024];
+                            int len;
+                            while ((len = in.read(buf)) > 0) {
+                                out.write(buf, 0, len);
+                            }
+                            in.close();
+                            out.close();
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                        
+                        qd.loadTranscript(saveAsFile);
 						String transcriptString = saveAsFile.getAbsolutePath();
 						prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 						makeRecentlyOpened(transcriptString);
@@ -396,19 +397,21 @@ public class QDShell extends JFrame implements ItemListener
 						makeRecentlyOpened(command);
 						makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
 					}
+					contentPane.add(qd);
+					hasLoadedTranscript = true;
 					Wizard.this.hide();
 				}
 			});
 			JPanel northChoices = new JPanel(new GridLayout(1, 0));
-			JPanel northEastChoices = new JPanel (new BorderLayout());
-			JPanel defaultPanel = new JPanel (new FlowLayout(FlowLayout.RIGHT));
-			defaultPanel.add(useAsDefault);
-			northEastChoices.add(BorderLayout.NORTH, defaultPanel);
-			northEastChoices.add(BorderLayout.CENTER, moviePlayerChoice);
+			JPanel upperHalfChoices = new JPanel (new BorderLayout());
+			JPanel defaultPanel = new JPanel (new FlowLayout(FlowLayout.LEFT));
+			defaultPanel.add(openWizardAutomatically);
 			northChoices.add(configurationChoice);
-			northChoices.add(northEastChoices);
+			northChoices.add(moviePlayerChoice);
+			upperHalfChoices.add(BorderLayout.NORTH, defaultPanel);
+			upperHalfChoices.add(BorderLayout.CENTER, northChoices);			
 			JPanel choices = new JPanel(new GridLayout(0, 1));
-			choices.add(northChoices);
+			choices.add(upperHalfChoices);
 			choices.add(dataSourceChoice);
 			JPanel buttons = new JPanel();
 			buttons.add(okButton);
@@ -432,22 +435,18 @@ public class QDShell extends JFrame implements ItemListener
 		needsToRestart = false;
 		messages = I18n.getResourceBundle();
 		setLocation(prefmngr.getInt(prefmngr.WINDOW_X_KEY, 0), prefmngr.getInt(prefmngr.WINDOW_Y_KEY, 0));
-		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width),
-		prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
+		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
 		qd = new QD(prefmngr);
+		contentPane = getContentPane();
+		hasLoadedTranscript = false;
 		
-		getContentPane().add(qd);
 		// setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
 				closeThisQDFrame();
-				if (numberOfQDsOpen == 0) {
-					putPreferences();
-					System.exit(0);
-				}
 			}
-		});		
+		});
 	}
 	
 	private void loadSpecificInitialStateFromWizard()
@@ -496,7 +495,9 @@ public class QDShell extends JFrame implements ItemListener
 	}
 	
 	private void loadSpecificInitialState(File transcriptFile, String mediaURL, String configName, String mediaName)
-	{
+	{		
+		contentPane.add(qd);
+		
 		String transcriptString = transcriptFile.getAbsolutePath();
 		prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 		
@@ -542,33 +543,6 @@ public class QDShell extends JFrame implements ItemListener
 		
 		try
 		{
-			if (useWizard==0)
-			{
-				loadSpecificInitialStateFromDefaults();
-			}
-		}
-		catch (Exception e)
-		{
-			useWizard=1;
-		}
-		
-		if (useWizard==1)
-		{
-			// load wizard
-			loadSpecificInitialStateFromWizard();
-		}
-		setJMenuBar(getQDShellMenu());
-		setVisible(true);		
-	}
-	
-	public QDShell()
-	{
-		loadGenericInitialState();
-		
-		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1), pos;
-		
-		try
-		{
 			if (useWizard==-1)
 			{
 				loadSpecificInitialStateFromDefaults();
@@ -584,8 +558,34 @@ public class QDShell extends JFrame implements ItemListener
 			// load wizard
 			loadSpecificInitialStateFromWizard();
 		}
+		if (hasLoadedTranscript)
+		{
+			setJMenuBar(getQDShellMenu());
+			setVisible(true);
+		}
+		else closeThisQDFrame();
+	}
+	
+	public QDShell()
+	{
+		loadGenericInitialState();
+		
+		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1);
+		
+		/*try
+		{
+			if (useWizard==-1) loadSpecificInitialStateFromDefaults();
+		}
+		catch (Exception e)
+		{
+			useWizard=1;
+		}*/
+
 		setJMenuBar(getQDShellMenu());
 		setVisible(true);
+		
+		if (useWizard==1) // load wizard
+			loadSpecificInitialStateFromWizard();		
 	}
 
 	
@@ -611,16 +611,22 @@ public class QDShell extends JFrame implements ItemListener
 
 	private void closeThisQDFrame() {
 		/*i first used dispose() instead of hide(), which should clear up memory,
-		 but i got an error: can't dispose InputContext while it's active*/
-		if (qd.getEditor() == null) { //no content in this QD window
-			hide();
-			numberOfQDsOpen--;
-		} else { //there's a QD editor: save and close
+		 but i got an error: can't dispose InputContext while it's active
+		 Note by Andres: This error seems to be fixed on JDK 1.5, so changed back
+		 to dispose and things seem fine. */
+		if (qd.getEditor() != null) //no content in this QD window
+		{ //there's a QD editor: save and close
 			if (qd.getEditor().isEditable())
 				qd.saveTranscript();
 			qd.removeContent();
-			hide();
-			numberOfQDsOpen--;
+		}
+		//hide();
+		dispose();
+		numberOfQDsOpen--;
+		if (numberOfQDsOpen == 0)
+		{
+			putPreferences();
+			System.exit(0);
 		}
 	}
 
@@ -631,12 +637,24 @@ public class QDShell extends JFrame implements ItemListener
 	public JMenuBar getQDShellMenu() {
 		//File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
-		JMenuItem wizardItem = new JMenuItem(messages.getString("NewWizard"));
+		JMenuItem wizardItem = new JMenuItem(messages.getString("Open"));
+		wizardItem.setAccelerator(KeyStroke.getKeyStroke("control O"));		
 		wizardItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new QDShell(1);
+				if (hasLoadedTranscript)
+					new QDShell(1);
+				else
+					loadSpecificInitialStateFromWizard();
 			}
 		});
+		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
+		closeItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Should prompt user to save!!
+				//System.exit(tryToQuit());
+				closeThisQDFrame();
+			}
+		});		
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -645,8 +663,8 @@ public class QDShell extends JFrame implements ItemListener
                                 qd.saveTranscript();
 			}
 		});
-		JMenuItem quitItem = new JMenuItem(messages.getString("Quit"));
-		quitItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
+		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
+		quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Should prompt user to save!!
@@ -656,6 +674,7 @@ public class QDShell extends JFrame implements ItemListener
 			}
 		});
 		projectMenu.add(wizardItem);
+		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveItem);
 		projectMenu.addSeparator();
