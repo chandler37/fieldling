@@ -19,12 +19,12 @@ optimized for use with Tibetan script.
 <resources>
   <j2se version="1.5+"/>
   <property name="javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom" value="net.sf.saxon.xpath.XPathFactoryImpl"/>
+  <jar href="../lib_webstart/quilldriver-TIB.jar"/>
   <jar href="../lib_webstart/activation.jar"/>
   <jar href="../lib_webstart/core-renderer.jar"/>
   <jar href="../lib_webstart/cssparser-0-9-4-fs.jar"/>
   <jar href="../lib_webstart/jdom.jar"/>
   <jar href="../lib_webstart/mail.jar"/>
-  <jar href="../lib_webstart/quilldriver-TIB.jar"/>
   <jar href="../lib_webstart/Jskad.jar"/>
   <jar href="../lib_webstart/saxon8-dom.jar"/>
   <jar href="../lib_webstart/saxon8-xpath.jar"/>
@@ -32,4 +32,4 @@ optimized for use with Tibetan script.
   <jar href="../lib_webstart/xercesImpl.jar"/>
 </resources>
 <application-desc main-class="fieldling.quilldriver.gui.QDShell"/>
-</jnlp>		
+</jnlp>
