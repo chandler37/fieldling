@@ -459,10 +459,6 @@
     <text lang="en">Name:</text>
     <text lang="zh">姓名：</text>
   </message>
-  <message id="Navigate">
-    <text lang="en">Navigate</text>
-    <text lang="zh">导航</text>
-  </message>
   <message id="New">
     <text lang="en">New</text>
     <text lang="zh">新建</text>
@@ -478,10 +474,6 @@
   <message id="NewTranscriptText">
     <text lang="en">Create a new transcript</text>
     <text lang="zh">建立新的文本</text>
-  </message>
-  <message id="NewWizard">
-    <text lang="en">New Wizard</text>
-    <text lang="zh">新文件</text>
   </message>
   <message id="Next">
     <text lang="en">Next</text>
@@ -524,8 +516,8 @@
     <text lang="zh">确定</text>
   </message>
   <message id="Open">
-    <text lang="en">Open</text>
-    <text lang="zh">打开</text>
+    <text lang="en">Open...</text>
+    <text lang="zh">打开…</text>
   </message>
   <message id="OpenExisting">
     <text lang="en">Open an existing transcript</text>
@@ -659,9 +651,9 @@
     <text lang="en">QuillDriver-TIBETAN</text>
     <text lang="zh">QuillDriver-藏语</text>
   </message>
-  <message id="Quit">
-    <text lang="en">Quit</text>
-    <text lang="zh">结束</text>
+  <message id="Exit">
+    <text lang="en">Exit</text>
+    <text lang="zh">Exit</text>
   </message>
   <message id="RapidDecreaseStart">
     <text lang="en">Rapid Decrease Start</text>
@@ -835,10 +827,6 @@
     <text lang="en">Tibetan Only</text>
     <text lang="zh">只显示藏文</text>
   </message>
-  <message id="TimeCode">
-    <text lang="en">Time Code</text>
-    <text lang="zh">时间参数</text>
-  </message>
   <message id="TimeCoding">
     <text lang="en">Time Coding...</text>
     <text lang="zh">时间参数…</text>
@@ -951,9 +939,9 @@
     <text lang="en">Low</text>
     <text lang="zh">低</text>
   </message>
-  <message id="UseTheseSettingsAsDefault">
-    <text lang="en">Use these settings as default?</text>
-    <text lang="zh">使用这些设定为缺省值？</text>
+  <message id="AutomaticallyOpenDialogBox">
+    <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
+    <text lang="zh">Automatically open this dialog box when QuillDriver starts up?</text>
   </message>
   <message id="help1">
     <text lang="en">
@@ -1450,6 +1438,14 @@
   <message id="TimeCodeMenu">
     <text lang="en">Time Code</text>
     <text lang="zh">时间参数</text>
+  </message>
+  <message id="Alert">
+    <text lang="en">Alert</text>
+    <text lang="zh">Alert</text>
+  </message>
+  <message id="FileCouldNotBeLoaded">
+    <text lang="en">The file/transcript could not be loaded! Please consult the log file for details.</text>
+    <text lang="zh">The file/transcript could not be loaded! Please consult the log file for details.</text>
   </message>
 </all-messages>
 
