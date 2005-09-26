@@ -2,15 +2,15 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 5-Sep-2005"
+!define PRODUCT_VERSION "Version 25-Sep-2005"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
-!define QUICKTIME_INSTALLER "QuickTimeFullInstaller.exe"
-!define JRE_INSTALLER "jre-1_5_0_04-windows-i586-p.exe"
+!define QUICKTIME_INSTALLER "QuickTimeInstaller.exe"
+!define JRE_INSTALLER "jre-1_5_0_05-windows-i586-p.exe"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -244,8 +244,7 @@ Function GetJRE
   Abort '未能找到Java运行环境，安装失败。'
   
   abortjre_eng:  
-  Abort 'Unable to find Java Runtime Environment.$\n\
-  Installation failed.'
+  Abort 'Unable to find Java Runtime Environment. Installation failed.'
   
   JreFound:
   Pop $R1
@@ -258,7 +257,7 @@ Function getQTJava
   
   ;StrCpy $R1 "$R0\lib\ext\QTJava.zip"
   ;IfFileExists "$R1" allSet
-  ReadRegStr $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime\Installed Files\QTJava.dll" "Full Path"
+  ReadRegDWORD $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
   IfErrors 0 allSet
 
   ; Was not found. Install.
@@ -284,17 +283,13 @@ Function getQTJava
   
   ; warning in Chinese
   MessageBox MB_OK \
-  '现在安装程序要开始安装QuickTime$\n$\n\
-  提示：QuickTime for Java不是QuickTime“推荐安装”部分，$\n\
-  所以你要“自定义安装”并选择QuickTime for Java或全部安装。$\n$\n\
-  ${PRODUCT_NAME}然后安装程序自动安装。'  
+  'The installer for QuickTime will begin now. $\n$\n\
+  Afterwards the ${PRODUCT_NAME} installation will resume automatically.'
   Goto resume_after_qtwarning
   
   warningqt_eng:
   MessageBox MB_OK \
   'The installer for QuickTime will begin now. $\n$\n\
-  IMPORTANT: QuickTime for Java is not part of the "Recommended" QuickTime install, so you$\n\
-  need to do a "Custom" install and specifically select QuickTime for Java or select all.$\n$\n\
   Afterwards the ${PRODUCT_NAME} installation will resume automatically.'
   
   resume_after_qtwarning:
@@ -304,7 +299,7 @@ Function getQTJava
   Delete "$TEMP\${QUICKTIME_INSTALLER}"
   
   ;IfFileExists "$R1" allSet
-  ReadRegStr $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime\Installed Files\QTJava.dll" "Full Path"
+  ReadRegDWORD $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
   IfErrors 0 allSet
   
   StrCmp $LANGUAGE "1033" abortqt_eng
@@ -313,8 +308,7 @@ Function getQTJava
   Abort '未能找到QuickTime for Java，安装失败。'
   
   abortqt_eng:
-  Abort 'Unable to find QuickTime for Java.$\n\
-  Installation failed.'
+  Abort 'Unable to find QuickTime for Java. Installation failed.'
   
   allSet:
   ;Pop $R1
@@ -351,7 +345,6 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk"
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-
   Delete "$INSTDIR\activation.jar"
   Delete "$INSTDIR\core-renderer.jar"
   Delete "$INSTDIR\cssparser-0-9-4-fs.jar"
