@@ -325,7 +325,8 @@ public class QDShell extends JFrame implements ItemListener
 			JButton cancelButton = new JButton(messages.getString("Cancel"));
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Wizard.this.hide();
+					//Wizard.this.hide();
+					Wizard.this.dispose();
 				}
 			});
 
@@ -333,6 +334,7 @@ public class QDShell extends JFrame implements ItemListener
 			JButton okButton = new JButton(messages.getString("Ok"));
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					boolean noProblems = true;
 					ButtonModel selectedConfiguration = configGroup.getSelection();
 					String configCommand = selectedConfiguration.getActionCommand();
 					try {
@@ -372,34 +374,52 @@ public class QDShell extends JFrame implements ItemListener
                         } catch (IOException ioe) {
                             ioe.printStackTrace();
                         }
-                        
-                        qd.loadTranscript(saveAsFile);
-						String transcriptString = saveAsFile.getAbsolutePath();
-						prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-						makeRecentlyOpened(transcriptString);
-						makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+                        noProblems = qd.loadTranscript(saveAsFile);
+                        if (noProblems)
+                        {
+                        	String transcriptString = saveAsFile.getAbsolutePath();
+                        	prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+                        	makeRecentlyOpened(transcriptString);
+                        	makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+                        }
 					} else if (command.equals(messages.getString("OpenExisting"))) {
 						File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 						if (transcriptFile != null) {
 							String transcriptString = transcriptFile.getAbsolutePath();
 							prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-							qd.loadTranscript(transcriptFile);
-							makeRecentlyOpened(transcriptString);
-							makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+							noProblems = qd.loadTranscript(transcriptFile);
+							if (noProblems)
+							{
+								makeRecentlyOpened(transcriptString);
+								makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+							}
 						}
 					} else { //must be recent file
 						File transcriptFile = new File(command);
 						Object video = recentTranscriptToRecentVideoMap.get(command);
 						if (video == null)
-							qd.loadTranscript(transcriptFile);
+							noProblems = qd.loadTranscript(transcriptFile);
 						else
-							qd.loadTranscript(transcriptFile, (String) video);
-						makeRecentlyOpened(command);
-						makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+							noProblems = qd.loadTranscript(transcriptFile, (String) video);
+						if (noProblems)
+						{
+							makeRecentlyOpened(command);
+							makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+						}
 					}
-					contentPane.add(qd);
-					hasLoadedTranscript = true;
-					Wizard.this.hide();
+					
+					//Wizard.this.hide();
+					Wizard.this.dispose();
+					
+					if (noProblems)
+					{
+						contentPane.add(qd);
+						hasLoadedTranscript = true;
+					}
+					else
+					{
+						 JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 			JPanel northChoices = new JPanel(new GridLayout(1, 0));
@@ -648,6 +668,7 @@ public class QDShell extends JFrame implements ItemListener
 			}
 		});
 		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
+		closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));		
 		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Should prompt user to save!!
