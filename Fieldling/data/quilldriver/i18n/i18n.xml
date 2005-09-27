@@ -1423,7 +1423,7 @@
   </message>
   <message id="help44">
     <text lang="en">
-        Deletes a chinese translation slot for the current transcription. 中文。
+        Deletes a chinese translation slot for the current transcription. 
     </text>
     <text lang="zh"> Deletes a chinese translation slot for the current transcription.</text>
   </message>

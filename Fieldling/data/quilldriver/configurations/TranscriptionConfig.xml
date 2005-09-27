@@ -227,6 +227,7 @@
 				<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
 					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
+                        <tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
 			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
