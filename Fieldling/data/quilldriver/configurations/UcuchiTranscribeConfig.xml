@@ -29,13 +29,13 @@
 			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playEdge">
                                 <helptext ref="help5"/>
                         </action>
-			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*]" qd-command="playNode">
+			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*][1]" qd-command="playNode">
                                 <helptext ref="help6"/>
                         </action>
 			<action name="GotoNextLine" keystroke="control DOWN" node="following::ucuchi:C">
                                 <helptext ref="help7"/>
                         </action>
-			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C">
+			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::ucuchi:C[1]">
                                 <helptext ref="help8"/>
                         </action>
                         
@@ -103,17 +103,25 @@
                         <tag name="ucuchi:GOD-KNOWS" visible="false" visiblecontents="false"/>
                         <tag name="ucuchi:COMMENT" visible="false" visiblecontents="false"/>
                         <tag name="ucuchi:SPEAKER" visible="true" displayas="'SPEAKER'"/>
-                        <tag name="ucuchi:C" visible="false" visiblecontents="true">
-                            <attribute name="qd:t1" visible="false"/>
-                            <attribute name="qd:t2" visible="false"/>
-                            <attribute name="spid" visible="false"/>
-                        </tag>
                         <tagview name="QuechuaOnly" keystroke="F1">
+                            <tag name="ucuchi:C" visible="false" visiblecontents="true">
+                                <attribute name="qd:t1" visible="false"/>
+                                <attribute name="qd:t2" visible="false"/>
+                                <attribute name="spid" visible="false"/>
+                            </tag>
                             <tag name="ucuchi:F" visible="true" displayas="if (../@spid=../preceding-sibling::ucuchi:C[1]/@spid) then '          ' else (id(../@spid))" visiblecontents="true"/>
                             <tag name="ucuchi:TRANSL" visiblecontents="false" visible="false"/>
                         </tagview>
                         <tagview name="QuechuaAndEnglish" keystroke="F2">
-                            <tag name="ucuchi:F" visible="true" displayas="if (../@spid=../preceding-sibling::ucuchi:C[1]/@spid) then '          ' else (id(../@spid))" visiblecontents="true"/>
+                            <tag name="ucuchi:C" visible="true" displayas="if (./@spid=./preceding-sibling::ucuchi:C[1]/@spid) then '          ' else (id(./@spid))" visiblecontents="true">
+                                <attribute name="qd:t1" visible="false"/>
+                                <attribute name="qd:t2" visible="false"/>
+                                <attribute name="spid" visible="false"/>
+                                <attribute name="id" visible="false"/>
+                                <attribute name="xmlns:qd" visible="false"/>
+                                <attribute name="xmlns:ucuchi" visible="false"/>
+                            </tag>
+                            <tag name="ucuchi:F" visible="false" visiblecontents="true"/>
                             <tag name="ucuchi:TRANSL" visiblecontents="true" visible="false"/>
                         </tagview>
 		</rendering-instructions>

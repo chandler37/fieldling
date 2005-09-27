@@ -439,24 +439,18 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
             };
             viewButton.addActionListener(acList);
             editButton.addActionListener(acList);
-            
                         JPanel jp = new JPanel(new BorderLayout());
                         jp.add("North", buttonPanel);
 			jp.add("Center", hp);
                         JTabbedPane tabbedPane = new JTabbedPane();
-                        tabbedPane.add("Foolproof XML", jp);
-                        org.xhtmlrenderer.simple.XHTMLPanel helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
-                        helpPanel.setDocument(configuration.getHelpDocument());
-                        tabbedPane.add("Editing help", new JScrollPane(helpPanel));
+                        tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
 			JComponent c = (JComponent)textFrame.getContentPane();
 			c.setLayout(new BorderLayout());
                         c.add("Center", tabbedPane);
-                        
 			textFrame.setSize(textFrame.getSize().width, getSize().height);
 			textFrame.invalidate();
 			textFrame.validate();
 			textFrame.repaint();
-
 			editor.addNodeEditListener(new Editor.NodeEditListener() {
 				public void nodeEditPerformed(Editor.NodeEditEvent ned) {
 					if (ned instanceof Editor.StartEditEvent) {
@@ -554,6 +548,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	}
         public void changeTagInfo(TagInfo newTagInfo) {
             if (editor != null) {
+                currentTagInfo = newTagInfo;
                 editor.setTagInfo(currentTagInfo);
                 hp.refresh();
             }
@@ -586,6 +581,14 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                     if (qdActionDesc.getXSLTask() != null && qdActionDesc.getXSLTask().equals("qd.insertTimes"))
                         insertTimesAction = keyAction;
                     keyActions.put(qdActionDesc.getKeyboardShortcut(), keyAction); //eventually to be registered with transcript's JTextPane
+                }
+                if (tagInfo.length > 1) {
+                    for (int i=0; i<tagInfo.length; i++) {
+                        KeyStroke key = tagInfo[i].getKeyboardShortcut();
+                        Action keyAction = Configuration.getActionForTagInfoChange(tagInfo[i]);
+                        if ( !(key == null || keyAction == null) )
+                            keyActions.put(key, keyAction);
+                    }
                 }
                 currentTagInfo = tagInfo[0];
                 return true;
@@ -747,9 +750,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                     }
                 }
 	}
-	/*public JMenu[] getConfiguredMenus() {
-		return configMenus;
-	}*/
 
 	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
 		@TIBETAN@return activeKeyboard;
@@ -927,38 +927,7 @@ and in the XSL definition, I use the white-space-collapse and linefeed-treatment
 </fo:block>
 */
                 
-               /* int xCount = 0;
-                if (tagInfo.length < 2)
-                    configMenus = new JMenu[1]; //no need for extra "View" menu
-                else {
-                    configMenus = new JMenu[2]; //need extra "View" menu
-                    JMenu viewMenu = new JMenu(messages.getString("View"));
-                    ButtonGroup tagGroup = new ButtonGroup();
-                    for (int z=0; z<tagInfo.length; z++) {
-                        final TagInfo zTagInfo = tagInfo[z];
-                        Action changeViewAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent e) {
-                                changeTagInfo(zTagInfo);
-                            }
-                        };
-                        JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(messages.getString(tagInfo[z].getIdentifyingName()));
-                        tagItem.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                changeViewAction.actionPerformed(e);
-                            }
-                        });
-                        KeyStroke k = (KeyStroke)tagShortcuts.get(tagInfo[z]);
-                        if (k != null) {
-                            tagItem.setAccelerator(k);
-                            keyActions.put(k, changeViewAction);
-                        }
-                        tagGroup.add(tagItem);
-                        if (z == 0) tagItem.setSelected(true);
-                        configMenus[xCount].add(tagItem);
-                    }
-                    currentTagInfo = tagInfo[0];
-                    xCount++;
-                }*/
+
                 
                                 
  /*               Iterator pitty = keyActions.keySet().iterator();

@@ -17,6 +17,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import javax.xml.xpath.*;
+import fieldling.util.GuiUtil;
 import fieldling.quilldriver.gui.QD;
 import fieldling.quilldriver.xml.*;
 import org.jdom.*;
@@ -74,8 +75,6 @@ public class Configuration
 	if (editElem != null)
 	    editURL = loader.getResource(editElem.getAttributeValue("val"));
     }
-   
-
     public void configure(Map defaultProperties) throws IOException, TransformerException, ParserConfigurationException, SAXException {
         docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
 	org.jdom.Element cRoot = configDoc.getRootElement();
@@ -247,7 +246,8 @@ public class Configuration
         ResourceBundle messages = fieldling.util.I18n.getResourceBundle();
         jBar = new JMenuBar();
         List menuElems = allMenus.getChildren(ONE_MENU_ELEMENT_NAME);
-        JMenu[] jMenu = new JMenu[menuElems.size()];
+        int possibleTagInfoMenu = tagInfo.length > 1 ? 1 : 0 ;
+        JMenu[] jMenu = new JMenu[menuElems.size() + possibleTagInfoMenu + 1];
         Iterator itty = menuElems.iterator();
         int i=0;
         while (itty.hasNext()) {
@@ -269,9 +269,60 @@ public class Configuration
             }
             jBar.add(jMenu[i]);
         }
+        if (possibleTagInfoMenu == 1) {
+            JMenu viewMenu = new JMenu(messages.getString("View"));
+            ButtonGroup tagGroup = new ButtonGroup();
+            for (int z=0; z<tagInfo.length; z++) {
+                final Action changeViewAction = getActionForTagInfoChange(tagInfo[z]);
+                JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(messages.getString(tagInfo[z].getIdentifyingName()));
+                tagItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        changeViewAction.actionPerformed(e);
+                    }
+                });
+                tagItem.setAccelerator(tagInfo[z].getKeyboardShortcut());
+                tagGroup.add(tagItem);
+                if (z == 0) tagItem.setSelected(true);
+                viewMenu.add(tagItem);
+            }
+            jBar.add(viewMenu);
+        }
+        JMenu helpMenu = new JMenu(messages.getString("Help"));
+        org.xhtmlrenderer.simple.XHTMLPanel helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
+        helpPanel.setDocument(getHelpDocument());
+        final JScrollPane sp = GuiUtil.getScrollPaneForJPanel(helpPanel);
+        JMenuItem helpItem = new JMenuItem(messages.getString("Help"));
+        helpItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFrame f = new JFrame();
+                f.setSize(500, 400);
+                f.getContentPane().add(sp);
+                f.setVisible(true);
+            }
+        });
+        helpMenu.add(helpItem);
+        jBar.add(helpMenu);
     }
     public JMenuBar getJMenuBar() {
         return jBar;
+    }
+    public static Action getActionForTagInfoChange(final TagInfo tagInfo) {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (!(source instanceof Component))
+                {
+                    System.out.println("no component for event--what to do?");
+                    return;
+                }
+                QD qd = getQdParentForComponent((Component)source);
+                if (qd == null) {
+                    System.out.println("can't find any QD parent");
+                    return;
+                }
+                qd.changeTagInfo(tagInfo);
+            }
+        };
     }
                                      /*I added the boolean move parameter to actions in the
                                     configuration files because while for some actions, like 

@@ -1447,5 +1447,9 @@
     <text lang="en">The file/transcript could not be loaded! Please consult the log file for details.</text>
     <text lang="zh">The file/transcript could not be loaded! Please consult the log file for details.</text>
   </message>
+  <message id="BasicTranscriptViewMode">
+        <text lang="en">Basic View</text>
+        <text lang="zh">Basic View</text>
+  </message>
 </all-messages>
 

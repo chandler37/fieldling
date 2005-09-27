@@ -31,6 +31,7 @@ import java.util.prefs.*;
 import fieldling.quilldriver.PreferenceManager;
 import fieldling.quilldriver.config.*;
 import fieldling.mediaplayer.*;
+import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 
@@ -726,7 +727,7 @@ public class QDShell extends JFrame implements ItemListener
 		});
 		JMenuItem aboutItem = new JMenuItem(messages.getString("AboutQuillDriver"));
 		try {
-			final JScrollPane sp = getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
+			final JScrollPane sp = GuiUtil.getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
 			aboutItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame f = new JFrame();
@@ -750,11 +751,6 @@ public class QDShell extends JFrame implements ItemListener
 		bar.add(preferencesMenu);
 		betaMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(betaMenu);
-		/*JMenu[] configMenus = qd.getConfiguredMenus();
-		for (int k = 0; k < configMenus.length; k++) {
-			configMenus[k].getPopupMenu().setLightWeightPopupEnabled(false);
-			bar.add(configMenus[k]);
-		}*/
 		return bar;
 		/*
 		 @TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
@@ -1134,37 +1130,6 @@ public class QDShell extends JFrame implements ItemListener
 		public String getDescription() {
 			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 		}
-	}	
-        private JScrollPane getScrollPaneForTextFile(ClassLoader resourceLoader, String textFileName) throws IOException, FileNotFoundException
-	{
-		InputStream in = resourceLoader.getResourceAsStream(textFileName);
-		if (in == null) {
-			throw new FileNotFoundException(textFileName);
-		}
-		try {
-			BufferedReader changeReader = new BufferedReader(
-					new InputStreamReader(in));
-			StringBuffer concat = new StringBuffer();
-			String line;
-			while (null != (line = changeReader.readLine())) {
-				concat.append(line);
-				concat.append('\n');
-			}
-			JTextArea changeText = new JTextArea(concat.toString());
-			changeText.setEditable(false);
-			JScrollPane sp = new JScrollPane();
-			sp.setViewportView(changeText);
-			return sp;
-		} catch (IOException ioe) {
-			throw ioe;
-		}
-	}
-        private JScrollPane getScrollPaneForString(String s) {
-		JTextArea changeText = new JTextArea(s);
-		changeText.setEditable(false);
-		JScrollPane sp = new JScrollPane();
-		sp.setViewportView(changeText);
-                return sp;
 	}
 }
 /*JMenuItem closeItem = new JMenuItem(messages.getString("Close"));

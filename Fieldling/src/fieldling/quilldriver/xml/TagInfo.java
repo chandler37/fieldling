@@ -7,6 +7,7 @@ public class TagInfo {
 	private HashMap displayYesNo, displayContentsYesNo, displayAs, displayIcon, editableYesNo;
 	@TIBETAN@private HashMap areTagContentsTibetan, isAttributeTextTibetan, isTagItselfTibetan;
 	private HashMap attributeDisplayYesNo, attributeDisplayAs, attributeDisplayIcon, attributeEditableYesNo;
+        private KeyStroke keyboardShortcut = null;
 	private String identifyingName = null;
         private org.jdom.Namespace[] namespaces;
         
@@ -150,11 +151,16 @@ public class TagInfo {
 			else return (String)obj;
 		} else return icon;
 	}
+        public void setKeyboardShortcut(KeyStroke key) {
+            keyboardShortcut = key;
+        }
+        public KeyStroke getKeyboardShortcut() {
+            return keyboardShortcut;
+        }
         public static TagInfo[] getTagInfoFromXMLConfiguration(org.jdom.Element renderingInstructions) {
 			List sharedInstructions = renderingInstructions.getChildren("tag");
 			List tagViews = renderingInstructions.getChildren("tagview");
 			TagInfo[] tagInfo;
-			Map tagShortcuts = null;
 			if (tagViews.size() == 0) { //only one set of rendering instructions
 				tagInfo = new TagInfo[1];
 				tagInfo[0] = new TagInfo();
@@ -184,15 +190,13 @@ public class TagInfo {
 					}
 				}
 			} else {
-				tagShortcuts = new HashMap();
 				tagInfo = new TagInfo[tagViews.size()];
 				int count = 0;
 				Iterator tagViewIter = tagViews.iterator();
 				while (tagViewIter.hasNext()) {
 					org.jdom.Element tagView = (org.jdom.Element)tagViewIter.next();
 					tagInfo[count] = new TagInfo(tagView.getAttributeValue("name"));
-					KeyStroke key = KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke"));
-					tagShortcuts.put(tagInfo[count], key);
+					tagInfo[count].setKeyboardShortcut(KeyStroke.getKeyStroke(tagView.getAttributeValue("keystroke")));
 					if (sharedInstructions.size() > 0) {
 						Iterator it = sharedInstructions.iterator();
 						while (it.hasNext()) {
