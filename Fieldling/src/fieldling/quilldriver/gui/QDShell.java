@@ -178,6 +178,14 @@ public class QDShell extends JFrame implements ItemListener
 	class Wizard extends JDialog {
 		public Wizard() {
 			//choice of configuration
+			super(QDShell.this, messages.getString("Open"), true);
+			setSize(new Dimension(600,400));
+			addWindowListener(new WindowAdapter () {
+				public void windowClosing (WindowEvent e) {
+					Wizard.this.dispose();
+				}
+			});
+			
 			JPanel configurationChoice = new JPanel();
 			configurationChoice.setBorder(BorderFactory.createTitledBorder(messages.getString("SelectConfiguration")));
 			final Configuration[] configurations = ConfigurationFactory.getAllQDConfigurations(QDShell.this.getClass().getClassLoader());
@@ -465,7 +473,7 @@ public class QDShell extends JFrame implements ItemListener
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
-				closeThisQDFrame();
+				closeThisQDFrame(true);
 			}
 		});
 	}
@@ -473,13 +481,6 @@ public class QDShell extends JFrame implements ItemListener
 	private void loadSpecificInitialStateFromWizard()
 	{
 		Wizard wiz = new Wizard();
-		wiz.setModal(true);
-		wiz.setSize(new Dimension(600,400));
-		wiz.addWindowListener(new WindowAdapter () {
-			public void windowClosing (WindowEvent e) {
-                            System.exit(0);
-			}
-		});
 		wiz.show();		
 	}
 
@@ -577,14 +578,15 @@ public class QDShell extends JFrame implements ItemListener
 		if (useWizard==1)
 		{
 			// load wizard
-			loadSpecificInitialStateFromWizard();
+			Wizard wiz = new Wizard();
+			wiz.show();		
 		}
 		if (hasLoadedTranscript)
 		{
 			setJMenuBar(getQDShellMenu());
 			setVisible(true);
 		}
-		else closeThisQDFrame();
+		else closeThisQDFrame(false);
 	}
 	
 	public QDShell()
@@ -606,7 +608,10 @@ public class QDShell extends JFrame implements ItemListener
 		setVisible(true);
 		
 		if (useWizard==1) // load wizard
-			loadSpecificInitialStateFromWizard();		
+		{
+			Wizard wiz = new Wizard();
+			wiz.show();
+		}
 	}
 
 	
@@ -630,21 +635,45 @@ public class QDShell extends JFrame implements ItemListener
 				prefmngr.media_directory);
 	}
 
-	private void closeThisQDFrame() {
+	private void closeThisQDFrame(boolean closingWindow) {
 		/*i first used dispose() instead of hide(), which should clear up memory,
 		 but i got an error: can't dispose InputContext while it's active
 		 Note by Andres: This error seems to be fixed on JDK 1.5, so changed back
 		 to dispose and things seem fine. */
-		if (qd.getEditor() != null) //no content in this QD window
-		{ //there's a QD editor: save and close
-			if (qd.getEditor().isEditable())
-				qd.saveTranscript();
-			qd.removeContent();
+		if (hasLoadedTranscript)
+		{
+			if (qd.getEditor() != null) //no content in this QD window
+			{ //there's a QD editor: save and close
+				if (qd.getEditor().isEditable())
+					qd.saveTranscript();
+				qd.removeContent();
+			}
+			numberOfQDsOpen--;
+			if (closingWindow)
+			{
+				dispose();			
+				if (numberOfQDsOpen == 0)
+				{
+					putPreferences();
+					System.exit(0);
+				}
+			}
+			else
+			{
+				if (numberOfQDsOpen > 0)
+				{
+					dispose();
+				}
+				else
+				{
+					qd.removeContent();
+					contentPane.remove(qd);
+					contentPane.repaint();
+					hasLoadedTranscript = false;
+				}
+			}
 		}
-		//hide();
-		dispose();
-		numberOfQDsOpen--;
-		if (numberOfQDsOpen == 0)
+		else
 		{
 			putPreferences();
 			System.exit(0);
@@ -665,7 +694,10 @@ public class QDShell extends JFrame implements ItemListener
 				if (hasLoadedTranscript)
 					new QDShell(1);
 				else
-					loadSpecificInitialStateFromWizard();
+				{
+					Wizard wiz = new Wizard();
+					wiz.show();
+				}
 			}
 		});
 		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
@@ -674,7 +706,7 @@ public class QDShell extends JFrame implements ItemListener
 			public void actionPerformed(ActionEvent e) {
 				//Should prompt user to save!!
 				//System.exit(tryToQuit());
-				closeThisQDFrame();
+				closeThisQDFrame(false);
 			}
 		});		
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
