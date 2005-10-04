@@ -80,11 +80,6 @@ public class Configuration
 	org.jdom.Element cRoot = configDoc.getRootElement();
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild("rendering-instructions"));
 	org.jdom.Element parameterSet = cRoot.getChild("parameters");
-        org.jdom.Element newTemplateParam = cRoot.getChild("newtemplate");
-        if (newTemplateParam == null)
-            newTemplate = new String();
-        else
-            newTemplate = newTemplateParam.getAttributeValue("val");
         org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
 
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
@@ -190,10 +185,7 @@ public class Configuration
                            return factory.newDocumentBuilder();
     }
     public String getNewTemplate() {
-        if (isConfigured)
-            return newTemplate;
-        else
-            return new String();
+        return newTemplate;
     }
     public boolean canEdit() {
         if (editURL == null) return false;
