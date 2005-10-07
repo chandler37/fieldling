@@ -8,11 +8,19 @@
                     <parameter name="qd.root.element" val="ucuchi:TEXT"/>
                 </parameters>
                 <menus>
+						<menu name="Transcript" contains="Save"/>
+						<menu name="Options" contains="TimeCoding"/>
                         <menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine GotoNextLine GotoPreviousLine"/>
                         <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker NewClause DeleteClause"/>
                         <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
                 </menus>
                 <actions>
+					<!-- file menu -->	
+					<action name="Save" keystroke="control S" node="." qd-command="saveTranscript">
+					</action>
+					<!-- preferences menu -->	
+						<action name="TimeCoding" keystroke="control T" node="." qd-command="timeCode">
+					</action>
                         <!-- browse menu -->
                         <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
                                 <helptext ref="help1"/>

@@ -709,6 +709,8 @@ public class QDShell extends JFrame implements ItemListener
 				closeThisQDFrame(false);
 			}
 		});		
+		/* Saving is actually context specific. Configurations designed
+		 * to be Read-only shouldn't include this option.
 		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
 		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
 		saveItem.addActionListener(new ActionListener() {
@@ -716,7 +718,7 @@ public class QDShell extends JFrame implements ItemListener
                             if (qd.getEditor().isEditable())
                                 qd.saveTranscript();
 			}
-		});
+		});*/
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
@@ -730,26 +732,28 @@ public class QDShell extends JFrame implements ItemListener
 		projectMenu.add(wizardItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
-		projectMenu.add(saveItem);
+		//projectMenu.add(saveItem);
 		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
 
 		//Preferences menu
-		JMenuItem fontItem = new JMenuItem(messages.getString("Display"));
+		JMenuItem fontItem = new JMenuItem(messages.getString("Preferences"));
 		fontItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getDisplayPreferences();
 			}
 		});
-		JMenuItem timeCodeItem = new JMenuItem(messages.getString("TimeCoding"));
+		/* Time coding is also configuration specific.
+		 * Read-only configurations won't include it. 
+		 * JMenuItem timeCodeItem = new JMenuItem(messages.getString("TimeCoding"));
 		timeCodeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				getTimeCodePreferences();
 			}
-		});
-		JMenu preferencesMenu = new JMenu(messages.getString("Preferences"));
+		}); */
+		JMenu preferencesMenu = new JMenu(messages.getString("Tools"));
 		preferencesMenu.add(fontItem);
-		preferencesMenu.add(timeCodeItem);
+		// preferencesMenu.add(timeCodeItem);
 
 		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
@@ -771,7 +775,7 @@ public class QDShell extends JFrame implements ItemListener
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		JMenu betaMenu = new JMenu(messages.getString("Help"));
+		JMenu betaMenu = new JMenu(messages.getString("About"));
 		betaMenu.add(aboutItem);
 		betaMenu.add(feedbackItem);
 
@@ -875,64 +879,7 @@ public class QDShell extends JFrame implements ItemListener
 			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, sb.toString());
 		}
 	}
-
-	private void getTimeCodePreferences() {
-		//allows user to change slow adjust, rapid adjust, and play minus parameters
-		JPanel slowAdjustPanel = new JPanel(new BorderLayout());
-		slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("SlowIncreaseDecreaseValue")));
-		JTextField slowAdjustField = new JTextField(String
-				.valueOf(prefmngr.slow_adjust));
-		slowAdjustField.setPreferredSize(new Dimension(240, 30));
-		slowAdjustPanel.add(slowAdjustField);
-		JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
-		rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("RapidDncreaseDecreaseValue")));
-		JTextField rapidAdjustField = new JTextField(String
-				.valueOf(prefmngr.rapid_adjust));
-		rapidAdjustField.setPreferredSize(new Dimension(240, 30));
-		rapidAdjustPanel.add(rapidAdjustField);
-		JPanel playMinusPanel = new JPanel(new BorderLayout());
-		playMinusPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("PlayVinusValue")));
-		JTextField playMinusField = new JTextField(String
-				.valueOf(prefmngr.play_minus));
-		playMinusField.setPreferredSize(new Dimension(240, 30));
-		playMinusPanel.add(playMinusField);
-		JPanel preferencesPanel = new JPanel();
-		preferencesPanel.setLayout(new GridLayout(3, 1));
-		preferencesPanel.add(slowAdjustPanel);
-		preferencesPanel.add(rapidAdjustPanel);
-		preferencesPanel.add(playMinusPanel);
-		JOptionPane pane = new JOptionPane(preferencesPanel);
-		JDialog dialog = pane.createDialog(this, messages
-				.getString("TimeCodingPreferences"));
-		// This returns only when the user has closed the dialog
-		dialog.show();
-		int old_slow_adjust = prefmngr.slow_adjust;
-		try {
-			prefmngr.slow_adjust = Integer.parseInt(slowAdjustField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		int old_rapid_adjust = prefmngr.rapid_adjust;
-		try {
-			prefmngr.rapid_adjust = Integer
-					.parseInt(rapidAdjustField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		int old_play_minus = prefmngr.play_minus;
-		try {
-			prefmngr.play_minus = Integer.parseInt(playMinusField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		// note: if these become negative numbers no error
-		if (old_slow_adjust != prefmngr.slow_adjust)
-			prefmngr.setInt(prefmngr.SLOW_ADJUST_KEY, prefmngr.slow_adjust);
-		if (old_rapid_adjust != prefmngr.rapid_adjust)
-			prefmngr.setInt(prefmngr.RAPID_ADJUST_KEY, prefmngr.rapid_adjust);
-		if (old_play_minus != prefmngr.play_minus)
-			prefmngr.setInt(prefmngr.PLAY_MINUS_KEY, prefmngr.play_minus);
-	}
+	
 	public void itemStateChanged(ItemEvent e)
 	{
 		needsToRestart = true;

@@ -12,15 +12,21 @@
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
 	</parameters>
 	<menus>
-		<menu name="File" contains="FixMedia"/>
+		<menu name="Transcript" contains="Save FixMedia"/>
+		<menu name="Options" contains="TimeCoding"/>
 		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
 		<menu name="EditMenu" contains="InsertAfter InsertBefore DeleteSentence InsertTranslation_EN DeleteTranslation_EN InsertTranslation_ZH DeleteTranslation_ZH AddSpeaker DeleteSpeaker ChangeSpeaker AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
 		<menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
 	</menus>
 	<actions>
 		<!-- file menu -->	
+		<action name="Save" keystroke="control S" node="." qd-command="saveTranscript">
+		</action>
 		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia">
 			<helptext ref="help34"/>
+		</action>
+		<!-- preferences menu -->	
+		<action name="TimeCoding" keystroke="control T" node="." qd-command="timeCode">
 		</action>
 		<!-- browse menu -->			
 		<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">

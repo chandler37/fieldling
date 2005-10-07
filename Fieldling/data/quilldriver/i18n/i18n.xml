@@ -12,8 +12,8 @@
     <text lang="zh">关于</text>
   </message>
   <message id="AboutQuillDriver">
-    <text lang="en">About QuillDriver</text>
-    <text lang="zh">关于QuillDriver</text>
+    <text lang="en">About QuillDriver...</text>
+    <text lang="zh">关于QuillDriver…</text>
   </message>
   <message id="Add">
     <text lang="en">Add</text>
@@ -604,8 +604,8 @@
     <text lang="zh">播放时间值（按毫秒）</text>
   </message>
   <message id="Preferences">
-    <text lang="en">Preferences</text>
-    <text lang="zh">设置选择</text>
+    <text lang="en">Preferences...</text>
+    <text lang="zh">设置选择…</text>
   </message>
   <message id="Previous">
     <text lang="en">Previous</text>
@@ -1447,9 +1447,21 @@
     <text lang="en">The file/transcript could not be loaded! Please consult the log file for details.</text>
     <text lang="zh">The file/transcript could not be loaded! Please consult the log file for details.</text>
   </message>
+  <message id="FileCouldNotBeSaved">
+    <text lang="en">The file/transcript could not be saved! Please consult the log file for details.</text>
+    <text lang="zh">The file/transcript could not be saved! Please consult the log file for details.</text>
+  </message>
   <message id="BasicTranscriptViewMode">
         <text lang="en">Basic View</text>
         <text lang="zh">Basic View</text>
+  </message>
+  <message id="Options">
+  	<text lang="en">Options</text>
+  	<text lang="zh">Options</text>
+  </message>
+  <message id="Tools">
+  	<text lang="en">Tools</text>
+  	<text lang="zh">Tools</text>
   </message>
 </all-messages>
 

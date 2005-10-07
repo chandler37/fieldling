@@ -172,6 +172,65 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			player.setParentContainer(QD.this);
 		}
 	}
+	
+	private void getTimeCodePreferences() {
+		//allows user to change slow adjust, rapid adjust, and play minus parameters
+		JPanel slowAdjustPanel = new JPanel(new BorderLayout());
+		slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
+				.getString("SlowIncreaseDecreaseValue")));
+		JTextField slowAdjustField = new JTextField(String
+				.valueOf(prefmngr.slow_adjust));
+		slowAdjustField.setPreferredSize(new Dimension(240, 30));
+		slowAdjustPanel.add(slowAdjustField);
+		JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
+		rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
+				.getString("RapidDncreaseDecreaseValue")));
+		JTextField rapidAdjustField = new JTextField(String
+				.valueOf(prefmngr.rapid_adjust));
+		rapidAdjustField.setPreferredSize(new Dimension(240, 30));
+		rapidAdjustPanel.add(rapidAdjustField);
+		JPanel playMinusPanel = new JPanel(new BorderLayout());
+		playMinusPanel.setBorder(BorderFactory.createTitledBorder(messages
+				.getString("PlayVinusValue")));
+		JTextField playMinusField = new JTextField(String
+				.valueOf(prefmngr.play_minus));
+		playMinusField.setPreferredSize(new Dimension(240, 30));
+		playMinusPanel.add(playMinusField);
+		JPanel preferencesPanel = new JPanel();
+		preferencesPanel.setLayout(new GridLayout(3, 1));
+		preferencesPanel.add(slowAdjustPanel);
+		preferencesPanel.add(rapidAdjustPanel);
+		preferencesPanel.add(playMinusPanel);
+		JOptionPane pane = new JOptionPane(preferencesPanel);
+		JDialog dialog = pane.createDialog(this, messages
+				.getString("TimeCodingPreferences"));
+		// This returns only when the user has closed the dialog
+		dialog.show();
+		int old_slow_adjust = prefmngr.slow_adjust;
+		try {
+			prefmngr.slow_adjust = Integer.parseInt(slowAdjustField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		int old_rapid_adjust = prefmngr.rapid_adjust;
+		try {
+			prefmngr.rapid_adjust = Integer
+					.parseInt(rapidAdjustField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		int old_play_minus = prefmngr.play_minus;
+		try {
+			prefmngr.play_minus = Integer.parseInt(playMinusField.getText());
+		} catch (NumberFormatException ne) {
+		}
+		// note: if these become negative numbers no error
+		if (old_slow_adjust != prefmngr.slow_adjust)
+			prefmngr.setInt(prefmngr.SLOW_ADJUST_KEY, prefmngr.slow_adjust);
+		if (old_rapid_adjust != prefmngr.rapid_adjust)
+			prefmngr.setInt(prefmngr.RAPID_ADJUST_KEY, prefmngr.rapid_adjust);
+		if (old_play_minus != prefmngr.play_minus)
+			prefmngr.setInt(prefmngr.PLAY_MINUS_KEY, prefmngr.play_minus);
+	}	
+	
 	public PanelPlayer getMediaPlayer() {
 		return player;
 	}
@@ -680,75 +739,86 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 
 	public void executeCommand(String command) {
 		//FIXME: These commands should be defined elsewhere, in programmatically extensible classes
-                if (command.equals("playNode")) {
-                    Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-                    playNode(nearestParent);
-                }
-                else if (command.equals("playPause")) {
-                    try {
-                        /* by transferring focus, we don't have to worry about problems caused by
-                        the cursor position in the editor being different from the highlight,
-                        since users will have to click on the editor to get back into editing */
-                        if (mode == VIEW_MODE)
-                            editor.getTextPane().transferFocus();
-                        if (player.isPlaying()) player.cmd_stop();
-                        else player.cmd_playOn();
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
-                else if (command.equals("playBack")) {
-                    try {
-                        long t = player.getCurrentTime() - PreferenceManager.play_minus;
-                        if (t < 0) t = 0;
-                        if (player.isPlaying()) player.cmd_stop();
-                        player.setCurrentTime(t);
-                        player.cmd_playOn();
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
-                else if (command.equals("playEdge")) {
-                    try {
-                        Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-                        tcp.setNode(nearestParent);
-                        Long t2 = tcp.getOutTime();
-                        long t1 = t2.longValue() - PreferenceManager.play_minus;
-                        if (t1 < 0) t1 = 0;
-                        player.cmd_playSegment(new Long(t1), t2);
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
-                else if (command.equals("seekStart")) {
-                    try {
-                        Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-                        tcp.setNode(nearestParent);
-                        Long t = tcp.getInTime();
-                        if (player.isPlaying()) player.cmd_stop();
-                        player.setCurrentTime(t.longValue());
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
-                else if (command.equals("seekEnd")) {
-                    try {
-                        Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-                        tcp.setNode(nearestParent);
-                        Long t = tcp.getOutTime();
-                        if (player.isPlaying()) player.cmd_stop();
-                        player.setCurrentTime(t.longValue());
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
-                else if (command.equals("stopMedia")) {
-                    try {
-                        if (player.isPlaying()) player.cmd_stop();
-                    } catch (PanelPlayerException ppe) {
-                        ppe.printStackTrace();
-                    }
-                }
+		boolean result=true;
+		
+        if (command.equals("playNode")) {
+            Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
+            playNode(nearestParent);
+        }
+        else if (command.equals("playPause")) {
+            try {
+                /* by transferring focus, we don't have to worry about problems caused by
+                the cursor position in the editor being different from the highlight,
+                since users will have to click on the editor to get back into editing */
+                if (mode == VIEW_MODE)
+                    editor.getTextPane().transferFocus();
+                if (player.isPlaying()) player.cmd_stop();
+                else player.cmd_playOn();
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("playBack")) {
+            try {
+                long t = player.getCurrentTime() - PreferenceManager.play_minus;
+                if (t < 0) t = 0;
+                if (player.isPlaying()) player.cmd_stop();
+                player.setCurrentTime(t);
+                player.cmd_playOn();
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("playEdge")) {
+            try {
+                Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
+                tcp.setNode(nearestParent);
+                Long t2 = tcp.getOutTime();
+                long t1 = t2.longValue() - PreferenceManager.play_minus;
+                if (t1 < 0) t1 = 0;
+                player.cmd_playSegment(new Long(t1), t2);
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("seekStart")) {
+            try {
+                Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
+                tcp.setNode(nearestParent);
+                Long t = tcp.getInTime();
+                if (player.isPlaying()) player.cmd_stop();
+                player.setCurrentTime(t.longValue());
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("seekEnd")) {
+            try {
+                Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
+                tcp.setNode(nearestParent);
+                Long t = tcp.getOutTime();
+                if (player.isPlaying()) player.cmd_stop();
+                player.setCurrentTime(t.longValue());
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("stopMedia")) {
+            try {
+                if (player.isPlaying()) player.cmd_stop();
+            } catch (PanelPlayerException ppe) {
+                ppe.printStackTrace();
+            }
+        }
+        else if (command.equals("saveTranscript")) {
+            if (getEditor().isEditable())
+                result = saveTranscript();
+            if (!result)
+            	JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeSaved"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
+        }
+        else if (command.equals("timeCode")) {
+        	getTimeCodePreferences();
+        }
 	}
 
 	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
