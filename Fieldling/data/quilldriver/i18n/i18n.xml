@@ -939,6 +939,32 @@
     <text lang="en">Low</text>
     <text lang="zh">低</text>
   </message>
+  
+   <message id="Window">
+    <text lang="en">Window</text>
+    <text lang="zh">窗口</text>
+  </message>
+    <message id="InitialVerticalWindows">
+    <text lang="en">Initial Verticial Windows</text>
+    <text lang="zh">Initial Verticial Windows</text>
+  </message>
+   <message id="VerticalWindows">
+    <text lang="en">Vertical Windows</text>
+    <text lang="zh">Vertical Windows</text>
+  </message>
+   <message id="SubtitleBelow">
+    <text lang="en">Subtitle Below</text>
+    <text lang="zh">Subtitle Below</text>
+  </message>
+   <message id="FullScreenVideo">
+    <text lang="en">Full Screen Video</text>
+    <text lang="zh">Full Screen Video</text>
+  </message>
+   <message id="DefaultWindows">
+    <text lang="en">Default Windows</text>
+    <text lang="zh">Default Windows</text>
+  </message>
+  
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">Automatically open this dialog box when QuillDriver starts up?</text>

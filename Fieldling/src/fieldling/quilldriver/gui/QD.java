@@ -1,4 +1,5 @@
-/* ***** BEGIN LICENSE BLOCK *****
+/******* BEGIN LICENSE BLOCK *****
+ *
  *    Copyright 2003 Edward Garrett
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -49,6 +50,22 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public static final int SCROLLING_HIGHLIGHT_IS_ON = 0;
         public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
         protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
+        
+        public static final int HORIZONTAL_WINDOWS=0;
+        public static final int VERTICAL_WINDOWS=1;
+        public static final int SUBTITILE_BELOW=2;
+        public static final int FULL_SCREEN_VIDEO=3;
+        protected int windowsMode=0;
+        protected int defaultWindowsMode=0;
+        protected int initVideoFrameWidth=0;
+        protected int initVideoFrameHeight=0;
+        protected int defaultVideoFrameWidth=0;
+        protected int defaultVideoFrameHeight=0;
+        protected int defaultTextFrameWidth=0;
+        protected int defaultTextFrameHeight=0;
+        protected Point defaultVideoFrameLocation=null;        
+        protected Point defaultTextFrameLocation=null;
+       
         protected static Color hColor = Color.cyan;
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
@@ -136,6 +153,91 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 		});
 	}
+        
+         //------setting textframe and videoframe windows mode--------------
+         public void setInitialVerticalWindows(){
+                        defaultVideoFrameLocation=videoFrame.getLocation();
+                        videoFrame.setLocation(getSize().width- initVideoFrameWidth, 0);
+		        defaultVideoFrameWidth=videoFrame.getSize().width;
+		        defaultVideoFrameHeight=videoFrame.getSize().height;
+                        videoFrame.setSize(initVideoFrameWidth, initVideoFrameHeight);
+
+                        defaultTextFrameLocation=textFrame.getLocation();
+                        textFrame.setLocation(0,0);
+                        defaultTextFrameWidth=textFrame.getSize().width;
+                        defaultTextFrameHeight=textFrame.getSize().height;
+                        textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
+			
+                        defaultWindowsMode=windowsMode;
+                        windowsMode=HORIZONTAL_WINDOWS;
+                        
+        }       
+        
+         public void setVerticalWindows(){
+                                defaultTextFrameLocation=textFrame.getLocation();
+                                defaultVideoFrameLocation=videoFrame.getLocation();
+                                
+                                textFrame.setLocation(0, 0);
+                                defaultTextFrameWidth=textFrame.getSize().width;
+                                defaultTextFrameHeight=textFrame.getSize().height;
+                                textFrame.setSize(getSize().width/2, getSize().height);
+                                
+                                videoFrame.setLocation(getSize().width-textFrame.getSize().width, 0); 
+                                defaultVideoFrameWidth=videoFrame.getSize().width;
+                                defaultVideoFrameHeight=videoFrame.getSize().height;
+                                videoFrame.setSize(getSize().width/2, getSize().height*3/4); //???
+                                
+                                defaultWindowsMode=windowsMode;
+                                windowsMode=VERTICAL_WINDOWS;
+                }
+                
+        public void setSubtitleWindows(){
+                                defaultTextFrameLocation=textFrame.getLocation();
+                                defaultVideoFrameLocation=videoFrame.getLocation();
+                                
+                                videoFrame.setLocation(0,0); 
+                                defaultVideoFrameWidth=videoFrame.getSize().width;
+                                defaultVideoFrameHeight=videoFrame.getSize().height;
+                                videoFrame.setSize(getSize().width/2, getSize().height*7/10); //????
+                               
+                                textFrame.setLocation(0,videoFrame.getSize().height);
+                                defaultTextFrameWidth=textFrame.getSize().width;
+                                defaultTextFrameHeight=textFrame.getSize().height;
+                                textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
+                                
+                                defaultWindowsMode=windowsMode;
+                                windowsMode=SUBTITILE_BELOW;                               
+        }
+        
+        public void setFullScreenVideo(){
+                                defaultTextFrameLocation=textFrame.getLocation();
+                                defaultVideoFrameLocation=videoFrame.getLocation();
+                                
+                                videoFrame.setLocation(0,0); 
+                                defaultVideoFrameWidth=videoFrame.getSize().width;
+                                defaultVideoFrameHeight=videoFrame.getSize().height;
+                                videoFrame.setSize(getSize().width, getSize().height);
+                               
+                                textFrame.setLocation(0,0);
+                                textFrame.setSize(0,0);
+                                defaultTextFrameWidth=textFrame.getSize().width;
+                                defaultTextFrameHeight=textFrame.getSize().height;
+                                
+                                defaultWindowsMode=windowsMode;
+                                 windowsMode=FULL_SCREEN_VIDEO;                                
+        }
+        
+        public void setDefaultWindows(){
+                         switch(defaultWindowsMode){  
+                             case -1:
+                             case 0: setInitialVerticalWindows(); break;
+                             case 1: setVerticalWindows(); break;
+                             case 2: setSubtitleWindows(); break;
+                             case 3: setFullScreenVideo(); break;
+                         }                                              
+        }               
+        //---------------------------
+        
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
 		timer.schedule(new TimerTask() {
@@ -147,6 +249,15 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					videoFrame.getContentPane().setLayout(new BorderLayout());
 					videoFrame.getContentPane().add("Center", player);
 					videoFrame.pack();
+                                         //----------------------
+                                        initVideoFrameWidth=videoFrame.getSize().width;
+                                        defaultVideoFrameWidth=initVideoFrameWidth;
+                                        initVideoFrameHeight=videoFrame.getSize().height;
+                                        defaultVideoFrameHeight=initVideoFrameHeight;
+                                        
+                                        defaultTextFrameWidth=textFrame.getSize().width;                                       
+                                        defaultTextFrameHeight=textFrame.getSize().height;
+                                        //----------------------------
 				}
 			}}, 0, 50);
 	}
