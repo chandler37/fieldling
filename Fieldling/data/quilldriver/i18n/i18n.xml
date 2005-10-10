@@ -1455,6 +1455,10 @@
         <text lang="en">Basic View</text>
         <text lang="zh">Basic View</text>
   </message>
+  <message id="ScrollingHighlightPolicy">
+        <text lang="en">Scrolling Highlight Policy</text>
+        <text lang="zh">Scrolling Highlight Policy</text>
+  </message>
   <message id="Options">
   	<text lang="en">Options</text>
   	<text lang="zh">Options</text>

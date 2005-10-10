@@ -40,6 +40,14 @@ import fieldling.quilldriver.gui.QDShell;
 
 public class PreferenceManager extends JPanel {
 		//preference keys
+                public static final String TRANSCRIPT_X_KEY= "TRANSCRIPT__X";
+                public static final String TRANSCRIPT_Y_KEY= "TRANSCRIPT__Y";
+                public static final String TRANSCRIPT_WIDTH_KEY = "TRANSCRIPT_WIDTH";
+                public static final String TRANSCRIPT_HEIGHT_KEY = "TRANSCRIPT_HEIGHT";
+                public static final String VIDEO_X_KEY= "VIDEO__X";
+                public static final String VIDEO_Y_KEY= "VIDEO__Y";
+                public static final String VIDEO_WIDTH_KEY = "VIDEO_WIDTH";
+                public static final String VIDEO_HEIGHT_KEY = "VIDEO_HEIGHT";
 		public static final String WINDOW_X_KEY = "WINDOW_X";
 		public static final String WINDOW_Y_KEY = "WINDOW_Y";
 		public static final String WINDOW_WIDTH_KEY = "WINDOW_WIDTH";
@@ -55,41 +63,35 @@ public class PreferenceManager extends JPanel {
 		public static final String FONT_FACE_KEY = "FONT_FACE";
 		public static final String FONT_SIZE_KEY = "FONT_SIZE";
 		public static final String CONFIGURATION_KEY = "CONFIGURATION";
-        public static final String HIGHLIGHT_KEY = "HIGHLIGHT";
-        public static final String HIGHLIGHT_POSITION_KEY = "HIGHLIGHT_POSITION";
-        public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
-        
-        public static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
-        public static final String DEFAULT_INTERFACE_FONT_KEY = "DEFAULT_INTERFACE_FONT";
-        
-        public static final String USE_WIZARD_KEY = "USE_WIZARD";
-        
-        @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
-        @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
-
+                public static final String HIGHLIGHT_KEY = "HIGHLIGHT";
+                public static final String HIGHLIGHT_POSITION_KEY = "HIGHLIGHT_POSITION";
+                public static final String SCROLLING_HIGHLIGHT_POLICY_KEY = "SCROLLING_HIGHLIGHT_POLICY";
+                public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
+                public static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
+                public static final String DEFAULT_INTERFACE_FONT_KEY = "DEFAULT_INTERFACE_FONT";
+                public static final String USE_WIZARD_KEY = "USE_WIZARD";
+                @TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
+                @TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 		public static String media_directory;
 		public static int slow_adjust;
 		public static int rapid_adjust;
 		public static int play_minus;
 		public static String font_face;
 		public static int font_size;
-        public static String highlight_color;
-        public static String highlight_position;
-        public static String multiple_highlight_policy;
+                public static String highlight_color;
+                public static String highlight_position;
+                public static String scrolling_highlight_policy;
+                public static String multiple_highlight_policy;
 		@TIBETAN@public static int tibetan_font_size;
-
 		public static String working_directory;
 		@TIBETAN@public static String tibetan_keyboard;
 		public static String recent_files;
 		public static String recent_videos;
 		public static String configuration_key;
 		public static String media_player;
-		
 		public static int default_language;
 		public static String default_interface_font;
-		
 		public static int use_wizard;
-		
 		ResourceBundle messages = null;
 		Method getMethodvalue, getMethodint,setMethodvalue, setMethodint;
 		public static Object myPrefs = null;
@@ -131,12 +133,13 @@ public class PreferenceManager extends JPanel {
 			play_minus = getInt(PLAY_MINUS_KEY, 1000); // milliseconds
 			font_face = getValue(FONT_FACE_KEY, "Courier");
 			font_size = getInt(FONT_SIZE_KEY, 14);
-            highlight_color = getValue(HIGHLIGHT_KEY, "FFCCFF");
-            highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
-            multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
-            default_language = getInt(DEFAULT_LANGUAGE_KEY, -1);
-            default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
-            use_wizard = getInt(USE_WIZARD_KEY, 1);
+                        highlight_color = getValue(HIGHLIGHT_KEY, "FFCCFF");
+                        highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
+                        scrolling_highlight_policy = getValue(SCROLLING_HIGHLIGHT_POLICY_KEY, "Allowed");
+                        multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
+                        default_language = getInt(DEFAULT_LANGUAGE_KEY, -1);
+                        default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
+                        use_wizard = getInt(USE_WIZARD_KEY, 1);
 			@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		}
 

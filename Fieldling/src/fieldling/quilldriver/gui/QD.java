@@ -46,9 +46,9 @@ import fieldling.quilldriver.xml.*;
 import fieldling.quilldriver.xml.View;
 
 public class QD extends JDesktopPane implements DOMErrorHandler {
-        public static final int VIEW_MODE = 0;
-        public static final int EDIT_MODE = 1;
-        protected int mode = VIEW_MODE;
+        public static final int SCROLLING_HIGHLIGHT_IS_ON = 0;
+        public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
+        protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
         protected static Color hColor = Color.cyan;
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
@@ -70,7 +70,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	public Timer checkTimeTimer = null;
         protected PreferenceManager prefmngr;
         protected Action insertTimesAction = null;
-
+        protected boolean firstQDresize = true;
+        
         static {
             org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
             XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(qdNamespace);
@@ -102,7 +103,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	private void setupGUI() {
  		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		videoFrame = new JInternalFrame(null, true, false, true);//title, resizable, closable, maximizable, iconifiable
+		videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
 		videoFrame.setVisible(true);
 		videoFrame.setLocation(0,0);
 		videoFrame.setSize(0,0);
@@ -120,12 +121,18 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		repaint();
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
-				Dimension d = videoFrame.getSize();
-				if (d.width == 0 && d.height == 0)
-					videoFrame.setSize(getSize().width / 2, 0);
-				textFrame.setLocation(0,0);
-				textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-				videoFrame.setLocation(textFrame.getSize().width, 0);
+                            if (firstQDresize) {
+                                        videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 
+                                                getSize().width - videoFrame.getSize().width),
+                                                prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));
+                                        textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
+                                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
+                                        textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY, 
+                                                getSize().width - videoFrame.getSize().width),
+                                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY, 
+                                                getSize().height));             
+                                        firstQDresize = false;
+                            }
 			}
 		});
 	}
@@ -140,15 +147,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					videoFrame.getContentPane().setLayout(new BorderLayout());
 					videoFrame.getContentPane().add("Center", player);
 					videoFrame.pack();
-					videoFrame.setLocation(getSize().width - videoFrame.getSize().width, 0);
-					invalidate();
-					validate();
-					repaint();
-					textFrame.setLocation(0, 0);
-					textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-					invalidate();
-					validate();
-					repaint();
 				}
 			}}, 0, 50);
 	}
@@ -468,44 +466,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					tcv.setCurrentTime(player.getCurrentTime());
 				}
 			}, 0, 50);
-            JRadioButton viewButton = new JRadioButton(messages.getString("View"), true);
-            JRadioButton editButton = new JRadioButton(messages.getString("Edit"));
-            viewButton.setActionCommand(messages.getString("View"));
-            editButton.setActionCommand(messages.getString("Edit"));
-            ButtonGroup buttons = new ButtonGroup();
-            buttons.add(viewButton);
-            buttons.add(editButton);
-            JPanel buttonPanel = new JPanel(new BorderLayout());
-            JPanel subPanel = new JPanel();
-            subPanel.add(new JLabel(messages.getString("SelectMode")));
-			JPanel vePanel = new JPanel(new GridLayout(0,1));
-			vePanel.add(viewButton);
-	                vePanel.add(editButton);
-			subPanel.add(vePanel);
-	                buttonPanel.add("West", subPanel);
-			buttonPanel.add("East", tcv); //added
-            ActionListener acList = new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String s = e.getActionCommand();
-                    if (s.equals("View")) {
-                        mode = VIEW_MODE;
-                        player.setAutoScrolling(true);
-                    } else {
-                        mode = EDIT_MODE;
-                        player.setAutoScrolling(false);
-                    }
-                }
-            };
-            viewButton.addActionListener(acList);
-            editButton.addActionListener(acList);
+                        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			buttonPanel.add(tcv);
                         JPanel jp = new JPanel(new BorderLayout());
                         jp.add("North", buttonPanel);
 			jp.add("Center", hp);
-                        JTabbedPane tabbedPane = new JTabbedPane();
-                        tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
+                        //JTabbedPane tabbedPane = new JTabbedPane();
+                        //tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
 			JComponent c = (JComponent)textFrame.getContentPane();
 			c.setLayout(new BorderLayout());
-                        c.add("Center", tabbedPane);
+                        //c.add("Center", tabbedPane);
+                        c.add("Center", jp);
 			textFrame.setSize(textFrame.getSize().width, getSize().height);
 			textFrame.invalidate();
 			textFrame.validate();
@@ -539,7 +510,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			{
 				e.printStackTrace(System.err);
 			}
-			if (mode == VIEW_MODE)
+			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
                             player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
 			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 			return true;
@@ -561,7 +532,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			FIXME here's a problem, though: if there is a scrollbar for the JTextPane, then
 			focus transfers to this scrollbar. if not, then it transfers back to itself, in other
 			words the desired effect is not achieved! */
-			if (mode == VIEW_MODE)
+			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
                             editor.getTextPane().transferFocus();
 			player.cmd_playS(nodeid);
 		}
@@ -750,7 +721,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 /* by transferring focus, we don't have to worry about problems caused by
                 the cursor position in the editor being different from the highlight,
                 since users will have to click on the editor to get back into editing */
-                if (mode == VIEW_MODE)
+                if (mode == SCROLLING_HIGHLIGHT_IS_ON)
                     editor.getTextPane().transferFocus();
                 if (player.isPlaying()) player.cmd_stop();
                 else player.cmd_playOn();

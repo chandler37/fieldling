@@ -85,7 +85,30 @@ public class QDShell extends JFrame implements ItemListener
 	}
 	
 	public static void main(String[] args)
-	{
+        {
+            /* i have chosen the Metal look and feel to get around one apparent bug with
+                the Windows look and feel (see below). for us, the problem is that if you
+                maximize the transcript, and then click on the video, then the video suddenly
+                maximizes and you can't see the transcript any more--not what we want!
+                
+                http://forum.java.sun.com/thread.jspa?forumID=57&threadID=586119
+                Problem with "Windows Look N Feel"
+                Author: gulshan21  Posts: 63   Registered: 10/1/03
+		Jan 11, 2005 10:43 PM 	
+                Hi, I have a JFrame in which there are several JInternalFrames. 
+                Am actually using the Windows Look N Feel. The problem is that 
+                when I maximised one of those JInternalFrame all of them got 
+                maximised and when I minimised one of them again, all got 
+                minimised. But when using other Look N Feel apart from 
+                Windows, everything works fine. Can anyone please explain 
+                me what's the cause of the problem and if possible send me 
+                the solution.*/
+                try {
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (Exception e) { }
+                /*try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) { }*/
 		PrintStream ps=null;
 		try 
 		{
@@ -103,12 +126,7 @@ public class QDShell extends JFrame implements ItemListener
 			System.setProperty("javax.xml.transform.TransformerFactory",
                                         "net.sf.saxon.TransformerFactoryImpl");
 			//		"org.apache.xalan.processor.TransformerFactoryImpl");
-			try 
-			{
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-			}
+			
 			try 
 			{
 				ps = new PrintStream(new FileOutputStream(System
@@ -469,8 +487,8 @@ public class QDShell extends JFrame implements ItemListener
 		contentPane = getContentPane();
 		hasLoadedTranscript = false;
 		
-		// setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
 				closeThisQDFrame(true);
@@ -631,8 +649,19 @@ public class QDShell extends JFrame implements ItemListener
 		prefmngr.setInt(prefmngr.WINDOW_Y_KEY, getY());
 		prefmngr.setInt(prefmngr.WINDOW_WIDTH_KEY, getWidth());
 		prefmngr.setInt(prefmngr.WINDOW_HEIGHT_KEY, getHeight());
-		prefmngr.setValue(prefmngr.MEDIA_DIRECTORY_KEY,
-				prefmngr.media_directory);
+                if (qd.getEditor() != null) {
+                    Rectangle tRec = qd.textFrame.getBounds();
+                    prefmngr.setInt(prefmngr.TRANSCRIPT_X_KEY, tRec.x);
+                    prefmngr.setInt(prefmngr.TRANSCRIPT_Y_KEY, tRec.y);
+                    prefmngr.setInt(prefmngr.TRANSCRIPT_HEIGHT_KEY, tRec.height);
+                    prefmngr.setInt(prefmngr.TRANSCRIPT_WIDTH_KEY, tRec.width);
+                    Rectangle vRec = qd.videoFrame.getBounds();
+                    prefmngr.setInt(prefmngr.VIDEO_X_KEY, vRec.x);
+                    prefmngr.setInt(prefmngr.VIDEO_Y_KEY, vRec.y);
+                    prefmngr.setInt(prefmngr.VIDEO_HEIGHT_KEY, vRec.height);
+                    prefmngr.setInt(prefmngr.VIDEO_WIDTH_KEY, vRec.width);
+                }
+		prefmngr.setValue(prefmngr.MEDIA_DIRECTORY_KEY, prefmngr.media_directory);
 	}
 
 	private void closeThisQDFrame(boolean closingWindow) {
@@ -640,7 +669,8 @@ public class QDShell extends JFrame implements ItemListener
 		 but i got an error: can't dispose InputContext while it's active
 		 Note by Andres: This error seems to be fixed on JDK 1.5, so changed back
 		 to dispose and things seem fine. */
-		if (hasLoadedTranscript)
+		putPreferences();
+                 if (hasLoadedTranscript)
 		{
 			if (qd.getEditor() != null) //no content in this QD window
 			{ //there's a QD editor: save and close
@@ -654,7 +684,6 @@ public class QDShell extends JFrame implements ItemListener
 				dispose();			
 				if (numberOfQDsOpen == 0)
 				{
-					putPreferences();
 					System.exit(0);
 				}
 			}
@@ -675,7 +704,6 @@ public class QDShell extends JFrame implements ItemListener
 		}
 		else
 		{
-			putPreferences();
 			System.exit(0);
 		}
 	}
@@ -723,10 +751,10 @@ public class QDShell extends JFrame implements ItemListener
 		quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+                                //NOTE THIS HAS BEEN DISABLED UNTIL USER IS PROMPTED TO SAVE
 				//Should prompt user to save!!
 				//System.exit(tryToQuit());
-				putPreferences();
-				System.exit(0);
+				closeThisQDFrame(true);
 			}
 		});
 		projectMenu.add(wizardItem);
@@ -996,36 +1024,44 @@ public class QDShell extends JFrame implements ItemListener
 		romanPanel.setLayout(new GridLayout(1,2));
 		romanPanel.add(romanFontFamilies);
 		romanPanel.add(romanFontSizes);
-        JPanel highlightPanel;
-        JComboBox highlightPosition, multipleHighlightPolicy;  
-        JTextField highlightField;
-        JLabel hColorLabel, hPositionLabel, hMultipleLabel;
-        JPanel h1Panel, h2Panel, h3Panel;
-        highlightPanel = new JPanel();
-        highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));
-        hColorLabel = new JLabel(messages.getString("ColorInHex"));
-        highlightField = new JTextField(prefmngr.highlight_color);
-        h1Panel = new JPanel();
-        h1Panel.add(hColorLabel);
-        h1Panel.add(highlightField);
-        hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
-        highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
-        highlightPosition.setSelectedItem(prefmngr.highlight_position);
-        highlightPosition.setEditable(true);
-        h2Panel = new JPanel();
-        h2Panel.add(hPositionLabel);
-        h2Panel.add(highlightPosition);
-        hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
-        multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
-        multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
-        multipleHighlightPolicy.setEditable(true);
-        h3Panel = new JPanel();
-        h3Panel.add(hMultipleLabel);
-        h3Panel.add(multipleHighlightPolicy);
-        highlightPanel.setLayout(new GridLayout(0,1));
-        highlightPanel.add(h1Panel);
-        highlightPanel.add(h2Panel);
-        highlightPanel.add(h3Panel);
+                JPanel highlightPanel;
+                JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
+                JTextField highlightField;
+                JLabel hColorLabel, hPositionLabel, hMultipleLabel, hScrollingLabel;
+                JPanel h1Panel, h2Panel, h3Panel, h4Panel;
+                highlightPanel = new JPanel();
+                highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));
+                hColorLabel = new JLabel(messages.getString("ColorInHex"));
+                highlightField = new JTextField(prefmngr.highlight_color);
+                h1Panel = new JPanel();
+                h1Panel.add(hColorLabel);
+                h1Panel.add(highlightField);
+                hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
+                highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
+                highlightPosition.setSelectedItem(prefmngr.highlight_position);
+                highlightPosition.setEditable(true);
+                h2Panel = new JPanel();
+                h2Panel.add(hPositionLabel);
+                h2Panel.add(highlightPosition);
+                hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
+                multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+                multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
+                multipleHighlightPolicy.setEditable(true);
+                hScrollingLabel = new JLabel(messages.getString("ScrollingHighlightPolicy"));
+                scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+                scrollingHighlightPolicy.setSelectedItem(prefmngr.scrolling_highlight_policy);
+                scrollingHighlightPolicy.setEditable(true);
+                h3Panel = new JPanel();
+                h3Panel.add(hMultipleLabel);
+                h3Panel.add(multipleHighlightPolicy);
+                h4Panel = new JPanel();
+                h4Panel.add(hScrollingLabel);
+                h4Panel.add(scrollingHighlightPolicy);
+                highlightPanel.setLayout(new GridLayout(0,1));
+                highlightPanel.add(h1Panel);
+                highlightPanel.add(h2Panel);
+                highlightPanel.add(h3Panel);
+                highlightPanel.add(h4Panel);
 		JPanel preferencesPanel = new JPanel();
 		preferencesPanel.setLayout(new GridLayout(0,1));
 		preferencesPanel.add(interfacePanel);
@@ -1076,6 +1112,18 @@ public class QDShell extends JFrame implements ItemListener
             qd.player.setMultipleAnnotationPolicy(true);
         else
             qd.player.setMultipleAnnotationPolicy(false);
+        String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
+        if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
+            if (qd != null) {
+                qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
+                qd.player.setAutoScrolling(true);
+            }
+        } else {
+            if (qd != null) {
+                qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
+                qd.player.setAutoScrolling(false);
+            }
+        }
         String hexColor = highlightField.getText();
         try {
             Color c = Color.decode("0x"+hexColor);
@@ -1111,15 +1159,3 @@ public class QDShell extends JFrame implements ItemListener
 		}
 	}
 }
-/*JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
- closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));
- closeItem.addActionListener(new ActionListener() {
- public void actionPerformed(ActionEvent e) {
- if (numberOfQDsOpen > 1) closeThisQDFrame();
- else {
- if (qd.getEditor().isEditable()) qd.saveTranscript();
- qd.removeContent();
- }
- }
- });
- */
