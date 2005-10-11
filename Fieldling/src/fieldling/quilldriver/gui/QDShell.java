@@ -811,24 +811,26 @@ public class QDShell extends JFrame implements ItemListener
                  //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
                 JMenu windowMenu=new JMenu(messages.getString("Window"));
                
-                JRadioButtonMenuItem horizontalItem= new JRadioButtonMenuItem(messages.getString("InitialVerticalWindows"),true);
-                horizontalItem.setAccelerator(KeyStroke.getKeyStroke("control A"));
-                horizontalItem.addActionListener(new ActionListener() {
+                //JRadioButtonMenuItem horizontalItem= new JRadioButtonMenuItem(messages.getString("InitialVerticalWindows"),true);
+                JRadioButtonMenuItem verticalItem= new JRadioButtonMenuItem(messages.getString("VerticalWindows"),true);
+                verticalItem.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
+                verticalItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				getQD().setInitialVerticalWindows();
+                                getQD().setVerticalWindows();
+				//getQD().setInitialVerticalWindows();
 			}
 		});
-                
+                /*
                 JRadioButtonMenuItem verticalItem= new JRadioButtonMenuItem(messages.getString("VerticalWindows"));
-                verticalItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
+                verticalItem.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
                 verticalItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {                            
                         getQD().setVerticalWindows();
 			}
-		});
+		});*/
                 
                 JRadioButtonMenuItem subtitleItem= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
-                subtitleItem.setAccelerator(KeyStroke.getKeyStroke("control U"));
+                subtitleItem.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
                 subtitleItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 			  getQD().setSubtitleWindows();
@@ -837,7 +839,7 @@ public class QDShell extends JFrame implements ItemListener
                 
                 
                 JRadioButtonMenuItem fullScreenVideoItem= new JRadioButtonMenuItem(messages.getString("FullScreenVideo"));
-                fullScreenVideoItem.setAccelerator(KeyStroke.getKeyStroke("control F"));
+                fullScreenVideoItem.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
                 fullScreenVideoItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 			  getQD().setFullScreenVideo();
@@ -845,7 +847,7 @@ public class QDShell extends JFrame implements ItemListener
 		});
                 
                 JRadioButtonMenuItem defaultItem= new JRadioButtonMenuItem(messages.getString("DefaultWindows"));
-                defaultItem.setAccelerator(KeyStroke.getKeyStroke("control D"));
+                defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
                 defaultItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 			  getQD().setDefaultWindows();	
@@ -853,18 +855,17 @@ public class QDShell extends JFrame implements ItemListener
 		});
                 
                 ButtonGroup group = new ButtonGroup( );
-                group.add(horizontalItem);
+                //group.add(horizontalItem);
                 group.add(verticalItem);
                 group.add(subtitleItem);
                 group.add(fullScreenVideoItem);
                 group.add(defaultItem);
                 
-                windowMenu.add(horizontalItem);
+                //windowMenu.add(horizontalItem);
                 windowMenu.add(verticalItem);
                 windowMenu.add(subtitleItem);
                 windowMenu.add(fullScreenVideoItem);
                 windowMenu.add(defaultItem);
-                windowMenu.addSeparator();
                 //------------------------------------------
                 
 		//putting the menus into a menu bar
