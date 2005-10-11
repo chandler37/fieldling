@@ -748,7 +748,7 @@ public class QDShell extends JFrame implements ItemListener
 			}
 		});*/
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
-		quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
+		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                                 //NOTE THIS HAS BEEN DISABLED UNTIL USER IS PROMPTED TO SAVE

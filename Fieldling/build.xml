@@ -292,7 +292,7 @@ a version optimized for use with Tibetan script.
 		</copy>
         <!-- create time-stamped 'About' files -->
         <tstamp>
-            <format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en"/>
+            <format property="TODAY_US" pattern="d-MMMM-yyyy" locale="en"/>
         </tstamp>
 <echo file="${unicode.classes}/about.txt" 
 append="false">QuillDriver
@@ -300,7 +300,7 @@ append="false">QuillDriver
 (c) 2004, Roger Andersen, Edward Garrett and 
 David Germano
 
-Version ${TODAY_UK}
+Version ${TODAY_US}
 
 Send feedback, including bug reports (with the 
 version date), to
@@ -330,7 +330,7 @@ append="false">QuillDriver-TIB (optimized for Tibetan script)
 
 (c) 2004, Roger Andersen, Edward Garrett and David Germano
 
-Version ${TODAY_UK} (TIB)
+Version ${TODAY_US} (TIB)
 
 Send feedback, including bug reports (with the
 version date), to
@@ -344,7 +344,8 @@ the Free Software Foundation; either version 2 of the License, or
 any later version.
     
 The code has been written by Edward Garrett, Michel Jacobson,
-Shreyaswini Ramaswamy, Andres Montano, and Rinchen Norbu. Visit &lt;http://altiplano.emich.edu/quilldriver/index.html&gt;
+Andres Montano, Rinchen Norbu, and Yutso. 
+Visit &lt;http://altiplano.emich.edu/quilldriver/index.html&gt;
 to access source code, sample content, instructions and other resources.
 If you would like to contribute, please consider becoming a
 developer.</echo>

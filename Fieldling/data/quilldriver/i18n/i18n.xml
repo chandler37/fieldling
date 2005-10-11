@@ -859,13 +859,25 @@
     <text lang="en">Transcript:</text>
     <text lang="zh">文本：</text>
   </message>
-  <message id="TranscriptionAndNotes">
-    <text lang="en">Transcription and Notes</text>
-    <text lang="zh">转录文本和注释</text>
-  </message>
   <message id="TranscriptionOnly">
     <text lang="en">Transcription Only</text>
     <text lang="zh">只有转录文本</text>
+  </message>
+  <message id="TranscriptionPlusEnglish">
+        <text lang="en">Transcription + English</text>
+        <text lang="zh">Transcription + English</text>
+  </message>
+  <message id="TranscriptionPlusChinese">
+        <text lang="en">Transcription + Chinese</text>
+        <text lang="zh">Transcription + Chinese</text>
+  </message>
+  <message id="TranscriptionPlusEnglishPlusChinese">
+        <text lang="en">Transcription + English + Chinese</text>
+        <text lang="zh">Transcription + English + Chinese</text>
+  </message>
+  <message id="EnglishPlusChinese">
+        <text lang="en">English + Chinese</text>
+        <text lang="zh">English + Chinese</text>
   </message>
   <message id="Translation_ENOnly">
     <text lang="en">English Translation Only</text>
