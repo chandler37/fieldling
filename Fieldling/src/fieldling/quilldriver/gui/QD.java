@@ -392,13 +392,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                             ioe.printStackTrace();
                             return false;
                         }
-			//TIBETAN-SPECIFIC final JTextPane t = new org.thdl.tib.input.DuffPane();
-			//TIBETAN-SPECIFIC org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-			//TIBETAN-SPECIFIC dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-			//TIBETAN-SPECIFIC dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
+			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
+			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
 
-			final JTextPane t = new JTextPane();
-			t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+			@UNICODE@final JTextPane t = new JTextPane();
+			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
 
 			editor = new Editor(xmlDoc, t, currentTagInfo);
 

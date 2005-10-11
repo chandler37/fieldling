@@ -48,7 +48,7 @@ public class TagInfo {
 	}
 	@TIBETAN@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, Boolean areTagContentsTibetan, String displayIcon, Boolean isEditable, Boolean isTagItselfTibetan) {
 	@UNICODE@public void addTag(String tag, Boolean display, Boolean displayContents, String displayAs, String displayIcon, Boolean isEditable) {
-		displayYesNo.put(tag, display);
+                displayYesNo.put(tag, display);
 		displayContentsYesNo.put(tag, displayContents);
 		this.displayAs.put(tag, displayAs);
 		editableYesNo.put(tag, isEditable);

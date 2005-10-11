@@ -292,7 +292,7 @@ a version optimized for use with Tibetan script.
 		</copy>
         <!-- create time-stamped 'About' files -->
         <tstamp>
-            <format property="TODAY_US" pattern="d-MMMM-yyyy" locale="en"/>
+            <format property="TODAY_US" pattern="MMMM-d-yyyy" locale="en"/>
         </tstamp>
 <echo file="${unicode.classes}/about.txt" 
 append="false">QuillDriver

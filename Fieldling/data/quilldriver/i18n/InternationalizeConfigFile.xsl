@@ -20,6 +20,8 @@
 <!ATTLIST xmlschema val CDATA #REQUIRED>
 <!ELEMENT newtemplate EMPTY>
 <!ATTLIST newtemplate val CDATA #REQUIRED>
+<!ELEMENT xsltransform EMPTY>
+<!ATTLIST xsltransform val CDATA #REQUIRED>
 <!ELEMENT parameter EMPTY>
 <!ATTLIST parameter name CDATA #REQUIRED
                     val CDATA #REQUIRED

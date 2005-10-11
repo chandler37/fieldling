@@ -158,156 +158,97 @@
 	<rendering-instructions>
 		<tag name="TEXT">
 			<attribute name="xml:lang" visible="false"/>
-			<desc>Display TEXT tag but not its attributes.</desc>
 		</tag>
 		<tag name="TITLE">
 			<attribute name="xml:lang" visible="false"/>
-			<desc>Display TITLE tag but not its attributes.</desc>
 		</tag>
 		<tag name="SPEAKER" tibetancontents="true"/>
-		<tag name="NOTE" displayas="@type">
-			<attribute name="type" visible="false"/>
-			<desc>This tells QuillDriver to render the NOTE tag as the value of its
-				'type' attribute.</desc>
-		</tag>
-		<tag name="AUDIO" visible="false" visiblecontents="false">
-			<desc>This tells QuillDriver to not render the AUDIO tag at all. We do not render this tag since
-				time codes are already marked under the video in the time coding area.</desc>
-		</tag>
+		<tag name="AUDIO" visible="false" visiblecontents="false"/>
+                <tag name="NOTE" visible="false" visiblecontents="false"/>
 		<tagview name="TranscriptionOnly" keystroke="F1">
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="who" visible="false"/>
 				<attribute name="id" visible="false"/>
-				<desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                    but to visually suppress its 'id' attribute.</desc>
 			</tag>
 			<tag name="FORM" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true" tibetancontents="true">
 				<attribute name="type" visible="false"/>
-				<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
-					but to visually suppress its 'type' attribute.</desc>
 			</tag>
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
                         <tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
                                 <attribute name="id" visible="false"/>
                                 <attribute name="who" visible="false"/>
-                                <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                        but to visually suppress its 'id' attribute.</desc>
                         </tag>
                         <tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-			<!--<tag name="FORM" displayas="'bod yig'" tibetan="true" tibetancontents="true">-->
 				<attribute name="type" visible="false"/>
-				<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
-					but to visually suppress its 'type' attribute.</desc>
 			</tag>
                         <tag name="TRANSL" visible="false" visiblecontents="true">
-			<!--<tag name="TRANSL" displayas="'ENG'">-->
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
                         <tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="TranscriptionPlusChinese" keystroke="F3">
                         <tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
                                 <attribute name="id" visible="false"/>
                                 <attribute name="who" visible="false"/>
-                                <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                        but to visually suppress its 'id' attribute.</desc>
                         </tag>
                         <tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-			<!--<tag name="FORM" displayas="'bod yig'" tibetan="true" tibetancontents="true">-->
 				<attribute name="type" visible="false"/>
-				<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
-					but to visually suppress its 'type' attribute.</desc>
 			</tag>
                         <tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ZH', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
                         <tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
                                 <attribute name="id" visible="false"/>
                                 <attribute name="who" visible="false"/>
-                                <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                        but to visually suppress its 'id' attribute.</desc>
                         </tag>
                         <tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-			<!--<tag name="FORM" displayas="'bod yig'" tibetan="true" tibetancontents="true">-->
 				<attribute name="type" visible="false"/>
-				<desc>This tells QuillDriver to display the FORM tag as 'TIB', and to display its contents,
-					but to visually suppress its 'type' attribute.</desc>
 			</tag>
                         <tag name="TRANSL" visible="false" visiblecontents="true">
-			<!--<tag name="TRANSL" displayas="'ENG'">-->
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ZH', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="EnglishPlusChinese" keystroke="F5">
                         <tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
                                 <attribute name="id" visible="false"/>
                                 <attribute name="who" visible="false"/>
-                                <desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                        but to visually suppress its 'id' attribute.</desc>
                         </tag>
                         <tag name="FORM" visible="false" visiblecontents="false"/>
                         <tag name="TRANSL" visible="false" visiblecontents="true">
-			<!--<tag name="TRANSL" displayas="'ENG'">-->
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ZH', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="Translation_ENOnly" keystroke="F6">
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
-				<desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                    but to visually suppress its 'id' attribute.</desc>
 			</tag>
-			<tag name="TRANSL" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))">
+			<tag name="TRANSL" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ENG', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
                         <tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
 		</tagview>
 		<tagview name="Translation_ZHOnly" keystroke="F7">
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
-				<desc>This tells QuillDriver to display the S tag as 'S', and to display its contents,
-                                    but to visually suppress its 'id' attribute.</desc>
 			</tag>
                         <tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))">
+			<tag name="TRANSL_ZH" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
-				<desc>This tells QuillDriver to display the TRANSL tag as 'ZH', and to display its contents,
-					but to visually suppress its 'xml:lang' attribute.</desc>
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
 			<tag name="NOTE" visible="false" visiblecontents="false"/>
