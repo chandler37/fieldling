@@ -51,23 +51,18 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
         protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
         
-        public static final int HORIZONTAL_WINDOWS=0;
-        public static final int VERTICAL_WINDOWS=1;
-        public static final int SUBTITLE_BELOW=2;
-        public static final int FULL_SCREEN_VIDEO=3;
+        //public static final int HORIZONTAL_WINDOWS=0;
+        public static final int VERTICAL_WINDOWS=0;
+        public static final int SUBTITLE_BELOW=1;
+        public static final int FULL_SCREEN_VIDEO=2;
+        
         protected int windowsMode=0;
         protected int defaultWindowsMode=0;
         protected int initVideoFrameWidth=0;
         protected int initVideoFrameHeight=0;
-        protected int defaultVideoFrameWidth=0;
-        protected int defaultVideoFrameHeight=0;
-        protected int defaultTextFrameWidth=0;
-        protected int defaultTextFrameHeight=0;
-        protected Point defaultVideoFrameLocation=null;        
-        protected Point defaultTextFrameLocation=null;
-       
+              
         protected static Color hColor = Color.cyan;
-	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
+	//TIBETAN-SPECIFIC protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected Editor editor = null;
 	protected JInternalFrame videoFrame = null;
@@ -150,12 +145,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                                 getSize().height));
                                          //----------------------
                                         initVideoFrameWidth=videoFrame.getSize().width;
-                                        defaultVideoFrameWidth=initVideoFrameWidth;
-                                        initVideoFrameHeight=videoFrame.getSize().height;
-                                        defaultVideoFrameHeight=initVideoFrameHeight;
                                         
-                                        defaultTextFrameWidth=textFrame.getSize().width;                                       
-                                        defaultTextFrameHeight=textFrame.getSize().height;
+                                        initVideoFrameHeight=videoFrame.getSize().height;                                      
                                         //----------------------------
                                         firstQDresize = false;
                             }
@@ -165,88 +156,62 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         
          //------setting textframe and videoframe windows mode--------------
          //public void setInitialVerticalWindows(){
-         public void setVerticalWindows(){
-                        defaultVideoFrameLocation=videoFrame.getLocation();
-                        videoFrame.setLocation(getSize().width- initVideoFrameWidth, 0);
-		        defaultVideoFrameWidth=videoFrame.getSize().width;
-		        defaultVideoFrameHeight=videoFrame.getSize().height;
-                        videoFrame.setSize(initVideoFrameWidth, initVideoFrameHeight);
-
-                        defaultTextFrameLocation=textFrame.getLocation();
-                        textFrame.setLocation(0,0);
-                        defaultTextFrameWidth=textFrame.getSize().width;
-                        defaultTextFrameHeight=textFrame.getSize().height;
-                        textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-			
-                        defaultWindowsMode=windowsMode;
-                        windowsMode=VERTICAL_WINDOWS; //isn't that right? (Ed)
-                        //windowsMode=HORIZONTAL_WINDOWS;
-                        
-        }       
-        /* Commented out--see my CVS post (Ed)
-         public void setVerticalWindows(){
-                                defaultTextFrameLocation=textFrame.getLocation();
-                                defaultVideoFrameLocation=videoFrame.getLocation();
-                                
-                                textFrame.setLocation(0, 0);
-                                defaultTextFrameWidth=textFrame.getSize().width;
-                                defaultTextFrameHeight=textFrame.getSize().height;
-                                textFrame.setSize(getSize().width/2, getSize().height);
-                                
-                                videoFrame.setLocation(getSize().width-textFrame.getSize().width, 0); 
-                                defaultVideoFrameWidth=videoFrame.getSize().width;
-                                defaultVideoFrameHeight=videoFrame.getSize().height;
-                                videoFrame.setSize(getSize().width/2, getSize().height*3/4); //???
-                                
-                                defaultWindowsMode=windowsMode;
+          public void setVerticalWindows(){                         
+                                videoFrame.setLocation(getSize().width- initVideoFrameWidth, 0);//????		       
+                                videoFrame.setSize(initVideoFrameWidth, initVideoFrameHeight);                    
+                                textFrame.setLocation(0,0);                       
+                                textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
+                                                            
                                 windowsMode=VERTICAL_WINDOWS;
                 }
-           */     
-        public void setSubtitleWindows(){
-                                defaultTextFrameLocation=textFrame.getLocation();
-                                defaultVideoFrameLocation=videoFrame.getLocation();
-                                
-                                videoFrame.setLocation(0,0); 
-                                defaultVideoFrameWidth=videoFrame.getSize().width;
-                                defaultVideoFrameHeight=videoFrame.getSize().height;
-                                videoFrame.setSize(getSize().width, initVideoFrameHeight);
+                        
+            
+          
+         public void setSubtitleWindows(){  
+                                videoFrame.setLocation(0,0);   
+                                //videoFrame.setSize(getSize().width/2, getSize().height*7/10); //????
+                               videoFrame.setSize(getSize().width, initVideoFrameHeight);
                                
                                 textFrame.setLocation(0,videoFrame.getSize().height);
-                                defaultTextFrameWidth=textFrame.getSize().width;
-                                defaultTextFrameHeight=textFrame.getSize().height;
                                 textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
-                                
-                                defaultWindowsMode=windowsMode;
                                 windowsMode=SUBTITLE_BELOW;                               
         }
         
-        public void setFullScreenVideo(){
-                                defaultTextFrameLocation=textFrame.getLocation();
-                                defaultVideoFrameLocation=videoFrame.getLocation();
-                                
-                                videoFrame.setLocation(0,0); 
-                                defaultVideoFrameWidth=videoFrame.getSize().width;
-                                defaultVideoFrameHeight=videoFrame.getSize().height;
+         public void setFullScreenVideo(){                        
+                                videoFrame.setLocation(0,0);                        
                                 videoFrame.setSize(getSize().width, getSize().height);
                                
                                 textFrame.setLocation(0,0);
                                 textFrame.setSize(0,0);
-                                defaultTextFrameWidth=textFrame.getSize().width;
-                                defaultTextFrameHeight=textFrame.getSize().height;
-                                
-                                defaultWindowsMode=windowsMode;
-                                 windowsMode=FULL_SCREEN_VIDEO;         
+                            
+                                windowsMode=FULL_SCREEN_VIDEO;                                
         }
         
         public void setDefaultWindows(){
+                // default windows is initial windows mode????
+                     defaultWindowsMode=0;
+                     windowsMode=defaultWindowsMode;
+                     setVerticalWindows(); 
+                     /**
                          switch(defaultWindowsMode){  
                              case -1:
-                             case 0: setVerticalWindows(); break;
-                             //case 1: setVerticalWindows(); break;
+                             case 0: setInitialVerticalWindows(); break;
+                             case 1: setVerticalWindows(); break;
                              case 2: setSubtitleWindows(); break;
                              case 3: setFullScreenVideo(); break;
+                         }  **/                                            
+        } 
+        
+        
+            // used for save the current window mode for other files
+            public void setWindows(){                
+                         switch(windowsMode){  
+                             //case 0: setVerticalWindows(); break;
+                             case 0: setVerticalWindows(); break;
+                             case 1: setSubtitleWindows(); break;
+                             case 2: setFullScreenVideo(); break;
                          }                                              
-        }               
+        } 
         //---------------------------
         
 	private void startTimer() {
@@ -427,13 +392,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                             ioe.printStackTrace();
                             return false;
                         }
-			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
-			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+			//TIBETAN-SPECIFIC final JTextPane t = new org.thdl.tib.input.DuffPane();
+			//TIBETAN-SPECIFIC org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
+			//TIBETAN-SPECIFIC dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+			//TIBETAN-SPECIFIC dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
 
-			@UNICODE@final JTextPane t = new JTextPane();
-			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+			final JTextPane t = new JTextPane();
+			t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
 
 			editor = new Editor(xmlDoc, t, currentTagInfo);
 
@@ -625,7 +590,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
                             player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
-			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
+			//TIBETAN-SPECIFIC if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 			return true;
 		} catch (PanelPlayerException smpe) {
 			smpe.printStackTrace();
@@ -905,15 +870,15 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         }
 	}
 
-	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
-		@TIBETAN@return activeKeyboard;
-	@TIBETAN@}
-	@TIBETAN@public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
-		@TIBETAN@activeKeyboard = kbd;
-		@TIBETAN@if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
-		@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
-		@TIBETAN@kbd.activate(dp);
-	@TIBETAN@}
+	//TIBETAN-SPECIFIC public org.thdl.tib.input.JskadKeyboard getKeyboard() {
+		//TIBETAN-SPECIFIC return activeKeyboard;
+	//TIBETAN-SPECIFIC }
+	//TIBETAN-SPECIFIC public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
+		//TIBETAN-SPECIFIC activeKeyboard = kbd;
+		//TIBETAN-SPECIFIC if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
+		//TIBETAN-SPECIFIC org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
+		//TIBETAN-SPECIFIC kbd.activate(dp);
+	//TIBETAN-SPECIFIC }
 }
 
 /*
