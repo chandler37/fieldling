@@ -811,61 +811,98 @@ public class QDShell extends JFrame implements ItemListener
                  //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
                 JMenu windowMenu=new JMenu(messages.getString("Window"));
                
-                //JRadioButtonMenuItem horizontalItem= new JRadioButtonMenuItem(messages.getString("InitialVerticalWindows"),true);
-                JRadioButtonMenuItem verticalItem= new JRadioButtonMenuItem(messages.getString("VerticalWindows"),true);
-                verticalItem.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
-                verticalItem.addActionListener(new ActionListener() {
+                JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"),true);
+                item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
+                item1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-                                getQD().setVerticalWindows();
-				//getQD().setInitialVerticalWindows();
+                                getQD().setHorizontalWindowsMediaToRight();		
 			}
 		});
-                /*
-                JRadioButtonMenuItem verticalItem= new JRadioButtonMenuItem(messages.getString("VerticalWindows"));
-                verticalItem.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
-                verticalItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {                            
-                        getQD().setVerticalWindows();
-			}
-		});*/
                 
-                JRadioButtonMenuItem subtitleItem= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
-                subtitleItem.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
-                subtitleItem.addActionListener(new ActionListener() {
+                JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaLeft"));
+                item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
+                item2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+                                getQD().setHorizontalWindowsMediaToLeft();		
+			}
+		});
+                
+                JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("VerticalWindowsMediaTop"));
+                item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
+                item3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+                                getQD().setVerticalWindowsMediaTop();
+			}
+		});               
+                
+                JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
+                item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
+                item4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 			  getQD().setSubtitleWindows();
 			}
 		});
                 
                 
-                JRadioButtonMenuItem fullScreenVideoItem= new JRadioButtonMenuItem(messages.getString("FullScreenVideo"));
-                fullScreenVideoItem.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
-                fullScreenVideoItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-			  getQD().setFullScreenVideo();
+                JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("VideoOnlyFullScreen"));
+                item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
+                item5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {                            
+                        getQD().setVideoOnlyFullScreen();
 			}
 		});
                 
+                JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("VideoOnlyNormalSize"));
+                item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
+                item6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+			  getQD().setVideoOnlyNormalSize();
+			}
+		});
+               
+                JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
+                item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
+                item7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+			  getQD().setTranscriptOnly();
+			}
+		});
+                
+                /**
                 JRadioButtonMenuItem defaultItem= new JRadioButtonMenuItem(messages.getString("DefaultWindows"));
                 defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
                 defaultItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 			  getQD().setDefaultWindows();	
                             }
+		});**/
+                
+                ButtonGroup group = new ButtonGroup( );              
+                group.add(item1);
+                group.add(item2);
+                group.add(item3);
+                group.add(item4);
+                group.add(item5);
+                group.add(item6);
+                group.add(item7);
+                                
+                windowMenu.add(item1);
+                windowMenu.add(item2);
+                windowMenu.add(item3);
+                windowMenu.add(item4);
+                windowMenu.add(item5);
+                windowMenu.add(item6);
+                windowMenu.add(item7);
+                windowMenu.addSeparator();
+                
+                JMenuItem defaultSizesItem = new JMenuItem(messages.getString("DefaultSizes"));
+		defaultSizesItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			 getQD().setDefaultSizes();
+			}
 		});
+                windowMenu.add(defaultSizesItem);
                 
-                ButtonGroup group = new ButtonGroup( );
-                //group.add(horizontalItem);
-                group.add(verticalItem);
-                group.add(subtitleItem);
-                group.add(fullScreenVideoItem);
-                group.add(defaultItem);
-                
-                //windowMenu.add(horizontalItem);
-                windowMenu.add(verticalItem);
-                windowMenu.add(subtitleItem);
-                windowMenu.add(fullScreenVideoItem);
-                windowMenu.add(defaultItem);
                 //------------------------------------------
                 
 		//putting the menus into a menu bar

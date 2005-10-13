@@ -956,25 +956,37 @@
     <text lang="en">Window</text>
     <text lang="zh">窗口</text>
   </message>
-    <message id="InitialVerticalWindows">
-    <text lang="en">Initial Verticial Windows</text>
-    <text lang="zh">Initial Verticial Windows</text>
+    <message id="HorizontalWindowsMediaRight">
+    <text lang="en">Horizontal Windows Media Right</text>
+    <text lang="zh">Horizontal Windows Media Right</text>
   </message>
-   <message id="VerticalWindows">
-    <text lang="en">Vertical Windows</text>
-    <text lang="zh">Vertical Windows</text>
+  <message id="HorizontalWindowsMediaLeft">
+    <text lang="en">Horizontal Windows Media Left</text>
+    <text lang="zh">Horizontal Windows Media Left</text>
+  </message>
+  <message id="VerticalWindowsMediaTop">
+    <text lang="en">Vertical Windows Media Top</text>
+    <text lang="zh">Vertical Windows Media Top</text>
+  </message>
+  <message id="VideoOnlyFullScreen">
+    <text lang="en">Video Only Full Screen</text>
+    <text lang="zh">Video Only Full Screen</text>
+  </message>
+   <message id="VideoOnlyNormalSize">
+    <text lang="en">Video Only Normal Size</text>
+    <text lang="zh">Video Only Normal Size</text>
   </message>
    <message id="SubtitleBelow">
     <text lang="en">Subtitle Below</text>
     <text lang="zh">Subtitle Below</text>
   </message>
-   <message id="FullScreenVideo">
-    <text lang="en">Full Screen Video</text>
-    <text lang="zh">Full Screen Video</text>
+   <message id="TranscriptOnly">
+    <text lang="en">Transcript Only</text>
+    <text lang="zh">Transcript Only</text>
   </message>
-   <message id="DefaultWindows">
-    <text lang="en">Default Windows</text>
-    <text lang="zh">Default Windows</text>
+   <message id="DefaultSizes">
+    <text lang="en">Default Sizes</text>
+    <text lang="zh">Default Sizes</text>
   </message>
   
   <message id="AutomaticallyOpenDialogBox">

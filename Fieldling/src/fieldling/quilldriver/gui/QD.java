@@ -51,16 +51,21 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
         protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
         
-        //public static final int HORIZONTAL_WINDOWS=0;
-        public static final int VERTICAL_WINDOWS=0;
-        public static final int SUBTITLE_BELOW=1;
-        public static final int FULL_SCREEN_VIDEO=2;
-        
+        public static final int HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT=0;
+        public static final int HORIZONTAL_WINDOWS_MEDIA_TO_LEFT=1;
+        public static final int VERTICAL_WINDOWS_MEDIA_TOP=2;
+        public static final int SUBTITLE_BELOW=3;
+        public static final int VIDEO_ONLY_FULL_SCREEN=4;
+        public static final int VIDEO_ONLY_NORMAL_SIZE=5;
+        public static final int TRANSCRIPT_ONLY=6;
+      
         protected int windowsMode=0;
-        protected int defaultWindowsMode=0;
-        protected int initVideoFrameWidth=0;
-        protected int initVideoFrameHeight=0;
-              
+       // protected  Dimension initVideoFrameSize=null;
+       // protected  Dimension initTextFrameSize=null;
+        protected  Dimension defaultVideoFrameSize=null;    
+        protected  Dimension defaultTextFrameSize=null;      
+        //protected  Dimension videoFrameNormalSize=null;
+        
         protected static Color hColor = Color.cyan;
 	//TIBETAN-SPECIFIC protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
@@ -143,75 +148,230 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                                 getSize().width - videoFrame.getSize().width),
                                                 prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY, 
                                                 getSize().height));
-                                         //----------------------
-                                        initVideoFrameWidth=videoFrame.getSize().width;
-                                        
-                                        initVideoFrameHeight=videoFrame.getSize().height;                                      
-                                        //----------------------------
+                                      
                                         firstQDresize = false;
                             }
 			}
 		});
 	}
         
-         //------setting textframe and videoframe windows mode--------------
-         //public void setInitialVerticalWindows(){
-          public void setVerticalWindows(){                         
-                                videoFrame.setLocation(getSize().width- initVideoFrameWidth, 0);//????		       
-                                videoFrame.setSize(initVideoFrameWidth, initVideoFrameHeight);                    
-                                textFrame.setLocation(0,0);                       
-                                textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-                                                            
-                                windowsMode=VERTICAL_WINDOWS;
+         //------setting textframe and videoframe windows mode--------------        
+          public void setHorizontalWindowsMediaToRight(){ // it could remember the size and location
+                             /**
+                               try{
+                                if(videoFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }                                
+                                 try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
+                              
+                                textFrame.setSize(getSize().width*3/4,getSize().height);
+                                textFrame.setLocation(0,0);
+                                videoFrame.setSize(getSize().width - textFrame.getSize().width, getSize().height/3);
+                                videoFrame.setLocation(textFrame.getSize().width,0);//????
+                                videoFrame.pack();
+                                                        
+                                windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT;
+                                
+                               defaultVideoFrameSize=videoFrame.getSize();    
+                               defaultTextFrameSize=textFrame.getSize();
+                               
                 }
                         
-            
+         public void setHorizontalWindowsMediaToLeft(){ //it COULD NOT  remember the location of textFrame,but videoFrame is ok                                                       		       
+                                //videoFrame.setSize(initVideoFrameSize.width, initVideoFrameSize.height);                        
+                               /**  try{
+                                if(textFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }
+                                try
+                                if(textFrame.isIconifiable()) textFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
+                             
+                                videoFrame.setSize(getSize().width/4,getSize().height/3);
+                                videoFrame.setLocation(0,0);
+                             
+                                textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
+                                textFrame.setLocation(videoFrame.getSize().width,0);  
+                                videoFrame.pack();
+                                
+                                windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_LEFT;
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();                               
+                }   
           
-         public void setSubtitleWindows(){  
-                                videoFrame.setLocation(0,0);   
-                                //videoFrame.setSize(getSize().width/2, getSize().height*7/10); //????
-                               videoFrame.setSize(getSize().width, initVideoFrameHeight);
+        public void setVerticalWindowsMediaTop(){   // it could remember the size and location                              
+                               /**  try{
+                                if(textFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }                               
+                                try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
                                
+                                videoFrame.setLocation(getSize().width/3,0);
+                                videoFrame.setSize(getSize().width/2,getSize().height/2);                               
+                                videoFrame.pack();
                                 textFrame.setLocation(0,videoFrame.getSize().height);
                                 textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
-                                windowsMode=SUBTITLE_BELOW;                               
+                                
+                                windowsMode=VERTICAL_WINDOWS_MEDIA_TOP;  
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();
         }
         
-         public void setFullScreenVideo(){                        
+         public void setSubtitleWindows(){  // it could remember the size and location,but some problem when set this mode, it works same as VerticalWindowsMediaTop                      
+                             /**
+                                 try{
+                                if(textFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }
+                                                               
+                                try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
+   
+                                videoFrame.setLocation(getSize().width/3,0);
+                                videoFrame.setSize(getSize().width*2/3,getSize().height*7/10);
+                                //videoFrame.setSize(0,0);
+                                videoFrame.pack();
+                                textFrame.setLocation(0,videoFrame.getSize().height);
+                                textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
+  
+                                windowsMode=SUBTITLE_BELOW;  
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();
+        }
+         
+        public void setVideoOnlyFullScreen(){    //it COULD NOT  remember the location of textFrame and videoFrame                     
+                                /**
+                                try{
+                                if(videoFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }
+             
+                                try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(true); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                } **/  
+            
+                                
                                 videoFrame.setLocation(0,0);                        
                                 videoFrame.setSize(getSize().width, getSize().height);
-                               
-                                textFrame.setLocation(0,0);
+                                //videoFrame.pack();
                                 textFrame.setSize(0,0);
-                            
-                                windowsMode=FULL_SCREEN_VIDEO;                                
+                                textFrame.setLocation(0,0);                      
+                                                    
+                                windowsMode=VIDEO_ONLY_FULL_SCREEN; 
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();
         }
         
-        public void setDefaultWindows(){
-                // default windows is initial windows mode????
-                     defaultWindowsMode=0;
-                     windowsMode=defaultWindowsMode;
-                     setVerticalWindows(); 
+         public void setVideoOnlyNormalSize(){ //it COULD NOT  remember the size of textFrame(is visible after reopen),but videoFrame is ok
+                            /**
+                                try{
+                                if(videoFrame.isIconifiable()) videoFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }
+                               
+                                try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(true); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }                               
+                               **/
+             
+                                textFrame.setSize(0,0);
+                                textFrame.setLocation(0,0);
+                                videoFrame.setSize(getSize().width/4,getSize().height/3);
+                                videoFrame.setLocation(getSize().width/4, getSize().height/4);
+                                videoFrame.pack();                              
+                                
+                                windowsMode=VIDEO_ONLY_NORMAL_SIZE; 
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();
+                                
+        }
+        
+          public void setTranscriptOnly(){ //it COULD NOT  remember the size of videoFrame(it is still visible after reopen),but textFrame is ok                       
+                                /**
+                                try{
+                                if(textFrame.isIconifiable()) textFrame.setIcon(false); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
+                                videoFrame.setSize(0,0);
+                                videoFrame.setLocation(0,0);                              
+                                //videoFrame.pack();                               
+                                textFrame.setLocation(0,0);                        
+                                textFrame.setSize(getSize().width,getSize().height);                              
+                                
+                                /**
+                                try{
+                                if(videoFrame.isIconifiable()) videoFrame.setIcon(true); 
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.exit(0);
+                                }**/
+                                windowsMode=TRANSCRIPT_ONLY; 
+                                defaultVideoFrameSize=videoFrame.getSize();    
+                                defaultTextFrameSize=textFrame.getSize();
+        }
+       
+        public void setDefaultSizes(){
+                // we have 7 windows modes and each of them has its default size set by set...()method, but when user drap windows and what is the default size???
+                   //I am not sure I understand the meaning of defaultsize.
+                     videoFrame.setSize(defaultVideoFrameSize.width,defaultVideoFrameSize.height);
+                     textFrame.setSize(defaultTextFrameSize.width,defaultTextFrameSize.height);
                      /**
-                         switch(defaultWindowsMode){  
-                             case -1:
+                         switch(windowsMode){                             
                              case 0: setInitialVerticalWindows(); break;
                              case 1: setVerticalWindows(); break;
                              case 2: setSubtitleWindows(); break;
                              case 3: setFullScreenVideo(); break;
-                         }  **/                                            
+                         }  **/                                         
         } 
         
         
             // used for save the current window mode for other files
+        /**
             public void setWindows(){                
                          switch(windowsMode){  
                              //case 0: setVerticalWindows(); break;
                              case 0: setVerticalWindows(); break;
                              case 1: setSubtitleWindows(); break;
                              case 2: setFullScreenVideo(); break;
-                         }                                              
-        } 
+                         } **/                                             
+         
         //---------------------------
         
 	private void startTimer() {
