@@ -437,7 +437,7 @@ public class QDShell extends JFrame implements ItemListener
 					
 					//Wizard.this.hide();
 					Wizard.this.dispose();
-					
+                                                           
 					if (noProblems)
 					{
 						contentPane.add(qd);
@@ -662,6 +662,7 @@ public class QDShell extends JFrame implements ItemListener
                     prefmngr.setInt(prefmngr.VIDEO_WIDTH_KEY, vRec.width);
                 }
 		prefmngr.setValue(prefmngr.MEDIA_DIRECTORY_KEY, prefmngr.media_directory);
+                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, qd.getWindowsMode());
 	}
 
 	private void closeThisQDFrame(boolean closingWindow) {
@@ -811,14 +812,15 @@ public class QDShell extends JFrame implements ItemListener
                  //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
                 JMenu windowMenu=new JMenu(messages.getString("Window"));
                
-                JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"),true);
+                JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"));
                 item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
                 item1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
                                 getQD().setHorizontalWindowsMediaToRight();		
 			}
 		});
-                
+                if(qd.getWindowsMode()==0) item1.setSelected(true);
+                                          
                 JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaLeft"));
                 item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
                 item2.addActionListener(new ActionListener() {
@@ -826,6 +828,7 @@ public class QDShell extends JFrame implements ItemListener
                                 getQD().setHorizontalWindowsMediaToLeft();		
 			}
 		});
+                 if(qd.getWindowsMode()==1) item2.setSelected(true);
                 
                 JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("VerticalWindowsMediaTop"));
                 item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
@@ -834,6 +837,7 @@ public class QDShell extends JFrame implements ItemListener
                                 getQD().setVerticalWindowsMediaTop();
 			}
 		});               
+                 if(qd.getWindowsMode()==2) item3.setSelected(true);
                 
                 JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
                 item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
@@ -842,7 +846,7 @@ public class QDShell extends JFrame implements ItemListener
 			  getQD().setSubtitleWindows();
 			}
 		});
-                
+                 if(qd.getWindowsMode()==3) item4.setSelected(true);
                 
                 JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("VideoOnlyFullScreen"));
                 item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
@@ -851,6 +855,7 @@ public class QDShell extends JFrame implements ItemListener
                         getQD().setVideoOnlyFullScreen();
 			}
 		});
+                 if(qd.getWindowsMode()==4) item5.setSelected(true);
                 
                 JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("VideoOnlyNormalSize"));
                 item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
@@ -859,6 +864,7 @@ public class QDShell extends JFrame implements ItemListener
 			  getQD().setVideoOnlyNormalSize();
 			}
 		});
+                 if(qd.getWindowsMode()==5) item6.setSelected(true);
                
                 JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
                 item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
@@ -867,15 +873,7 @@ public class QDShell extends JFrame implements ItemListener
 			  getQD().setTranscriptOnly();
 			}
 		});
-                
-                /**
-                JRadioButtonMenuItem defaultItem= new JRadioButtonMenuItem(messages.getString("DefaultWindows"));
-                defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
-                defaultItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-			  getQD().setDefaultWindows();	
-                            }
-		});**/
+                if(qd.getWindowsMode()==6) item7.setSelected(true);
                 
                 ButtonGroup group = new ButtonGroup( );              
                 group.add(item1);
@@ -895,13 +893,14 @@ public class QDShell extends JFrame implements ItemListener
                 windowMenu.add(item7);
                 windowMenu.addSeparator();
                 
-                JMenuItem defaultSizesItem = new JMenuItem(messages.getString("DefaultSizes"));
-		defaultSizesItem.addActionListener(new ActionListener() {
+                JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultWindows"));
+                defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
+		defaultItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			 getQD().setDefaultSizes();
+			 getQD().setDefaultWindows();
 			}
 		});
-                windowMenu.add(defaultSizesItem);
+                windowMenu.add(defaultItem);
                 
                 //------------------------------------------
                 
