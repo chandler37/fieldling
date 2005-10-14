@@ -809,92 +809,92 @@ public class QDShell extends JFrame implements ItemListener
 		betaMenu.add(feedbackItem);
 
                 
-                 //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
-                JMenu windowMenu=new JMenu(messages.getString("Window"));
-               
-                JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"));
-                item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
-                item1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-                                getQD().setHorizontalWindowsMediaToRight();		
-			}
-		});
-                if(qd.getWindowsMode()==0) item1.setSelected(true);
-                                          
-                JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaLeft"));
-                item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
-                item2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-                                getQD().setHorizontalWindowsMediaToLeft();		
-			}
-		});
-                 if(qd.getWindowsMode()==1) item2.setSelected(true);
-                
-                JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("VerticalWindowsMediaTop"));
-                item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
-                item3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-                                getQD().setVerticalWindowsMediaTop();
-			}
-		});               
-                 if(qd.getWindowsMode()==2) item3.setSelected(true);
-                
-                JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
-                item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
-                item4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-			  getQD().setSubtitleWindows();
-			}
-		});
-                 if(qd.getWindowsMode()==3) item4.setSelected(true);
-                
-                JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("VideoOnlyFullScreen"));
-                item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
-                item5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {                            
-                        getQD().setVideoOnlyFullScreen();
-			}
-		});
-                 if(qd.getWindowsMode()==4) item5.setSelected(true);
-                
-                JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("VideoOnlyNormalSize"));
-                item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
-                item6.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-			  getQD().setVideoOnlyNormalSize();
-			}
-		});
-                 if(qd.getWindowsMode()==5) item6.setSelected(true);
-               
-                JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
-                item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
-                item7.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-			  getQD().setTranscriptOnly();
-			}
-		});
-                if(qd.getWindowsMode()==6) item7.setSelected(true);
-                
-                ButtonGroup group = new ButtonGroup( );              
-                group.add(item1);
-                group.add(item2);
-                group.add(item3);
-                group.add(item4);
-                group.add(item5);
-                group.add(item6);
-                group.add(item7);
-                                
-                windowMenu.add(item1);
-                windowMenu.add(item2);
-                windowMenu.add(item3);
-                windowMenu.add(item4);
-                windowMenu.add(item5);
-                windowMenu.add(item6);
-                windowMenu.add(item7);
-                windowMenu.addSeparator();
-                
-                JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultWindows"));
-                defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
+         //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
+        JMenu windowMenu=new JMenu(messages.getString("Window"));
+       
+        JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"));
+        item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
+        item1.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+                        getQD().setHorizontalWindowsMediaToRight();		
+	}
+});
+        if(qd.getWindowsMode()==0) item1.setSelected(true);
+                                  
+        JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaLeft"));
+        item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
+        item2.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+                        getQD().setHorizontalWindowsMediaToLeft();		
+	}
+});
+         if(qd.getWindowsMode()==1) item2.setSelected(true);
+        
+        JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("VerticalWindowsMediaTop"));
+        item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
+        item3.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+                        getQD().setVerticalWindowsMediaTop();
+	}
+});               
+         if(qd.getWindowsMode()==2) item3.setSelected(true);
+        
+        JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
+        item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
+        item4.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+	  getQD().setSubtitleWindows();
+	}
+});
+         if(qd.getWindowsMode()==3) item4.setSelected(true);
+        
+        JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("VideoOnlyFullScreen"));
+        item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
+        item5.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {                            
+                getQD().setVideoOnlyFullScreen();
+	}
+});
+         if(qd.getWindowsMode()==4) item5.setSelected(true);
+        
+        JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("VideoOnlyNormalSize"));
+        item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
+        item6.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+	  getQD().setVideoOnlyNormalSize();
+	}
+});
+         if(qd.getWindowsMode()==5) item6.setSelected(true);
+       
+        JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
+        item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
+        item7.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent ae) {
+	  getQD().setTranscriptOnly();
+	}
+});
+        if(qd.getWindowsMode()==6) item7.setSelected(true);
+        
+        ButtonGroup group = new ButtonGroup( );              
+        group.add(item1);
+        group.add(item2);
+        group.add(item3);
+        group.add(item4);
+        group.add(item5);
+        group.add(item6);
+        group.add(item7);
+                        
+        windowMenu.add(item1);
+        windowMenu.add(item2);
+        windowMenu.add(item3);
+        windowMenu.add(item4);
+        windowMenu.add(item5);
+        windowMenu.add(item6);
+        windowMenu.add(item7);
+        windowMenu.addSeparator();
+        
+        JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultWindows"));
+        defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
 		defaultItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			 getQD().setDefaultWindows();
@@ -917,43 +917,6 @@ public class QDShell extends JFrame implements ItemListener
 		betaMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(betaMenu);
 		return bar;
-		/*
-		 @TIBETAN@org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
-		 @TIBETAN@JMenuItem[] keyboardItems = null;
-		 @TIBETAN@try {
-		 @TIBETAN@keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-		 @TIBETAN@}catch (Exception e) {}
-		 @TIBETAN@if (keybdMgr != null) {
-		 @TIBETAN@ButtonGroup keyboardGroup = new ButtonGroup();
-		 @TIBETAN@keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-		 @TIBETAN@for (int i=0; i<keybdMgr.size(); i++) {
-		 @TIBETAN@final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
-		 //if (kbd.hasQuickRefFile()) {
-		 @TIBETAN@keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-		 @TIBETAN@keyboardItems[i].addActionListener(new ActionListener() {
-		 @TIBETAN@public void actionPerformed(ActionEvent e) {
-		 @TIBETAN@qd.changeKeyboard(kbd);
-		 @TIBETAN@prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
-		 @TIBETAN@}
-		 @TIBETAN@});
-		 @TIBETAN@keyboardGroup.add(keyboardItems[i]);
-		 @TIBETAN@}
-		 @TIBETAN@}
-		 @TIBETAN@if (keybdMgr != null) {
-		 @TIBETAN@String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
-		 @TIBETAN@int i;
-		 @TIBETAN@for (i=0; i<keybdMgr.size(); i++)
-		 @TIBETAN@if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
-		 @TIBETAN@if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
-		 @TIBETAN@keyboardItems[0].setSelected(true);
-		 @TIBETAN@else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
-		 @TIBETAN@keyboardItems[i].setSelected(true);
-		 @TIBETAN@qd.changeKeyboard(keybdMgr.elementAt(i));
-		 @TIBETAN@}
-		 @TIBETAN@for (int k=0; k<keyboardItems.length; k++)
-		 @TIBETAN@preferencesMenu.add(keyboardItems[k]);
-		 @TIBETAN@}
-		 */
 	}
 
 	private void makeRecentlyOpened(String s) {

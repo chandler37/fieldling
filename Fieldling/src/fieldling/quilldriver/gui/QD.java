@@ -67,7 +67,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         //protected  Dimension videoFrameNormalSize=null;
         
         protected static Color hColor = Color.cyan;
-	//TIBETAN-SPECIFIC protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
+	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected Editor editor = null;
 	protected JInternalFrame videoFrame = null;
@@ -768,7 +768,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
                             player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
-			//TIBETAN-SPECIFIC if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
+			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 			return true;
 		} catch (PanelPlayerException smpe) {
 			smpe.printStackTrace();
@@ -842,7 +842,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	public boolean configure(Configuration configuration) {
 		if (transcriptFile != null) return false;
 		try {
-                    configuration.configure(qdDefaultProperties);
+                    configuration.configure(qdDefaultProperties, this, prefmngr);
                     if (configuration.getJMenuBar() != null)
                         textFrame.setJMenuBar(configuration.getJMenuBar());
                     this.configuration = configuration;
@@ -1048,15 +1048,15 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         }
 	}
 
-	//TIBETAN-SPECIFIC public org.thdl.tib.input.JskadKeyboard getKeyboard() {
-		//TIBETAN-SPECIFIC return activeKeyboard;
-	//TIBETAN-SPECIFIC }
-	//TIBETAN-SPECIFIC public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
-		//TIBETAN-SPECIFIC activeKeyboard = kbd;
-		//TIBETAN-SPECIFIC if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
-		//TIBETAN-SPECIFIC org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
-		//TIBETAN-SPECIFIC kbd.activate(dp);
-	//TIBETAN-SPECIFIC }
+	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
+	@TIBETAN@	return activeKeyboard;
+	@TIBETAN@}
+	@TIBETAN@public void changeKeyboard(org.thdl.tib.input.JskadKeyboard kbd) {
+	@TIBETAN@	activeKeyboard = kbd;
+	@TIBETAN@	if (editor == null || !(editor.getTextPane() instanceof org.thdl.tib.input.DuffPane)) return;
+	@TIBETAN@	org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
+	@TIBETAN@	kbd.activate(dp);
+	@TIBETAN@}
 }
 
 /*

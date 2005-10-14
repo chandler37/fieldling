@@ -18,6 +18,8 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import javax.xml.xpath.*;
 import fieldling.util.GuiUtil;
+import fieldling.util.I18n;
+import fieldling.quilldriver.*;
 import fieldling.quilldriver.gui.QD;
 import fieldling.quilldriver.xml.*;
 import org.jdom.*;
@@ -75,15 +77,16 @@ public class Configuration
 	if (editElem != null)
 	    editURL = loader.getResource(editElem.getAttributeValue("val"));
     }
-    public void configure(Map defaultProperties) throws IOException, TransformerException, ParserConfigurationException, SAXException {
+    public void configure(Map defaultProperties, QD qd, PreferenceManager prefmngr) throws IOException, TransformerException, ParserConfigurationException, SAXException
+	{
         docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
-	org.jdom.Element cRoot = configDoc.getRootElement();
+        org.jdom.Element cRoot = configDoc.getRootElement();
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild("rendering-instructions"));
-	org.jdom.Element parameterSet = cRoot.getChild("parameters");
+        org.jdom.Element parameterSet = cRoot.getChild("parameters");
         org.jdom.Element schemaParam = parameterSet.getChild("xmlschema");
 
         tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
-	parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
+        parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
         schemaParam = parameterSet.getChild(XML_SCHEMA_ELEMENT_NAME);
 
         if (schemaParam != null)
@@ -99,7 +102,7 @@ public class Configuration
             tagInfo[i].useNamespaces(namespaces);
         XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(namespaces);
         parameters = new HashMap(defaultProperties);
-	List parameterList = parameterSet.getChildren(ONE_PARAMETER_ELEMENT_NAME);
+        List parameterList = parameterSet.getChildren(ONE_PARAMETER_ELEMENT_NAME);
         Iterator it = parameterList.iterator();
         while (it.hasNext()) {
             org.jdom.Element e = (org.jdom.Element)it.next();
@@ -119,7 +122,7 @@ public class Configuration
                 e.getAttributeValue("node"), e.getAttributeValue("move"), 
                 e.getAttributeValue("qd-command"), e.getAttributeValue("xsl-task")));
         }
-        setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME));
+        setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME), qd, prefmngr);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         if (canEdit())
             transformer = transformerFactory.newTransformer(new StreamSource(editURL.openStream()));
@@ -233,19 +236,80 @@ public class Configuration
         }
         return namespaces;
     }
-    private void setJMenuBar(org.jdom.Element allMenus) {
+    
+    @TIBETAN@private static JMenu getTibetanKeyboardMenu(QD qd, PreferenceManager pm)
+    @TIBETAN@{
+	@TIBETAN@	org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
+	@TIBETAN@	JMenuItem[] keyboardItems = null;
+	@TIBETAN@	JMenu tibetanKeyboard = null;
+	@TIBETAN@	final PreferenceManager prefmngr = pm;
+	@TIBETAN@	final ResourceBundle messages = I18n.getResourceBundle();	
+	@TIBETAN@	try {
+	@TIBETAN@		keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
+	@TIBETAN@	}catch (Exception e) {}
+	@TIBETAN@	if (keybdMgr != null) {
+	@TIBETAN@		ButtonGroup keyboardGroup = new ButtonGroup();
+	@TIBETAN@		keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
+	@TIBETAN@		for (int i=0; i<keybdMgr.size(); i++) {
+	@TIBETAN@			final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
+	//if (kbd.hasQuickRefFile()) {
+	@TIBETAN@			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
+	@TIBETAN@			keyboardItems[i].addActionListener(new ActionListener() {
+	@TIBETAN@				public void actionPerformed(ActionEvent e) {
+	@TIBETAN@					Object source = e.getSource();
+	@TIBETAN@					if (!(source instanceof Component))
+	@TIBETAN@					{
+	@TIBETAN@						System.out.println("no component for event--what to do?");
+	@TIBETAN@						return;
+	@TIBETAN@					}
+	@TIBETAN@					QD qd = getQdParentForComponent((Component)source);
+	@TIBETAN@					if (qd == null) {
+	@TIBETAN@						System.out.println("can't find any QD parent");
+	@TIBETAN@						return;
+	@TIBETAN@					}
+	@TIBETAN@					qd.changeKeyboard(kbd);
+	@TIBETAN@					prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
+	@TIBETAN@				}
+	@TIBETAN@			});
+	@TIBETAN@			keyboardGroup.add(keyboardItems[i]);
+	@TIBETAN@		}
+	@TIBETAN@		String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
+	@TIBETAN@		int i;
+	@TIBETAN@		for (i=0; i<keybdMgr.size(); i++)
+	@TIBETAN@			if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
+	@TIBETAN@		if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
+	@TIBETAN@			keyboardItems[0].setSelected(true);
+	@TIBETAN@		else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
+	@TIBETAN@			keyboardItems[i].setSelected(true);
+	@TIBETAN@			qd.changeKeyboard(keybdMgr.elementAt(i));
+	@TIBETAN@		}
+	@TIBETAN@		tibetanKeyboard = new JMenu(messages.getString("KeyboardInputMethod"));
+	@TIBETAN@		for (int k=0; k<keyboardItems.length; k++)
+	@TIBETAN@			tibetanKeyboard.add(keyboardItems[k]);
+	@TIBETAN@	}
+	@TIBETAN@	return tibetanKeyboard;
+	@TIBETAN@}
+    
+    private void setJMenuBar(org.jdom.Element allMenus, QD qd, PreferenceManager prefmngr)
+    {
+    	String menuName;
         if (allMenus == null) return;
         ResourceBundle messages = fieldling.util.I18n.getResourceBundle();
         jBar = new JMenuBar();
         List menuElems = allMenus.getChildren(ONE_MENU_ELEMENT_NAME);
         int possibleTagInfoMenu = tagInfo.length > 1 ? 1 : 0 ;
-        JMenu[] jMenu = new JMenu[menuElems.size() + possibleTagInfoMenu + 1];
+        //JMenu[] jMenu = new JMenu[menuElems.size() + possibleTagInfoMenu + 1];
+        JMenu jMenu;
         Iterator itty = menuElems.iterator();
-        int i=0;
+        //int i=0;
         while (itty.hasNext()) {
             org.jdom.Element elem = (org.jdom.Element)itty.next();
-            jMenu[i] = new JMenu(messages.getString(elem.getAttributeValue("name")));
-            jMenu[i].getPopupMenu().setLightWeightPopupEnabled(false);
+            menuName = elem.getAttributeValue("name");
+            @TIBETAN@if (menuName.equals("TibetanKeyboard"))
+			@TIBETAN@{
+			@TIBETAN@	jMenu = getTibetanKeyboardMenu(qd, prefmngr);
+			@TIBETAN@} else {
+            jMenu = new JMenu(messages.getString(menuName));
             String[] menuItems = elem.getAttributeValue("contains").split(" ");
             for (int j=0; j<menuItems.length; j++) {
                 QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
@@ -257,9 +321,11 @@ public class Configuration
                         menuAction.actionPerformed(ae);
                     }
                 });
-                jMenu[i].add(jItem);
+                jMenu.add(jItem);
             }
-            jBar.add(jMenu[i]);
+            @TIBETAN@}
+            jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+            jBar.add(jMenu);
         }
         if (possibleTagInfoMenu == 1) {
             JMenu viewMenu = new JMenu(messages.getString("View"));
