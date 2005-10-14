@@ -861,7 +861,7 @@
   </message>
   <message id="TranscriptionOnly">
     <text lang="en">Transcription Only</text>
-    <text lang="zh">只有转录文本</text>
+    <text lang="zh">只有转录文本</text>  
   </message>
   <message id="TranscriptionPlusEnglish">
         <text lang="en">Transcription + English</text>
@@ -951,30 +951,33 @@
     <text lang="en">Low</text>
     <text lang="zh">低</text>
   </message>
-  
+  <message id=" TibetanKeyboard">
+    <text lang="en"> TibetanKeyboard</text>
+    <text lang="zh">藏文键盘</text>
+  </message>
    <message id="Window">
     <text lang="en">Window</text>
     <text lang="zh">窗口</text>
   </message>
     <message id="HorizontalWindowsMediaRight">
-    <text lang="en">Horizontal Windows Media Right</text>
-    <text lang="zh">Horizontal Windows Media Right</text>
+    <text lang="en">Horizontal Windows(Media Right)</text>
+    <text lang="zh">Horizontal Windows(Media Right)</text>
   </message>
   <message id="HorizontalWindowsMediaLeft">
-    <text lang="en">Horizontal Windows Media Left</text>
-    <text lang="zh">Horizontal Windows Media Left</text>
+    <text lang="en">Horizontal Windows(Media Left)</text>
+    <text lang="zh">Horizontal Windows(Media Left)</text>
   </message>
   <message id="VerticalWindowsMediaTop">
-    <text lang="en">Vertical Windows Media Top</text>
-    <text lang="zh">Vertical Windows Media Top</text>
+    <text lang="en">Vertical Windows(Media on Top)</text>
+    <text lang="zh">Vertical Windows(Media on Top)</text>
   </message>
   <message id="VideoOnlyFullScreen">
-    <text lang="en">Video Only Full Screen</text>
-    <text lang="zh">Video Only Full Screen</text>
+    <text lang="en">Video Only(Full Window)</text>
+    <text lang="zh">Video Only(Full Window)</text>
   </message>
    <message id="VideoOnlyNormalSize">
-    <text lang="en">Video Only Normal Size</text>
-    <text lang="zh">Video Only Normal Size</text>
+    <text lang="en">Video Only(Normal Size)</text>
+    <text lang="zh">Video Only(Normal Size)</text>
   </message>
    <message id="SubtitleBelow">
     <text lang="en">Subtitle Below</text>
