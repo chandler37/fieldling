@@ -17,6 +17,7 @@
 		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
 		<menu name="EditMenu" contains="InsertAfter InsertBefore DeleteSentence InsertTranslation_EN DeleteTranslation_EN InsertTranslation_ZH DeleteTranslation_ZH AddSpeaker DeleteSpeaker ChangeSpeaker AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
 		<menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
+		<menu name="TibetanKeyboard"/>
 	</menus>
 	<actions>
 		<!-- file menu -->	
