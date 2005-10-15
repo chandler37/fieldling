@@ -305,27 +305,31 @@ public class Configuration
         while (itty.hasNext()) {
             org.jdom.Element elem = (org.jdom.Element)itty.next();
             menuName = elem.getAttributeValue("name");
-            @TIBETAN@if (menuName.equals("TibetanKeyboard"))
-			@TIBETAN@{
-			@TIBETAN@	jMenu = getTibetanKeyboardMenu(qd, prefmngr);
-			@TIBETAN@} else {
-            jMenu = new JMenu(messages.getString(menuName));
-            String[] menuItems = elem.getAttributeValue("contains").split(" ");
-            for (int j=0; j<menuItems.length; j++) {
-                QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
-                final Action menuAction = getActionForActionDescription(actDesc);
-                JMenuItem jItem = new JMenuItem(messages.getString(menuItems[j]));
-                jItem.setAccelerator(actDesc.getKeyboardShortcut());
-                jItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        menuAction.actionPerformed(ae);
-                    }
-                });
-                jMenu.add(jItem);
+            if (menuName.equals("TibetanKeyboard"))
+			{
+            	@TIBETAN@jMenu = getTibetanKeyboardMenu(qd, prefmngr);
+            	@TIBETAN@jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+            	@TIBETAN@jBar.add(jMenu);
+			} 
+            else
+            {
+	            jMenu = new JMenu(messages.getString(menuName));
+	            String[] menuItems = elem.getAttributeValue("contains").split(" ");
+	            for (int j=0; j<menuItems.length; j++) {
+	                QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
+	                final Action menuAction = getActionForActionDescription(actDesc);
+	                JMenuItem jItem = new JMenuItem(messages.getString(menuItems[j]));
+	                jItem.setAccelerator(actDesc.getKeyboardShortcut());
+	                jItem.addActionListener(new ActionListener() {
+	                    public void actionPerformed(ActionEvent ae) {
+	                        menuAction.actionPerformed(ae);
+	                    }
+	                });
+	                jMenu.add(jItem);
+	            }
+	            jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+	            jBar.add(jMenu);
             }
-            @TIBETAN@}
-            jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-            jBar.add(jMenu);
         }
         if (possibleTagInfoMenu == 1) {
             JMenu viewMenu = new JMenu(messages.getString("View"));
