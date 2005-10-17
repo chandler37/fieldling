@@ -893,7 +893,7 @@ public class QDShell extends JFrame implements ItemListener
         windowMenu.add(item7);
         windowMenu.addSeparator();
         
-        JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultWindows"));
+        JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultSizeAndPlacement"));
         defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
 		defaultItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

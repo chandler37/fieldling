@@ -987,9 +987,9 @@
     <text lang="en">Transcript Only</text>
     <text lang="zh">Transcript Only</text>
   </message>
-   <message id="DefaultWindows">
-    <text lang="en">Default Windows</text>
-    <text lang="zh">Default Windows</text>
+   <message id="DefaultSizeAndPlacement">
+    <text lang="en">Default Size/Placement</text>
+    <text lang="zh">Default Size/Placement</text>
   </message>
   
   <message id="AutomaticallyOpenDialogBox">
