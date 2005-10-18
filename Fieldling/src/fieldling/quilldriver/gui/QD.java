@@ -526,10 +526,14 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		editor = null;
 		setupGUI(); //set up GUI for another transcript
 	}
-	public boolean loadTranscript(File file) {
-            return loadTranscript(file, null);
-        }
-	public boolean loadTranscript(File file, String videoUrl) {
+	
+	public boolean loadTranscript(File file)
+	{
+		return loadTranscript(file, null);
+	}
+	
+	public boolean loadTranscript(File file, String videoUrl)
+	{
 		try 
 		{
 			return loadTranscript(file.toURI().toURL(), videoUrl);
@@ -539,37 +543,41 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			e.printStackTrace(System.err);
 			return false;
 		}
-        }
-	public boolean loadTranscript(URL transcriptURL) {
-            return loadTranscript(transcriptURL, null);
-        }
-	public boolean loadTranscript(URL transcriptURL, String videoUrl) {
+	}
+	
+	public boolean loadTranscript(URL transcriptURL)
+	{
+		return loadTranscript(transcriptURL, null);
+	}
+	public boolean loadTranscript(URL transcriptURL, String videoUrl)
+	{
 		String transcriptString = transcriptURL.toString();
 		if (player == null) {
 			JOptionPane.showConfirmDialog(QD.this, messages.getString("SupportedMediaError"), null, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		try {
-                        org.w3c.dom.Document xmlDoc = null;
-                        try {                       
-                            /* I use the xerces-2-java parser because, to my knowledge, it is the only parser that supports
-                            DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
-                            after each call to NodeTransformer, without reloading the entire document. See.
-                                     http://xml.apache.org/xerces2-j/faq-dom.html#faq-9*/
-                            System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-                            DocumentBuilder docBuilder = configuration.getDocumentBuilder(DocumentBuilderFactory.newInstance());
-                            xmlDoc = docBuilder.parse(transcriptString);
-                           /* handler = new SAXValidator();
-                            docBuilder.setErrorHandler(handler);*/
-                        } catch (ParserConfigurationException pce) {
-                            pce.printStackTrace();
-                        } catch (org.xml.sax.SAXException saxe) {
-                            saxe.printStackTrace();
-                            return false;
-                        } catch (IOException ioe) {
-                            ioe.printStackTrace();
-                            return false;
-                        }
+		try
+		{
+            org.w3c.dom.Document xmlDoc = null;
+            try {                       
+                /* I use the xerces-2-java parser because, to my knowledge, it is the only parser that supports
+                DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
+                after each call to NodeTransformer, without reloading the entire document. See.
+                         http://xml.apache.org/xerces2-j/faq-dom.html#faq-9*/
+                System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+                DocumentBuilder docBuilder = configuration.getDocumentBuilder(DocumentBuilderFactory.newInstance());
+                xmlDoc = docBuilder.parse(transcriptString);
+               /* handler = new SAXValidator();
+                docBuilder.setErrorHandler(handler);*/
+            } catch (ParserConfigurationException pce) {
+                pce.printStackTrace();
+            } catch (org.xml.sax.SAXException saxe) {
+                saxe.printStackTrace();
+                return false;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                return false;
+            }
 			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
 			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
 			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
@@ -590,16 +598,16 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 			editor.getTextPane().setKeymap(keymap);
 			view = new View(editor, editor.getXMLDocument(), (XPathExpression)configuration.getParameters().get("qd.timealignednodes"), (XPathExpression)configuration.getParameters().get("qd.nodebegins"), (XPathExpression)configuration.getParameters().get("qd.nodeends"));          
-                        try {
-                            hColor = Color.decode("0x"+PreferenceManager.highlight_color);
-                        } catch (NumberFormatException nfe) {
-                            nfe.printStackTrace();
-                        }
-                        hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
-                        
-                        /*LOGGING
-                        for (int ok=0; ok<namespaces.length; ok++)
-                            System.out.println(namespaces[ok].toString());*/
+            try {
+                hColor = Color.decode("0x"+PreferenceManager.highlight_color);
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+            hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
+            
+            /*LOGGING
+            for (int ok=0; ok<namespaces.length; ok++)
+                System.out.println(namespaces[ok].toString());*/
 
 			//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
 			//Ctrl-Page_Down and so on... surely there is a better way to do this....
@@ -640,7 +648,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					if (value.startsWith("http:"))
 					{
 						player.loadMovie(new URL(value));
-                                                videoFrame.setTitle(value);
+						videoFrame.setTitle(value);
 						nomedia = false;
 					}
 					else
@@ -651,8 +659,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						{
 							try
 							{
-                                                                //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-                                                                transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+								//File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+								transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 								String transcriptAbs = transcriptFile.getAbsolutePath();
 								mediaFile = new File(transcriptAbs.substring(0,transcriptAbs.lastIndexOf(QDShell.FILE_SEPARATOR) + 1), value);
 							}
@@ -661,19 +669,26 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 								e.printStackTrace(System.err);
 							}
 						}
-						if (mediaFile.exists()) { //open the actual file
-							player.loadMovie(mediaFile.toURL());
-                                                        videoFrame.setTitle(mediaFile.toString());
-							nomedia = false;
-						} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
-							String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
-							mediaFile = new File(PreferenceManager.media_directory, mediaName);
-							if (mediaFile.exists()) {
+						try
+						{
+							if (mediaFile.exists()) { //open the actual file
 								player.loadMovie(mediaFile.toURL());
-                                                                videoFrame.setTitle(mediaFile.toString());
+								videoFrame.setTitle(mediaFile.toString());
 								nomedia = false;
-								//INSERT VIDEO NAME INTO DATA FILE
+							} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
+								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
+								mediaFile = new File(PreferenceManager.media_directory, mediaName);
+								if (mediaFile.exists()) {
+									player.loadMovie(mediaFile.toURL());
+									videoFrame.setTitle(mediaFile.toString());
+									nomedia = false;
+									//INSERT VIDEO NAME INTO DATA FILE
+								}
 							}
+						}
+						catch (Exception ex)
+						{
+							ex.printStackTrace();
 						}
 					}  
 				} catch (MalformedURLException murle) {murle.printStackTrace();} //do nothing
@@ -691,7 +706,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
-                                                        videoFrame.setTitle(mediaFile.toString());
+							videoFrame.setTitle(mediaFile.toString());
 							String mediaString = mediaFile.getAbsolutePath();
 							PreferenceManager.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
@@ -713,8 +728,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				}
 			});
 			startTimer();
-
-                        textFrame.setTitle(transcriptString); //title=name of transcript file
+			textFrame.setTitle(transcriptString); //title=name of transcript file
 			final TimeCodeView tcv = new TimeCodeView(player, tcp);
 			checkTimeTimer = new Timer(true);
 			checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
@@ -722,17 +736,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					tcv.setCurrentTime(player.getCurrentTime());
 				}
 			}, 0, 50);
-                        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			buttonPanel.add(tcv);
-                        JPanel jp = new JPanel(new BorderLayout());
-                        jp.add("North", buttonPanel);
+			JPanel jp = new JPanel(new BorderLayout());
+			jp.add("North", buttonPanel);
 			jp.add("Center", hp);
-                        //JTabbedPane tabbedPane = new JTabbedPane();
-                        //tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
+			//JTabbedPane tabbedPane = new JTabbedPane();
+			//tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
 			JComponent c = (JComponent)textFrame.getContentPane();
 			c.setLayout(new BorderLayout());
-                        //c.add("Center", tabbedPane);
-                        c.add("Center", jp);
+			//c.add("Center", tabbedPane);
+			c.add("Center", jp);
 			textFrame.setSize(textFrame.getSize().width, getSize().height);
 			textFrame.invalidate();
 			textFrame.validate();
@@ -759,15 +773,15 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			else editor.setEditabilityTracker(true);
 			try
 			{
-                            //File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-                            transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+				//File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+				transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace(System.err);
 			}
 			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
-                            player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
+				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
 			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 			return true;
 		} catch (PanelPlayerException smpe) {
