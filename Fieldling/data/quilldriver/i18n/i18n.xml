@@ -991,7 +991,14 @@
     <text lang="en">Default Size/Placement</text>
     <text lang="zh">Default Size/Placement</text>
   </message>
-  
+  <message id="NumberOfOpenFilesExceed">
+    <text lang="en">The number of open transcripts is exceed, please close one of them, and retry!</text>
+    <text lang="zh">The number of open transcripts is exceed, please close one of them, and retry!</text>
+  </message>
+   <message id="FileAlreadyBeLoaded">
+    <text lang="en">The transcript file has been load!</text>
+    <text lang="zh">The transcript file has been load!</text>
+  </message>
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">Automatically open this dialog box when QuillDriver starts up?</text>

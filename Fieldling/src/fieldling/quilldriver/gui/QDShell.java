@@ -913,8 +913,6 @@ public class QDShell extends JFrame implements ItemListener
 		});
                 windowMenu.add(defaultItem);
                 
-                //------------------------------------------
-                
 		//putting the menus into a menu bar
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
