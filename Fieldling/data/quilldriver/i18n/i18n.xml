@@ -404,7 +404,7 @@
     <text lang="zh">键盘</text>
   </message>
   <message id="KeyboardInputMethod">
-    <text lang="en">Keyboard Input Method</text>
+    <text lang="en">Tibetan Keyboard</text>
     <text lang="zh">键盘输入方法</text>
   </message>
   <message id="Language">
@@ -871,9 +871,13 @@
         <text lang="en">Transcription + Chinese</text>
         <text lang="zh">Transcription + Chinese</text>
   </message>
+  <message id="TranscriptionPlusNotes">
+        <text lang="en">Transcription + Notes</text>
+        <text lang="zh">Transcription + Notes</text>
+  </message>  
   <message id="TranscriptionPlusEnglishPlusChinese">
-        <text lang="en">Transcription + English + Chinese</text>
-        <text lang="zh">Transcription + English + Chinese</text>
+        <text lang="en">Transcript + Eng + Ch</text>
+        <text lang="zh">Transcript + Eng + Ch</text>
   </message>
   <message id="EnglishPlusChinese">
         <text lang="en">English + Chinese</text>

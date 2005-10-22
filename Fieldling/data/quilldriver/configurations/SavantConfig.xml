@@ -60,8 +60,9 @@
 			<attribute name="type" visible="false"/>
 		</tag>
 		<tag name="AUDIO" visible="false" visiblecontents="false"/>
-		<tagview name="TibetanOnly" keystroke="F1">
-			<tag name="S" visible="true" displayas="id(./@who)" tibetan="true">
+		
+		<tagview name="TranscriptionOnly" keystroke="F1">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true" tibetancontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
@@ -71,8 +72,67 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		<tagview name="EnglishOnly" keystroke="F2">
-			<tag name="S" visible="true" displayas="id(./@who)">
+		
+		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="TranscriptionPlusChinese" keystroke="F3">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+            <tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="EnglishPlusChinese" keystroke="F5">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="Translation_ENOnly" keystroke="F6">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
@@ -80,29 +140,35 @@
 			<tag name="TRANSL" visible="true" icon="play.gif">
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		<tagview name="TibetanAndEnglish" keystroke="F3">
-			<tag name="S" visible="true" displayas="id(./@who)" tibetan="true">
+		
+		<tagview name="Translation_ZHOnly" keystroke="F7">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
-			<tag name="FORM" visible="true" tibetan="true" icon="play.gif">
-				<attribute name="type" visible="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
 			</tag>
-			<tag name="TRANSL" visible="false"/>
-		</tagview>
-		<tagview name="WylieAndEnglish" keystroke="F4">
-			<tag name="S" visible="true" displayas="id(./@who)">
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+		</tagview>		
+		
+		<tagview name="WylieAndEnglish" keystroke="F8">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
 			<tag name="FORM" visible="true" icon="play.gif">
 				<attribute name="type" visible="false"/>
 			</tag>
-			<tag name="TRANSL" visible="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		<tagview name="NotesOnly" keystroke="F5">
-			<tag name="S" visible="true" displayas="@who">
+		
+		<tagview name="NotesOnly" keystroke="F9">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
@@ -111,16 +177,36 @@
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		<tagview name="ShowEverything" keystroke="F6">
-			<tag name="S" visible="true" displayas="@who">
+
+		<tagview name="TranscriptionPlusNotes" keystroke="F10">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
-			<tag name="FORM" visible="true" tibetan="true" icon="play.gif">
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
 				<attribute name="type" visible="false"/>
 			</tag>
-			<tag name="TRANSL" visible="false">
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="ShowEverything" keystroke="F11">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))"  tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 			<tag name="NOTE" displayas="@type">
