@@ -707,7 +707,7 @@ public class QDShell extends JFrame implements ItemListener
 					qd.removeContent();
 					contentPane.remove(qd);
 					contentPane.repaint();
-					hasLoadedTranscript = false;
+					hasLoadedTranscript = false;                                       
 				}
 			break;
 			default:

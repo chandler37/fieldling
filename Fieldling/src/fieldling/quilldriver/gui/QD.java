@@ -161,17 +161,43 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                         //windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);                                      
                                         firstQDresize = false;
                             }
+                            else
+                            {
+                                switch(windowsMode){
+                                    case 0:                                                                  
+                                        if(ce.getComponent()==(Component)textFrame){
+                                         textFrame.setLocation(0,0);  
+                                         videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().height/3);
+                                         videoFrame.setLocation(textFrame.getSize().width,0);                            
+                                        }
+                                        else
+                                        {
+                                           videoFrame.setLocation(getSize().width-videoFrame.getSize().width,0);
+                                           textFrame.setLocation(0,0); 
+                                           textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);                                        
+                                        }
+                                        break;                                  
+                                }
+                            }
 			}
 		});
 	}
         
          //------setting textframe and videoframe windows mode--------------
           public void setHorizontalWindowsMediaToRight(){ 
+                                videoFrame.setSize(getSize().width/4,getSize().height/3);
+                                videoFrame.pack();
+                                videoFrame.setLocation(getSize().width - videoFrame.getSize().width,0);
+                                textFrame.setLocation(0,0);
+                                textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);                   
+                                //videoFrame.pack();
+                                
+                                /*
                                 textFrame.setSize(getSize().width*3/4,getSize().height);
                                 textFrame.setLocation(0,0);
                                 videoFrame.setSize(getSize().width - textFrame.getSize().width, getSize().height/3);
                                 videoFrame.setLocation(textFrame.getSize().width,0);//????
-                                videoFrame.pack();
+                                videoFrame.pack();*/
                                                         
                                 windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT;
                                
@@ -180,10 +206,10 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
          public void setHorizontalWindowsMediaToLeft(){                                                     		                                   
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
                                 videoFrame.setLocation(0,0);
-                             
+                                videoFrame.pack();
                                 textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
                                 textFrame.setLocation(videoFrame.getSize().width,0);  
-                                videoFrame.pack();
+                                //videoFrame.pack();
                                 
                                 windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_LEFT;                            
                 }   
