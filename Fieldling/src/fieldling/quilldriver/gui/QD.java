@@ -33,6 +33,7 @@ import javax.swing.text.*;
 import javax.swing.plaf.*;
 import java.awt.*;
 import java.awt.event.*;
+//import java.awt.geom.*; 
 import java.lang.reflect.*;
 import fieldling.mediaplayer.*;
 import fieldling.util.*;
@@ -59,9 +60,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public static final int VIDEO_ONLY_NORMAL_SIZE=5;
         public static final int TRANSCRIPT_ONLY=6;
       
-        protected int windowsMode=0;
-        protected  Dimension defaultVideoFrameSize=null;    
-        protected  Dimension defaultTextFrameSize=null;             
+        protected int windowsMode=0;                
         
         protected static Color hColor = Color.cyan;
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
@@ -85,6 +84,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         protected PreferenceManager prefmngr;
         protected Action insertTimesAction = null;
         protected boolean firstQDresize = true;
+        
         
         static {
             org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
@@ -135,6 +135,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		invalidate();
 		validate();
 		repaint();
+                           
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
                             if (firstQDresize) {
@@ -147,8 +148,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                         textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY, 
                                                 getSize().width - videoFrame.getSize().width),
                                                 prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY, 
-                                                getSize().height)); */
-                                                                         
+                                                getSize().height)); */                             
                                         textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
                                                 prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
                                         textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY,0),
@@ -157,111 +157,95 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                         videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 0 ),
                                                 prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                    
                                         videoFrame.setSize(prefmngr.getInt(PreferenceManager.VIDEO_WIDTH_KEY, 0),
-                                                prefmngr.getInt(PreferenceManager.VIDEO_HEIGHT_KEY,0));
-                                        //windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);                                      
-                                        firstQDresize = false;
-                            }
-                            else
-                            {
-                                switch(windowsMode){
-                                    case 0:                                                                  
-                                        if(ce.getComponent()==(Component)textFrame){
-                                         textFrame.setLocation(0,0);  
-                                         videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().height/3);
-                                         videoFrame.setLocation(textFrame.getSize().width,0);                            
-                                        }
-                                        else
-                                        {
-                                           videoFrame.setLocation(getSize().width-videoFrame.getSize().width,0);
-                                           textFrame.setLocation(0,0); 
-                                           textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);                                        
-                                        }
-                                        break;                                  
-                                }
-                            }
-			}
-		});
-	}
-        
+                                                prefmngr.getInt(PreferenceManager.VIDEO_HEIGHT_KEY,0));                                                                              
+                                        firstQDresize = false;                                        
+                            } 
+		}});
+        }
+    
          //------setting textframe and videoframe windows mode--------------
-          public void setHorizontalWindowsMediaToRight(){ 
+          public void setHorizontalWindowsMediaToRight(){
+            
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
-                                videoFrame.pack();
+                                videoFrame.pack();                             
                                 videoFrame.setLocation(getSize().width - videoFrame.getSize().width,0);
-                                textFrame.setLocation(0,0);
-                                textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);                   
                                 //videoFrame.pack();
-                                
-                                /*
-                                textFrame.setSize(getSize().width*3/4,getSize().height);
                                 textFrame.setLocation(0,0);
-                                videoFrame.setSize(getSize().width - textFrame.getSize().width, getSize().height/3);
-                                videoFrame.setLocation(textFrame.getSize().width,0);//????
-                                videoFrame.pack();*/
-                                                        
+                                textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
+                                           
                                 windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT;
-                               
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
                 }
                         
-         public void setHorizontalWindowsMediaToLeft(){                                                     		                                   
+         public void setHorizontalWindowsMediaToLeft(){                              
+                                
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
                                 videoFrame.setLocation(0,0);
                                 videoFrame.pack();
                                 textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
                                 textFrame.setLocation(videoFrame.getSize().width,0);  
-                                //videoFrame.pack();
                                 
-                                windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_LEFT;                            
+                                windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_LEFT;
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
                 }   
           
-        public void setVerticalWindowsMediaTop(){                                               
+        public void setVerticalWindowsMediaTop(){
+                                
                                 videoFrame.setLocation(getSize().width/3,0);
                                 videoFrame.setSize(getSize().width/2,getSize().height/2);                               
-                                videoFrame.pack();
+                                videoFrame.pack();                            
                                 textFrame.setLocation(0,videoFrame.getSize().height);
                                 textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
                                 
-                                windowsMode=VERTICAL_WINDOWS_MEDIA_TOP;  
+                                windowsMode=VERTICAL_WINDOWS_MEDIA_TOP;
         }
         
-         public void setSubtitleWindows(){
+         public void setSubtitleWindows(){                 
                                 videoFrame.setLocation(getSize().width/3,0);
                                 videoFrame.setSize(getSize().width/2,getSize().height*7/10);                      
                                 //videoFrame.pack();
                                 textFrame.setLocation(0,videoFrame.getSize().height);
                                 textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
   
-                                windowsMode=SUBTITLE_BELOW;  
+                                windowsMode=SUBTITLE_BELOW;
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);//////////
+                               
         }
          
-        public void setVideoOnlyFullScreen(){                                                        
+        public void setVideoOnlyFullScreen(){
+                                
                                 videoFrame.setLocation(0,0);                        
                                 videoFrame.setSize(getSize().width, getSize().height);
                                 //videoFrame.pack();
                                 textFrame.setSize(0,0);
                                 textFrame.setLocation(0,0);                      
                                                     
-                                windowsMode=VIDEO_ONLY_FULL_SCREEN; 
+                                windowsMode=VIDEO_ONLY_FULL_SCREEN;
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
         }
         
          public void setVideoOnlyNormalSize(){ 
+                                
                                 textFrame.setSize(0,0);
                                 textFrame.setLocation(0,0);
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
                                 videoFrame.setLocation(getSize().width/4, getSize().height/4);
                                 videoFrame.pack();                              
                                 
-                                windowsMode=VIDEO_ONLY_NORMAL_SIZE;                            
+                                windowsMode=VIDEO_ONLY_NORMAL_SIZE;
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
         }
         
-          public void setTranscriptOnly(){                      
+          public void setTranscriptOnly(){
+                                
                                 videoFrame.setSize(0,0);
                                 videoFrame.setLocation(0,0);                              
                                 //videoFrame.pack();                               
                                 textFrame.setLocation(0,0);                        
                                 textFrame.setSize(getSize().width,getSize().height);                              
     
-                                windowsMode=TRANSCRIPT_ONLY; 
+                                windowsMode=TRANSCRIPT_ONLY;
+                                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
         }
        
         public void setDefaultWindows(){                     
@@ -279,7 +263,21 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public int getWindowsMode(){
             return windowsMode;
         }
-                
+       
+       /*
+       public void setWindows(){   
+              textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
+                                    prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
+              textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY,0),
+                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY,0));
+              videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 0 ),
+                                     prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                    
+              videoFrame.setSize(prefmngr.getInt(PreferenceManager.VIDEO_WIDTH_KEY, 0),
+                                 prefmngr.getInt(PreferenceManager.VIDEO_HEIGHT_KEY,0));
+              //windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);  
+             }*/
+       
+       
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
 		timer.schedule(new TimerTask() {
