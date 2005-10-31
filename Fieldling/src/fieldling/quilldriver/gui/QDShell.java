@@ -364,7 +364,13 @@ public class QDShell extends JFrame implements ItemListener
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					//Wizard.this.setVisible(false);
-					Wizard.this.dispose();                                        
+					Wizard.this.dispose();
+                                        if(tempQD!=null){
+                                            qd=tempQD;
+                                            tempQD=null;
+                                            contentPane.add(qd);
+                                            contentPane.repaint();
+                                        }
 				}
 			});
 
@@ -377,7 +383,7 @@ public class QDShell extends JFrame implements ItemListener
                                             
                                             if(tempQD!=null){
                                                contentPane.remove(tempQD);
-                                               tempQD=null;
+                                               //tempQD=null;
                                                contentPane.repaint();  }
                                                   
 						ButtonModel selectedConfiguration = configGroup.getSelection();
@@ -497,21 +503,26 @@ public class QDShell extends JFrame implements ItemListener
 					{       
 					       contentPane.add(qd);
                                                qd.videoFrame.pack();
-                                               numberOfQDsOpen++; //////// 
+                                               numberOfQDsOpen++;  
 					       hasLoadedTranscript = true;                    
 					}
 					else
 					{
 						Wizard.this.dispose();
                                                 
+                                                if(tempQD!=null){
+                                                 qd=tempQD;                            
+                                                 contentPane.add(qd);
+                                                 contentPane.repaint();			        
+                                               }
                                                 if(sameTranscript){
                                                     JOptionPane.showMessageDialog(null, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
-                                                    sameTranscript=false;
+                                                    sameTranscript=false;                                                                                     
                                                 }else
-						    JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                      
-					        
-                                        }
-				}
+						    JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
+				     }
+                                        tempQD=null;
+                                }
 			});
 			JPanel northChoices = new JPanel(new GridLayout(1, 0));
 			JPanel upperHalfChoices = new JPanel (new BorderLayout());
@@ -729,7 +740,7 @@ public class QDShell extends JFrame implements ItemListener
 	}
  
         
-       private void closeThisQDFrame(int closeMode) {  /////////////////////////
+       private void closeThisQDFrame(int closeMode) {  
 		/*i first used dispose() instead of hide(), which should clear up memory,
 		 but i got an error: can't dispose InputContext while it's active
 		 Note by Andres: This error seems to be fixed on JDK 1.5, so changed back
@@ -768,7 +779,12 @@ public class QDShell extends JFrame implements ItemListener
                               if (numberOfQDsOpen == 0)
 				{				
 				  hasLoadedTranscript = false;
-                                }                             
+                                } else
+                                {  
+                                 qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
+                                 contentPane.add(qd);
+                                 contentPane.repaint();
+                                }                                   
                               setJMenuBar(getQDShellMenu()); 
                               setVisible(true);
                             
