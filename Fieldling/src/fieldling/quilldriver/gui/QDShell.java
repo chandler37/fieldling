@@ -917,7 +917,7 @@ public class QDShell extends JFrame implements ItemListener
          //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
         JMenu windowMenu=new JMenu(messages.getString("Window"));
        
-        JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaRight"));
+        JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("MediaToRight"));
         item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
         item1.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent ae) {
@@ -925,7 +925,7 @@ public class QDShell extends JFrame implements ItemListener
 	}
 });
                                   
-        JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("HorizontalWindowsMediaLeft"));
+        JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("MediaToLeft"));
         item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
         item2.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent ae) {
@@ -933,7 +933,7 @@ public class QDShell extends JFrame implements ItemListener
 	}
 });
         
-        JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("VerticalWindowsMediaTop"));
+        JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("MediaOnTop"));
         item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
         item3.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent ae) {
@@ -948,7 +948,7 @@ public class QDShell extends JFrame implements ItemListener
 	}
 });
         
-        JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("VideoOnlyFullScreen"));
+        JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("FullScreenVideoOnly"));
         item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
         item5.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent ae) {                            
@@ -956,7 +956,7 @@ public class QDShell extends JFrame implements ItemListener
 	}
 });
         
-        JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("VideoOnlyNormalSize"));
+        JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("NormalSizeVideoOnly"));
         item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
         item6.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent ae) {

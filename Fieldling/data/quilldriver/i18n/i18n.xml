@@ -963,45 +963,45 @@
     <text lang="en">Window</text>
     <text lang="zh">窗口</text>
   </message>
-    <message id="HorizontalWindowsMediaRight">
-    <text lang="en">Horizontal Windows(Media Right)</text>
-    <text lang="zh">Horizontal Windows(Media Right)</text>
+    <message id="MediaToRight">
+    <text lang="en">Media to right</text>
+    <text lang="zh">媒体在右边</text>
   </message>
-  <message id="HorizontalWindowsMediaLeft">
-    <text lang="en">Horizontal Windows(Media Left)</text>
-    <text lang="zh">Horizontal Windows(Media Left)</text>
+  <message id="MediaToLeft">
+    <text lang="en">Media To left</text>
+    <text lang="zh">媒体在左边</text>
   </message>
-  <message id="VerticalWindowsMediaTop">
-    <text lang="en">Vertical Windows(Media on Top)</text>
-    <text lang="zh">Vertical Windows(Media on Top)</text>
+  <message id="MediaOnTop">
+    <text lang="en">Media on top</text>
+    <text lang="zh">媒体在顶部</text>
   </message>
-  <message id="VideoOnlyFullScreen">
-    <text lang="en">Video Only(Full Window)</text>
-    <text lang="zh">Video Only(Full Window)</text>
+  <message id="FullScreenVideoOnly">
+    <text lang="en">FullScreen Video Only</text>
+    <text lang="zh">仅全屏幕视屏</text>
   </message>
-   <message id="VideoOnlyNormalSize">
-    <text lang="en">Video Only(Normal Size)</text>
-    <text lang="zh">Video Only(Normal Size)</text>
+   <message id="NormalSizeVideoOnly">
+    <text lang="en">Normal size video only</text>
+    <text lang="zh">仅正常大小的视屏</text>
   </message>
    <message id="SubtitleBelow">
-    <text lang="en">Subtitle Below</text>
-    <text lang="zh">Subtitle Below</text>
+    <text lang="en">Subtitle below</text>
+    <text lang="zh">子标题在下面</text>
   </message>
    <message id="TranscriptOnly">
     <text lang="en">Transcript Only</text>
-    <text lang="zh">Transcript Only</text>
+    <text lang="zh">仅文本</text>
   </message>
    <message id="DefaultSizeAndPlacement">
     <text lang="en">Default Size/Placement</text>
-    <text lang="zh">Default Size/Placement</text>
+    <text lang="zh">缺省的大小和位置</text>
   </message>
   <message id="NumberOfOpenFilesExceed">
     <text lang="en">The number of open transcripts is exceed, please close one of them, and retry!</text>
-    <text lang="zh">The number of open transcripts is exceed, please close one of them, and retry!</text>
+    <text lang="zh">目前打开的文件数目超过,请关闭其中一个,再试!</text>
   </message>
    <message id="FileAlreadyBeLoaded">
-    <text lang="en">The transcript file has been load!</text>
-    <text lang="zh">The transcript file has been load!</text>
+    <text lang="en">Sorry,you cannot open a transcript which has same name as currently open!</text>
+    <text lang="zh">对不起,你不能打开一个与已打开的文件有相同文件名的文件!</text>
   </message>
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
