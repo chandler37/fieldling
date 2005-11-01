@@ -84,7 +84,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         protected PreferenceManager prefmngr;
         protected Action insertTimesAction = null;
         protected boolean firstQDresize = true;
-        
+        protected boolean bothResize=false;
+        protected boolean firstVideoFrameResize = true;
+        protected boolean firstTextFrameResize = true;
         
         static {
             org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
@@ -105,13 +107,21 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		setupGlobals();
 		setupGUI();
 		configure(configuration);
-                windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);  
+                windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);
+                 if(prefmngr.getInt(PreferenceManager.BOTH_RESIZE_KEY, 0)==1)
+                    bothResize=true;
+                else
+                    bothResize=false;
 	}
 	public QD(PreferenceManager prefs) {
                 prefmngr = prefs;
 		setupGlobals();
 		setupGUI();
-                windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);  
+                windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);
+                if(prefmngr.getInt(PreferenceManager.BOTH_RESIZE_KEY, 0)==1)
+                    bothResize=true;
+                else
+                    bothResize=false;
 	}
 	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
@@ -135,11 +145,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		invalidate();
 		validate();
 		repaint();
-                           
+                textFrame.addComponentListener(new WindowsComponentAdapter());
+                videoFrame.addComponentListener(new WindowsComponentAdapter()); 
+                
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
-                            if (firstQDresize) {
-                                        /*
+                            if (firstQDresize) { 
+                                       /*
                                         videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 
                                                 getSize().width - videoFrame.getSize().width),
                                                 prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                      
@@ -148,12 +160,11 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                         textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY, 
                                                 getSize().width - videoFrame.getSize().width),
                                                 prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY, 
-                                                getSize().height)); */                             
-                                        textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
+                                                getSize().height)); */   
+                                       textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
                                                 prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
                                         textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY,0),
-                                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY,0));
-                                        
+                                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY,0));                                  
                                         videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 0 ),
                                                 prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                    
                                         videoFrame.setSize(prefmngr.getInt(PreferenceManager.VIDEO_WIDTH_KEY, 0),
@@ -162,10 +173,71 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                             } 
 		}});
         }
-    
+        
+        class WindowsComponentAdapter extends ComponentAdapter {         
+           public void componentResized(ComponentEvent ce) {
+                       if(!firstQDresize&&bothResize){                
+                                switch(windowsMode){
+                                    case 0:                                       
+                                        if(ce.getComponent()==(Component)textFrame){
+                                                  textFrame.setLocation(0,0);
+                                                  videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().width-textFrame.getSize().width);                                                                          
+                                                  videoFrame.setLocation(getSize().width-textFrame.getSize().width,0);                    
+                                        }
+                                        else
+                                        {   
+                                           videoFrame.setLocation(getSize().width-videoFrame.getSize().width,0);                                                                               
+                                           textFrame.setLocation(0,0); 
+                                           textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height); 
+                                        }
+                                        break;
+                                    case 1:
+                                         if(ce.getComponent()==(Component)textFrame){                                      
+                                         videoFrame.setLocation(0,0);    
+                                         videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().width-textFrame.getSize().width);
+                                         textFrame.setLocation(getSize().width-textFrame.getSize().width,0);                   
+                                        }
+                                        else
+                                        {                           
+                                           videoFrame.setLocation(0,0);
+                                           textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
+                                           textFrame.setLocation(getSize().width-textFrame.getSize().width,0);
+                                        }
+                                        break;
+                                    case 2:
+                                          if(ce.getComponent()==(Component)textFrame){
+                                         videoFrame.setLocation(getSize().width/3,0);
+                                         videoFrame.setSize(getSize().height-textFrame.getSize().height,getSize().height-textFrame.getSize().height);
+                                         textFrame.setLocation(0,videoFrame.getSize().height);                                                         
+                                        }
+                                        else
+                                        {   
+                                           videoFrame.setLocation(getSize().width/3,0);
+                                           textFrame.setSize(getSize().width,getSize().height-videoFrame.getSize().height);
+                                           textFrame.setLocation(0,videoFrame.getSize().height); 
+                                        }
+                                        break; 
+                                    case 3:
+                                         if(ce.getComponent()==(Component)textFrame){
+                                         videoFrame.setLocation(getSize().width/3,0);
+                                         videoFrame.setSize(getSize().height-textFrame.getSize().height,getSize().height-textFrame.getSize().height);
+                                         textFrame.setLocation(0,videoFrame.getSize().height);                                                         
+                                        }
+                                        else
+                                        {   
+                                           videoFrame.setLocation(getSize().width/3,0);  
+                                           textFrame.setSize(getSize().width,getSize().height-videoFrame.getSize().height);
+                                           textFrame.setLocation(0,videoFrame.getSize().height); 
+                                        }
+                                        break;                                                                    
+                                }
+                              }
+                                
+                       }
+        }
+        
          //------setting textframe and videoframe windows mode--------------
-          public void setHorizontalWindowsMediaToRight(){
-            
+          public void setHorizontalWindowsMediaToRight(){          
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
                                 videoFrame.pack();                             
                                 videoFrame.setLocation(getSize().width - videoFrame.getSize().width,0);
@@ -177,8 +249,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                 prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
                 }
                         
-         public void setHorizontalWindowsMediaToLeft(){                              
-                                
+         public void setHorizontalWindowsMediaToLeft(){                                                           
                                 videoFrame.setSize(getSize().width/4,getSize().height/3);
                                 videoFrame.setLocation(0,0);
                                 videoFrame.pack();
@@ -189,8 +260,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                 prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
                 }   
           
-        public void setVerticalWindowsMediaTop(){
-                                
+        public void setVerticalWindowsMediaTop(){                        
                                 videoFrame.setLocation(getSize().width/3,0);
                                 videoFrame.setSize(getSize().width/2,getSize().height/2);                               
                                 videoFrame.pack();                            
@@ -212,8 +282,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                
         }
          
-        public void setVideoOnlyFullScreen(){
-                                
+        public void setVideoOnlyFullScreen(){                             
                                 videoFrame.setLocation(0,0);                        
                                 videoFrame.setSize(getSize().width, getSize().height);
                                 //videoFrame.pack();
@@ -236,8 +305,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                                 prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
         }
         
-          public void setTranscriptOnly(){
-                                
+          public void setTranscriptOnly(){                          
                                 videoFrame.setSize(0,0);
                                 videoFrame.setLocation(0,0);                              
                                 //videoFrame.pack();                               
@@ -264,19 +332,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
             return windowsMode;
         }
        
-       /*
-       public void setWindows(){   
-              textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
-                                    prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
-              textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY,0),
-                                prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY,0));
-              videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 0 ),
-                                     prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                    
-              videoFrame.setSize(prefmngr.getInt(PreferenceManager.VIDEO_WIDTH_KEY, 0),
-                                 prefmngr.getInt(PreferenceManager.VIDEO_HEIGHT_KEY,0));
-              //windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);  
-             }*/
-       
+        public boolean getBothResize(){
+            return bothResize;
+        }
        
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);

@@ -33,7 +33,7 @@
   </message>
   <message id="AddInterpretiveNote">
     <text lang="en">Add Interpretive Note</text>
-    <text lang="zh">添加说明</text>
+    <text lang="zh">添加说明注释</text>
   </message>
   <message id="AddLexicalNote">
     <text lang="en">Add Lexical Note</text>
@@ -405,7 +405,7 @@
   </message>
   <message id="KeyboardInputMethod">
     <text lang="en">Tibetan Keyboard</text>
-    <text lang="zh">键盘输入方法</text>
+    <text lang="zh">藏文键盘</text>
   </message>
   <message id="Language">
     <text lang="en">Language:</text>
@@ -425,7 +425,7 @@
   </message>
   <message id="MaximizeStop">
     <text lang="en">Maximize Stop</text>
-    <text lang="zh">最多时间</text>
+    <text lang="zh">最大化结束</text>
   </message>
   <message id="MediaColon">
     <text lang="en">Media:</text>
@@ -865,23 +865,23 @@
   </message>
   <message id="TranscriptionPlusEnglish">
         <text lang="en">Transcription + English</text>
-        <text lang="zh">Transcription + English</text>
+        <text lang="zh">转录文本 + 英语</text>
   </message>
   <message id="TranscriptionPlusChinese">
         <text lang="en">Transcription + Chinese</text>
-        <text lang="zh">Transcription + Chinese</text>
+        <text lang="zh">转录文本 + 中文</text>
   </message>
   <message id="TranscriptionPlusNotes">
         <text lang="en">Transcription + Notes</text>
-        <text lang="zh">Transcription + Notes</text>
+        <text lang="zh">转录文本 + 注释</text>
   </message>  
   <message id="TranscriptionPlusEnglishPlusChinese">
         <text lang="en">Transcript + Eng + Ch</text>
-        <text lang="zh">Transcript + Eng + Ch</text>
+        <text lang="zh">转录文本 + 英文 +中文</text>
   </message>
   <message id="EnglishPlusChinese">
         <text lang="en">English + Chinese</text>
-        <text lang="zh">English + Chinese</text>
+        <text lang="zh">英文 + 中文</text>
   </message>
   <message id="Translation_ENOnly">
     <text lang="en">English Translation Only</text>
@@ -963,6 +963,10 @@
     <text lang="en">Window</text>
     <text lang="zh">窗口</text>
   </message>
+    <message id="BothResizeSetting">
+    <text lang="en">Both resize windows</text>
+    <text lang="zh">同时改变窗口大小</text>
+  </message>
     <message id="MediaToRight">
     <text lang="en">Media to right</text>
     <text lang="zh">媒体在右边</text>
@@ -1005,7 +1009,7 @@
   </message>
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
-    <text lang="zh">Automatically open this dialog box when QuillDriver starts up?</text>
+    <text lang="zh">当启动QuillDriver时,是否自动打开此对话框?</text>
   </message>
   <message id="help1">
     <text lang="en">
@@ -1505,7 +1509,7 @@
   </message>
   <message id="Alert">
     <text lang="en">Alert</text>
-    <text lang="zh">Alert</text>
+    <text lang="zh">警告</text>
   </message>
   <message id="FileCouldNotBeLoaded">
     <text lang="en">The file/transcript could not be loaded! Please consult the log file for details.</text>
@@ -1525,11 +1529,11 @@
   </message>
   <message id="Options">
   	<text lang="en">Options</text>
-  	<text lang="zh">Options</text>
+  	<text lang="zh">选项</text>
   </message>
   <message id="Tools">
   	<text lang="en">Tools</text>
-  	<text lang="zh">Tools</text>
+  	<text lang="zh">工具</text>
   </message>
 </all-messages>
 

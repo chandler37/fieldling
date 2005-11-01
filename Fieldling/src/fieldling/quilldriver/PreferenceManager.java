@@ -40,7 +40,8 @@ import fieldling.quilldriver.gui.QDShell;
 
 public class PreferenceManager extends JPanel {
 		//preference keys
-                public static final String WINDOW_MODE_KEY="WINDOW_MODE"; //Save the windows mode added by yutso
+                public static final String WINDOW_MODE_KEY="WINDOW_MODE";
+                public static final String BOTH_RESIZE_KEY="BOTH_RESIZE";
                 public static final String TRANSCRIPT_X_KEY= "TRANSCRIPT__X";
                 public static final String TRANSCRIPT_Y_KEY= "TRANSCRIPT__Y";
                 public static final String TRANSCRIPT_WIDTH_KEY = "TRANSCRIPT_WIDTH";

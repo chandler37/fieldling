@@ -737,6 +737,10 @@ public class QDShell extends JFrame implements ItemListener
                 }
 		prefmngr.setValue(prefmngr.MEDIA_DIRECTORY_KEY, prefmngr.media_directory);
                 prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, qd.getWindowsMode());
+                if(getQD().getBothResize()) 
+                     prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,1);
+                else
+                     prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,0);
 	}
  
         
@@ -932,7 +936,27 @@ public class QDShell extends JFrame implements ItemListener
                 
          //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
         JMenu windowMenu=new JMenu(messages.getString("Window"));
-       
+        final JCheckBoxMenuItem bothResizeSetting=new JCheckBoxMenuItem(messages.getString("BothResizeSetting"));
+        bothResizeSetting.setAccelerator(KeyStroke.getKeyStroke("shift F9"));
+        bothResizeSetting.addItemListener(new ItemListener() {
+	public void itemStateChanged(ItemEvent e) {
+              if(bothResizeSetting.getState()){ 
+                  getQD().bothResize=true;
+                  //prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 1);
+                  //System.out.println("BothReize: true");
+              }else{
+                  getQD().bothResize=false;
+                  //prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 0);
+              }
+          }
+});
+        if(getQD().getBothResize())          
+          bothResizeSetting.setState(true);
+        else 
+          bothResizeSetting.setState(false);
+
+        windowMenu.add(bothResizeSetting);
+        windowMenu.addSeparator();
         JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("MediaToRight"));
         item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
         item1.addActionListener(new ActionListener() {
