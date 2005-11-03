@@ -68,9 +68,10 @@ public class Renderer {
 			StyleConstants.setFontSize(eColor, PreferenceManager.font_size);
 			StyleConstants.setFontFamily(eColor, PreferenceManager.font_face);
 			eColor.addAttribute("xmlnode", e);
-                        @TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
-                        @TIBETAN@StyleConstants.setForeground(tibAtt, tagColor);
-                        @TIBETAN@tibAtt.addAttribute("xmlnode", e);
+            @TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
+            @TIBETAN@StyleConstants.setFontSize(tibAtt, PreferenceManager.tibetan_font_size);
+            @TIBETAN@StyleConstants.setForeground(tibAtt, tagColor);
+            @TIBETAN@tibAtt.addAttribute("xmlnode", e);
 			if (pos.getOffset()>0) {
 				String s = doc.getText(pos.getOffset()-1, 1);
 				if (s.charAt(0)!='\n') {
@@ -90,16 +91,16 @@ public class Renderer {
 				if (tagInfo == null) tagDisplay = new String(e.getNodeName());
 				else tagDisplay = tagInfo.getTagDisplay(e);
 				if (tagDisplay instanceof String) {
-                                    @TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagItselfTibetan(e.getNodeName())) {
-                                            @TIBETAN@int n = pos.getOffset();
-                                            @TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-                                            @TIBETAN@duff.toTibetanMachineWeb((String)tagDisplay, n);
-                                            @TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
-                                    @TIBETAN@} else {
-                                            @TIBETAN@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor);
-                                    @TIBETAN@}
-                                    @UNICODE@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor); //insert element begin tag
-                                }
+					@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagItselfTibetan(e.getNodeName())) {
+					@TIBETAN@int n = pos.getOffset();
+					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+					@TIBETAN@duff.toTibetanMachineWeb((String)tagDisplay, n);
+					@TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
+					@TIBETAN@} else {
+						@TIBETAN@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor);
+					@TIBETAN@}
+					@UNICODE@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor); //insert element begin tag
+				}
 				else if (tagDisplay instanceof Icon) {
 					pane.setCaretPosition(pos.getOffset());
 					pane.insertIcon((Icon)tagDisplay);
@@ -193,19 +194,19 @@ public class Renderer {
 				doc.insertString(pos.getOffset(), "=", aColor);
 			}
 			startOffsets.put(att, new Integer(pos.getOffset()+1)); //add one so that begin quote is not part of attribute value
-                        doc.insertString(pos.getOffset(), "\"", tColor);
-                        @TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isAttributeTextTibetan(att.getNodeName(), att.getOwnerElement().getNodeName())) {
+			doc.insertString(pos.getOffset(), "\"", tColor);
+			@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isAttributeTextTibetan(att.getNodeName(), att.getOwnerElement().getNodeName())) {
 				@TIBETAN@int n = pos.getOffset();
-                                @TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+				@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 				@TIBETAN@duff.toTibetanMachineWeb(att.getValue(), n);
 				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
 				@TIBETAN@tibAtt.addAttribute("xmlnode", att);
 				@TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
 			@TIBETAN@} else {
-                                @TIBETAN@doc.insertString(pos.getOffset(), att.getValue(), tColor);
+				@TIBETAN@doc.insertString(pos.getOffset(), att.getValue(), tColor);
 			@TIBETAN@}
 			@UNICODE@doc.insertString(pos.getOffset(), att.getValue(), tColor);
-                        doc.insertString(pos.getOffset(), "\"", tColor);
+			doc.insertString(pos.getOffset(), "\"", tColor);
 			endOffsets.put(att, new Integer(pos.getOffset()));
 			return pos.getOffset();
 		} catch (BadLocationException ble) {
