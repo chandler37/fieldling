@@ -964,7 +964,7 @@
     <text lang="zh">窗口</text>
   </message>
     <message id="BothResizeSetting">
-    <text lang="en">Both resize windows</text>
+    <text lang="en">Resize windows together</text>
     <text lang="zh">同时改变窗口大小</text>
   </message>
     <message id="MediaToRight">
@@ -972,7 +972,7 @@
     <text lang="zh">媒体在右边</text>
   </message>
   <message id="MediaToLeft">
-    <text lang="en">Media To left</text>
+    <text lang="en">Media to left</text>
     <text lang="zh">媒体在左边</text>
   </message>
   <message id="MediaOnTop">
@@ -980,7 +980,7 @@
     <text lang="zh">媒体在顶部</text>
   </message>
   <message id="FullScreenVideoOnly">
-    <text lang="en">FullScreen Video Only</text>
+    <text lang="en">Fullscreen video only</text>
     <text lang="zh">仅全屏幕视屏</text>
   </message>
    <message id="NormalSizeVideoOnly">
@@ -992,11 +992,11 @@
     <text lang="zh">子标题在下面</text>
   </message>
    <message id="TranscriptOnly">
-    <text lang="en">Transcript Only</text>
+    <text lang="en">Transcript only</text>
     <text lang="zh">仅文本</text>
   </message>
    <message id="DefaultSizeAndPlacement">
-    <text lang="en">Default Size/Placement</text>
+    <text lang="en">Default size/placement</text>
     <text lang="zh">缺省的大小和位置</text>
   </message>
   <message id="NumberOfOpenFilesExceed">
