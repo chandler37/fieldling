@@ -40,43 +40,43 @@ import fieldling.util.JdkVersionHacks;
 public class QDShell extends JFrame implements ItemListener
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
-
+	 
 	 *  clean */
-
+	
 	/*
 	 private final static JskadKeyboardManager keybdMgr
 	 = new JskadKeyboardManager(JskadKeyboardFactory.getAllAvailableJskadKeyboards());
 	 */
-
+	
 	/** When opening a file, this is the only extension QuillDriver
 	 cares about.  This is case-insensitive. */
 	protected final static String dotQuillDriver = ".xml";
 	protected final static String dotQuillDriverTibetan = ".qdt";
-
+	
 	ResourceBundle messages = null;
-
+	
 	QD qd = null;
-        
-        QD tempQD=null;//save qd before open another transcript
-        boolean sameTranscript=false;
-        public static final int MAXIMUM_NUMBER_OF_OPEN_FILES = 4; 
-        private java.util.List openFileList = new ArrayList();
-        private java.util.List qdList = new ArrayList();
-        private Map openTranscriptToQDMap=new HashMap();
-        
+	
+	QD tempQD=null;//save qd before open another transcript
+	boolean sameTranscript=false;
+	public static final int MAXIMUM_NUMBER_OF_OPEN_FILES = 4; 
+	private java.util.List openFileList = new ArrayList();
+	private java.util.List qdList = new ArrayList();
+	private Map openTranscriptToQDMap=new HashMap();
+	
 	Container contentPane;
 	private static boolean hasLoadedTranscript = false;
-
+	
 	PreferenceManager prefmngr = new fieldling.quilldriver.PreferenceManager();
-
+	
 	private static int numberOfQDsOpen = 0;
-
+	
 	/* public static final String NEW_FILE_ERROR_MESSAGE =
 	 "This file already exists! Type a new file name\n" +
 	 "instead of selecting an existing file.";*/
 	public static final String FILE_SEPARATOR = System
-			.getProperty("file.separator");
-
+	.getProperty("file.separator");
+	
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 	public static final int CLOSE_APPLICATION = 0;
 	public static final int CLOSE_WINDOW = 1;
@@ -91,53 +91,53 @@ public class QDShell extends JFrame implements ItemListener
 	 * Marks if preference changes that require restart took place.
 	 */
 	private boolean needsToRestart;
-
+	
 	private static void printSyntax()
 	{
 		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
 	}
 	
 	public static void main(String[] args)
-        {
-            /* i have chosen the Metal look and feel to get around one apparent bug with
-                the Windows look and feel (see below). for us, the problem is that if you
-                maximize the transcript, and then click on the video, then the video suddenly
-                maximizes and you can't see the transcript any more--not what we want!
-                
-                http://forum.java.sun.com/thread.jspa?forumID=57&threadID=586119
-                Problem with "Windows Look N Feel"
-                Author: gulshan21  Posts: 63   Registered: 10/1/03
-		Jan 11, 2005 10:43 PM 	
-                Hi, I have a JFrame in which there are several JInternalFrames. 
-                Am actually using the Windows Look N Feel. The problem is that 
-                when I maximised one of those JInternalFrame all of them got 
-                maximised and when I minimised one of them again, all got 
-                minimised. But when using other Look N Feel apart from 
-                Windows, everything works fine. Can anyone please explain 
-                me what's the cause of the problem and if possible send me 
-                the solution.*/
-                try {
-                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                } catch (Exception e) { }
-                /*try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) { }*/
+	{
+		/* i have chosen the Metal look and feel to get around one apparent bug with
+		 the Windows look and feel (see below). for us, the problem is that if you
+		 maximize the transcript, and then click on the video, then the video suddenly
+		 maximizes and you can't see the transcript any more--not what we want!
+		 
+		 http://forum.java.sun.com/thread.jspa?forumID=57&threadID=586119
+		 Problem with "Windows Look N Feel"
+		 Author: gulshan21  Posts: 63   Registered: 10/1/03
+		 Jan 11, 2005 10:43 PM 	
+		 Hi, I have a JFrame in which there are several JInternalFrames. 
+		 Am actually using the Windows Look N Feel. The problem is that 
+		 when I maximised one of those JInternalFrame all of them got 
+		 maximised and when I minimised one of them again, all got 
+		 minimised. But when using other Look N Feel apart from 
+		 Windows, everything works fine. Can anyone please explain 
+		 me what's the cause of the problem and if possible send me 
+		 the solution.*/
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (Exception e) { }
+		/*try {
+		 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		 } catch (Exception e) { }*/
 		PrintStream ps=null;
 		try 
 		{
 			//ThdlDebug.attemptToSetUpLogFile("qd", ".log");
 			/* I am using saxon-b 8.x as my Transformer for two reasons:
-                        (1) It supports XSLT 2.0, which is handy
-                        (2) Unlike xalan, it has the nice feature that if you transform a node, 
-                        you can get access to the entire document connected to that node. As
-                        Michael Kay writes, "Generally I"ve followed what Microsoft did (they were 
-                         the ones who introduced the idea of starting a transformation at a node 
-                         other than the root), which is that the start node is not detached from 
-                         the tree it belonged to - you can still do ancestor::x to find its 
-                         original ancestors." For discussion, see the following saxon-help post:
-                                http://sourceforge.net/mailarchive/message.php?msg_id=2997255*/
+			 (1) It supports XSLT 2.0, which is handy
+			 (2) Unlike xalan, it has the nice feature that if you transform a node, 
+			 you can get access to the entire document connected to that node. As
+			 Michael Kay writes, "Generally I"ve followed what Microsoft did (they were 
+			 the ones who introduced the idea of starting a transformation at a node 
+			 other than the root), which is that the start node is not detached from 
+			 the tree it belonged to - you can still do ancestor::x to find its 
+			 original ancestors." For discussion, see the following saxon-help post:
+			 http://sourceforge.net/mailarchive/message.php?msg_id=2997255*/
 			System.setProperty("javax.xml.transform.TransformerFactory",
-                                        "net.sf.saxon.TransformerFactoryImpl");
+			"net.sf.saxon.TransformerFactoryImpl");
 			//		"org.apache.xalan.processor.TransformerFactoryImpl");
 			
 			try 
@@ -154,7 +154,7 @@ public class QDShell extends JFrame implements ItemListener
 				new QDShell();
 				return;
 			}
-				
+			
 			if (args.length==1)
 			{
 				System.out.println("Syntax error: missing arguments!");
@@ -190,7 +190,7 @@ public class QDShell extends JFrame implements ItemListener
 		} catch (NoClassDefFoundError err) {
 		}
 	}
-
+	
 	public File selectTranscriptFile(String message) 
 	{
 		JFileChooser fc = new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
@@ -205,8 +205,8 @@ public class QDShell extends JFrame implements ItemListener
 			return null;
 		}
 	}
-        
-        class Wizard extends JDialog {
+	
+	class Wizard extends JDialog {
 		public Wizard() {
 			//choice of configuration
 			super(QDShell.this, messages.getString("Open"), true);
@@ -247,20 +247,20 @@ public class QDShell extends JFrame implements ItemListener
 			boolean useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1)==1;
 			JCheckBox openWizardAutomatically = new JCheckBox(messages.getString("AutomaticallyOpenDialogBox"), useWizard);
 			openWizardAutomatically.addItemListener(new ItemListener()
-			{
+					{
 				public void itemStateChanged(ItemEvent e) 
 				{
 					prefmngr.setInt(prefmngr.USE_WIZARD_KEY, e.getStateChange()==e.SELECTED?1:-1);
 				}				
-			});
-
+					});
+			
 			//choice of video player
 			JPanel moviePlayerChoice = new JPanel();
 			moviePlayerChoice
-					.setBorder(BorderFactory.createTitledBorder(messages
-							.getString("SelectVideoPlayer")));
+			.setBorder(BorderFactory.createTitledBorder(messages
+					.getString("SelectVideoPlayer")));
 			java.util.List moviePlayers = PlayerFactory
-					.getAllAvailablePlayers();
+			.getAllAvailablePlayers();
 			ButtonGroup mediaGroup = new ButtonGroup();
 			JRadioButton[] mediaItems = new JRadioButton[moviePlayers.size()];
 			for (int i = 0; i < moviePlayers.size(); i++) {
@@ -278,8 +278,8 @@ public class QDShell extends JFrame implements ItemListener
 			if (mediaItems.length > 0) {
 				PanelPlayer mPlayer = (PanelPlayer) moviePlayers.get(0);
 				String myPlayerName = prefmngr
-						.getValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer
-								.getIdentifyingName());
+				.getValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer
+						.getIdentifyingName());
 				if (myPlayerName.equals(mPlayer.getIdentifyingName())) { //user's player identical to QD's default player
 					mediaItems[0].setSelected(true);
 					qd.setMediaPlayer(mPlayer);
@@ -304,12 +304,12 @@ public class QDShell extends JFrame implements ItemListener
 			moviePlayerChoice.setLayout(new GridLayout(0, 1));
 			for (int i = 0; i < mediaItems.length; i++)
 				moviePlayerChoice.add(mediaItems[i]);
-
+			
 			//file choice: new transcript, open existing, or open recent
 			JPanel dataSourceChoice = new JPanel();
 			dataSourceChoice
-					.setBorder(BorderFactory.createTitledBorder(messages
-							.getString("SelectDataSource")));
+			.setBorder(BorderFactory.createTitledBorder(messages
+					.getString("SelectDataSource")));
 			java.util.List recentFileList = new ArrayList();
 			java.util.List recentVideoList = new ArrayList();
 			String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
@@ -327,10 +327,10 @@ public class QDShell extends JFrame implements ItemListener
 				}
 			}
 			String[] recentVideos = (String[]) recentVideoList
-					.toArray(new String[0]);
+			.toArray(new String[0]);
 			final ButtonGroup dataSourceGroup = new ButtonGroup();
 			JRadioButton[] dataSourceButtons = new JRadioButton[2 + recentFileList
-					.size()];
+			                                                    .size()];
 			dataSourceButtons[0] = new JRadioButton(messages
 					.getString("NewTranscriptText"));
 			dataSourceButtons[1] = new JRadioButton(messages
@@ -360,41 +360,41 @@ public class QDShell extends JFrame implements ItemListener
 				dataSourceButtons[2].setSelected(true); //open most recent file by default
 			else
 				dataSourceButtons[0].setSelected(true); //if no recent files, assume new transcript
-
+			
 			//cancel button: quit QuillDriver
 			JButton cancelButton = new JButton(messages.getString("Cancel"));
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					//Wizard.this.setVisible(false);
 					Wizard.this.dispose();
-                                        if(tempQD!=null){
-                                            qd=tempQD;
-                                            tempQD=null;
-                                            contentPane.add(qd);
-                                            contentPane.repaint();
-                                        }
+					if(tempQD!=null){
+						qd=tempQD;
+						tempQD=null;
+						contentPane.add(qd);
+						contentPane.repaint();
+					}
 				}
 			});
-
+			
 			//ok button: make changes
 			JButton okButton = new JButton(messages.getString("Ok"));
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					boolean noProblems = true;
 					try {
-                                            
-                                            if(tempQD!=null){
-                                               contentPane.remove(tempQD);
-                                               //tempQD=null;
-                                               contentPane.repaint();  }
-                                                  
+						
+						if(tempQD!=null){
+							contentPane.remove(tempQD);
+							//tempQD=null;
+							contentPane.repaint();  }
+						
 						ButtonModel selectedConfiguration = configGroup.getSelection();
 						String configCommand = selectedConfiguration.getActionCommand();
 						int i = Integer.parseInt(configCommand);
 						qd.configure(configurations[i]);
 						prefmngr.setValue(prefmngr.CONFIGURATION_KEY,configurations[i].getName());
 						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, qd.player.getIdentifyingName());
-
+						
 						ButtonModel selectedRb = dataSourceGroup.getSelection();
 						String command = selectedRb.getActionCommand();
 						if (command.equals(messages.getString("NewTranscriptText"))) {
@@ -405,90 +405,90 @@ public class QDShell extends JFrame implements ItemListener
 							if (newTemplateURL == null)
 								System.exit(0); //FIX
 							/*if (!newTemplateFile.exists())
-								System.exit(0); //FIX*/
-	                                                       
+							 System.exit(0); //FIX*/
+							
 							File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
-                                                        if(openFileList.contains(saveAsFile.getName())){
-                                                                    
-                                                                    sameTranscript=true;
-                                                        }
-                                                          else{
-                                                        
-                            InputStream in = newTemplateURL.openStream();
-                            OutputStream out = new FileOutputStream(saveAsFile);
-                            // Transfer bytes from in to out
-                            byte[] buf = new byte[1024];
-                            int len;
-                            while ((len = in.read(buf)) > 0) {
-                                out.write(buf, 0, len);
-                            }
-                            in.close();
-                            out.close();
-
-	                        noProblems = qd.loadTranscript(saveAsFile);
-	                        if (noProblems)
-	                        {
-	                        	String transcriptString = saveAsFile.getAbsolutePath();
-	                        	prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-	                        	makeRecentlyOpened(transcriptString);
-	                        	makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-                                        
-                                        if(openFileList.contains(saveAsFile.getName())==false){                                                       
-                                        openFileList.add(saveAsFile.getName());                               
-                                        qdList.add(qd);
-                                        openTranscriptToQDMap.put(saveAsFile.getName(),qd);
-                                        }
-	                        }
-                                                }      
-                                          		} else if (command.equals(messages.getString("OpenExisting"))) {
+							if(openFileList.contains(saveAsFile.getName())){
+								
+								sameTranscript=true;
+							}
+							else{
+								
+								InputStream in = newTemplateURL.openStream();
+								OutputStream out = new FileOutputStream(saveAsFile);
+								// Transfer bytes from in to out
+								byte[] buf = new byte[1024];
+								int len;
+								while ((len = in.read(buf)) > 0) {
+									out.write(buf, 0, len);
+								}
+								in.close();
+								out.close();
+								
+								noProblems = qd.loadTranscript(saveAsFile);
+								if (noProblems)
+								{
+									String transcriptString = saveAsFile.getAbsolutePath();
+									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+									makeRecentlyOpened(transcriptString);
+									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+									
+									if(openFileList.contains(saveAsFile.getName())==false){                                                       
+										openFileList.add(saveAsFile.getName());                               
+										qdList.add(qd);
+										openTranscriptToQDMap.put(saveAsFile.getName(),qd);
+									}
+								}
+							}      
+						} else if (command.equals(messages.getString("OpenExisting"))) {
 							File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 							if (transcriptFile != null) {
 								String transcriptString = transcriptFile.getAbsolutePath();
-                                                               if(openFileList.contains(transcriptFile.getName())){                                                                     
-                                                                  sameTranscript=true;
-                                                               } else{
-								prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-								noProblems = qd.loadTranscript(transcriptFile);
-								if (noProblems)
-								{
-									makeRecentlyOpened(transcriptString);
-									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-                                                                        
-                                                                        openFileList.add(transcriptFile.getName()); 
-                                                                        qdList.add(qd);
-                                                                        openTranscriptToQDMap.put(transcriptFile.getName(),qd);
-                                                                }              
-							  }
+								if(openFileList.contains(transcriptFile.getName())){                                                                     
+									sameTranscript=true;
+								} else{
+									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+									noProblems = qd.loadTranscript(transcriptFile);
+									if (noProblems)
+									{
+										makeRecentlyOpened(transcriptString);
+										makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+										
+										openFileList.add(transcriptFile.getName()); 
+										qdList.add(qd);
+										openTranscriptToQDMap.put(transcriptFile.getName(),qd);
+									}              
+								}
 							}
-                                                        
+							
 						} else { //must be recent file
 							File transcriptFile = new File(command);
-                                                        
-                                                        if(openFileList.contains(transcriptFile.getName())){                                                                   
-                                                                    sameTranscript=true;
-                                                        }
-                                                          else{
-							Object video = recentTranscriptToRecentVideoMap.get(command);
-							if (video == null)
-								noProblems = qd.loadTranscript(transcriptFile);
-							else
-								noProblems = qd.loadTranscript(transcriptFile, (String) video);
-							if (noProblems)
-							{                                                        
-								makeRecentlyOpened(command);
-								makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-                                                                
-                                                                openFileList.add(transcriptFile.getName());
-                                                                qdList.add(qd);
-                                                                openTranscriptToQDMap.put(transcriptFile.getName(),qd);
+							
+							if(openFileList.contains(transcriptFile.getName())){                                                                   
+								sameTranscript=true;
 							}
+							else{
+								Object video = recentTranscriptToRecentVideoMap.get(command);
+								if (video == null)
+									noProblems = qd.loadTranscript(transcriptFile);
+								else
+									noProblems = qd.loadTranscript(transcriptFile, (String) video);
+								if (noProblems)
+								{                                                        
+									makeRecentlyOpened(command);
+									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+									
+									openFileList.add(transcriptFile.getName());
+									qdList.add(qd);
+									openTranscriptToQDMap.put(transcriptFile.getName(),qd);
+								}
+							}
+							
 						}
-                                                
-                                        }
 						
 						//Wizard.this.hide();
 						Wizard.this.dispose();
-                                                                                                
+						
 					}
 					catch (Exception ex)
 					{
@@ -503,28 +503,28 @@ public class QDShell extends JFrame implements ItemListener
 					
 					if (noProblems&&!sameTranscript) 
 					{       
-					       contentPane.add(qd);
-                                               qd.videoFrame.pack();
-                                               numberOfQDsOpen++;  
-					       hasLoadedTranscript = true;                    
+						contentPane.add(qd);
+						qd.videoFrame.pack();
+						numberOfQDsOpen++;  
+						hasLoadedTranscript = true;                    
 					}
 					else
 					{
 						Wizard.this.dispose();
-                                                
-                                                if(tempQD!=null){
-                                                 qd=tempQD;                            
-                                                 contentPane.add(qd);
-                                                 contentPane.repaint();			        
-                                               }
-                                                if(sameTranscript){
-                                                    JOptionPane.showMessageDialog(null, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
-                                                    sameTranscript=false;                                                                                     
-                                                }else
-						    JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
-				     }
-                                        tempQD=null;
-                                }
+						
+						if(tempQD!=null){
+							qd=tempQD;                            
+							contentPane.add(qd);
+							contentPane.repaint();			        
+						}
+						if(sameTranscript){
+							JOptionPane.showMessageDialog(null, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
+							sameTranscript=false;                                                                                     
+						}else
+							JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
+					}
+					tempQD=null;
+				}
 			});
 			JPanel northChoices = new JPanel(new GridLayout(1, 0));
 			JPanel upperHalfChoices = new JPanel (new BorderLayout());
@@ -546,7 +546,7 @@ public class QDShell extends JFrame implements ItemListener
 			getContentPane().add(content);
 		}
 	}
-		
+	
 	/** Constructor for generic stuff loaded regardless of how to get initial state (wizard, command-line,
 	 * or defaults in pref manager). Not meant to be called directly!!! */
 	private void loadGenericInitialState()
@@ -577,7 +577,7 @@ public class QDShell extends JFrame implements ItemListener
 		Wizard wiz = new Wizard();
 		wiz.setVisible(true);		
 	}
-
+	
 	
 	private void loadSpecificInitialStateFromDefaults() throws Exception
 	{
@@ -626,7 +626,7 @@ public class QDShell extends JFrame implements ItemListener
 				break;
 			}
 		}
-
+		
 		java.util.List moviePlayers = PlayerFactory.getAllAvailablePlayers();
 		PanelPlayer mPlayer;
 		
@@ -650,7 +650,7 @@ public class QDShell extends JFrame implements ItemListener
 			makeRecentlyOpenedVideo(mediaURL);
 		}
 		makeRecentlyOpened(transcriptString);
-				
+		
 	}
 	
 	public QDShell(int useWizard)
@@ -690,14 +690,14 @@ public class QDShell extends JFrame implements ItemListener
 		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1);
 		
 		/*try
-		{
-			if (useWizard==-1) loadSpecificInitialStateFromDefaults();
-		}
-		catch (Exception e)
-		{
-			useWizard=1;
-		}*/
-
+		 {
+		 if (useWizard==-1) loadSpecificInitialStateFromDefaults();
+		 }
+		 catch (Exception e)
+		 {
+		 useWizard=1;
+		 }*/
+		
 		setJMenuBar(getQDShellMenu());
 		setVisible(true);
 		
@@ -707,7 +707,7 @@ public class QDShell extends JFrame implements ItemListener
 			wiz.setVisible(true);
 		}
 	}
-
+	
 	
 	public QDShell(File transcriptFile, String configName, String mediaName)
 	{
@@ -715,147 +715,147 @@ public class QDShell extends JFrame implements ItemListener
 		// not loading wizard
 		
 		loadSpecificInitialState(transcriptFile, configName, mediaName);		
-
+		
 		setJMenuBar(getQDShellMenu());
 		setVisible(true);
 	}
-
+	
 	private void putPreferences() {
 		prefmngr.setInt(prefmngr.WINDOW_X_KEY, getX());
 		prefmngr.setInt(prefmngr.WINDOW_Y_KEY, getY());
 		prefmngr.setInt(prefmngr.WINDOW_WIDTH_KEY, getWidth());
 		prefmngr.setInt(prefmngr.WINDOW_HEIGHT_KEY, getHeight());
-                if (qd.getEditor() != null) {
-                    Rectangle tRec = qd.textFrame.getBounds();
-                    prefmngr.setInt(prefmngr.TRANSCRIPT_X_KEY, tRec.x);
-                    prefmngr.setInt(prefmngr.TRANSCRIPT_Y_KEY, tRec.y);
-                    prefmngr.setInt(prefmngr.TRANSCRIPT_HEIGHT_KEY, tRec.height);
-                    prefmngr.setInt(prefmngr.TRANSCRIPT_WIDTH_KEY, tRec.width);
-                    Rectangle vRec = qd.videoFrame.getBounds();
-                    prefmngr.setInt(prefmngr.VIDEO_X_KEY, vRec.x);
-                    prefmngr.setInt(prefmngr.VIDEO_Y_KEY, vRec.y);
-                    prefmngr.setInt(prefmngr.VIDEO_HEIGHT_KEY, vRec.height);
-                    prefmngr.setInt(prefmngr.VIDEO_WIDTH_KEY, vRec.width);
-                }
+		if (qd.getEditor() != null) {
+			Rectangle tRec = qd.textFrame.getBounds();
+			prefmngr.setInt(prefmngr.TRANSCRIPT_X_KEY, tRec.x);
+			prefmngr.setInt(prefmngr.TRANSCRIPT_Y_KEY, tRec.y);
+			prefmngr.setInt(prefmngr.TRANSCRIPT_HEIGHT_KEY, tRec.height);
+			prefmngr.setInt(prefmngr.TRANSCRIPT_WIDTH_KEY, tRec.width);
+			Rectangle vRec = qd.videoFrame.getBounds();
+			prefmngr.setInt(prefmngr.VIDEO_X_KEY, vRec.x);
+			prefmngr.setInt(prefmngr.VIDEO_Y_KEY, vRec.y);
+			prefmngr.setInt(prefmngr.VIDEO_HEIGHT_KEY, vRec.height);
+			prefmngr.setInt(prefmngr.VIDEO_WIDTH_KEY, vRec.width);
+		}
 		prefmngr.setValue(prefmngr.MEDIA_DIRECTORY_KEY, prefmngr.media_directory);
-                prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, qd.getWindowsMode());
-                if(getQD().getBothResize()) 
-                     prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,1);
-                else
-                     prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,0);
+		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, qd.getWindowsMode());
+		if(getQD().getBothResize()) 
+			prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,1);
+		else
+			prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY,0);
 	}
- 
-        
-       private void closeThisQDFrame(int closeMode) {  
+	
+	
+	private void closeThisQDFrame(int closeMode) {  
 		/*i first used dispose() instead of hide(), which should clear up memory,
 		 but i got an error: can't dispose InputContext while it's active
 		 Note by Andres: This error seems to be fixed on JDK 1.5, so changed back
 		 to dispose and things seem fine. */
 		putPreferences();
-                if(closeMode==QDShell.CLOSE_APPLICATION){
-                    System.exit(0);
-                }
-              
+		if(closeMode==QDShell.CLOSE_APPLICATION){
+			System.exit(0);
+		}
+		
 		if (hasLoadedTranscript)
 		{
 			if (qd.getEditor() != null) //no content in this QD window
 			{ //there's a QD editor: save and close
 				if (qd.getEditor().isEditable())
 					qd.saveTranscript();
-                                openFileList.remove(qd.transcriptFile.getName());            
-                                openTranscriptToQDMap.remove(qd.transcriptFile.getName()); 
-                                qdList.remove(qd);                              
+				openFileList.remove(qd.transcriptFile.getName());            
+				openTranscriptToQDMap.remove(qd.transcriptFile.getName()); 
+				qdList.remove(qd);                              
 			}                                                    
-                                 
+			
 			numberOfQDsOpen--;
 			switch (closeMode)
 			{
 			case QDShell.CLOSE_WINDOW:                             
-                             dispose();                                                     
-                             if (numberOfQDsOpen == 0)
+				dispose();                                                     
+				if (numberOfQDsOpen == 0)
 				{       
 					System.exit(0);
 				}              
-                              				
-			break;
+				
+				break;
 			case QDShell.CLOSE_TRANSCRIPT:    
-                              qd.removeContent();                         
-                              contentPane.remove(qd); 
-			      contentPane.repaint();                             
-                              if (numberOfQDsOpen == 0)
+				qd.removeContent();                         
+				contentPane.remove(qd); 
+				contentPane.repaint();                             
+				if (numberOfQDsOpen == 0)
 				{				
-				  hasLoadedTranscript = false;
-                                } else
-                                {  
-                                 qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
-                                 contentPane.add(qd);
-                                 contentPane.repaint();
-                                }                                   
-                              setJMenuBar(getQDShellMenu()); 
-                              setVisible(true);
-                            
-			break;
+					hasLoadedTranscript = false;
+				} else
+				{  
+					qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
+					contentPane.add(qd);
+					contentPane.repaint();
+				}                                   
+				setJMenuBar(getQDShellMenu()); 
+				setVisible(true);
+				
+				break;
 			default:
 				System.exit(0);
 			}
 		}             
 		
-                else
+		else
 		{       
 			System.exit(0);
 		}
 	}
-        
-        /** For later opened transcripts */ 
+	
+	/** For later opened transcripts */ 
 	private void loadState()
 	{
 		//numberOfQDsOpen++;
 		qd = new QD(prefmngr);
-                qd.firstQDresize=true;
+		qd.firstQDresize=true;
 		contentPane = getContentPane();
 		addWindowListener(new WindowAdapter () {
 			public void windowClosing (WindowEvent e) {
-                            closeThisQDFrame(QDShell.CLOSE_WINDOW);
-                        }
+				closeThisQDFrame(QDShell.CLOSE_WINDOW);
+			}
 		});
 	}
-        
+	
 	public QD getQD() {
 		return qd;
 	}
-        
-    public JMenuBar getQDShellMenu() {
+	
+	public JMenuBar getQDShellMenu() {
 		//File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
 		JMenuItem wizardItem = new JMenuItem(messages.getString("Open"));
 		wizardItem.setAccelerator(KeyStroke.getKeyStroke("control O"));		
 		wizardItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {                         
-                               /*
-				if (hasLoadedTranscript)
-					new QDShell(1);
-				else*/				
-        
-                            if(numberOfQDsOpen<MAXIMUM_NUMBER_OF_OPEN_FILES){                              
-                                if (hasLoadedTranscript){                              
-                                  if (qd.getEditor() != null) //no content in this QD window
-                                   { 
-                                         putPreferences();  //later open trancript has same window size and plancement
-                                         tempQD=qd;      //  save for later remove from contentpane                                        
-                                   }
-                                 }
-                                        loadState();  // prepare load another transcript file
+				/*
+				 if (hasLoadedTranscript)
+				 new QDShell(1);
+				 else*/				
+				
+				if(numberOfQDsOpen<MAXIMUM_NUMBER_OF_OPEN_FILES){                              
+					if (hasLoadedTranscript){                              
+						if (qd.getEditor() != null) //no content in this QD window
+						{ 
+							putPreferences();  //later open trancript has same window size and plancement
+							tempQD=qd;      //  save for later remove from contentpane                                        
+						}
+					}
+					loadState();  // prepare load another transcript file
 					
-                                        Wizard wiz = new Wizard();
+					Wizard wiz = new Wizard();
 					wiz.setVisible(true);
-                                        setJMenuBar(getQDShellMenu());
-                                        setVisible(true);                                       
+					setJMenuBar(getQDShellMenu());
+					setVisible(true);                                       
 				}
-                            else
-                                JOptionPane.showMessageDialog(null, messages.getString("NumberOfOpenFilesExceed"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                        
+				else
+					JOptionPane.showMessageDialog(null, messages.getString("NumberOfOpenFilesExceed"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                        
 			}
 		});
-                
+		
 		JMenuItem closeItem = new JMenuItem(messages.getString("Close"));
 		closeItem.setAccelerator(KeyStroke.getKeyStroke("control W"));		
 		closeItem.addActionListener(new ActionListener() {
@@ -867,19 +867,19 @@ public class QDShell extends JFrame implements ItemListener
 		});		
 		/* Saving is actually context specific. Configurations designed
 		 * to be Read-only shouldn't include this option.
-		JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
-		saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
-		saveItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                            if (qd.getEditor().isEditable())
-                                qd.saveTranscript();
-			}
-		});*/
+		 JMenuItem saveItem = new JMenuItem(messages.getString("Save"));
+		 saveItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
+		 saveItem.addActionListener(new ActionListener() {
+		 public void actionPerformed(ActionEvent e) {
+		 if (qd.getEditor().isEditable())
+		 qd.saveTranscript();
+		 }
+		 });*/
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                                //NOTE THIS HAS BEEN DISABLED UNTIL USER IS PROMPTED TO SAVE
+				//NOTE THIS HAS BEEN DISABLED UNTIL USER IS PROMPTED TO SAVE
 				//Should prompt user to save!!
 				//System.exit(tryToQuit());
 				closeThisQDFrame(QDShell.CLOSE_APPLICATION);
@@ -891,7 +891,7 @@ public class QDShell extends JFrame implements ItemListener
 		//projectMenu.add(saveItem);
 		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
-
+		
 		//Preferences menu
 		JMenuItem fontItem = new JMenuItem(messages.getString("Preferences"));
 		fontItem.addActionListener(new ActionListener() {
@@ -902,15 +902,15 @@ public class QDShell extends JFrame implements ItemListener
 		/* Time coding is also configuration specific.
 		 * Read-only configurations won't include it. 
 		 * JMenuItem timeCodeItem = new JMenuItem(messages.getString("TimeCoding"));
-		timeCodeItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				getTimeCodePreferences();
-			}
-		}); */
+		 timeCodeItem.addActionListener(new ActionListener() {
+		 public void actionPerformed(ActionEvent ae) {
+		 getTimeCodePreferences();
+		 }
+		 }); */
 		JMenu preferencesMenu = new JMenu(messages.getString("Tools"));
 		preferencesMenu.add(fontItem);
 		// preferencesMenu.add(timeCodeItem);
-
+		
 		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -934,184 +934,184 @@ public class QDShell extends JFrame implements ItemListener
 		JMenu betaMenu = new JMenu(messages.getString("About"));
 		betaMenu.add(aboutItem);
 		betaMenu.add(feedbackItem);
-
-                
-         //-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
-        JMenu windowMenu=new JMenu(messages.getString("Window"));
-        final JCheckBoxMenuItem bothResizeSetting=new JCheckBoxMenuItem(messages.getString("BothResizeSetting"));
-        bothResizeSetting.setAccelerator(KeyStroke.getKeyStroke("shift F9"));
-        bothResizeSetting.addItemListener(new ItemListener() {
-	public void itemStateChanged(ItemEvent e) {
-              if(bothResizeSetting.getState()){ 
-                  getQD().bothResize=true;
-                  //prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 1);
-                  //System.out.println("BothReize: true");
-              }else{
-                  getQD().bothResize=false;
-                  //prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 0);
-              }
-          }
-});
-        if(getQD().getBothResize())          
-          bothResizeSetting.setState(true);
-        else 
-          bothResizeSetting.setState(false);
-
-        windowMenu.add(bothResizeSetting);
-        windowMenu.addSeparator();
-        JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("MediaToRight"));
-        item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
-        item1.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-                        getQD().setHorizontalWindowsMediaToRight();		
-	}
-});
-                                  
-        JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("MediaToLeft"));
-        item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
-        item2.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-                        getQD().setHorizontalWindowsMediaToLeft();		
-	}
-});
-        
-        JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("MediaOnTop"));
-        item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
-        item3.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-                        getQD().setVerticalWindowsMediaTop();
-	}
-});                       
-        JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
-        item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
-        item4.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-	  getQD().setSubtitleWindows();
-	}
-});
-        
-        JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("FullScreenVideoOnly"));
-        item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
-        item5.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {                            
-                getQD().setVideoOnlyFullScreen();
-	}
-});
-        
-        JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("NormalSizeVideoOnly"));
-        item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
-        item6.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-	  getQD().setVideoOnlyNormalSize();
-	}
-});
-       
-        JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
-        item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
-        item7.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent ae) {
-	  getQD().setTranscriptOnly();
-	}
-});
-     
-      switch(getQD().getWindowsMode()){          
-          case 0:item1.setSelected(true);break;
-          case 1:item2.setSelected(true);break;
-          case 2:item3.setSelected(true);break;
-          case 3:item4.setSelected(true);break;
-          case 4:item5.setSelected(true);break;
-          case 5:item6.setSelected(true);break;
-          case 6:item7.setSelected(true);break;                  
-      }
-        
-        ButtonGroup group = new ButtonGroup( );              
-        group.add(item1);
-        group.add(item2);
-        group.add(item3);
-        group.add(item4);
-        group.add(item5);
-        group.add(item6);
-        group.add(item7);
-                        
-        windowMenu.add(item1);
-        windowMenu.add(item2);
-        windowMenu.add(item3);
-        windowMenu.add(item4);
-        windowMenu.add(item5);
-        windowMenu.add(item6);
-        windowMenu.add(item7);
-        windowMenu.addSeparator();
-        
-        JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultSizeAndPlacement"));
-        defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
-		defaultItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			 getQD().setDefaultWindows();
+		
+		
+		//-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
+		JMenu windowMenu=new JMenu(messages.getString("Window"));
+		final JCheckBoxMenuItem bothResizeSetting=new JCheckBoxMenuItem(messages.getString("BothResizeSetting"));
+		bothResizeSetting.setAccelerator(KeyStroke.getKeyStroke("shift F9"));
+		bothResizeSetting.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(bothResizeSetting.getState()){ 
+					getQD().bothResize=true;
+					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 1);
+					//System.out.println("BothReize: true");
+				}else{
+					getQD().bothResize=false;
+					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 0);
+				}
 			}
 		});
-       windowMenu.add(defaultItem);
-       windowMenu.addSeparator();
-
-      // the following code for open a few files in same window of qdshell
-      Iterator itty = openFileList.iterator();
-      final JRadioButtonMenuItem[] fileItem= new JRadioButtonMenuItem[4];        
-      int count =0;
-      ButtonGroup groupFile = new ButtonGroup( );
-      String activeTranscript=null;
-      
-      if(qd.transcriptFile!=null)
-          activeTranscript=getQD().transcriptFile.getName();        
-      while (itty.hasNext()) {                     
-	  final String openFile = (String) itty.next();
-                                
-          if(activeTranscript!=null&&openFile.equals(activeTranscript))
-                 fileItem[count] = new JRadioButtonMenuItem(openFile,true);             
-          else 
-                fileItem[count] = new JRadioButtonMenuItem(openFile);
-          
-          final int i=count;
-          fileItem[count].addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent ae) {                                   
-                      fileItem[i].setSelected(true);
-                      contentPane = getContentPane();
-                      if (hasLoadedTranscript){                              
-                      if (qd.getEditor() != null) //no content in this QD window
-                        { 
-                            //putPreferences();
-                            contentPane.remove(qd);
-                            contentPane.repaint();
-                         }
-                      }
-                     qd = (QD)openTranscriptToQDMap.get(openFile);                                     
-                     contentPane.add(qd);
-                     contentPane.repaint();
-                     //qd.setWindows(); 
-                     //qd.videoFrame.pack();
-                     setJMenuBar(getQDShellMenu()); 
-                     setVisible(true);
-                     }
-              });
-          
-       groupFile.add(fileItem[i]);
-       windowMenu.add(fileItem[i]);
-       count++;
-   }
-                          
+		if(getQD().getBothResize())          
+			bothResizeSetting.setState(true);
+		else 
+			bothResizeSetting.setState(false);
+		
+		windowMenu.add(bothResizeSetting);
+		windowMenu.addSeparator();
+		JRadioButtonMenuItem item1= new JRadioButtonMenuItem(messages.getString("MediaToRight"));
+		item1.setAccelerator(KeyStroke.getKeyStroke("shift F1"));
+		item1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setHorizontalWindowsMediaToRight();		
+			}
+		});
+		
+		JRadioButtonMenuItem item2= new JRadioButtonMenuItem(messages.getString("MediaToLeft"));
+		item2.setAccelerator(KeyStroke.getKeyStroke("shift F2"));
+		item2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setHorizontalWindowsMediaToLeft();		
+			}
+		});
+		
+		JRadioButtonMenuItem item3= new JRadioButtonMenuItem(messages.getString("MediaOnTop"));
+		item3.setAccelerator(KeyStroke.getKeyStroke("shift F3"));
+		item3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setVerticalWindowsMediaTop();
+			}
+		});                       
+		JRadioButtonMenuItem item4= new JRadioButtonMenuItem(messages.getString("SubtitleBelow"));
+		item4.setAccelerator(KeyStroke.getKeyStroke("shift F4"));
+		item4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setSubtitleWindows();
+			}
+		});
+		
+		JRadioButtonMenuItem item5= new JRadioButtonMenuItem(messages.getString("FullScreenVideoOnly"));
+		item5.setAccelerator(KeyStroke.getKeyStroke("shift F5"));
+		item5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {                            
+				getQD().setVideoOnlyFullScreen();
+			}
+		});
+		
+		JRadioButtonMenuItem item6= new JRadioButtonMenuItem(messages.getString("NormalSizeVideoOnly"));
+		item6.setAccelerator(KeyStroke.getKeyStroke("shift F6"));
+		item6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setVideoOnlyNormalSize();
+			}
+		});
+		
+		JRadioButtonMenuItem item7= new JRadioButtonMenuItem(messages.getString("TranscriptOnly"));
+		item7.setAccelerator(KeyStroke.getKeyStroke("shift F7"));
+		item7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				getQD().setTranscriptOnly();
+			}
+		});
+		
+		switch(getQD().getWindowsMode()){          
+		case 0:item1.setSelected(true);break;
+		case 1:item2.setSelected(true);break;
+		case 2:item3.setSelected(true);break;
+		case 3:item4.setSelected(true);break;
+		case 4:item5.setSelected(true);break;
+		case 5:item6.setSelected(true);break;
+		case 6:item7.setSelected(true);break;                  
+		}
+		
+		ButtonGroup group = new ButtonGroup( );              
+		group.add(item1);
+		group.add(item2);
+		group.add(item3);
+		group.add(item4);
+		group.add(item5);
+		group.add(item6);
+		group.add(item7);
+		
+		windowMenu.add(item1);
+		windowMenu.add(item2);
+		windowMenu.add(item3);
+		windowMenu.add(item4);
+		windowMenu.add(item5);
+		windowMenu.add(item6);
+		windowMenu.add(item7);
+		windowMenu.addSeparator();
+		
+		JMenuItem defaultItem = new JMenuItem(messages.getString("DefaultSizeAndPlacement"));
+		defaultItem.setAccelerator(KeyStroke.getKeyStroke("shift F8"));
+		defaultItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getQD().setDefaultWindows();
+			}
+		});
+		windowMenu.add(defaultItem);
+		windowMenu.addSeparator();
+		
+		// the following code for open a few files in same window of qdshell
+		Iterator itty = openFileList.iterator();
+		final JRadioButtonMenuItem[] fileItem= new JRadioButtonMenuItem[4];        
+		int count =0;
+		ButtonGroup groupFile = new ButtonGroup( );
+		String activeTranscript=null;
+		
+		if(qd.transcriptFile!=null)
+			activeTranscript=getQD().transcriptFile.getName();        
+		while (itty.hasNext()) {                     
+			final String openFile = (String) itty.next();
+			
+			if(activeTranscript!=null&&openFile.equals(activeTranscript))
+				fileItem[count] = new JRadioButtonMenuItem(openFile,true);             
+			else 
+				fileItem[count] = new JRadioButtonMenuItem(openFile);
+			
+			final int i=count;
+			fileItem[count].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {                                   
+					fileItem[i].setSelected(true);
+					contentPane = getContentPane();
+					if (hasLoadedTranscript){                              
+						if (qd.getEditor() != null) //no content in this QD window
+						{ 
+							//putPreferences();
+							contentPane.remove(qd);
+							contentPane.repaint();
+						}
+					}
+					qd = (QD)openTranscriptToQDMap.get(openFile);                                     
+					contentPane.add(qd);
+					contentPane.repaint();
+					//qd.setWindows(); 
+					//qd.videoFrame.pack();
+					setJMenuBar(getQDShellMenu()); 
+					setVisible(true);
+				}
+			});
+			
+			groupFile.add(fileItem[i]);
+			windowMenu.add(fileItem[i]);
+			count++;
+		}
+		
 		//putting the menus into a menu bar
 		JMenuBar bar = new JMenuBar();
 		projectMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(projectMenu);
 		preferencesMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(preferencesMenu);
-                
-                windowMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+		
+		windowMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(windowMenu);
-                
+		
 		betaMenu.getPopupMenu().setLightWeightPopupEnabled(false);
 		bar.add(betaMenu);
 		return bar;
 	}
-
+	
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
 		if (r == null)
@@ -1138,7 +1138,7 @@ public class QDShell extends JFrame implements ItemListener
 			prefmngr.setValue(prefmngr.RECENT_FILES_KEY, sb.toString());
 		}
 	}
-
+	
 	private void makeRecentlyOpenedVideo(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
 		if (r == null)
@@ -1228,18 +1228,18 @@ public class QDShell extends JFrame implements ItemListener
 			else
 			{
 				String defaultLangLabel = I18n.getDefaultDisplayLanguage();
-			
+				
 				for (i=0; i<languageLabels.length; i++)
 					if (languageLabels[i].equals(defaultLangLabel))
 					{
 						defaultLanguage.setSelectedIndex(i);
 						break;
 					}
-					
+				
 				/* if the user's default language is not supported
 				 * by Quill-driver, for Quill-driver's sake, english
 				 * would be the default language.
-				*/
+				 */
 				if (i>=languageLabels.length)
 					defaultLanguage.setSelectedIndex(0);
 			}
@@ -1281,64 +1281,65 @@ public class QDShell extends JFrame implements ItemListener
 		romanPanel.setLayout(new GridLayout(1,2));
 		romanPanel.add(romanFontFamilies);
 		romanPanel.add(romanFontSizes);
-                JPanel highlightPanel;
-                JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
-                JTextField highlightField;
-                JLabel hColorLabel, hPositionLabel, hMultipleLabel, hScrollingLabel;
-                JPanel h1Panel, h2Panel, h3Panel, h4Panel;
-                highlightPanel = new JPanel();                   
-                highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
-                
-                final JButton ch=new JButton("Change high light color");
-                final Color initColor=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
-                                                prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
-                                                prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue));
-                ch.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent ev){
-                        Color color=JColorChooser.showDialog(ch,"Choose a color",initColor);                 
-                        if(color!=null){
-                            prefmngr.setInt(prefmngr.HIGHLIGHT_RED_KEY,color.getRed());
-                            prefmngr.setInt(prefmngr.HIGHLIGHT_GREEN_KEY,color.getGreen());
-                            prefmngr.setInt(prefmngr.HIGHLIGHT_BLUE_KEY,color.getBlue());
-                           
-                        }
-                    }
-                });
-                h1Panel = new JPanel();
-                h1Panel.add(ch); 
-                
-                hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
-                highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
-                highlightPosition.setSelectedItem(prefmngr.highlight_position);
-                highlightPosition.setEditable(true);
-                h2Panel = new JPanel();
-                h2Panel.add(hPositionLabel);
-                h2Panel.add(highlightPosition);
-                hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
-                multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
-                multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
-                multipleHighlightPolicy.setEditable(true);
-                hScrollingLabel = new JLabel(messages.getString("ScrollingHighlightPolicy"));
-                scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
-                scrollingHighlightPolicy.setSelectedItem(prefmngr.scrolling_highlight_policy);
-                scrollingHighlightPolicy.setEditable(true);
-                h3Panel = new JPanel();
-                h3Panel.add(hMultipleLabel);
-                h3Panel.add(multipleHighlightPolicy);
-                h4Panel = new JPanel();
-                h4Panel.add(hScrollingLabel);
-                h4Panel.add(scrollingHighlightPolicy);
-                highlightPanel.setLayout(new GridLayout(0,1));
-                highlightPanel.add(h1Panel);
-                highlightPanel.add(h2Panel);
-                highlightPanel.add(h3Panel);
-                highlightPanel.add(h4Panel);
-		JPanel preferencesPanel = new JPanel();
-		preferencesPanel.setLayout(new GridLayout(0,1));
-		preferencesPanel.add(interfacePanel);
-		@TIBETAN@preferencesPanel.add(tibetanPanel);
-		preferencesPanel.add(romanPanel);
-		preferencesPanel.add(highlightPanel);
+		JPanel highlightPanel;
+		JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
+		JTextField highlightField;
+		JLabel hColorLabel, hPositionLabel, hMultipleLabel, hScrollingLabel;
+		JPanel h1Panel, h2Panel, h3Panel, h4Panel;
+		highlightPanel = new JPanel();                   
+		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
+		
+		final JButton ch=new JButton("Change high light color");
+		final Color initColor=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
+				prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
+				prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue));
+		ch.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ev){
+				Color color=JColorChooser.showDialog(ch,"Choose a color",initColor);                 
+				if(color!=null){
+					prefmngr.setInt(prefmngr.HIGHLIGHT_RED_KEY,color.getRed());
+					prefmngr.setInt(prefmngr.HIGHLIGHT_GREEN_KEY,color.getGreen());
+					prefmngr.setInt(prefmngr.HIGHLIGHT_BLUE_KEY,color.getBlue());
+					
+				}
+			}
+		});
+		h1Panel = new JPanel();
+		h1Panel.add(ch); 
+		
+		hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
+		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
+		highlightPosition.setSelectedItem(prefmngr.highlight_position);
+		highlightPosition.setEditable(true);
+		h2Panel = new JPanel();
+		h2Panel.add(hPositionLabel);
+		h2Panel.add(highlightPosition);
+		hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
+		multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+		multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
+		multipleHighlightPolicy.setEditable(true);
+		hScrollingLabel = new JLabel(messages.getString("ScrollingHighlightPolicy"));
+		scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+		scrollingHighlightPolicy.setSelectedItem(prefmngr.scrolling_highlight_policy);
+		scrollingHighlightPolicy.setEditable(true);
+		h3Panel = new JPanel();
+		h3Panel.add(hMultipleLabel);
+		h3Panel.add(multipleHighlightPolicy);
+		h4Panel = new JPanel();
+		h4Panel.add(hScrollingLabel);
+		h4Panel.add(scrollingHighlightPolicy);
+		highlightPanel.setLayout(new GridLayout(0,1));
+		highlightPanel.add(h1Panel);
+		highlightPanel.add(h2Panel);
+		highlightPanel.add(h3Panel);
+		highlightPanel.add(h4Panel);
+		JPanel preferencesPanel = new JPanel (new BorderLayout());
+		preferencesPanel.add(interfacePanel, BorderLayout.NORTH);
+		JPanel middlePanel = new JPanel(new GridLayout(0,1));
+		@TIBETAN@middlePanel.add(tibetanPanel);
+		middlePanel.add(romanPanel);
+		preferencesPanel.add(middlePanel, BorderLayout.CENTER);
+		preferencesPanel.add(highlightPanel, BorderLayout.SOUTH);
 		JOptionPane pane = new JOptionPane(preferencesPanel);
 		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
 		
@@ -1348,90 +1349,90 @@ public class QDShell extends JFrame implements ItemListener
 		@TIBETAN@int old_tibetan_font_size = prefmngr.tibetan_font_size;
 		@TIBETAN@try {
 			@TIBETAN@prefmngr.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
-		@TIBETAN@} catch (NumberFormatException ne) {
-			@TIBETAN@prefmngr.tibetan_font_size = old_tibetan_font_size;
-		@TIBETAN@}
-		String old_font_face = new String(prefmngr.font_face);
-		prefmngr.font_face = romanFontFamilies.getSelectedItem().toString();
-		int old_font_size = prefmngr.font_size;
-		try {
-			prefmngr.font_size = Integer.parseInt(romanFontSizes.getSelectedItem().toString());
-		}
-		catch (NumberFormatException ne) {
-			prefmngr.font_size = old_font_size;
-		}
-		prefmngr.setValue(prefmngr.FONT_FACE_KEY, prefmngr.font_face);
-		prefmngr.setInt(prefmngr.FONT_SIZE_KEY, prefmngr.font_size);
-		@TIBETAN@prefmngr.setInt(prefmngr.TIBETAN_FONT_SIZE_KEY, prefmngr.tibetan_font_size);
-		if (qd.getEditor() != null) {
-			@UNICODE@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face))){
-			@TIBETAN@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face) && old_tibetan_font_size == prefmngr.tibetan_font_size)) {
-				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
-				@TIBETAN@dp.setByUserTibetanFontSize(prefmngr.tibetan_font_size);
-				@TIBETAN@dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
-				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(prefmngr.font_face, Font.PLAIN, prefmngr.font_size));
-				qd.getEditor().render();
-			}                  
-		}
-        String highlightPosVal = (String)highlightPosition.getSelectedItem();
-        String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
-        prefmngr.setValue(prefmngr.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-        if (qd.getEditor() != null) {
-            qd.hp.setHighlightPosition(highlightPosVal);
-        }
-        if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
-            qd.player.setMultipleAnnotationPolicy(true);
-        else
-            qd.player.setMultipleAnnotationPolicy(false);
-        String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
-        if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
-            if (qd != null) {
-                qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
-                qd.player.setAutoScrolling(true);
-            }
-        } else {
-            if (qd != null) {
-                qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
-                qd.player.setAutoScrolling(false);
-            }
-        }
-        //String hexColor = highlightField.getText();
-        try {
-            //Color c = Color.decode("0x"+hexColor);
-            //prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
-            Color c=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
-                              prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
-                              prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue)); 
-            if (qd.getEditor() != null) {
-                if (qd.hp != null) {
-                    qd.hp.setHighlightColor(c);
-                }
-            }
-        } catch (NumberFormatException nfe) {
-            nfe.printStackTrace();
-        }
-        if (needsToRestart)
-        {
-        	JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
-        	prefmngr.setValue(prefmngr.DEFAULT_INTERFACE_FONT_KEY, (String) supportedFonts.getSelectedItem());
-        	prefmngr.setInt(prefmngr.DEFAULT_LANGUAGE_KEY, defaultLanguage.getSelectedIndex());
-        	needsToRestart=false;
-        }
-	}
-             
-	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
-		// accepts all directories and all savant files
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
+			@TIBETAN@} catch (NumberFormatException ne) {
+				@TIBETAN@prefmngr.tibetan_font_size = old_tibetan_font_size;
+				@TIBETAN@}
+			String old_font_face = new String(prefmngr.font_face);
+			prefmngr.font_face = romanFontFamilies.getSelectedItem().toString();
+			int old_font_size = prefmngr.font_size;
+			try {
+				prefmngr.font_size = Integer.parseInt(romanFontSizes.getSelectedItem().toString());
 			}
-			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
-		}
-		//the description of this filter
-		public String getDescription() {
-			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
-		}
+			catch (NumberFormatException ne) {
+				prefmngr.font_size = old_font_size;
+			}
+			prefmngr.setValue(prefmngr.FONT_FACE_KEY, prefmngr.font_face);
+			prefmngr.setInt(prefmngr.FONT_SIZE_KEY, prefmngr.font_size);
+			@TIBETAN@prefmngr.setInt(prefmngr.TIBETAN_FONT_SIZE_KEY, prefmngr.tibetan_font_size);
+			if (qd.getEditor() != null) {
+				@UNICODE@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face))){
+					@TIBETAN@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face) && old_tibetan_font_size == prefmngr.tibetan_font_size)) {
+						@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+						@TIBETAN@dp.setByUserTibetanFontSize(prefmngr.tibetan_font_size);
+						@TIBETAN@dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
+						@UNICODE@qd.getEditor().getTextPane().setFont(new Font(prefmngr.font_face, Font.PLAIN, prefmngr.font_size));
+						qd.getEditor().render();
+					}                  
+				}
+				String highlightPosVal = (String)highlightPosition.getSelectedItem();
+				String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
+				prefmngr.setValue(prefmngr.HIGHLIGHT_POSITION_KEY, highlightPosVal);
+				if (qd.getEditor() != null) {
+					qd.hp.setHighlightPosition(highlightPosVal);
+				}
+				if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
+					qd.player.setMultipleAnnotationPolicy(true);
+				else
+					qd.player.setMultipleAnnotationPolicy(false);
+				String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
+				if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
+					if (qd != null) {
+						qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
+						qd.player.setAutoScrolling(true);
+					}
+				} else {
+					if (qd != null) {
+						qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
+						qd.player.setAutoScrolling(false);
+					}
+				}
+				//String hexColor = highlightField.getText();
+				try {
+					//Color c = Color.decode("0x"+hexColor);
+					//prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
+					Color c=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
+							prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
+							prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue)); 
+					if (qd.getEditor() != null) {
+						if (qd.hp != null) {
+							qd.hp.setHighlightColor(c);
+						}
+					}
+				} catch (NumberFormatException nfe) {
+					nfe.printStackTrace();
+				}
+				if (needsToRestart)
+				{
+					JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
+					prefmngr.setValue(prefmngr.DEFAULT_INTERFACE_FONT_KEY, (String) supportedFonts.getSelectedItem());
+					prefmngr.setInt(prefmngr.DEFAULT_LANGUAGE_KEY, defaultLanguage.getSelectedIndex());
+					needsToRestart=false;
+				}
+			}
+			
+			private class QDFileFilter extends javax.swing.filechooser.FileFilter {
+				// accepts all directories and all savant files
+				public boolean accept(File f) {
+					if (f.isDirectory()) {
+						return true;
+					}
+					return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
+				}
+				//the description of this filter
+				public String getDescription() {
+					return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
+				}
+			}
+			
 	}
-   
-}
-
+	
