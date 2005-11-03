@@ -932,7 +932,7 @@
     <text lang="zh">你要做什么？</text>
   </message>
   <message id="WylieAndEnglish">
-    <text lang="en">Wylie and English</text>
+    <text lang="en">Tib Translit and English</text>
     <text lang="zh">拉丁转写和英文</text>
   </message>
   <message id="ZapTimeCodes">
@@ -1000,11 +1000,11 @@
     <text lang="zh">缺省的大小和位置</text>
   </message>
   <message id="NumberOfOpenFilesExceed">
-    <text lang="en">The number of open transcripts is exceed, please close one of them, and retry!</text>
+    <text lang="en">The number of open transcripts was exceed, please close one of them, and retry!</text>
     <text lang="zh">目前打开的文件数目超过,请关闭其中一个,再试!</text>
   </message>
    <message id="FileAlreadyBeLoaded">
-    <text lang="en">Sorry,you cannot open a transcript which has same name as currently open!</text>
+    <text lang="en">You cannot open a transcript twice!</text>
     <text lang="zh">对不起,你不能打开一个与已打开的文件有相同文件名的文件!</text>
   </message>
   <message id="AutomaticallyOpenDialogBox">
