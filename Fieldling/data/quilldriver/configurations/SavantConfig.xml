@@ -123,7 +123,7 @@
 				<attribute name="who" visible="false"/>
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
@@ -149,7 +149,7 @@
 				<attribute name="who" visible="false"/>
 			</tag>
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+			<tag name="TRANSL_ZH" visible="true" icon="play.gif" visiblecontents="true">
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
@@ -163,7 +163,9 @@
 			<tag name="FORM" visible="true" icon="play.gif">
 				<attribute name="type" visible="false"/>
 			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
 		
