@@ -543,7 +543,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			editor.getTextPane().setKeymap(keymap);
 			view = new View(editor, editor.getXMLDocument(), (XPathExpression)configuration.getParameters().get("qd.timealignednodes"), (XPathExpression)configuration.getParameters().get("qd.nodebegins"), (XPathExpression)configuration.getParameters().get("qd.nodeends"));          
             try {
-                hColor = Color.decode("0x"+PreferenceManager.highlight_color);
+                //hColor = Color.decode("0x"+PreferenceManager.highlight_color);
+                hColor=new Color(prefmngr.highlight_color_red,prefmngr.highlight_color_green,prefmngr.highlight_color_blue);
             } catch (NumberFormatException nfe) {
                 nfe.printStackTrace();
             }

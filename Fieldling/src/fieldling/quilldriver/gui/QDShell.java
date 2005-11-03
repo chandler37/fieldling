@@ -23,6 +23,8 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.HyperlinkListener;//
+import javax.swing.event.HyperlinkEvent;//
 
 import java.awt.event.*;
 import javax.swing.text.*;
@@ -1083,7 +1085,7 @@ public class QDShell extends JFrame implements ItemListener
                      qd = (QD)openTranscriptToQDMap.get(openFile);                                     
                      contentPane.add(qd);
                      contentPane.repaint();
-                     //qd.setWindows(); //setting window mode for the selected transcript as the previous.
+                     //qd.setWindows(); 
                      //qd.videoFrame.pack();
                      setJMenuBar(getQDShellMenu()); 
                      setVisible(true);
@@ -1284,13 +1286,27 @@ public class QDShell extends JFrame implements ItemListener
                 JTextField highlightField;
                 JLabel hColorLabel, hPositionLabel, hMultipleLabel, hScrollingLabel;
                 JPanel h1Panel, h2Panel, h3Panel, h4Panel;
-                highlightPanel = new JPanel();
-                highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));
-                hColorLabel = new JLabel(messages.getString("ColorInHex"));
-                highlightField = new JTextField(prefmngr.highlight_color);
+                highlightPanel = new JPanel();                   
+                highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
+                
+                final JButton ch=new JButton("Change high light color");
+                final Color initColor=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
+                                                prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
+                                                prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue));
+                ch.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent ev){
+                        Color color=JColorChooser.showDialog(ch,"Choose a color",initColor);                 
+                        if(color!=null){
+                            prefmngr.setInt(prefmngr.HIGHLIGHT_RED_KEY,color.getRed());
+                            prefmngr.setInt(prefmngr.HIGHLIGHT_GREEN_KEY,color.getGreen());
+                            prefmngr.setInt(prefmngr.HIGHLIGHT_BLUE_KEY,color.getBlue());
+                           
+                        }
+                    }
+                });
                 h1Panel = new JPanel();
-                h1Panel.add(hColorLabel);
-                h1Panel.add(highlightField);
+                h1Panel.add(ch); 
+                
                 hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
                 highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
                 highlightPosition.setSelectedItem(prefmngr.highlight_position);
@@ -1355,7 +1371,7 @@ public class QDShell extends JFrame implements ItemListener
 				@TIBETAN@dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
 				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(prefmngr.font_face, Font.PLAIN, prefmngr.font_size));
 				qd.getEditor().render();
-			}
+			}                  
 		}
         String highlightPosVal = (String)highlightPosition.getSelectedItem();
         String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
@@ -1379,10 +1395,13 @@ public class QDShell extends JFrame implements ItemListener
                 qd.player.setAutoScrolling(false);
             }
         }
-        String hexColor = highlightField.getText();
+        //String hexColor = highlightField.getText();
         try {
-            Color c = Color.decode("0x"+hexColor);
-            prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
+            //Color c = Color.decode("0x"+hexColor);
+            //prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
+            Color c=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
+                              prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
+                              prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue)); 
             if (qd.getEditor() != null) {
                 if (qd.hp != null) {
                     qd.hp.setHighlightColor(c);
@@ -1399,7 +1418,7 @@ public class QDShell extends JFrame implements ItemListener
         	needsToRestart=false;
         }
 	}
-        
+             
 	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
 		// accepts all directories and all savant files
 		public boolean accept(File f) {
@@ -1413,4 +1432,6 @@ public class QDShell extends JFrame implements ItemListener
 			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 		}
 	}
+   
 }
+

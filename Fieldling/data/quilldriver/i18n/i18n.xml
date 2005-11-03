@@ -116,8 +116,8 @@
     <text lang="zh">关闭</text>
   </message>
   <message id="ColorInHex">
-    <text lang="en">Color in hex [c.f. http://www.hypersolutions.org/pages/rgbhex.html]:</text>
-    <text lang="zh">十六进制颜色值[c.f. http://www.hypersolutions.org/pages/rgbhex.html]：</text>
+    <text lang="en">Color in hex</text>
+    <text lang="zh">十六进制颜色值</text>
   </message>
   <message id="Copy">
     <text lang="en">Copy</text>
