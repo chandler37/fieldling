@@ -451,6 +451,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 ser.setOutputByteStream(fous);
                 org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
                 domser.serialize(editor.getXMLDocument());
+                editor.resetChangedSinceLastSaved();
                 return true;
             } catch (IOException ioe) {
                 ioe.printStackTrace();

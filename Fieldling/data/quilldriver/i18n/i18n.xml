@@ -1015,6 +1015,10 @@
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">当启动QuillDriver时,是否自动打开此对话框?</text>
   </message>
+  <message id="WantToSaveChanges">
+    <text lang="en">Do you want to save the changes?</text>
+    <text lang="zh">Do you want to save the changes?</text>
+  </message>  
   <message id="help1">
     <text lang="en">
         Plays the video if it is stopped; pauses it otherwise.

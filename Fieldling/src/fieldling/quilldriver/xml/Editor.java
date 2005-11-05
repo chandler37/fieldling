@@ -57,6 +57,7 @@ public class Editor {
 	private boolean isEditing = false;
 	private Object editingNode = null;
 	private boolean hasChanged = false;
+	private boolean changedSinceLastSaved = false;
 	private Hashtable actions;
 	private TagInfo tagInfo;
 
@@ -511,9 +512,11 @@ upAction, writableAction
 		docListener = new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				hasChanged = true;
+				changedSinceLastSaved = true;
 			}
 			public void insertUpdate(DocumentEvent e) {
 				hasChanged = true;
+				changedSinceLastSaved = true;
 				if (getStartOffsetForNode(editingNode) > e.getOffset()) {
 					javax.swing.text.Document d = e.getDocument();
 					try {
@@ -525,6 +528,7 @@ upAction, writableAction
 			}
 			public void removeUpdate(DocumentEvent e) {
 				hasChanged = true;
+				changedSinceLastSaved = true;
 			}
 		};
 		mouseMotionListener = new MouseMotionAdapter() {
@@ -932,5 +936,15 @@ upAction, writableAction
 	}
 	public boolean isEditable() {
 		return pane.isEditable();
+	}
+	
+	public boolean hasChangedSinceLastSaved()
+	{
+		return changedSinceLastSaved;
+	}
+	
+	public void resetChangedSinceLastSaved()
+	{
+		changedSinceLastSaved = false;
 	}
 }

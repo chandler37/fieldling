@@ -32,6 +32,7 @@ import javax.swing.text.rtf.*;
 import java.util.prefs.*;
 import fieldling.quilldriver.PreferenceManager;
 import fieldling.quilldriver.config.*;
+import fieldling.quilldriver.xml.Editor;
 import fieldling.mediaplayer.*;
 import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
@@ -518,10 +519,10 @@ public class QDShell extends JFrame implements ItemListener
 							contentPane.repaint();			        
 						}
 						if(sameTranscript){
-							JOptionPane.showMessageDialog(null, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
 							sameTranscript=false;                                                                                     
 						}else
-							JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
+							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
 					}
 					tempQD=null;
 				}
@@ -755,13 +756,17 @@ public class QDShell extends JFrame implements ItemListener
 		if(closeMode==QDShell.CLOSE_APPLICATION){
 			System.exit(0);
 		}
-		
 		if (hasLoadedTranscript)
 		{
-			if (qd.getEditor() != null) //no content in this QD window
+			Editor editor = qd.getEditor(); 
+			if (editor != null) //no content in this QD window
 			{ //there's a QD editor: save and close
-				if (qd.getEditor().isEditable())
-					qd.saveTranscript();
+				if (editor.isEditable() && editor.hasChangedSinceLastSaved())
+				{
+					int option = JOptionPane.showConfirmDialog(this, messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_OPTION);
+					if (option==JOptionPane.YES_OPTION)
+						qd.saveTranscript();
+				}
 				openFileList.remove(qd.transcriptFile.getName());            
 				openTranscriptToQDMap.remove(qd.transcriptFile.getName()); 
 				qdList.remove(qd);                              
