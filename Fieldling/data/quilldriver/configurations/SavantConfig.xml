@@ -154,8 +154,20 @@
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
 		</tagview>		
+
+		<tagview name="WylieOnly" keystroke="F8">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
 		
-		<tagview name="WylieAndEnglish" keystroke="F8">
+		<tagview name="WylieAndEnglish" keystroke="F9">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -169,7 +181,7 @@
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
 		
-		<tagview name="NotesOnly" keystroke="F9">
+		<tagview name="NotesOnly" keystroke="F10">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -182,7 +194,7 @@
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
 
-		<tagview name="TranscriptionPlusNotes" keystroke="F10">
+		<tagview name="TranscriptionPlusNotes" keystroke="F11">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -197,7 +209,7 @@
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
 		
-		<tagview name="ShowEverything" keystroke="F11">
+		<tagview name="ShowEverything" keystroke="F12">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))"  tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>

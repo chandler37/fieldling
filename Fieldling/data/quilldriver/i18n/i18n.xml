@@ -931,6 +931,10 @@
     <text lang="en">What do you want to do?</text>
     <text lang="zh">你要做什么？</text>
   </message>
+  <message id="WylieOnly">
+    <text lang="en">Tib Translit Only</text>
+    <text lang="zh">Tib Translit Only</text>
+  </message>
   <message id="WylieAndEnglish">
     <text lang="en">Tib Translit and English</text>
     <text lang="zh">拉丁转写和英文</text>
