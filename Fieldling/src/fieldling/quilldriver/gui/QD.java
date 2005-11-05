@@ -682,7 +682,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					tcv.setCurrentTime(player.getCurrentTime());
 				}
 			}, 0, 50);
-			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
 			buttonPanel.add(tcv);
 			JPanel jp = new JPanel(new BorderLayout());
 			jp.add("North", buttonPanel);
