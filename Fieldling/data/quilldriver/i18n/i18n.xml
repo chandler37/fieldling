@@ -860,23 +860,23 @@
     <text lang="zh">文本：</text>
   </message>
   <message id="TranscriptionOnly">
-    <text lang="en">Transcription Only</text>
+    <text lang="en">Tibetan Only</text>
     <text lang="zh">只有转录文本</text>  
   </message>
   <message id="TranscriptionPlusEnglish">
-        <text lang="en">Transcription + English</text>
+        <text lang="en">Tibetan + English</text>
         <text lang="zh">转录文本 + 英语</text>
   </message>
   <message id="TranscriptionPlusChinese">
-        <text lang="en">Transcription + Chinese</text>
+        <text lang="en">Tibetan + Chinese</text>
         <text lang="zh">转录文本 + 中文</text>
   </message>
   <message id="TranscriptionPlusNotes">
-        <text lang="en">Transcription + Notes</text>
+        <text lang="en">Tibetan + Notes</text>
         <text lang="zh">转录文本 + 注释</text>
   </message>  
   <message id="TranscriptionPlusEnglishPlusChinese">
-        <text lang="en">Transcript + Eng + Ch</text>
+        <text lang="en">Tib + Eng + Ch</text>
         <text lang="zh">转录文本 + 英文 +中文</text>
   </message>
   <message id="EnglishPlusChinese">
