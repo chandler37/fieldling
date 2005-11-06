@@ -70,6 +70,10 @@ public class PreferenceManager extends JPanel {
 	public static final String HIGHLIGHT_GREEN_KEY = "HIGHLIGHT_GREEN";
 	public static final String HIGHLIGHT_BLUE_KEY = "HIGHLIGHT_BLUE";
 	
+	public static final String TAG_RED_KEY = "TAG_RED";	
+	public static final String TAG_GREEN_KEY = "TAG_GREEN";	
+	public static final String TAG_BLUE_KEY = "TAG_BLUE";	
+	
 	public static final String HIGHLIGHT_POSITION_KEY = "HIGHLIGHT_POSITION";
 	public static final String SCROLLING_HIGHLIGHT_POLICY_KEY = "SCROLLING_HIGHLIGHT_POLICY";
 	public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
@@ -85,7 +89,8 @@ public class PreferenceManager extends JPanel {
 	public static String font_face;
 	public static int font_size;
 	//public static String highlight_color;
-	public static int highlight_color_red,highlight_color_green,highlight_color_blue;              
+	public static int highlight_color_red, highlight_color_green, highlight_color_blue;
+	public static int tag_color_red, tag_color_green, tag_color_blue;	
 	public static String highlight_position;
 	public static String scrolling_highlight_policy;
 	public static String multiple_highlight_policy;
@@ -144,6 +149,11 @@ public class PreferenceManager extends JPanel {
 		highlight_color_red = getInt(HIGHLIGHT_RED_KEY,204);// RGB color value
 		highlight_color_green = getInt(HIGHLIGHT_GREEN_KEY,102);
 		highlight_color_blue = getInt(HIGHLIGHT_BLUE_KEY,255);
+		
+		// Royal blue !
+		tag_color_red = getInt(TAG_RED_KEY,65);
+		tag_color_green = getInt(TAG_GREEN_KEY,105);
+		tag_color_blue = getInt(TAG_BLUE_KEY,225);
 		
 		highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
 		scrolling_highlight_policy = getValue(SCROLLING_HIGHLIGHT_POLICY_KEY, "Allowed");

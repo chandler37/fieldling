@@ -34,32 +34,32 @@ import fieldling.quilldriver.PreferenceManager;
 
 public class Renderer {
 	private static final float indentIncrement = 15.0F;
-	private static final Color tagColor = Color.magenta;
+	private static final Color tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
 	private static final Color attColor = Color.pink;
 	private static final Color textColor = Color.darkGray;
-
-    private Renderer() {} //don't instantiate
-    
-    public static int render(Node node, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
-        if (offset == -1) return -1;
-        
-        if (node instanceof DocumentFragment) {
-            NodeList chillern = node.getChildNodes();
-            for (int z=0; z<chillern.getLength(); z++)
-                offset = render(node, pane, offset, indent, tagInfo, startOffsets, endOffsets);
-            return offset;
-        } else if (node instanceof Element)
-            return renderElement((Element)node, pane, offset, indent, tagInfo, startOffsets, endOffsets);
-        else if (node instanceof Attr)
-            return renderAttribute((Attr)node, pane, offset, tagInfo, startOffsets, endOffsets);
-        else if (node instanceof Text)
-            return renderText((Text)node, pane, offset, tagInfo, startOffsets, endOffsets);
-        else
-            return -1;
-    }
-    public static int renderElement(Element e, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
+	
+	private Renderer() {} //don't instantiate
+	
+	public static int render(Node node, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
+		if (offset == -1) return -1;
+		
+		if (node instanceof DocumentFragment) {
+			NodeList chillern = node.getChildNodes();
+			for (int z=0; z<chillern.getLength(); z++)
+				offset = render(node, pane, offset, indent, tagInfo, startOffsets, endOffsets);
+			return offset;
+		} else if (node instanceof Element)
+			return renderElement((Element)node, pane, offset, indent, tagInfo, startOffsets, endOffsets);
+		else if (node instanceof Attr)
+			return renderAttribute((Attr)node, pane, offset, tagInfo, startOffsets, endOffsets);
+		else if (node instanceof Text)
+			return renderText((Text)node, pane, offset, tagInfo, startOffsets, endOffsets);
+		else
+			return -1;
+	}
+	public static int renderElement(Element e, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
 		StyledDocument doc = pane.getStyledDocument();
-        try {
+		try {
 			Position pos = doc.createPosition(offset);
 			SimpleAttributeSet eAttributes = new SimpleAttributeSet();
 			StyleConstants.setLeftIndent(eAttributes, indent);
@@ -68,10 +68,10 @@ public class Renderer {
 			StyleConstants.setFontSize(eColor, PreferenceManager.font_size);
 			StyleConstants.setFontFamily(eColor, PreferenceManager.font_face);
 			eColor.addAttribute("xmlnode", e);
-            @TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
-            @TIBETAN@StyleConstants.setFontSize(tibAtt, PreferenceManager.tibetan_font_size);
-            @TIBETAN@StyleConstants.setForeground(tibAtt, tagColor);
-            @TIBETAN@tibAtt.addAttribute("xmlnode", e);
+			@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
+			@TIBETAN@StyleConstants.setFontSize(tibAtt, PreferenceManager.tibetan_font_size);
+			@TIBETAN@StyleConstants.setForeground(tibAtt, tagColor);
+			@TIBETAN@tibAtt.addAttribute("xmlnode", e);
 			if (pos.getOffset()>0) {
 				String s = doc.getText(pos.getOffset()-1, 1);
 				if (s.charAt(0)!='\n') {
@@ -84,21 +84,21 @@ public class Renderer {
 			}
 			int start = pos.getOffset();
 			startOffsets.put(e, new Integer(start));
-            //should check to make sure tagInfo isn't null!
-
+			//should check to make sure tagInfo isn't null!
+			
 			if (tagInfo.isTagForDisplay(e.getNodeName())) { //then display tag and its attributes
 				Object tagDisplay;
 				if (tagInfo == null) tagDisplay = new String(e.getNodeName());
 				else tagDisplay = tagInfo.getTagDisplay(e);
 				if (tagDisplay instanceof String) {
 					@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.isTagItselfTibetan(e.getNodeName())) {
-					@TIBETAN@int n = pos.getOffset();
-					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-					@TIBETAN@duff.toTibetanMachineWeb((String)tagDisplay, n);
-					@TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
-					@TIBETAN@} else {
-						@TIBETAN@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor);
-					@TIBETAN@}
+						@TIBETAN@int n = pos.getOffset();
+						@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
+						@TIBETAN@duff.toTibetanMachineWeb((String)tagDisplay, n);
+						@TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
+						@TIBETAN@} else {
+							@TIBETAN@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor);
+							@TIBETAN@}
 					@UNICODE@doc.insertString(pos.getOffset(), (String)tagDisplay, eColor); //insert element begin tag
 				}
 				else if (tagDisplay instanceof Icon) {
@@ -109,22 +109,22 @@ public class Renderer {
 				//need space before attributes
 				//otherwise clicking on right-side of icon won't cause item to play
 				if (tagDisplay instanceof Icon) doc.insertString(pos.getOffset(), " ", eColor);
-                                NamedNodeMap attributes = e.getAttributes();
-                                for (int z=0; z<attributes.getLength(); z++) {
-                                    Attr att = (Attr)attributes.item(z);
-                                    if (tagInfo == null || tagInfo.isAttributeForDisplay(att.getNodeName(), e.getNodeName()))
-                                        renderAttribute(att, pane, pos.getOffset(), tagInfo, startOffsets, endOffsets);
-                                }
-                                if (tagDisplay instanceof String) {
-                                    //@TIBETAN@doc.insertString(pos.getOffset(), " ", tibAtt);
-                                    @UNICODE@doc.insertString(pos.getOffset(), " ", eColor);
-                                }
+				NamedNodeMap attributes = e.getAttributes();
+				for (int z=0; z<attributes.getLength(); z++) {
+					Attr att = (Attr)attributes.item(z);
+					if (tagInfo == null || tagInfo.isAttributeForDisplay(att.getNodeName(), e.getNodeName()))
+						renderAttribute(att, pane, pos.getOffset(), tagInfo, startOffsets, endOffsets);
+				}
+				if (tagDisplay instanceof String) {
+					//@TIBETAN@doc.insertString(pos.getOffset(), " ", tibAtt);
+					@UNICODE@doc.insertString(pos.getOffset(), " ", eColor);
+				}
 			}
 			doc.setParagraphAttributes(start, pos.getOffset()-start, eAttributes, false);
 			if (tagInfo.areTagContentsForDisplay(e.getNodeName())) {
-                NodeList chillern = e.getChildNodes();
-                for (int z=0; z<chillern.getLength(); z++) {
-                    Node next = chillern.item(z);
+				NodeList chillern = e.getChildNodes();
+				for (int z=0; z<chillern.getLength(); z++) {
+					Node next = chillern.item(z);
 					if (next instanceof Element) {
 						Element ne = (Element)next;
 						if (tagInfo.isTagForDisplay(ne.getNodeName()) || tagInfo.areTagContentsForDisplay(ne.getLocalName())) {
@@ -135,7 +135,7 @@ public class Renderer {
 						}
 					} else if (next instanceof Text) {
 						Text t = (Text)next;
-                        if (t.getParentNode().getChildNodes().getLength() == 1 || t.getNodeValue().trim().length() > 0)
+						if (t.getParentNode().getChildNodes().getLength() == 1 || t.getNodeValue().trim().length() > 0)
 							renderText(t, pane, pos.getOffset(), tagInfo, startOffsets, endOffsets);
 					}
 					// Also: Comment ProcessingInstruction CDATA EntityRef
@@ -152,10 +152,10 @@ public class Renderer {
 			ble.printStackTrace();
 			return -1;
 		}
-    }
-    public static int renderAttribute(Attr att, JTextPane pane, int offset, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
+	}
+	public static int renderAttribute(Attr att, JTextPane pane, int offset, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
 		StyledDocument doc = pane.getStyledDocument();
-        try {
+		try {
 			Position pos = doc.createPosition(offset);
 			SimpleAttributeSet aColor = new SimpleAttributeSet();
 			StyleConstants.setForeground(aColor, attColor);
@@ -168,7 +168,7 @@ public class Renderer {
 			StyleConstants.setFontSize(tColor, PreferenceManager.font_size);
 			StyleConstants.setFontFamily(tColor, PreferenceManager.font_face);
 			tColor.addAttribute("xmlnode", att);
-            String name = att.getNodeName();
+			String name = att.getNodeName();
 			String value = att.getValue();
 			if (pos.getOffset()>0) {
 				String s = doc.getText(pos.getOffset()-1, 1);
@@ -181,7 +181,7 @@ public class Renderer {
 					doc.insertString(pos.getOffset(), " ", sas);
 				}
 			}
-
+			
 			Object displayName;
 			if (tagInfo == null) displayName = new String(att.getNodeName());
 			else displayName = tagInfo.getAttributeDisplay(att.getNodeName(), att.getOwnerElement().getNodeName());
@@ -202,9 +202,9 @@ public class Renderer {
 				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
 				@TIBETAN@tibAtt.addAttribute("xmlnode", att);
 				@TIBETAN@doc.setCharacterAttributes(n, pos.getOffset()-n, tibAtt, false);
-			@TIBETAN@} else {
-				@TIBETAN@doc.insertString(pos.getOffset(), att.getValue(), tColor);
-			@TIBETAN@}
+				@TIBETAN@} else {
+					@TIBETAN@doc.insertString(pos.getOffset(), att.getValue(), tColor);
+					@TIBETAN@}
 			@UNICODE@doc.insertString(pos.getOffset(), att.getValue(), tColor);
 			doc.insertString(pos.getOffset(), "\"", tColor);
 			endOffsets.put(att, new Integer(pos.getOffset()));
@@ -213,10 +213,10 @@ public class Renderer {
 			ble.printStackTrace();
 			return -1;
 		}
-    }
-    public static int renderText(Text t, JTextPane pane, int offset, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
+	}
+	public static int renderText(Text t, JTextPane pane, int offset, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
 		StyledDocument doc = pane.getStyledDocument();
-        try {
+		try {
 			Position pos = doc.createPosition(offset);
 			SimpleAttributeSet tAttributes = new SimpleAttributeSet();
 			//StyleConstants.setLeftIndent(tAttributes, indent);
@@ -224,38 +224,38 @@ public class Renderer {
 			StyleConstants.setFontSize(tAttributes, PreferenceManager.font_size);
 			StyleConstants.setFontFamily(tAttributes, PreferenceManager.font_face);
 			tAttributes.addAttribute("xmlnode", t);
-                        SimpleAttributeSet minimalTAttributes = new SimpleAttributeSet();
-                        minimalTAttributes.addAttribute("xmlnode", t);
-                        doc.insertString(pos.getOffset(), " ", minimalTAttributes);
+			SimpleAttributeSet minimalTAttributes = new SimpleAttributeSet();
+			minimalTAttributes.addAttribute("xmlnode", t);
+			doc.insertString(pos.getOffset(), " ", minimalTAttributes);
 			//doc.insertString(pos.getOffset(), " ", tAttributes); //insert space with text attributes so first character has correct color, xmlnode attribute, etc.
-
-            String s = t.getNodeValue();
-            if (s.equals(" "))
-                s = "";
+			
+			String s = t.getNodeValue();
+			if (s.equals(" "))
+				s = "";
 			int start = pos.getOffset();
 			startOffsets.put(t, new Integer(start));
-
+			
 			@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.areTagContentsTibetan(t.getParentNode().getNodeName())) {
 				@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 				@TIBETAN@duff.toTibetanMachineWeb(s, pos.getOffset());
 				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
 				@TIBETAN@tibAtt.addAttribute("xmlnode", t);
 				@TIBETAN@doc.setCharacterAttributes(start, pos.getOffset()-start, tibAtt, false);
-			@TIBETAN@} else {
-				@TIBETAN@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
-			@TIBETAN@}
+				@TIBETAN@} else {
+					@TIBETAN@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
+					@TIBETAN@}
 			@UNICODE@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
 			int end = pos.getOffset();
 			endOffsets.put(t, new Integer(end));
-                        doc.insertString(pos.getOffset(), "\n", minimalTAttributes);
+			doc.insertString(pos.getOffset(), "\n", minimalTAttributes);
 			//doc.insertString(pos.getOffset(), "\n", tAttributes);
 			return pos.getOffset();
 		} catch (BadLocationException ble) {
 			ble.printStackTrace();
 			return -1;
 		} catch (DOMException dome) {
-            dome.printStackTrace();
-            return -1;
-        }
-    }
+			dome.printStackTrace();
+			return -1;
+		}
+	}
 }
