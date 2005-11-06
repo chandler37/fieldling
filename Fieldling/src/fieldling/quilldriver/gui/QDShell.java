@@ -23,9 +23,11 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.HyperlinkListener;//
-import javax.swing.event.HyperlinkEvent;//
-
+import java.awt.print.*;
+import javax.print.*;
+import javax.print.attribute.*;
+import javax.print.attribute.standard.*;
+import javax.swing.plaf.basic.*;
 import java.awt.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.*;
@@ -38,7 +40,7 @@ import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 
-public class QDShell extends JFrame implements ItemListener
+public class QDShell extends JFrame implements ItemListener,Printable
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
 	 
@@ -92,7 +94,10 @@ public class QDShell extends JFrame implements ItemListener
 	 * Marks if preference changes that require restart took place.
 	 */
 	private boolean needsToRestart;
-	
+	/*Used for printing */
+        private PrinterJob pj=null;  
+	protected PrintView printView=null;
+        
 	private static void printSyntax()
 	{
 		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
@@ -880,6 +885,18 @@ public class QDShell extends JFrame implements ItemListener
 		 qd.saveTranscript();
 		 }
 		 });*/
+                
+                 JMenuItem printItem = new JMenuItem(messages.getString("Print"));
+		printItem.setAccelerator(KeyStroke.getKeyStroke("control P"));		
+		printItem.addActionListener(new ActionListener() {
+		   public void actionPerformed(ActionEvent e) {
+			Thread runner = new Thread() {
+                           public void run() {
+                                 printTranscript();
+                           }};
+                           runner.start();
+                   }});
+                          
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
@@ -891,6 +908,8 @@ public class QDShell extends JFrame implements ItemListener
 			}
 		});
 		projectMenu.add(wizardItem);
+                //projectMenu.add(pageSettupItem);
+                projectMenu.add(printItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		//projectMenu.add(saveItem);
@@ -950,7 +969,6 @@ public class QDShell extends JFrame implements ItemListener
 				if(bothResizeSetting.getState()){ 
 					getQD().bothResize=true;
 					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 1);
-					//System.out.println("BothReize: true");
 				}else{
 					getQD().bothResize=false;
 					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 0);
@@ -1116,6 +1134,46 @@ public class QDShell extends JFrame implements ItemListener
 		bar.add(betaMenu);
 		return bar;
 	}
+        
+            public void printTranscript() {
+              try {
+                 /* Create a print job */
+                 pj = PrinterJob.getPrinterJob();                 
+                 pj.setPrintable(this);
+                 if (!pj.printDialog())
+                         return;
+                 setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                 pj.print();
+                 setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                 JOptionPane.showMessageDialog(this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);		 
+            }catch (PrinterException e) {
+                 e.printStackTrace();
+                 System.err.println("Printing error: "+e.toString());
+                 JOptionPane.showMessageDialog(this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+         public int print(Graphics pg, PageFormat pageFormat,int pageIndex) throws PrinterException {
+                 pg.translate((int)pageFormat.getImageableX(),(int)pageFormat.getImageableY());
+                 int wPage = (int)pageFormat.getImageableWidth();
+                 int hPage = (int)pageFormat.getImageableHeight();
+                 pg.setClip(0, 0, wPage, hPage);
+                 // Only do this once per print
+                if (printView == null) {
+                    JTextPane t=qd.getEditor().getTextPane();
+                    BasicTextUI btui = (BasicTextUI)t.getUI();
+                    javax.swing.text.View root = btui.getRootView(t);
+                    printView = new PrintView(t.getStyledDocument().getDefaultRootElement(), root, wPage, hPage);
+                 }
+                boolean bContinue = printView.paintPage(pg,hPage, pageIndex);
+                System.gc();
+                if (bContinue)
+                    return PAGE_EXISTS;
+                else {
+                    printView = null;
+                return NO_SUCH_PAGE;
+            }
+        }
 	
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
@@ -1424,7 +1482,7 @@ public class QDShell extends JFrame implements ItemListener
 					needsToRestart=false;
 				}
 			}
-			
+                        	
 			private class QDFileFilter extends javax.swing.filechooser.FileFilter {
 				// accepts all directories and all savant files
 				public boolean accept(File f) {
@@ -1438,6 +1496,51 @@ public class QDShell extends JFrame implements ItemListener
 					return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 				}
 			}
+                        
+                /**
+                 *Renderring the content of a styled document
+                 */       
+               class PrintView extends BoxView{ 
+                          /*index of the first view to be rendered on the current page*/
+                          protected int firstOnPage = 0;
+                          /*index of the last view to be rendered on the current page*/
+                          protected int lastOnPage = 0;
+                          /*index of the current page*/
+                          protected int pageIndex = 0;
+                          
+                          public PrintView(Element elem, View root, int w, int h) {
+                                super(elem, Y_AXIS);
+                                setParent(root);
+                                setSize(w, h);
+                                layout(w, h);
+                             }
+                          /**
+                           *Renderring a single page of a styled document
+                           */
+                         public boolean paintPage(Graphics g, int hPage,int page_Index) {
+                                    if (page_Index > pageIndex) {
+                                            firstOnPage = lastOnPage + 1;
+                                            if (firstOnPage >= getViewCount())
+                                               return false;
+                                            pageIndex = page_Index;
+                                           }
+                                     int yMin = getOffset(Y_AXIS, firstOnPage);
+                                     int yMax = yMin + hPage;
+                                     Rectangle rc = new Rectangle();
+                                     for (int k = firstOnPage; k < getViewCount(); k++) {
+                                              rc.x = getOffset(X_AXIS, k);
+                                              rc.y = getOffset(Y_AXIS, k);
+                                              rc.width = getSpan(X_AXIS, k);
+                                              rc.height = getSpan(Y_AXIS, k);
+                                              if (rc.y+rc.height > yMax)
+                                                       break;
+                                              lastOnPage = k;
+                                              rc.y -= yMin;
+                                              paintChild(g, rc, k);
+                                       }
+                                   return true;
+                          }
+                       }
 			
 	}
 	

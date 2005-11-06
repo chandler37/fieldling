@@ -1011,6 +1011,18 @@
     <text lang="en">You cannot open a transcript twice!</text>
     <text lang="zh">对不起,你不能打开一个与已打开的文件有相同文件名的文件!</text>
   </message>
+  <message id="Print">
+    <text lang="en">Print...</text>
+    <text lang="zh">打印...</text>
+  </message>
+    <message id="PrintComplete">
+    <text lang="en">Printing completed successfully!</text>
+    <text lang="zh">打印完成!</text>
+  </message>
+  <message id="PrintFail">
+    <text lang="en">Printing fail!</text>
+    <text lang="zh">打印失败!</text>
+  </message>
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">当启动QuillDriver时,是否自动打开此对话框?</text>
