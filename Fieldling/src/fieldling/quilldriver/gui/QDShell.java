@@ -23,11 +23,9 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import java.awt.print.*;
-import javax.print.*;
-import javax.print.attribute.*;
-import javax.print.attribute.standard.*;
-import javax.swing.plaf.basic.*;
+import javax.swing.event.HyperlinkListener;//
+import javax.swing.event.HyperlinkEvent;//
+
 import java.awt.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.*;
@@ -40,10 +38,9 @@ import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 
-public class QDShell extends JFrame implements ItemListener,Printable
+public class QDShell extends JFrame
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
-	 
 	 *  clean */
 	
 	/*
@@ -84,20 +81,8 @@ public class QDShell extends JFrame implements ItemListener,Printable
 	public static final int CLOSE_APPLICATION = 0;
 	public static final int CLOSE_WINDOW = 1;
 	public static final int CLOSE_TRANSCRIPT = 2;
-	
-	/**
-	 * Used in the Preference window. Need to access them from itemHasChanged
-	 */
 	private JComboBox defaultLanguage, supportedFonts;
-	
-	/**
-	 * Marks if preference changes that require restart took place.
-	 */
-	private boolean needsToRestart;
-	/*Used for printing */
-        private PrinterJob pj=null;  
-	protected PrintView printView=null;
-        
+		
 	private static void printSyntax()
 	{
 		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
@@ -253,12 +238,12 @@ public class QDShell extends JFrame implements ItemListener,Printable
 			boolean useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1)==1;
 			JCheckBox openWizardAutomatically = new JCheckBox(messages.getString("AutomaticallyOpenDialogBox"), useWizard);
 			openWizardAutomatically.addItemListener(new ItemListener()
-					{
+			{
 				public void itemStateChanged(ItemEvent e) 
 				{
 					prefmngr.setInt(prefmngr.USE_WIZARD_KEY, e.getStateChange()==e.SELECTED?1:-1);
 				}				
-					});
+			});
 			
 			//choice of video player
 			JPanel moviePlayerChoice = new JPanel();
@@ -562,7 +547,6 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		@TIBETAN@setTitle("QuillDriver-TIBETAN");
 		defaultLanguage = null;
 		supportedFonts = null;
-		needsToRestart = false;
 		messages = I18n.getResourceBundle();
 		setLocation(prefmngr.getInt(prefmngr.WINDOW_X_KEY, 0), prefmngr.getInt(prefmngr.WINDOW_Y_KEY, 0));
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
@@ -885,18 +869,6 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		 qd.saveTranscript();
 		 }
 		 });*/
-                
-                 JMenuItem printItem = new JMenuItem(messages.getString("Print"));
-		printItem.setAccelerator(KeyStroke.getKeyStroke("control P"));		
-		printItem.addActionListener(new ActionListener() {
-		   public void actionPerformed(ActionEvent e) {
-			Thread runner = new Thread() {
-                           public void run() {
-                                 printTranscript();
-                           }};
-                           runner.start();
-                   }});
-                          
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
@@ -908,8 +880,6 @@ public class QDShell extends JFrame implements ItemListener,Printable
 			}
 		});
 		projectMenu.add(wizardItem);
-                //projectMenu.add(pageSettupItem);
-                projectMenu.add(printItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		//projectMenu.add(saveItem);
@@ -969,6 +939,7 @@ public class QDShell extends JFrame implements ItemListener,Printable
 				if(bothResizeSetting.getState()){ 
 					getQD().bothResize=true;
 					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 1);
+					//System.out.println("BothReize: true");
 				}else{
 					getQD().bothResize=false;
 					//prefmngr.setInt(prefmngr.BOTH_RESIZE_KEY, 0);
@@ -1134,46 +1105,6 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		bar.add(betaMenu);
 		return bar;
 	}
-        
-            public void printTranscript() {
-              try {
-                 /* Create a print job */
-                 pj = PrinterJob.getPrinterJob();                 
-                 pj.setPrintable(this);
-                 if (!pj.printDialog())
-                         return;
-                 setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                 pj.print();
-                 setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                 JOptionPane.showMessageDialog(this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);		 
-            }catch (PrinterException e) {
-                 e.printStackTrace();
-                 System.err.println("Printing error: "+e.toString());
-                 JOptionPane.showMessageDialog(this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-         public int print(Graphics pg, PageFormat pageFormat,int pageIndex) throws PrinterException {
-                 pg.translate((int)pageFormat.getImageableX(),(int)pageFormat.getImageableY());
-                 int wPage = (int)pageFormat.getImageableWidth();
-                 int hPage = (int)pageFormat.getImageableHeight();
-                 pg.setClip(0, 0, wPage, hPage);
-                 // Only do this once per print
-                if (printView == null) {
-                    JTextPane t=qd.getEditor().getTextPane();
-                    BasicTextUI btui = (BasicTextUI)t.getUI();
-                    javax.swing.text.View root = btui.getRootView(t);
-                    printView = new PrintView(t.getStyledDocument().getDefaultRootElement(), root, wPage, hPage);
-                 }
-                boolean bContinue = printView.paintPage(pg,hPage, pageIndex);
-                System.gc();
-                if (bContinue)
-                    return PAGE_EXISTS;
-                else {
-                    printView = null;
-                return NO_SUCH_PAGE;
-            }
-        }
 	
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
@@ -1228,12 +1159,6 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		}
 	}
 	
-	public void itemStateChanged(ItemEvent e)
-	{
-		needsToRestart = true;
-		if (e.getSource()==defaultLanguage)
-			updateSupportedFonts();
-	}
 	private void updateSupportedFonts()
 	{
 		int i;
@@ -1257,10 +1182,16 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		if (i>=fontNames.length)
 			supportedFonts.setSelectedIndex(0);
 	}
-	private void getDisplayPreferences() {
+	
+	private boolean optionsChanged, needsToRestart;
+	private Color highlightColor;
+	
+	private void getDisplayPreferences()
+	{
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontNames;
 		int i;
+		highlightColor = new Color(PreferenceManager.highlight_color_red, PreferenceManager.highlight_color_green, PreferenceManager.highlight_color_blue);
 		
 		fontNames = genv.getAvailableFontFamilyNames();
 		
@@ -1274,20 +1205,37 @@ public class QDShell extends JFrame implements ItemListener,Printable
 			 * depend on the language selected.
 			 */
 			supportedFonts = new JComboBox();
-			supportedFonts.addItemListener(this);
+			supportedFonts.addItemListener(new ItemListener()
+			{
+				public void itemStateChanged(ItemEvent e) 
+				{
+					optionsChanged = true;
+					needsToRestart = true;
+				}				
+			});
 		}			
 		
 		if (defaultLanguage==null)
 		{
 			String[] languageLabels = I18n.getSupportedLanguages();;
 			defaultLanguage = new JComboBox(languageLabels);
-			defaultLanguage.addItemListener(this);
+			defaultLanguage.addItemListener(new ItemListener()
+			{
+				public void itemStateChanged(ItemEvent e) 
+				{
+					optionsChanged = true;
+					needsToRestart = true;
+					updateSupportedFonts();
+				}				
+			});
 			
 			/* If there is no default language set for Quilldriver, use the system
 			 * default language.
 			 */
 			if (PreferenceManager.default_language>-1)
+			{
 				defaultLanguage.setSelectedIndex(PreferenceManager.default_language);
+			}
 			else
 			{
 				String defaultLangLabel = I18n.getDefaultDisplayLanguage();
@@ -1304,13 +1252,14 @@ public class QDShell extends JFrame implements ItemListener,Printable
 				 * would be the default language.
 				 */
 				if (i>=languageLabels.length)
+				{
 					defaultLanguage.setSelectedIndex(0);
+				}
 			}
 			
 			/* calling this directly since itemStateChanged
 			 * is not invoked by setSelectedIndex.
 			 */
-			
 			updateSupportedFonts();
 		}
 		
@@ -1324,26 +1273,50 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		@TIBETAN@tibetanPanel = new JPanel();
 		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("TibetanFontSize")));
 		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
+		@TIBETAN@tibetanFontSizes.addItemListener(new ItemListener()
+		@TIBETAN@{
+			@TIBETAN@public void itemStateChanged(ItemEvent e) 
+			@TIBETAN@{
+				@TIBETAN@optionsChanged = true;
+			@TIBETAN@}				
+		@TIBETAN@});
 		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(prefmngr.tibetan_font_size));
+		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.tibetan_font_size));
 		@TIBETAN@tibetanFontSizes.setEditable(true);
 		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
 		JPanel romanPanel;
 		JComboBox romanFontFamilies;
 		JComboBox romanFontSizes;
-		romanPanel = new JPanel();
+		romanPanel = new JPanel(new GridLayout(1,2));
 		romanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("NonTibetanFontAndSize")));
 		romanFontFamilies = new JComboBox(fontNames);
+		romanFontFamilies.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+		});
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
-		romanFontFamilies.setSelectedItem(prefmngr.font_face);
+		romanFontFamilies.setSelectedItem(PreferenceManager.font_face);
 		romanFontFamilies.setEditable(true);
 		romanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
+		romanFontSizes.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+		});
 		romanFontSizes.setMaximumSize(romanFontSizes.getPreferredSize());
-		romanFontSizes.setSelectedItem(String.valueOf(prefmngr.font_size));
+		romanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.font_size));
 		romanFontSizes.setEditable(true);
-		romanPanel.setLayout(new GridLayout(1,2));
+				
+		//JPanel romanUpperPanel = new JPanel(new GridLayout(1,2));
 		romanPanel.add(romanFontFamilies);
 		romanPanel.add(romanFontSizes);
+		//romanPanel.add(romanUpperPanel);
+		
 		JPanel highlightPanel;
 		JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
 		JTextField highlightField;
@@ -1352,38 +1325,55 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		highlightPanel = new JPanel();                   
 		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
 		
-		final JButton ch=new JButton("Change high light color");
-		final Color initColor=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
-				prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
-				prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue));
-		ch.addActionListener(new ActionListener(){
+		final JButton highlightColorButton =new JButton(messages.getString("ChangeHighlightColor"));
+		highlightColorButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ev){
-				Color color=JColorChooser.showDialog(ch,"Choose a color",initColor);                 
-				if(color!=null){
-					prefmngr.setInt(prefmngr.HIGHLIGHT_RED_KEY,color.getRed());
-					prefmngr.setInt(prefmngr.HIGHLIGHT_GREEN_KEY,color.getGreen());
-					prefmngr.setInt(prefmngr.HIGHLIGHT_BLUE_KEY,color.getBlue());
-					
+				Color newColor = JColorChooser.showDialog(highlightColorButton, "Choose a color", highlightColor);                 
+				if(newColor!=null)
+				{
+					optionsChanged = true;
+					highlightColor = newColor;
 				}
 			}
 		});
 		h1Panel = new JPanel();
-		h1Panel.add(ch); 
+		h1Panel.add(highlightColorButton); 
 		
 		hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
 		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
-		highlightPosition.setSelectedItem(prefmngr.highlight_position);
+		highlightPosition.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+		});
+		highlightPosition.setSelectedItem(PreferenceManager.highlight_position);
 		highlightPosition.setEditable(true);
 		h2Panel = new JPanel();
 		h2Panel.add(hPositionLabel);
 		h2Panel.add(highlightPosition);
 		hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
 		multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
-		multipleHighlightPolicy.setSelectedItem(prefmngr.multiple_highlight_policy);
+		multipleHighlightPolicy.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+		});
+		multipleHighlightPolicy.setSelectedItem(PreferenceManager.multiple_highlight_policy);
 		multipleHighlightPolicy.setEditable(true);
 		hScrollingLabel = new JLabel(messages.getString("ScrollingHighlightPolicy"));
 		scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
-		scrollingHighlightPolicy.setSelectedItem(prefmngr.scrolling_highlight_policy);
+		scrollingHighlightPolicy.addItemListener(new ItemListener()
+		{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+		});
+		scrollingHighlightPolicy.setSelectedItem(PreferenceManager.scrolling_highlight_policy);
 		scrollingHighlightPolicy.setEditable(true);
 		h3Panel = new JPanel();
 		h3Panel.add(hMultipleLabel);
@@ -1403,144 +1393,117 @@ public class QDShell extends JFrame implements ItemListener,Printable
 		middlePanel.add(romanPanel);
 		preferencesPanel.add(middlePanel, BorderLayout.CENTER);
 		preferencesPanel.add(highlightPanel, BorderLayout.SOUTH);
-		JOptionPane pane = new JOptionPane(preferencesPanel);
+		JOptionPane pane = new JOptionPane(preferencesPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
 		
 		// This returns only when the user has closed the dialog
+		optionsChanged = false;
+		needsToRestart = false;
 		dialog.setVisible(true);
 		
-		@TIBETAN@int old_tibetan_font_size = prefmngr.tibetan_font_size;
+		Object selectedValue = pane.getValue();
+		
+		if (!optionsChanged || selectedValue==null || !(selectedValue instanceof Integer))
+			return;
+
+		Integer selectedInteger = (Integer) selectedValue;
+		if (selectedInteger.intValue() != JOptionPane.OK_OPTION)
+			return;
+		
+		@TIBETAN@int old_tibetan_font_size = PreferenceManager.tibetan_font_size;
 		@TIBETAN@try {
-			@TIBETAN@prefmngr.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
-			@TIBETAN@} catch (NumberFormatException ne) {
-				@TIBETAN@prefmngr.tibetan_font_size = old_tibetan_font_size;
-				@TIBETAN@}
-			String old_font_face = new String(prefmngr.font_face);
-			prefmngr.font_face = romanFontFamilies.getSelectedItem().toString();
-			int old_font_size = prefmngr.font_size;
-			try {
-				prefmngr.font_size = Integer.parseInt(romanFontSizes.getSelectedItem().toString());
+			@TIBETAN@PreferenceManager.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
+		@TIBETAN@}
+		@TIBETAN@catch (NumberFormatException ne) {
+			@TIBETAN@PreferenceManager.tibetan_font_size = old_tibetan_font_size;
+		@TIBETAN@}
+		
+		String old_font_face = new String(PreferenceManager.font_face);
+		
+		PreferenceManager.font_face = romanFontFamilies.getSelectedItem().toString();
+		int old_font_size = PreferenceManager.font_size;
+		try {
+			PreferenceManager.font_size = Integer.parseInt(romanFontSizes.getSelectedItem().toString());
+		}
+		catch (NumberFormatException ne) {
+			PreferenceManager.font_size = old_font_size;
+		}
+		
+		prefmngr.setValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.font_face);
+		prefmngr.setInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.font_size);
+		@TIBETAN@prefmngr.setInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.tibetan_font_size);
+		if (qd.getEditor() != null)
+		{
+			@UNICODE@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face))){
+			@TIBETAN@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face) && old_tibetan_font_size == PreferenceManager.tibetan_font_size)) {
+				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+				@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+				@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
+				qd.getEditor().render();
+			}                  
+		}
+		String highlightPosVal = (String)highlightPosition.getSelectedItem();
+		String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
+
+		PreferenceManager.multiple_highlight_policy = (String)multipleHighlightPolicy.getSelectedItem();
+		PreferenceManager.highlight_position = highlightPosVal;
+		
+		prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
+		prefmngr.setValue(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
+		
+		if (qd.getEditor() != null) {
+			qd.hp.setHighlightPosition(highlightPosVal);
+			if (qd.hp != null) {
+				qd.hp.setHighlightColor(highlightColor);
 			}
-			catch (NumberFormatException ne) {
-				prefmngr.font_size = old_font_size;
+		}
+		
+		if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
+			qd.player.setMultipleAnnotationPolicy(true);
+		else
+			qd.player.setMultipleAnnotationPolicy(false);
+		
+		String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
+		
+		PreferenceManager.scrolling_highlight_policy = (String) scrollingHighlightPolicy.getSelectedItem();
+		prefmngr.setValue(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
+		
+		if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
+			if (qd != null) {
+				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
+				qd.player.setAutoScrolling(true);
 			}
-			prefmngr.setValue(prefmngr.FONT_FACE_KEY, prefmngr.font_face);
-			prefmngr.setInt(prefmngr.FONT_SIZE_KEY, prefmngr.font_size);
-			@TIBETAN@prefmngr.setInt(prefmngr.TIBETAN_FONT_SIZE_KEY, prefmngr.tibetan_font_size);
-			if (qd.getEditor() != null) {
-				@UNICODE@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face))){
-					@TIBETAN@if (!(old_font_size == prefmngr.font_size && old_font_face.equals(prefmngr.font_face) && old_tibetan_font_size == prefmngr.tibetan_font_size)) {
-						@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
-						@TIBETAN@dp.setByUserTibetanFontSize(prefmngr.tibetan_font_size);
-						@TIBETAN@dp.setByUserRomanAttributeSet(prefmngr.font_face, prefmngr.font_size);
-						@UNICODE@qd.getEditor().getTextPane().setFont(new Font(prefmngr.font_face, Font.PLAIN, prefmngr.font_size));
-						qd.getEditor().render();
-					}                  
-				}
-				String highlightPosVal = (String)highlightPosition.getSelectedItem();
-				String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
-				prefmngr.setValue(prefmngr.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-				if (qd.getEditor() != null) {
-					qd.hp.setHighlightPosition(highlightPosVal);
-				}
-				if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
-					qd.player.setMultipleAnnotationPolicy(true);
-				else
-					qd.player.setMultipleAnnotationPolicy(false);
-				String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
-				if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
-					if (qd != null) {
-						qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
-						qd.player.setAutoScrolling(true);
-					}
-				} else {
-					if (qd != null) {
-						qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
-						qd.player.setAutoScrolling(false);
-					}
-				}
-				//String hexColor = highlightField.getText();
-				try {
-					//Color c = Color.decode("0x"+hexColor);
-					//prefmngr.setValue(prefmngr.HIGHLIGHT_KEY, hexColor);
-					Color c=new Color(prefmngr.getInt(prefmngr.HIGHLIGHT_RED_KEY,prefmngr.highlight_color_red),
-							prefmngr.getInt(prefmngr.HIGHLIGHT_GREEN_KEY,prefmngr.highlight_color_green),
-							prefmngr.getInt(prefmngr.HIGHLIGHT_BLUE_KEY,prefmngr.highlight_color_blue)); 
-					if (qd.getEditor() != null) {
-						if (qd.hp != null) {
-							qd.hp.setHighlightColor(c);
-						}
-					}
-				} catch (NumberFormatException nfe) {
-					nfe.printStackTrace();
-				}
-				if (needsToRestart)
-				{
-					JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
-					prefmngr.setValue(prefmngr.DEFAULT_INTERFACE_FONT_KEY, (String) supportedFonts.getSelectedItem());
-					prefmngr.setInt(prefmngr.DEFAULT_LANGUAGE_KEY, defaultLanguage.getSelectedIndex());
-					needsToRestart=false;
-				}
+		} else {
+			if (qd != null) {
+				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
+				qd.player.setAutoScrolling(false);
 			}
-                        	
-			private class QDFileFilter extends javax.swing.filechooser.FileFilter {
-				// accepts all directories and all savant files
-				public boolean accept(File f) {
-					if (f.isDirectory()) {
-						return true;
-					}
-					return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
-				}
-				//the description of this filter
-				public String getDescription() {
-					return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
-				}
-			}
-                        
-                /**
-                 *Renderring the content of a styled document
-                 */       
-               class PrintView extends BoxView{ 
-                          /*index of the first view to be rendered on the current page*/
-                          protected int firstOnPage = 0;
-                          /*index of the last view to be rendered on the current page*/
-                          protected int lastOnPage = 0;
-                          /*index of the current page*/
-                          protected int pageIndex = 0;
-                          
-                          public PrintView(Element elem, View root, int w, int h) {
-                                super(elem, Y_AXIS);
-                                setParent(root);
-                                setSize(w, h);
-                                layout(w, h);
-                             }
-                          /**
-                           *Renderring a single page of a styled document
-                           */
-                         public boolean paintPage(Graphics g, int hPage,int page_Index) {
-                                    if (page_Index > pageIndex) {
-                                            firstOnPage = lastOnPage + 1;
-                                            if (firstOnPage >= getViewCount())
-                                               return false;
-                                            pageIndex = page_Index;
-                                           }
-                                     int yMin = getOffset(Y_AXIS, firstOnPage);
-                                     int yMax = yMin + hPage;
-                                     Rectangle rc = new Rectangle();
-                                     for (int k = firstOnPage; k < getViewCount(); k++) {
-                                              rc.x = getOffset(X_AXIS, k);
-                                              rc.y = getOffset(Y_AXIS, k);
-                                              rc.width = getSpan(X_AXIS, k);
-                                              rc.height = getSpan(Y_AXIS, k);
-                                              if (rc.y+rc.height > yMax)
-                                                       break;
-                                              lastOnPage = k;
-                                              rc.y -= yMin;
-                                              paintChild(g, rc, k);
-                                       }
-                                   return true;
-                          }
-                       }
+		}
+
+		if (needsToRestart)
+		{
+			JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
+			PreferenceManager.default_interface_font = (String) supportedFonts.getSelectedItem();
+			PreferenceManager.default_language = defaultLanguage.getSelectedIndex();
 			
+			prefmngr.setValue(PreferenceManager.DEFAULT_INTERFACE_FONT_KEY, PreferenceManager.default_interface_font);
+			prefmngr.setInt(PreferenceManager.DEFAULT_LANGUAGE_KEY, PreferenceManager.default_language);
+		}
 	}
+		
+	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
+		// accepts all directories and all savant files
+		public boolean accept(File f) {
+			if (f.isDirectory()) {
+				return true;
+			}
+			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
+		}
+		//the description of this filter
+		public String getDescription() {
+			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
+		}
+	}		
+}
 	

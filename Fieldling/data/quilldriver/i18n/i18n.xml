@@ -1555,5 +1555,9 @@
   	<text lang="en">Tools</text>
   	<text lang="zh">工具</text>
   </message>
+  <message id="ChangeHighlightColor">
+  	<text lang="en">Change highlight color</text>
+  	<text lang="zh">Change highlight color</text>
+  </message>
 </all-messages>
 
