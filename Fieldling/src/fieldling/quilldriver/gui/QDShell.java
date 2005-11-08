@@ -834,8 +834,7 @@ public class QDShell extends JFrame implements Printable
 				/*
 				 if (hasLoadedTranscript)
 				 new QDShell(1);
-				 else*/				
-				
+				 else*/							
 				if(numberOfQDsOpen<MAXIMUM_NUMBER_OF_OPEN_FILES){                              
 					if (hasLoadedTranscript){                              
 						if (qd.getEditor() != null) //no content in this QD window
@@ -844,8 +843,7 @@ public class QDShell extends JFrame implements Printable
 							tempQD=qd;      //  save for later remove from contentpane                                        
 						}
 					}
-					loadState();  // prepare load another transcript file
-					
+					loadState();  // prepare load another transcript file				
 					Wizard wiz = new Wizard();
 					wiz.setVisible(true);
 					setJMenuBar(getQDShellMenu());
@@ -886,7 +884,16 @@ public class QDShell extends JFrame implements Printable
 					}};
 					runner.start();
 			}});
-		
+		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
+		saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
+		saveAsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                                 if (!qd.getEditor().isEditable())
+                                      JOptionPane.showMessageDialog(QDShell.this, messages.getString("OnlyTranscriptionMode"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);        
+                                 else
+                                      saveTranscriptAs();                           
+			}});
+                        
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
@@ -902,7 +909,7 @@ public class QDShell extends JFrame implements Printable
 		projectMenu.add(printItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
-		//projectMenu.add(saveItem);
+		projectMenu.add(saveAsItem);
 		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
 		
@@ -1125,6 +1132,32 @@ public class QDShell extends JFrame implements Printable
 		return bar;
 	}
 	
+         public void saveTranscriptAs(){
+             JFileChooser fd=new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+             fd.setDialogTitle(messages.getString("SaveAs"));
+             fd.addChoosableFileFilter(new QDFileFilter());
+             try{
+                   int action=fd.showSaveDialog(QDShell.this);                      
+                   if(action==JFileChooser.APPROVE_OPTION){
+                   File oldFile=qd.transcriptFile;
+                   File newFile=fd.getSelectedFile();
+                   openFileList.set(openFileList.indexOf(oldFile.getName()), newFile.getName());
+                   qd=(QD)openTranscriptToQDMap.remove(oldFile.getName());
+                   openTranscriptToQDMap.put(newFile.getName(),qd);
+                   qd.transcriptFile=newFile;                              
+                   qd.saveTranscript();
+                   qd.textFrame.setTitle(newFile.getAbsolutePath());
+                   setJMenuBar(getQDShellMenu());
+		   setVisible(true); 
+                   makeRecentlyOpened(newFile.getAbsolutePath());
+		   makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+                  }
+               }catch(Exception ex){
+                   System.out.println("Errors are occured when saving: "+ex.toString());
+                   JOptionPane.showMessageDialog(this,messages.getString("SaveError"),"Alert",JOptionPane.ERROR_MESSAGE);
+               }
+          }
+         
 	public void printTranscript() {
 		try {
 			/* Create a print job */

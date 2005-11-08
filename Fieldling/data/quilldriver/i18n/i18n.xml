@@ -653,7 +653,7 @@
   </message>
   <message id="Exit">
     <text lang="en">Exit</text>
-    <text lang="zh">Exit</text>
+    <text lang="zh">退出</text>
   </message>
   <message id="RapidDecreaseStart">
     <text lang="en">Rapid Decrease Start</text>
@@ -708,9 +708,14 @@
     <text lang="zh">保存</text>
   </message>
   <message id="SaveAs">
-    <text lang="en">Save as</text>
-    <text lang="zh">保存到</text>
+    <text lang="en">Save As...</text>
+    <text lang="zh">保存到...</text>
   </message>
+    <message id="SaveError">
+    <text lang="en">Errors are occured when saving!</text>
+    <text lang="zh">保存时遇到错误!</text>
+  </message>
+  
   <message id="SaveCurrent">
     <text lang="en">Save the current transcript</text>
     <text lang="zh">保存当前转录文本</text>
@@ -1023,6 +1028,11 @@
     <text lang="en">Printing fail!</text>
     <text lang="zh">打印失败!</text>
   </message>
+   <message id="OnlyTranscriptionMode">
+    <text lang="en">Only transcription mode could use this function!</text>
+    <text lang="zh">只有转录THDL文本模式才能使用此功能!</text>
+  </message>
+
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">当启动QuillDriver时,是否自动打开此对话框?</text>
