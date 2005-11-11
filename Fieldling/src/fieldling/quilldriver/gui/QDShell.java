@@ -27,6 +27,7 @@ import javax.swing.plaf.basic.*;
 import java.awt.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.*;
+import javax.swing.text.View;
 import java.util.prefs.*;
 import fieldling.quilldriver.PreferenceManager;
 import fieldling.quilldriver.config.*;
@@ -36,7 +37,8 @@ import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
 //import org.xhtmlrenderer.simple.*;
-//import java.awt.print.*;
+import java.awt.print.*;
+
 
 public class QDShell extends JFrame 
 {
@@ -871,34 +873,15 @@ public class QDShell extends JFrame
 		JMenuItem printItem = new JMenuItem(messages.getString("Print"));
 		printItem.setAccelerator(KeyStroke.getKeyStroke("control P"));		
 		printItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                             Thread runner = new Thread() {
-				public void run() {
-				    DocumentRenderer documentRenderer = new DocumentRenderer();
-                                    documentRenderer.print(qd.getEditor().getTextPane());                     
-                                    if(documentRenderer.success)
-                                            JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);
-                                       // else  JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);                          
-                                    }
-                                };
-				 runner.start();                     
-				
-                       /*
-                        try {                    		
-			PrinterJob pj = PrinterJob.getPrinterJob();
-                        XHTMLPanel xml_panel = new XHTMLPanel();
-                        //xml_panel.setDocument(qd.getEditor().getXMLDocument());
-                        xml_panel.setDocument(qd.transcriptFile.toURI().toURL().toString());       
-			pj.setPrintable(new XHTMLPrintable(xml_panel));
-			if (pj.printDialog())		
-			    pj.print();
-			JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);		 
-		       }catch (Exception ex) {
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
-		       } */                
+			public void actionPerformed(ActionEvent e) {      
+			        Thread runner = new Thread() {
+				public void run() { 
+                                    DocumentRenderer documentRenderer = new DocumentRenderer();
+                                    documentRenderer.print(qd.getEditor().getTextPane());                                   
+                                    }};
+                              runner.start();               
 			}});
-                        
+                       
 		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
 		saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
 		saveAsItem.addActionListener(new ActionListener() {
@@ -1146,7 +1129,7 @@ public class QDShell extends JFrame
 		bar.add(betaMenu);
 		return bar;
 	}
-	
+
          public void saveTranscriptAs(){
              JFileChooser fd=new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
              fd.setDialogTitle(messages.getString("SaveAs"));
@@ -1572,7 +1555,157 @@ public class QDShell extends JFrame
 			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 		}
 	}
+    /**
+     *  Note: this class came from 
+     *  Kei G. Gauthier (Suite 301
+     *  77 Winsor Street
+     *  Ludlow, MA  01056)  
+     */ 
+   private class DocumentRenderer implements Printable {
+       int currentPage = -1;  //Used to keep track of when the page to print changes.
+       JTextPane jeditorPane;   //Container to hold the Document. This object be used to lay out the Document for printing.
+       double pageEndY = 0;                //Location of the current page end.
+       double pageStartY = 0;              //Location of the current page start.
+       boolean scaleWidthToFit = true;     //boolean to allow control over whether pages too wide to fit on a page will be scaled.
+       PageFormat pFormat;
+       PrinterJob pJob;
+  
+      public DocumentRenderer() {
+        pFormat = new PageFormat();
+        pJob = PrinterJob.getPrinterJob();
+      }
+
+     public void pageDialog() {
+       pFormat = pJob.pageDialog(pFormat);
+      }
+
+     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+        double scale = 1.0;
+        Graphics2D graphics2D;
+        View rootView;
+
+    graphics2D = (Graphics2D) graphics;
+    jeditorPane.setSize((int) pageFormat.getImageableWidth(),Integer.MAX_VALUE);
+    jeditorPane.validate();
+    rootView = jeditorPane.getUI().getRootView(jeditorPane);
+    if ((scaleWidthToFit) && (jeditorPane.getMinimumSize().getWidth() >
+    pageFormat.getImageableWidth())) {
+      scale = pageFormat.getImageableWidth()/
+      jeditorPane.getMinimumSize().getWidth();
+      graphics2D.scale(scale,scale);
+    }
+
+    graphics2D.setClip((int) (pageFormat.getImageableX()/scale),
+    (int) (pageFormat.getImageableY()/scale),
+    (int) (pageFormat.getImageableWidth()/scale),
+    (int) (pageFormat.getImageableHeight()/scale));
+
+    if (pageIndex > currentPage) {
+      currentPage = pageIndex;
+      pageStartY += pageEndY;
+      pageEndY = graphics2D.getClipBounds().getHeight();
+    }
+
+    graphics2D.translate(graphics2D.getClipBounds().getX(),
+    graphics2D.getClipBounds().getY());
+    Rectangle allocation = new Rectangle(0,
+    (int) -pageStartY,
+    (int) (jeditorPane.getMinimumSize().getWidth()),
+    (int) (jeditorPane.getPreferredSize().getHeight()));
+
+    if (printView(graphics2D,allocation,rootView)) {
+      return Printable.PAGE_EXISTS;
+    }
+    else {
+      pageStartY = 0;
+      pageEndY = 0;
+      currentPage = -1;
+      return Printable.NO_SUCH_PAGE;
+    }
+  }
+
+   /*print(JTextPane) prints a StyledDocument contained within a JTextPane.*/
+  public void print(JTextPane jedPane) {
+    setDocument(jedPane);
+    printDialog();
+  }
+  public void print(StyledDocument styledDocument) {
+    setDocument(styledDocument);
+    printDialog();
+  }
+  public void printDialog() {
+      //pageDialog();
+      if (pJob.printDialog()) {
+      pJob.setPrintable(this,pFormat);
+      try {
+        pJob.print();    
+        JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);
+      }
+      catch (PrinterException printerException) {
+        pageStartY = 0;
+        pageEndY = 0;
+        currentPage = -1;
+        System.out.println("Error Printing Document");
+        JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
+
+  public boolean printView(Graphics2D graphics2D, Shape allocation,View view) {
+    boolean pageExists = false;
+    Rectangle clipRectangle = graphics2D.getClipBounds();
+    Shape childAllocation;
+    View childView;
+
+    if (view.getViewCount() > 0) {
+      for (int i = 0; i < view.getViewCount(); i++) {
+        childAllocation = view.getChildAllocation(i,allocation);
+        if (childAllocation != null) {
+          childView = view.getView(i);
+          if (printView(graphics2D,childAllocation,childView)) {
+            pageExists = true;
+          }
+        }
+      }
+    } else {
+      if (allocation.getBounds().getMaxY() >= clipRectangle.getY()) {
+        pageExists = true;
+
+        if ((allocation.getBounds().getHeight() > clipRectangle.getHeight()) &&
+        (allocation.intersects(clipRectangle))) {
+          view.paint(graphics2D,allocation);
+        } else {
+
+          if (allocation.getBounds().getY() >= clipRectangle.getY()) {
+            if (allocation.getBounds().getMaxY() <= clipRectangle.getMaxY()) {
+              view.paint(graphics2D,allocation);
+            } else {
+
+              if (allocation.getBounds().getY() < pageEndY) {
+                pageEndY = allocation.getBounds().getY();
+              }
+            }
+          }
+        }
+      }
+    }
+    return pageExists;
+  }
+
+  public void setDocument(JTextPane jedPane) {
+    jeditorPane = new JTextPane();
+    setDocument(jedPane.getStyledDocument());
+  }
+
+  public void setDocument(StyledDocument document) {
+    jeditorPane.setDocument(document);
+  }
+
+ /*Method to set the current choice of the width scaling option.*/
+  public void setScaleWidthToFit(boolean scaleWidth) {
+    scaleWidthToFit = scaleWidth;
+  }
+}
 		
-	
 }
 		
