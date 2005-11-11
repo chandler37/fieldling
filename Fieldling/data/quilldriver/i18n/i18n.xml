@@ -990,11 +990,11 @@
   </message>
   <message id="FullScreenVideoOnly">
     <text lang="en">Fullscreen video only</text>
-    <text lang="zh">仅全屏幕视屏</text>
+    <text lang="zh">仅全屏幕视频</text>
   </message>
    <message id="NormalSizeVideoOnly">
     <text lang="en">Normal size video only</text>
-    <text lang="zh">仅正常大小的视屏</text>
+    <text lang="zh">仅正常大小的视频</text>
   </message>
    <message id="SubtitleBelow">
     <text lang="en">Subtitle below</text>
@@ -1039,14 +1039,14 @@
   </message>
   <message id="WantToSaveChanges">
     <text lang="en">Do you want to save the changes?</text>
-    <text lang="zh">Do you want to save the changes?</text>
+    <text lang="zh">你想保存这些改变吗?</text>
   </message>  
   <message id="help1">
     <text lang="en">
         Plays the video if it is stopped; pauses it otherwise.
     </text>
     <text lang="zh">
-        Plays the video if it is stopped; pauses it otherwise.
+        如果视频停止,播发它;否则停止它.
     </text>
   </message>
   <message id="help2">
@@ -1106,7 +1106,7 @@
         Plays the previous transcription line.
     </text>
     <text lang="zh">
-        Plays the previous transcription line.
+        播放前面的转录文本行.
     </text>
   </message>
   <message id="help7">

@@ -23,10 +23,6 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import java.awt.print.*;
-import javax.print.*;
-import javax.print.attribute.*;
-import javax.print.attribute.standard.*;
 import javax.swing.plaf.basic.*;
 import java.awt.event.*;
 import javax.swing.text.*;
@@ -39,8 +35,10 @@ import fieldling.mediaplayer.*;
 import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.util.JdkVersionHacks;
+//import org.xhtmlrenderer.simple.*;
+//import java.awt.print.*;
 
-public class QDShell extends JFrame implements Printable
+public class QDShell extends JFrame 
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
 	 *  clean */
@@ -84,10 +82,6 @@ public class QDShell extends JFrame implements Printable
 	public static final int CLOSE_WINDOW = 1;
 	public static final int CLOSE_TRANSCRIPT = 2;
 	private JComboBox defaultLanguage, supportedFonts;
-	
-	/** Used for printing */
-	private PrinterJob pj=null;  
-	protected PrintView printView=null;
 	
 	private static void printSyntax()
 	{
@@ -878,12 +872,33 @@ public class QDShell extends JFrame implements Printable
 		printItem.setAccelerator(KeyStroke.getKeyStroke("control P"));		
 		printItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {
-						printTranscript();
-					}};
-					runner.start();
+                             Thread runner = new Thread() {
+				public void run() {
+				    DocumentRenderer documentRenderer = new DocumentRenderer();
+                                    documentRenderer.print(qd.getEditor().getTextPane());                     
+                                    if(documentRenderer.success)
+                                            JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);
+                                       // else  JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);                          
+                                    }
+                                };
+				 runner.start();                     
+				
+                       /*
+                        try {                    		
+			PrinterJob pj = PrinterJob.getPrinterJob();
+                        XHTMLPanel xml_panel = new XHTMLPanel();
+                        //xml_panel.setDocument(qd.getEditor().getXMLDocument());
+                        xml_panel.setDocument(qd.transcriptFile.toURI().toURL().toString());       
+			pj.setPrintable(new XHTMLPrintable(xml_panel));
+			if (pj.printDialog())		
+			    pj.print();
+			JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);		 
+		       }catch (Exception ex) {
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(QDShell.this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
+		       } */                
 			}});
+                        
 		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
 		saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
 		saveAsItem.addActionListener(new ActionListener() {
@@ -1158,46 +1173,7 @@ public class QDShell extends JFrame implements Printable
                }
           }
          
-	public void printTranscript() {
-		try {
-			/* Create a print job */
-			pj = PrinterJob.getPrinterJob();                 
-			pj.setPrintable(this);
-			if (!pj.printDialog())
-				return;
-			setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			pj.print();
-			setCursor( Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			JOptionPane.showMessageDialog(this,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);		 
-		}catch (PrinterException e) {
-			e.printStackTrace();
-			System.err.println("Printing error: "+e.toString());
-			JOptionPane.showMessageDialog(this,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
-		}
-	}
-	
-	public int print(Graphics pg, PageFormat pageFormat,int pageIndex) throws PrinterException {
-		pg.translate((int)pageFormat.getImageableX(),(int)pageFormat.getImageableY());
-		int wPage = (int)pageFormat.getImageableWidth();
-		int hPage = (int)pageFormat.getImageableHeight();
-		pg.setClip(0, 0, wPage, hPage);
-		// Only do this once per print
-		if (printView == null) {
-			JTextPane t=qd.getEditor().getTextPane();
-			BasicTextUI btui = (BasicTextUI)t.getUI();
-			javax.swing.text.View root = btui.getRootView(t);
-			printView = new PrintView(t.getStyledDocument().getDefaultRootElement(), root, wPage, hPage);
-		}
-		boolean bContinue = printView.paintPage(pg,hPage, pageIndex);
-		System.gc();
-		if (bContinue)
-			return PAGE_EXISTS;
-		else {
-			printView = null;
-			return NO_SUCH_PAGE;
-		}
-	}
-	
+
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
 		if (r == null)
@@ -1597,49 +1573,6 @@ public class QDShell extends JFrame implements Printable
 		}
 	}
 		
-	/**
-	 *Renderring the content of a styled document
-	 */       
-	class PrintView extends BoxView{ 
-		/*index of the first view to be rendered on the current page*/
-		protected int firstOnPage = 0;
-		/*index of the last view to be rendered on the current page*/
-		protected int lastOnPage = 0;
-		/*index of the current page*/
-		protected int pageIndex = 0;
-		
-		public PrintView(Element elem, View root, int w, int h) {
-			super(elem, Y_AXIS);
-			setParent(root);
-			setSize(w, h);
-			layout(w, h);
-		}
-		/**
-		 *Renderring a single page of a styled document
-		 */
-		public boolean paintPage(Graphics g, int hPage,int page_Index) {
-			if (page_Index > pageIndex) {
-				firstOnPage = lastOnPage + 1;
-				if (firstOnPage >= getViewCount())
-					return false;
-				pageIndex = page_Index;
-			}
-			int yMin = getOffset(Y_AXIS, firstOnPage);
-			int yMax = yMin + hPage;
-			Rectangle rc = new Rectangle();
-			for (int k = firstOnPage; k < getViewCount(); k++) {
-				rc.x = getOffset(X_AXIS, k);
-				rc.y = getOffset(Y_AXIS, k);
-				rc.width = getSpan(X_AXIS, k);
-				rc.height = getSpan(Y_AXIS, k);
-				if (rc.y+rc.height > yMax)
-					break;
-				lastOnPage = k;
-				rc.y -= yMin;
-				paintChild(g, rc, k);
-			}
-			return true;
-		}
-	}
+	
 }
 		
