@@ -27,7 +27,7 @@ import fieldling.util.*;
 import java.awt.print.*;
 
     /**
-     *  Note: this class came from 
+     *  Note: this class is modified from 
      *  Kei G. Gauthier (Suite 301
      *  77 Winsor Street
      *  Ludlow, MA  01056)  
@@ -38,18 +38,12 @@ public class DocumentRenderer implements Printable {
 	double pageEndY = 0;                //Location of the current page end.
 	double pageStartY = 0;              //Location of the current page start.
 	boolean scaleWidthToFit = true;     //boolean to allow control over whether pages too wide to fit on a page will be scaled.
-	PageFormat pFormat;
-	PrinterJob pJob;
 	protected ResourceBundle messages;
 		
-	public DocumentRenderer() {
-		pFormat = new PageFormat();
-		pJob = PrinterJob.getPrinterJob();
-		messages = I18n.getResourceBundle();
-	}
-	
-	public void pageDialog() {
-		pFormat = pJob.pageDialog(pFormat);
+	public DocumentRenderer(StyledDocument document) {
+	     messages = I18n.getResourceBundle();
+             jeditorPane = new JTextPane();
+             jeditorPane.setDocument(document);
 	}
 	
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
@@ -97,33 +91,6 @@ public class DocumentRenderer implements Printable {
 		}
 	}
 	
-	/*print(JTextPane) prints a StyledDocument contained within a JTextPane.*/
-	public void print(JTextPane jedPane) {
-		setDocument(jedPane);
-		printDialog();
-	}
-	public void print(StyledDocument styledDocument) {
-		setDocument(styledDocument);
-		printDialog();
-	}
-	public void printDialog() {
-		//pageDialog();
-		if (pJob.printDialog()) {
-			pJob.setPrintable(this,pFormat);
-			try {
-				pJob.print();    
-				JOptionPane.showMessageDialog(null,messages.getString("PrintComplete"),"Info",JOptionPane.INFORMATION_MESSAGE);
-			}
-			catch (PrinterException printerException) {
-				pageStartY = 0;
-				pageEndY = 0;
-				currentPage = -1;
-				System.out.println("Error Printing Document");
-				JOptionPane.showMessageDialog(null,messages.getString("PrintFail"),"Alert",JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
 	public boolean printView(Graphics2D graphics2D, Shape allocation,View view) {
 		boolean pageExists = false;
 		Rectangle clipRectangle = graphics2D.getClipBounds();
@@ -163,15 +130,6 @@ public class DocumentRenderer implements Printable {
 			}
 		}
 		return pageExists;
-	}
-	
-	public void setDocument(JTextPane jedPane) {
-		jeditorPane = new JTextPane();
-		setDocument(jedPane.getStyledDocument());
-	}
-	
-	public void setDocument(StyledDocument document) {
-		jeditorPane.setDocument(document);
 	}
 	
 	/*Method to set the current choice of the width scaling option.*/

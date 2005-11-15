@@ -30,7 +30,11 @@ import fieldling.quilldriver.xml.*;
 import fieldling.mediaplayer.*;
 import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
-
+import java.awt.print.*;     
+import javax.print.*;        
+import javax.print.event.*;  
+import javax.print.attribute.*;
+import javax.print.attribute.standard.*;
 public class QDShell extends JFrame 
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
@@ -75,7 +79,7 @@ public class QDShell extends JFrame
 	public static final int CLOSE_WINDOW = 1;
 	public static final int CLOSE_TRANSCRIPT = 2;
 	private JComboBox defaultLanguage, supportedFonts;
-	
+        
 	private static void printSyntax()
 	{
 		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
@@ -867,12 +871,21 @@ public class QDShell extends JFrame
 			public void actionPerformed(ActionEvent e) {      
 			        Thread runner = new Thread() {
 				public void run() { 
-                                    DocumentRenderer documentRenderer = new DocumentRenderer();
-                                    documentRenderer.print(qd.getEditor().getTextPane());                                   
+                                    print();
                                     }};
                               runner.start();               
 			}});
-                       
+                /*
+                JMenuItem printToFileItem = new JMenuItem("Print To File");		
+		printToFileItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {      
+			        Thread runner = new Thread() {
+				public void run() { 
+                                    printToFile();
+                                }};
+                               runner.start();
+                        }});*/
+                        
 		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
 		saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
 		saveAsItem.addActionListener(new ActionListener() {
@@ -894,8 +907,8 @@ public class QDShell extends JFrame
 			}
 		});
 		projectMenu.add(wizardItem);
-		//projectMenu.add(pageSettupItem);
 		projectMenu.add(printItem);
+                //projectMenu.add(printToFileItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveAsItem);
@@ -1146,8 +1159,78 @@ public class QDShell extends JFrame
                    JOptionPane.showMessageDialog(this,messages.getString("SaveError"),"Alert",JOptionPane.ERROR_MESSAGE);
                }
           }
-         
+   
+     public void print( ) {
+        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+        PrintService[  ] services =PrintServiceLookup.lookupPrintServices(flavor, null);
+        PrintRequestAttributeSet printAttributes =new HashPrintRequestAttributeSet( );
+        //printAttributes.add(OrientationRequested.LANDSCAPE); // landscape mode
+        //printAttributes.add(Chromaticity.MONOCHROME);        // print in mono
+        PrintService service = ServiceUI.printDialog(null, 100, 100,services, null, null,printAttributes);
 
+        // If the user canceled, don't do anything
+        if (service == null) return;
+         // Now call a method defined below to finish the printing
+        printDocument(service, printAttributes);
+    }
+      public void printDocument(PrintService service,PrintRequestAttributeSet printAttributes)
+     {
+        DocumentRenderer printable = new DocumentRenderer(qd.getEditor().getTextPane().getStyledDocument());
+        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+        Doc doc = new SimpleDoc(printable, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+
+        // Set up a dialog box to  monitor printing status
+        final JOptionPane pane = new JOptionPane(messages.getString("Printing"),JOptionPane.PLAIN_MESSAGE);
+        JDialog dialog = pane.createDialog(this, messages.getString("PrintStatus"));
+        // This listener object updates the dialog as the status changes
+        job.addPrintJobListener(new PrintJobAdapter( ) {
+                public void printJobCompleted(PrintJobEvent e) {
+                    pane.setMessage(messages.getString("PrintingComplete"));
+                }
+                public void printDataTransferCompleted(PrintJobEvent e) {
+                    pane.setMessage(messages.getString("DocumentTransferedToPrinter"));
+                }
+                public void printJobRequiresAttention(PrintJobEvent e) {
+                    pane.setMessage(messages.getString("OutOfPaper"));
+                }
+                public void printJobFailed(PrintJobEvent e) {
+                    pane.setMessage(messages.getString("PrintFailed"));
+                }
+            });
+
+        // Show the dialog, non-modal.
+        dialog.setModal(false);
+        dialog.show( );
+
+        // Now print the Doc to the DocPrintJob
+        try {
+            job.print(doc, printAttributes);
+        }
+        catch(PrintException e) {
+            // Display any errors to the dialog box
+            pane.setMessage(e.toString( ));
+        }
+    }
+    /*
+     public void printToFile( ){
+         try {
+        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+        String format = "application/postscript";// so far only support ps output
+        //String format = "text/html;charset=utf-8";
+        StreamPrintServiceFactory factory = StreamPrintServiceFactory.
+            lookupStreamPrintServiceFactories(flavor, format)[0];
+        JFileChooser chooser = new JFileChooser( );
+        if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
+        File f = chooser.getSelectedFile( );
+        FileOutputStream out = new FileOutputStream(f);
+        StreamPrintService service = factory.getPrintService(out);
+        printDocument(service, null);
+        out.close( );
+      }catch(Exception e){
+          JOptionPane.showMessageDialog(QDShell.this, "Print fail", messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);   
+         }
+    }*/
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
 		if (r == null)

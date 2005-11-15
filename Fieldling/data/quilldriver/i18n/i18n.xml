@@ -1020,13 +1020,29 @@
     <text lang="en">Print...</text>
     <text lang="zh">打印...</text>
   </message>
-    <message id="PrintComplete">
-    <text lang="en">Printing completed successfully!</text>
+    <message id="Printing">
+    <text lang="en">Printing...</text>
+    <text lang="zh">正在打印...</text>
+  </message>
+    <message id="PrintStatus">
+    <text lang="en">Print status</text>
+    <text lang="zh">打印状态</text>
+  </message>
+  <message id="PrintingComplete">
+    <text lang="en">Printing complete!</text>
     <text lang="zh">打印完成!</text>
   </message>
-  <message id="PrintFail">
-    <text lang="en">Printing fail!</text>
-    <text lang="zh">打印失败!</text>
+    <message id="DocumentTransferedToPrinter">
+    <text lang="en">Document transfered to printer.</text>
+    <text lang="zh">文档已传输到打印机.</text>
+  </message>
+    <message id="OutOfPaper">
+    <text lang="en">Check printer: out of paper?</text>
+    <text lang="zh">检查打印机:缺纸?</text>
+  </message>
+  <message id="PrintFailed">
+    <text lang="en">Print job failed!</text>
+    <text lang="zh">打印作业失败!</text>
   </message>
    <message id="OnlyTranscriptionMode">
     <text lang="en">Only transcription mode could use this function!</text>
