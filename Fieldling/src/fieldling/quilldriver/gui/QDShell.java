@@ -23,18 +23,20 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.event.*;
 import fieldling.quilldriver.PreferenceManager;
 import fieldling.quilldriver.config.*;
 import fieldling.quilldriver.xml.*;
 import fieldling.mediaplayer.*;
-import fieldling.util.GuiUtil;
-import fieldling.util.I18n;
+import fieldling.util.*;
 import java.awt.print.*;     
 import javax.print.*;        
 import javax.print.event.*;  
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
+
 public class QDShell extends JFrame 
 {
 	/** the middleman that keeps code regarding Tibetan keyboards
@@ -875,19 +877,23 @@ public class QDShell extends JFrame
                                     }};
                               runner.start();               
 			}});
-                /*
-                JMenuItem printToFileItem = new JMenuItem("Print To File");		
-		printToFileItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {      
-			        Thread runner = new Thread() {
-				public void run() { 
-                                    printToFile();
-                                }};
-                               runner.start();
-                        }});*/
-                        
+                
+                JMenu printToFileMenu = new JMenu(messages.getString("PrintToFile"));		
+                JMenuItem printToPS=new JMenuItem(messages.getString("PrintToPS")); 
+                printToPS.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {    		         
+                                    printToPS();
+                              }});
+                JMenuItem printToRTF=new JMenuItem(messages.getString("PrintToRTF")); 
+                printToRTF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {    		         
+                                    printToRTF();
+                              }});
+                printToFileMenu.add(printToRTF);
+                printToFileMenu.add(printToPS);
+                
 		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
-		saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
+		//saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
 		saveAsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                                  if (!qd.getEditor().isEditable())
@@ -907,12 +913,13 @@ public class QDShell extends JFrame
 			}
 		});
 		projectMenu.add(wizardItem);
-		projectMenu.add(printItem);
-                //projectMenu.add(printToFileItem);
 		projectMenu.add(closeItem);
 		projectMenu.addSeparator();
 		projectMenu.add(saveAsItem);
 		projectMenu.addSeparator();
+                projectMenu.add(printItem);
+                projectMenu.add(printToFileMenu);
+                projectMenu.addSeparator();
 		projectMenu.add(quitItem);
 		
 		//Preferences menu
@@ -1164,13 +1171,9 @@ public class QDShell extends JFrame
         DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
         PrintService[  ] services =PrintServiceLookup.lookupPrintServices(flavor, null);
         PrintRequestAttributeSet printAttributes =new HashPrintRequestAttributeSet( );
-        //printAttributes.add(OrientationRequested.LANDSCAPE); // landscape mode
-        //printAttributes.add(Chromaticity.MONOCHROME);        // print in mono
         PrintService service = ServiceUI.printDialog(null, 100, 100,services, null, null,printAttributes);
-
         // If the user canceled, don't do anything
         if (service == null) return;
-         // Now call a method defined below to finish the printing
         printDocument(service, printAttributes);
     }
       public void printDocument(PrintService service,PrintRequestAttributeSet printAttributes)
@@ -1212,15 +1215,16 @@ public class QDShell extends JFrame
             pane.setMessage(e.toString( ));
         }
     }
-    /*
-     public void printToFile( ){
-         try {
+    
+     public void printToPS( ){
+        try {
         DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
         String format = "application/postscript";// so far only support ps output
-        //String format = "text/html;charset=utf-8";
         StreamPrintServiceFactory factory = StreamPrintServiceFactory.
             lookupStreamPrintServiceFactories(flavor, format)[0];
         JFileChooser chooser = new JFileChooser( );
+        chooser.setDialogTitle(messages.getString("PrintToPS"));
+        chooser.addChoosableFileFilter(new OutputFileFilter());
         if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
         File f = chooser.getSelectedFile( );
         FileOutputStream out = new FileOutputStream(f);
@@ -1228,9 +1232,26 @@ public class QDShell extends JFrame
         printDocument(service, null);
         out.close( );
       }catch(Exception e){
-          JOptionPane.showMessageDialog(QDShell.this, "Print fail", messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);   
+          JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);   
          }
-    }*/
+    }
+   
+      public void printToRTF(){
+          try{
+          RTFEditorKit rtf=new RTFEditorKit();
+          JFileChooser chooser = new JFileChooser( );
+          chooser.setDialogTitle(messages.getString("PrintToRTF"));
+          chooser.addChoosableFileFilter(new OutputFileFilter());
+          if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
+          File f = chooser.getSelectedFile( );
+          FileOutputStream out = new FileOutputStream(f);
+          StyledDocument doc=qd.getEditor().getTextPane().getStyledDocument();
+          rtf.write(out,(Document)doc,0,doc.getLength());
+          }catch(Exception e){
+            JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE); 
+          }
+      }    
+      
 	private void makeRecentlyOpened(String s) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
 		if (r == null)
@@ -1627,6 +1648,19 @@ public class QDShell extends JFrame
 		//the description of this filter
 		public String getDescription() {
 			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
+		}
+	}
+        private class OutputFileFilter extends javax.swing.filechooser.FileFilter {
+		// accepts all directories and all savant files
+		public boolean accept(File f) {
+			if (f.isDirectory()) {
+				return true;
+			}
+			return f.getName().toLowerCase().endsWith(".rtf") || f.getName().toLowerCase().endsWith(".ps");
+		}
+		//the description of this filter
+		public String getDescription() {
+			return "QD Output File Format (" + ".rtf" + ", " + ".ps" + ")";
 		}
 	}
 }

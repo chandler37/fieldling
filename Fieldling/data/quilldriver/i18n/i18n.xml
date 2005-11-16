@@ -1020,11 +1020,23 @@
     <text lang="en">Print...</text>
     <text lang="zh">打印...</text>
   </message>
-    <message id="Printing">
+  <message id="Printing">
     <text lang="en">Printing...</text>
     <text lang="zh">正在打印...</text>
   </message>
-    <message id="PrintStatus">
+  <message id="PrintToRTF">
+    <text lang="en">Print to RTF</text>
+    <text lang="zh">打印到RTF</text>
+  </message>
+  <message id="PrintToFile">
+    <text lang="en">Print to file...</text>
+    <text lang="zh">打印到文件...</text>
+  </message>
+  <message id="PrintToPS">
+    <text lang="en">Print to PostScript</text>
+    <text lang="zh">打印到PostScript</text>
+  </message>
+  <message id="PrintStatus">
     <text lang="en">Print status</text>
     <text lang="zh">打印状态</text>
   </message>
