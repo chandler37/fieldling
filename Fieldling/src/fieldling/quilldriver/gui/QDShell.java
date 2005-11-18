@@ -371,6 +371,7 @@ public class QDShell extends JFrame
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					boolean noProblems = true;
+                                        boolean cancelAction=false;
 					try {
 						
 						if(tempQD!=null){
@@ -397,13 +398,11 @@ public class QDShell extends JFrame
 							/*if (!newTemplateFile.exists())
 							 System.exit(0); //FIX*/
 							
-							File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
-							if(openFileList.contains(saveAsFile.getName())){
-								
-								sameTranscript=true;
-							}
-							else{
-								
+							 File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));	 
+                                                         if(saveAsFile!=null&&openFileList.contains(saveAsFile.getName()))		
+								sameTranscript=true;//the save file name is same as one opened
+							
+							 if(saveAsFile!=null&&!sameTranscript){						
 								InputStream in = newTemplateURL.openStream();
 								OutputStream out = new FileOutputStream(saveAsFile);
 								// Transfer bytes from in to out
@@ -415,7 +414,7 @@ public class QDShell extends JFrame
 								in.close();
 								out.close();
 								
-								noProblems = qd.loadTranscript(saveAsFile);
+								noProblems = qd.loadTranscript(saveAsFile);       
 								if (noProblems)
 								{
 									String transcriptString = saveAsFile.getAbsolutePath();
@@ -429,7 +428,10 @@ public class QDShell extends JFrame
 										openTranscriptToQDMap.put(saveAsFile.getName(),qd);
 									}
 								}
-							}      
+                                                              }
+                                                         if(saveAsFile==null)                                                             
+                                                             cancelAction=true; //when user chooses to cancel create a new transcript
+							      
 						} else if (command.equals(messages.getString("OpenExisting"))) {
 							File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 							if (transcriptFile != null) {
@@ -449,7 +451,8 @@ public class QDShell extends JFrame
 										openTranscriptToQDMap.put(transcriptFile.getName(),qd);
 									}              
 								}
-							}
+							}else
+                                                            cancelAction=true;// when user choose to cancel open existing
 							
 						} else { //must be recent file
 							File transcriptFile = new File(command);
@@ -491,7 +494,7 @@ public class QDShell extends JFrame
 						noProblems = false;
 					}
 					
-					if (noProblems&&!sameTranscript) 
+					if (!cancelAction&&noProblems&&!sameTranscript) 
 					{       
 						contentPane.add(qd);
 						qd.videoFrame.pack();
@@ -510,8 +513,9 @@ public class QDShell extends JFrame
 						if(sameTranscript){
 							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
 							sameTranscript=false;                                                                                     
-						}else
-							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                    
+						}
+						if(!noProblems)
+                                                    JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                                                                             
 					}
 					tempQD=null;
 				}
