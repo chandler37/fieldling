@@ -1593,9 +1593,21 @@
   	<text lang="en">Tools</text>
   	<text lang="zh">工具</text>
   </message>
-  <message id="ChangeHighlightColor">
-  	<text lang="en">Change highlight color</text>
-  	<text lang="zh">Change highlight color</text>
+  <message id="Change">
+  	<text lang="en">Change...</text>
+  	<text lang="zh">Change...</text>
+  </message>
+  <message id="TagColor">
+  	<text lang="en">Tag Color:</text>
+  	<text lang="zh">Tag Color:</text>
+  </message>
+  <message id="HighlightColor">
+  	<text lang="en">Highlight Color:</text>
+  	<text lang="zh">Highlight Color:</text>
+  </message>
+  <message id="Colors">
+  	<text lang="en">Colors</text>
+  	<text lang="zh">Colors</text>
   </message>
 </all-messages>
 
