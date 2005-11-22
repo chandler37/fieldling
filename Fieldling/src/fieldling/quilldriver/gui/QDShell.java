@@ -1208,7 +1208,7 @@ public class QDShell extends JFrame
 
         // Show the dialog, non-modal.
         dialog.setModal(false);
-        dialog.show( );
+        dialog.setVisible(true);
 
         // Now print the Doc to the DocPrintJob
         try {
@@ -1333,8 +1333,11 @@ public class QDShell extends JFrame
 			supportedFonts.setSelectedIndex(0);
 	}
 	
+	/* Declaring the following private instance variables was the only way I figured to share
+	 * information between the method itself and its inner classes. */ 
 	private boolean optionsChanged, needsToRestart;
-	private Color highlightColor;
+	private Color highlightColor, tagColor;
+	private JPanel highlightColorPanel, tagColorPanel;
 	
 	private void getDisplayPreferences()
 	{
@@ -1342,10 +1345,11 @@ public class QDShell extends JFrame
 		String[] fontNames;
 		int i;
 		highlightColor = new Color(PreferenceManager.highlight_color_red, PreferenceManager.highlight_color_green, PreferenceManager.highlight_color_blue);
+		tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
 		
 		fontNames = genv.getAvailableFontFamilyNames();
 		
-		JPanel interfacePanel = new JPanel(new GridLayout(2,2));
+		JPanel hPanel, interfacePanel = new JPanel(new GridLayout(2,2));
 		interfacePanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Interface")));
 		interfacePanel.add(new JLabel(messages.getString("Language")));
 		
@@ -1467,15 +1471,29 @@ public class QDShell extends JFrame
 		romanPanel.add(romanFontSizes);
 		//romanPanel.add(romanUpperPanel);
 		
-		JPanel highlightPanel;
-		JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
-		JTextField highlightField;
-		JLabel hColorLabel, hPositionLabel, hMultipleLabel, hScrollingLabel;
-		JPanel h1Panel, h2Panel, h3Panel, h4Panel;
-		highlightPanel = new JPanel();                   
-		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
+		JPanel colorPanel = new JPanel(new GridLayout(2,3,10,10));
+		colorPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Colors")));
 		
-		final JButton highlightColorButton =new JButton(messages.getString("ChangeHighlightColor"));
+		final JButton tagColorButton =new JButton(messages.getString("Change"));
+		tagColorButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ev){
+				Color newColor = JColorChooser.showDialog(tagColorButton, "Choose a color", tagColor);                 
+				if(newColor!=null)
+				{
+					optionsChanged = true;
+					tagColor = newColor;
+					tagColorPanel.setBackground(newColor);
+					tagColorPanel.repaint();
+				}
+			}
+		});	
+		colorPanel.add(new JLabel(messages.getString("TagColor")));		
+		tagColorPanel = new JPanel();
+		tagColorPanel.setBackground(tagColor);
+		colorPanel.add(tagColorPanel);
+		colorPanel.add(tagColorButton);		
+		
+		final JButton highlightColorButton =new JButton(messages.getString("Change"));
 		highlightColorButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ev){
 				Color newColor = JColorChooser.showDialog(highlightColorButton, "Choose a color", highlightColor);                 
@@ -1483,72 +1501,84 @@ public class QDShell extends JFrame
 				{
 					optionsChanged = true;
 					highlightColor = newColor;
+					highlightColorPanel.setBackground(newColor);
+					highlightColorPanel.repaint();
 				}
 			}
-		});
-		h1Panel = new JPanel();
-		h1Panel.add(highlightColorButton); 
+		});	
+		colorPanel.add(new JLabel(messages.getString("HighlightColor")));		
+		highlightColorPanel = new JPanel();
+		highlightColorPanel.setBackground(highlightColor);
+		colorPanel.add(highlightColorPanel);
+		colorPanel.add(highlightColorButton);
 		
-		hPositionLabel = new JLabel(messages.getString("HighlightPosition"));
+		JPanel highlightPanel;
+		JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
+		JTextField highlightField;
+		highlightPanel = new JPanel();                   
+		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
+		highlightPanel.setLayout(new GridLayout(0,1));
+		
 		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
 		highlightPosition.addItemListener(new ItemListener()
 				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
+					public void itemStateChanged(ItemEvent e) 
+					{
+						optionsChanged = true;
+					}				
 				});
 		highlightPosition.setSelectedItem(PreferenceManager.highlight_position);
 		highlightPosition.setEditable(true);
-		h2Panel = new JPanel();
-		h2Panel.add(hPositionLabel);
-		h2Panel.add(highlightPosition);
-		hMultipleLabel = new JLabel(messages.getString("MultipleHighlightPolicy"));
+		hPanel = new JPanel();
+		hPanel.add(new JLabel(messages.getString("HighlightPosition")));
+		hPanel.add(highlightPosition);
+		highlightPanel.add(hPanel);
+		
 		multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
 		multipleHighlightPolicy.addItemListener(new ItemListener()
 				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
+					public void itemStateChanged(ItemEvent e) 
+					{
+						optionsChanged = true;
+					}				
 				});
 		multipleHighlightPolicy.setSelectedItem(PreferenceManager.multiple_highlight_policy);
 		multipleHighlightPolicy.setEditable(true);
-		hScrollingLabel = new JLabel(messages.getString("ScrollingHighlightPolicy"));
 		scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
 		scrollingHighlightPolicy.addItemListener(new ItemListener()
 				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
+					public void itemStateChanged(ItemEvent e) 
+					{
+						optionsChanged = true;
+					}				
 				});
 		scrollingHighlightPolicy.setSelectedItem(PreferenceManager.scrolling_highlight_policy);
 		scrollingHighlightPolicy.setEditable(true);
-		h3Panel = new JPanel();
-		h3Panel.add(hMultipleLabel);
-		h3Panel.add(multipleHighlightPolicy);
-		h4Panel = new JPanel();
-		h4Panel.add(hScrollingLabel);
-		h4Panel.add(scrollingHighlightPolicy);
-		highlightPanel.setLayout(new GridLayout(0,1));
-		highlightPanel.add(h1Panel);
-		highlightPanel.add(h2Panel);
-		highlightPanel.add(h3Panel);
-		highlightPanel.add(h4Panel);
+		hPanel = new JPanel();
+		hPanel.add(new JLabel(messages.getString("MultipleHighlightPolicy")));
+		hPanel.add(multipleHighlightPolicy);
+		highlightPanel.add(hPanel);
+		
+		hPanel = new JPanel();
+		hPanel.add(new JLabel(messages.getString("ScrollingHighlightPolicy")));
+		hPanel.add(scrollingHighlightPolicy);
+		highlightPanel.add(hPanel);
+		
 		JPanel preferencesPanel = new JPanel (new BorderLayout());
 		preferencesPanel.add(interfacePanel, BorderLayout.NORTH);
 		JPanel middlePanel = new JPanel(new GridLayout(0,1));
 		@TIBETAN@middlePanel.add(tibetanPanel);
 		middlePanel.add(romanPanel);
+		middlePanel.add(colorPanel);
 		preferencesPanel.add(middlePanel, BorderLayout.CENTER);
 		preferencesPanel.add(highlightPanel, BorderLayout.SOUTH);
 		JOptionPane pane = new JOptionPane(preferencesPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
 		
-		// This returns only when the user has closed the dialog
 		optionsChanged = false;
 		needsToRestart = false;
+
+		// This returns only when the user has closed the dialog
 		dialog.setVisible(true);
 		
 		Object selectedValue = pane.getValue();
@@ -1582,18 +1612,33 @@ public class QDShell extends JFrame
 		prefmngr.setValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.font_face);
 		prefmngr.setInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.font_size);
 		@TIBETAN@prefmngr.setInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.tibetan_font_size);
-		if (qd.getEditor() != null)
+		Editor editor = qd.getEditor();
+
+		fieldling.quilldriver.xml.Renderer.setTagColor(tagColor);
+		PreferenceManager.tag_color_red = tagColor.getRed();
+		PreferenceManager.tag_color_green = tagColor.getGreen();
+		PreferenceManager.tag_color_blue = tagColor.getBlue();
+		prefmngr.setInt(PreferenceManager.TAG_RED_KEY, PreferenceManager.tag_color_red);
+		prefmngr.setInt(PreferenceManager.TAG_GREEN_KEY, PreferenceManager.tag_color_green);
+		prefmngr.setInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.tag_color_blue);		
+
+		String highlightPosVal = (String)highlightPosition.getSelectedItem();
+		
+		if (editor != null)
 		{
 			@UNICODE@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face))){
 			@TIBETAN@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face) && old_tibetan_font_size == PreferenceManager.tibetan_font_size)) {
-				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)qd.getEditor().getTextPane();
+				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
 				@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
 				@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
-				@UNICODE@qd.getEditor().getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
-				qd.getEditor().render();
-			}                  
+				@UNICODE@editor.getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
+			}
+			qd.hp.setHighlightPosition(highlightPosVal);
+			if (qd.hp != null) {
+				qd.hp.setHighlightColor(highlightColor);
+			}
+			editor.render();			
 		}
-		String highlightPosVal = (String)highlightPosition.getSelectedItem();
 		String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
 		
 		PreferenceManager.multiple_highlight_policy = (String)multipleHighlightPolicy.getSelectedItem();
@@ -1601,14 +1646,7 @@ public class QDShell extends JFrame
 		
 		prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
 		prefmngr.setValue(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
-		
-		if (qd.getEditor() != null) {
-			qd.hp.setHighlightPosition(highlightPosVal);
-			if (qd.hp != null) {
-				qd.hp.setHighlightColor(highlightColor);
-			}
-		}
-		
+				
 		if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
 			qd.player.setMultipleAnnotationPolicy(true);
 		else

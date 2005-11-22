@@ -34,11 +34,23 @@ import fieldling.quilldriver.PreferenceManager;
 
 public class Renderer {
 	private static final float indentIncrement = 15.0F;
-	private static final Color tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
 	private static final Color attColor = Color.pink;
 	private static final Color textColor = Color.darkGray;
+	private static PreferenceManager prefmngr; 
+
+	private static Color tagColor;
+	
+	static
+	{
+		tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
+	}
 	
 	private Renderer() {} //don't instantiate
+	
+	public static void setTagColor(Color c)
+	{
+		tagColor = c;
+	}
 	
 	public static int render(Node node, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
 		if (offset == -1) return -1;
