@@ -11,14 +11,14 @@
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
 	</parameters>
 	<menus>
-		<menu name="Transcript" contains="FixMedia"/>
+		<!-- <menu name="Transcript" contains="FixMedia"/> -->
 		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
 	</menus>
 	<actions>
 		<!-- file menu -->	
-		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia">
+		<!-- <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="saveTranscript">
 			<helptext ref="help34"/>
-		</action>
+		</action> -->
 		<!-- browse menu -->			
 		<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
 			<helptext ref="help1"/>
