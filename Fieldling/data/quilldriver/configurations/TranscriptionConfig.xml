@@ -23,7 +23,7 @@
 		<!-- file menu -->	
 		<action name="Save" keystroke="control S" node="." qd-command="saveTranscript">
 		</action>
-		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia">
+		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="saveTranscript">
 			<helptext ref="help34"/>
 		</action>
 		<!-- preferences menu -->	
