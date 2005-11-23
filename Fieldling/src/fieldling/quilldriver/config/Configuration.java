@@ -474,8 +474,8 @@ public class Configuration
                                     System.out.println("can't find any QD parent");
                                     return;
                                 }
-                                if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
                                 qd.transformTranscript(qd.getEditor().getNodeForOffset(qd.getEditor().getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
+                                if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
                             }
                         };
                     }
