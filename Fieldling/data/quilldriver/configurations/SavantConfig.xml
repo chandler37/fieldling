@@ -208,8 +208,23 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
+
+		<tagview name="EnglishPlusNotes" keystroke="F12">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
 		
-		<tagview name="ShowEverything" keystroke="F12">
+		<tagview name="ShowEverything">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))"  tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>

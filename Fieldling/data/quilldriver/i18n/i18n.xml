@@ -1609,5 +1609,9 @@
   	<text lang="en">Colors</text>
   	<text lang="zh">Colors</text>
   </message>
+  <message id="EnglishPlusNotes">
+  	<text lang="en">English + Notes</text>
+  	<text lang="zh">English + Notes</text>
+  </message>
 </all-messages>
 
