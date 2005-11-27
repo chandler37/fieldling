@@ -37,11 +37,11 @@
   </message>
   <message id="AddLexicalNote">
     <text lang="en">Add Lexical Note</text>
-    <text lang="zh">添加词语注释</text>
+    <text lang="zh">添加词汇注释</text>
   </message>
   <message id="AddPronunciationNote">
     <text lang="en">Add Pronunciation  Note</text>
-    <text lang="zh">添加读法注释</text>
+    <text lang="zh">添加语音注释</text>
   </message>
   <message id="AddSociolinguisticNote">
     <text lang="en">Add Sociolinguistic Note</text>
@@ -57,7 +57,7 @@
   </message>
   <message id="AffectedModule">
     <text lang="en">Affected module:</text>
-    <text lang="zh">外观：</text>
+    <text lang="zh">受影响的模块：</text>
   </message>
   <message id="AllFiles">
     <text lang="en">All Files</text>
@@ -137,11 +137,11 @@
   </message>
   <message id="DecreaseStartTime">
     <text lang="en">Decrease Start Time</text>
-    <text lang="zh">缩短开始时间</text>
+    <text lang="zh">减少开始时间</text>
   </message>
   <message id="DecreaseStopTime">
     <text lang="en">Decrease Stop Time</text>
-    <text lang="zh">缩短结尾时间</text>
+    <text lang="zh">减少结尾时间</text>
   </message>
   <message id="DeleteDivision">
     <text lang="en">Delete Division</text>
@@ -177,7 +177,7 @@
   </message>
   <message id="Disallowed">
     <text lang="en">Disallowed</text>
-    <text lang="zh">不能接受</text>
+    <text lang="zh">不允许</text>
   </message>
   <message id="Display">
     <text lang="en">Display...</text>
@@ -197,7 +197,7 @@
   </message>
   <message id="English">
     <text lang="en">English</text>
-    <text lang="zh">英文 (English)</text>
+    <text lang="zh">英文</text>
   </message>
   <message id="EnglishOnly">
     <text lang="en">English Only</text>
@@ -289,7 +289,7 @@
   </message>
   <message id="FontAndStylePreferences">
     <text lang="en">Font and Style Preferences</text>
-    <text lang="zh">字体和样式</text>
+    <text lang="zh">字体和样式选项</text>
   </message>
   <message id="GotoEnd">
     <text lang="en">Goto End</text>
@@ -317,7 +317,7 @@
   </message>
   <message id="HighlightRelatedPreferences">
     <text lang="en">Highlight-Related Preferences</text>
-    <text lang="zh">加亮选项</text>
+    <text lang="zh">有关加亮的选项</text>
   </message>
   <message id="Icon">
     <text lang="en">icon</text>
@@ -449,7 +449,7 @@
   </message>
   <message id="MultipleHighlightPolicy">
     <text lang="en">Multiple highlight policy:</text>
-    <text lang="zh">多重加亮方式：</text>
+    <text lang="zh">多重加亮方法：</text>
   </message>
   <message id="Name">
     <text lang="en">Name</text>
@@ -505,7 +505,7 @@
   </message>
   <message id="NotesOnly">
     <text lang="en">Notes Only</text>
-    <text lang="zh">仅备注</text>
+    <text lang="zh">仅注释</text>
   </message>
   <message id="NoTranscript">
     <text lang="en">No transcript</text>
@@ -529,7 +529,7 @@
   </message>
   <message id="OpenMediaURL">
     <text lang="en">Open Media from URL</text>
-    <text lang="zh">打开媒体网址</text>
+    <text lang="zh">从URL打开媒体</text>
   </message>
   <message id="OpenTranscript">
     <text lang="en">Open Transcript</text>
@@ -541,7 +541,7 @@
   </message>
   <message id="OutgoingMailServer">
     <text lang="en">Outgoing Mail Server</text>
-    <text lang="zh">邮件服务器提供者</text>
+    <text lang="zh">出站邮件服务器</text>
   </message>
   <message id="Password">
     <text lang="en">Password</text>
@@ -565,15 +565,15 @@
   </message>
   <message id="PlayCurrentLine">
     <text lang="en">Play Current</text>
-    <text lang="zh">播放当前的</text>
+    <text lang="zh">播放当前行</text>
   </message>
   <message id="PlayEndofCurrent">
     <text lang="en">Play End of Current</text>
-    <text lang="zh">播放至当前末尾</text>
+    <text lang="zh">播放当前末尾</text>
   </message>
   <message id="PlayEndofCurrentLine">
     <text lang="en">Play End of Current Line</text>
-    <text lang="zh">从当前行播放到末尾</text>
+    <text lang="zh">播放当前行的末尾</text>
   </message>
   <message id="PlayNext ">
     <text lang="en">Play Next</text>
@@ -657,15 +657,15 @@
   </message>
   <message id="RapidDecreaseStart">
     <text lang="en">Rapid Decrease Start</text>
-    <text lang="zh">快速缩短开始时间</text>
+    <text lang="zh">快速减少开始时间</text>
   </message>
   <message id="RapidDecreaseStop">
     <text lang="en">Rapid Decrease Stop</text>
-    <text lang="zh">快速缩短结尾时间</text>
+    <text lang="zh">快速减少结尾时间</text>
   </message>
   <message id="RapidDncreaseDecreaseValue">
     <text lang="en">Rapid increase/decrease value (in milliseconds)</text>
-    <text lang="zh">加快/减慢（按毫秒）</text>
+    <text lang="zh">快速增加/减少值（按毫秒）</text>
   </message>
   <message id="RapidIncreaseStart">
     <text lang="en">Rapid Increase Start</text>
@@ -738,15 +738,15 @@
   </message>
   <message id="SeekNext">
     <text lang="en">Seek Next</text>
-    <text lang="zh">往后寻找</text>
+    <text lang="zh">查找下一个</text>
   </message>
   <message id="SeekPrevious">
     <text lang="en">Seek Previous</text>
-    <text lang="zh">往前寻找</text>
+    <text lang="zh">查找前一个</text>
   </message>
   <message id="SeekStart">
     <text lang="en">Seek Start</text>
-    <text lang="zh">寻找开始</text>
+    <text lang="zh">查找开始</text>
   </message>
   <message id="SelectAll">
     <text lang="en">Select all</text>
@@ -778,7 +778,7 @@
   </message>
   <message id="SlowIncreaseDecreaseValue">
     <text lang="en">Slow increase/decrease value (in milliseconds)</text>
-    <text lang="zh">微调增减值</text>
+    <text lang="zh">缓慢增加/减少值(按毫秒)</text>
   </message>
   <message id="Speakers">
     <text lang="en">Speakers</text>
@@ -786,11 +786,11 @@
   </message>
   <message id="StartFromBeginning">
     <text lang="en">You've reached the end of the document. Do you want to continue searching from the beginning?</text>
-    <text lang="zh">你已经到达文本末尾，是否继续从头查找？</text>
+    <text lang="zh">你已经到达文档末尾，是否继续从头查找？</text>
   </message>
   <message id="SupportedMediaError">
     <text lang="en">Consult your THDL documentation and install a supported media player.</text>
-    <text lang="zh">请参考THDL文档并安装媒体播放器。</text>
+    <text lang="zh">请参考THDL文档并安装一个支持的媒体播放器。</text>
   </message>
   <message id="SuppressTimes">
     <text lang="en">Hide times</text>
@@ -802,7 +802,7 @@
   </message>
   <message id="SurroundwithPageLineBreaks">
     <text lang="en">Surround with Page-Line Breaks</text>
-    <text lang="zh">包围超出页面界线</text>
+    <text lang="zh">周围超出页面界线</text>
   </message>
   <message id="TextFound">
     <text lang="en">Text found.</text>
@@ -862,27 +862,27 @@
   </message>
   <message id="TranscriptColon">
     <text lang="en">Transcript:</text>
-    <text lang="zh">文本：</text>
+    <text lang="zh">转录文本：</text>
   </message>
   <message id="TranscriptionOnly">
     <text lang="en">Tibetan Only</text>
-    <text lang="zh">只有转录文本</text>  
+    <text lang="zh">仅藏文</text>  
   </message>
   <message id="TranscriptionPlusEnglish">
         <text lang="en">Tibetan + English</text>
-        <text lang="zh">转录文本 + 英语</text>
+        <text lang="zh">藏文 + 英语</text>
   </message>
   <message id="TranscriptionPlusChinese">
         <text lang="en">Tibetan + Chinese</text>
-        <text lang="zh">转录文本 + 中文</text>
+        <text lang="zh">藏文 + 中文</text>
   </message>
   <message id="TranscriptionPlusNotes">
         <text lang="en">Tibetan + Notes</text>
-        <text lang="zh">转录文本 + 注释</text>
+        <text lang="zh">藏文 + 注释</text>
   </message>  
   <message id="TranscriptionPlusEnglishPlusChinese">
         <text lang="en">Tib + Eng + Ch</text>
-        <text lang="zh">转录文本 + 英文 +中文</text>
+        <text lang="zh">藏文 + 英文 +中文</text>
   </message>
   <message id="EnglishPlusChinese">
         <text lang="en">English + Chinese</text>
@@ -890,15 +890,15 @@
   </message>
   <message id="Translation_ENOnly">
     <text lang="en">English Translation Only</text>
-    <text lang="zh">只有英文翻译</text>
+    <text lang="zh">仅英文翻译</text>
   </message>
   <message id="Translation_ZHOnly">
     <text lang="en">Chinese Translation Only</text>
-    <text lang="zh">只有中文翻译</text>
+    <text lang="zh">仅中文翻译</text>
   </message>
   <message id="TypeMediaURL">
     <text lang="en">Enter the URL of the media you want to open:</text>
-    <text lang="zh">输入你要打开的媒体网址：</text>
+    <text lang="zh">输入你要打开媒体的URL：</text>
   </message>
   <message id="TypeMessageHere">
     <text lang="en">Type Message Here</text>
@@ -926,7 +926,7 @@
   </message>
   <message id="WantSave">
     <text lang="en">Do you want to save this transcript?</text>
-    <text lang="zh">你要保存这个文本吗？</text>
+    <text lang="zh">你要保存这个转录文本吗？</text>
   </message>
   <message id="Warning">
     <text lang="en">Warning!</text>
@@ -938,11 +938,11 @@
   </message>
   <message id="WylieOnly">
     <text lang="en">Tib Translit Only</text>
-    <text lang="zh">Tib Translit Only</text>
+    <text lang="zh">仅藏文拉丁转写</text>
   </message>
   <message id="WylieAndEnglish">
     <text lang="en">Tib Translit and English</text>
-    <text lang="zh">拉丁转写和英文</text>
+    <text lang="zh">藏文拉丁转写和英文</text>
   </message>
   <message id="ZapTimeCodes">
     <text lang="en">Zap Time Codes</text>
@@ -950,7 +950,7 @@
   </message>
   <message id="ChangesToInterface">
     <text lang="en">Changes to the interface will show up\nthe next time you open QuillDriver.</text>
-    <text lang="zh">下一次打开QuillDriver\n时候显示界面将改变。</text>
+    <text lang="zh">下一次打开QuillDriver时\n显示界面将改变。</text>
   </message>
   <message id="High">
     <text lang="en">High</text>
@@ -965,7 +965,7 @@
     <text lang="zh">低</text>
   </message>
   <message id=" TibetanKeyboard">
-    <text lang="en"> TibetanKeyboard</text>
+    <text lang="en">TibetanKeyboard</text>
     <text lang="zh">藏文键盘</text>
   </message>
    <message id="Window">
@@ -1002,7 +1002,7 @@
   </message>
    <message id="TranscriptOnly">
     <text lang="en">Transcript only</text>
-    <text lang="zh">仅文本</text>
+    <text lang="zh">仅转录文本</text>
   </message>
    <message id="DefaultSizeAndPlacement">
     <text lang="en">Default size/placement</text>
@@ -1014,7 +1014,7 @@
   </message>
    <message id="FileAlreadyBeLoaded">
     <text lang="en">You cannot open a transcript twice!</text>
-    <text lang="zh">对不起,你不能打开一个与已打开的文件有相同文件名的文件!</text>
+    <text lang="zh">对不起,你不能打开一个转录文本两次!</text>
   </message>
   <message id="Print">
     <text lang="en">Print...</text>
@@ -1086,11 +1086,9 @@
         then the video will rewind by one second while still playing.
     </text>
     <text lang="zh">
-        Rewinds the video by a specified decrement without stopping it.
-        The decrement is determined by QuillDriver's "Play minus" value,
-        which is one of QuillDriver's user preferences. For example, if the
-        "Play minus" value is 1,000 (one thousand milliseconds),
-        then the video will rewind by one second while still playing.
+        按指定的减少时间值倒退视频,但不停止它.这个减少时间值由QuillDriver的"播放时间"
+        值决定.这个"播放时间"值是QuillDriver的用户选项之一.比如,如果这个"播放时间"值
+        是1,000微秒,那么视频将倒退一秒钟,但始终保持在播放状态.    
     </text>
   </message>
   <message id="help3">
@@ -1099,8 +1097,7 @@
         codes associated with it.
     </text>
     <text lang="zh">
-        Plays the next transcription line that has start and end time
-        codes associated with it.
+        播放下一个有开始和结束时间参数相关联的转录文本行.
     </text>
   </message>
   <message id="help4">
@@ -1108,7 +1105,7 @@
         Plays the currently selected transcription line.
     </text>
     <text lang="zh">
-        Plays the currently selected transcription line.
+        播放当前选择的转录文本行.
     </text>
   </message>
   <message id="help5">
@@ -1121,12 +1118,9 @@
         or editing its end time code.
     </text>
     <text lang="zh">
-        Plays the end of the current transcription line. Again, how much 
-        constitutes the "end" of the line is determined by the "Play minus"
-        value. If the "Play minus" value is 1,000, then this will play the
-        final second of the current line. By using this function, you don't
-        have to listen to the entirety of a transcription line when checking
-        or editing its end time code.
+       播放当前转录文本行的末尾部分,但这行的末尾继续多少取决于"播放时间"值.如果这个值是
+       1000,那么这将播放当前行的最后一秒钟.当你检查或编辑转录文本行的结束时间参数时,通过
+       使用这个功能你就不用听整个转录文本行.
     </text>
   </message>
   <message id="help6">
@@ -1134,7 +1128,7 @@
         Plays the previous transcription line.
     </text>
     <text lang="zh">
-        播放前面的转录文本行.
+        播放前一个的转录文本行.
     </text>
   </message>
   <message id="help7">
@@ -1143,8 +1137,7 @@
         line, without playing it.
     </text>
     <text lang="zh">
-        Moves the editing cursor to the next transcription
-        line, without playing it.
+        移动编辑光标到下一个转录文本行,但不播放它.
     </text>
   </message>
   <message id="help8">
@@ -1153,8 +1146,7 @@
         line, without playing it.
     </text>
     <text lang="zh">
-        Moves the editing cursor to the previous transcription
-        line, without playing it.
+        移动编辑光标到前一个转录文本行,但不播放它.
     </text>
   </message>
   <message id="help9">
@@ -1163,8 +1155,7 @@
         of the transcript.
     </text>
     <text lang="zh">
-        Adds a new speaker slot to the metadata at the beginning
-        of the transcript.
+        在转录文本开始处给媒体数据增加一个新的发言者.
     </text>
   </message>
   <message id="help10">
@@ -1179,14 +1170,10 @@
         metadata.
     </text>
     <text lang="zh">
-        If your cursor is located on a speaker name within the
-        metadata at the beginning of the transcript, then this will
-        delete that speaker from the metadata. CAUTION: This
-        does not delete any references to the speaker within the
-        transcript itself. If you have actually assigned transcription
-        lines to this speaker, then you should first delete those
-        transcription lines before deleting the speaker in the 
-        metadata.
+        如果你的光标在一个发言者的名字上,且此名字在转录文本开始处的媒体数据之内,
+        那么这将从媒体数据中删除这个发言者.警告:这不会在转录文本本身中删除对这个发言者
+        的任何参照.如果你确实把一些转录文本行赋给了这个发言者,那么你应该首先删除这些文
+        本行,然后再在媒体数据里删除这个发言者.
     </text>
   </message>
   <message id="help11">
@@ -1200,13 +1187,9 @@
         of speakers.
     </text>
     <text lang="zh">
-        Changes the speaker assigned to the current transcription
-        line. This works by cycling through the speakers one by one.
-        Thus, to change from the first speaker in the metadata to the
-        fourth speaker, you must first change to the second and then
-        to the third speaker. Using this function to change speakers
-        is efficient only when there are a relatively small number
-        of speakers.
+        为当前转录文本行切换发言者.这将在发言者中循环.因此,为了从第一个发言者切换到
+        第四个发言者,你不得不首先改变到第二个,然后第三个.这种方法仅仅当发言者的数目
+        相对少时有效.
     </text>
   </message>
   <message id="help12">
@@ -1216,9 +1199,7 @@
         it is paused.
     </text>
     <text lang="zh">
-        Assigns the start time for the current transcription line to the
-        current media time. Can be used if the media is playing or if
-        it is paused.
+        将当前媒体时间赋给当前转录文本行的开始时间.当媒体正在播放或停止时可以使用.
     </text>
   </message>
   <message id="help13">
@@ -1228,9 +1209,7 @@
         it is paused.
     </text>
     <text lang="zh">
-        Assigns the end time for the current transcription line to the
-        current media time. Can be used if the media is playing or if
-        it is paused.
+        将当前媒体时间赋给当前转录文本行的结束时间.当媒体正在播放或停止时可以使用.
     </text>
   </message>
   <!-- <message id="help14">
@@ -1256,11 +1235,8 @@
         inaccurate.
     </text>
     <text lang="zh">
-        Zaps away the start and end times for the current transcription
-        line, by assigning both to -1, the "has no time code" value. 
-        This function is used to time code a line from scratch, in those 
-        cases, for example, where the existing time codes are completely 
-        inaccurate.
+        将当前转录文本行的开始和结束时间赋予-1(没有时间参数值).这个功能是用来当一个转录
+        文本行的存在的时间参数完全不精确时,给此行重新赋予时间参数.
     </text>
   </message>
   <message id="help16">
@@ -1271,10 +1247,8 @@
         This value is a QuillDriver user preference, so you can change it.
     </text>
     <text lang="zh">
-        Increases the start time of the current transcription line
-        by the "Slow Increase/Decrease" value.
-        Use this function to increase the start time by a small amount.
-        This value is a QuillDriver user preference, so you can change it.
+        通过"缓慢增加/减少"值来增加当前转录文本行的开始时间.使用这个功能来少量增加开始时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help17">
@@ -1286,11 +1260,8 @@
         change it.
     </text>
     <text lang="zh">
-        Increases the start time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to increase the start time by a large amount.
-        This value is a QuillDriver user preference, so you can
-        change it.
+        通过"快速增加/减少"值来增加当前转录文本行的开始时间.使用这个功能来大量增加开始时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help18">
@@ -1301,10 +1272,8 @@
         This value is a QuillDriver user preference, so you can change it.
     </text>
     <text lang="zh">
-        Decreases the start time of the current transcription line
-        by the "Slow Increase/Decrease" value.
-        Use this function to decrease the start time by a small amount.
-        This value is a QuillDriver user preference, so you can change it.
+        通过"缓慢增加/减少"值来减少当前转录文本行的开始时间.使用这个功能来少量减少开始时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help19">
@@ -1316,27 +1285,21 @@
         change it.
     </text>
     <text lang="zh">
-        Decreases the start time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to decrease the start time by a large amount.
-        This value is a QuillDriver user preference, so you can
-        change it.
+        通过"快速增加/减少"值来减少当前转录文本行的开始时间.使用这个功能来大量减少开始时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help20">
     <text lang="en">
         Increases the end time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to increase the end time by a large amount.
+        by the "Slow Increase/Decrease" value.
+        Use this function to increase the end time by a small amount.
         This value is a QuillDriver user preference, so you can
         change it.
     </text>
     <text lang="zh">
-        Increases the end time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to increase the end time by a large amount.
-        This value is a QuillDriver user preference, so you can
-        change it.
+        通过"缓慢增加/减少"值来增加当前转录文本行的结束时间.使用这个功能少量增加结束时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help21">
@@ -1348,11 +1311,8 @@
         change it.
     </text>
     <text lang="zh">
-        Increases the end time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to increase the end time by a large amount.
-        This value is a QuillDriver user preference, so you can
-        change it.
+        通过"快速增加/减少"值来增加当前转录文本行的结束时间.使用这个功能来大量增加结束时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help22">
@@ -1362,9 +1322,7 @@
         time code for a line.
     </text>
     <text lang="zh">
-        Assigns the end time of the current transcription line to the
-        end of the media. Use this when you want to redo the end
-        time code for a line.
+        将媒体的结尾赋给当前转录文本行的结束时间.
     </text>
   </message>
   <message id="help23">
@@ -1375,10 +1333,8 @@
         This value is a QuillDriver user preference, so you can change it.
     </text>
     <text lang="zh">
-        Decreases the end time of the current transcription line
-        by the "Slow Increase/Decrease" value.
-        Use this function to decrease the end time by a small amount.
-        This value is a QuillDriver user preference, so you can change it.
+        通过"缓慢增加/减少"值来减少当前转录文本行的结束时间.使用这个功能来少量减少结束时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help24">
@@ -1389,10 +1345,8 @@
         This value is a QuillDriver user preference, so you can change it.
     </text>
     <text lang="zh">
-        Decreases the end time of the current transcription line
-        by the "Rapid Increase/Decrease" value.
-        Use this function to decrease the end time by a large amount.
-        This value is a QuillDriver user preference, so you can change it.
+        通过"快速增加/减少"值来减少当前转录文本行的结束时间.使用这个功能来大量减少结束时间.
+        这个值是QuillDriver用户的选项设置,所以你可以改变它.
     </text>
   </message>
   <message id="help26">
@@ -1400,7 +1354,7 @@
         Deletes the currently selected transcription line.
     </text>
     <text lang="zh">
-        Deletes the currently selected transcription line.
+        删除当前选择的转录文本行.
     </text>
   </message>
   <message id="help27">
@@ -1411,10 +1365,8 @@
         speaker for the line.
     </text>
     <text lang="zh">
-        Inserts a new transcription line after the current
-        transcription line. If this line has a different speaker
-        from the previous line, then you must change the
-        speaker for the line.
+        在当前转录文本行之后插入一个新的转录文本行.如果插入的行有一个与前一行不同
+        的发言者,你必须为这行改变发言者.
     </text>
   </message>
   <message id="help28">
@@ -1423,8 +1375,7 @@
         transcription line.
     </text>
     <text lang="zh">
-        Inserts a new transcription line before the current
-        transcription line.
+        在当前转录文本行之前插入新的转录文本行.
     </text>
   </message>
   <message id="help30">
@@ -1433,8 +1384,7 @@
         line.
     </text>
     <text lang="zh">
-        Inserts a englilsh translation slot for the current transcription
-        line.
+        为当前转录文本行插入英语翻译.
     </text>
   </message>
   <message id="help31">
@@ -1442,7 +1392,7 @@
         Deletes the english translation for the current transcription line.
     </text>
     <text lang="zh">
-        Deletes the english translation for the current transcription line.
+        删除当前转录文本行的英语翻译.
     </text>
   </message>
   <message id="help32">
@@ -1451,8 +1401,7 @@
         the current transcription line.
     </text>
     <text lang="zh">
-        Changes the current media time to the start time of
-        the current transcription line.
+        改变当前媒体时间为当前转录文本行的开始时间.
     </text>
   </message>
   <message id="help33">
@@ -1461,8 +1410,7 @@
         the current transcription line.
     </text>
     <text lang="zh">
-        Changes the current media time to the end time of
-        the current transcription line.
+        改变当前媒体时间为当前转录文本行的结束时间.
     </text>
   </message>
   <message id="help34">
@@ -1472,9 +1420,7 @@
         this video opens up, too.
     </text>
     <text lang="zh">
-        Inserts a reference to the current media file into the
-        transcript, so that when you next open this transcript,
-        this video opens up, too.
+        为了当你下一次打开这个转录文本时,相关的视频也打开,在转录文本中插入对当前媒体文件的参照.
     </text>
   </message>
   <message id="help35">
@@ -1482,7 +1428,7 @@
         Adds a general note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a general note to the current transcription line.
+        给当前转录文本行增加一个一般注释.
     </text>
   </message>
   <message id="help36">
@@ -1490,7 +1436,7 @@
         Adds a lexical note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a lexical note to the current transcription line.
+        给当前转录文本行增加一个词汇注释.
     </text>
   </message>
   <message id="help37">
@@ -1498,7 +1444,7 @@
         Adds a grammatical note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a grammatical note to the current transcription line.
+        给当前转录文本行增加一个语法注释.
     </text>
   </message>
   <message id="help38">
@@ -1506,7 +1452,7 @@
         Adds a pronunciation note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a pronunciation note to the current transcription line.
+        给当前转录文本行增加一个语音注释.
     </text>
   </message>
   <message id="help39">
@@ -1514,7 +1460,7 @@
         Adds an interpretive note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds an interpretive note to the current transcription line.
+        给当前转录文本行增加一个说明注释.
     </text>
   </message>
   <message id="help40">
@@ -1522,7 +1468,7 @@
         Adds a sociolinguistic note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a sociolinguistic note to the current transcription line.
+        给当前转录文本行增加一个社会语言注释.   
     </text>
   </message>
   <message id="help41">
@@ -1530,7 +1476,7 @@
         Adds a cultural note to the current transcription line.
     </text>
     <text lang="zh">
-        Adds a cultural note to the current transcription line.
+        给当前转录文本行增加一个文化注释.
     </text>
   </message>
   <message id="help42">
@@ -1538,20 +1484,20 @@
         Deletes the currently selected note.
     </text>
     <text lang="zh">
-        Deletes the currently selected note.
+        删除当前选择的注释.
     </text>
   </message>
   <message id="help43">
     <text lang="en">
         Inserts a chinese translation slot for the current transcription.
     </text>
-    <text lang="zh">Inserts a chinese translation slot for the current transcription.</text>
+    <text lang="zh">为当前转录文本行插入中文翻译</text>
   </message>
   <message id="help44">
     <text lang="en">
         Deletes a chinese translation slot for the current transcription. 
     </text>
-    <text lang="zh"> Deletes a chinese translation slot for the current transcription.</text>
+    <text lang="zh">为当前转录文本行删除中文翻译.</text>
   </message>
   <message id="BrowseMenu">
     <text lang="en">Navigate</text>
@@ -1571,19 +1517,19 @@
   </message>
   <message id="FileCouldNotBeLoaded">
     <text lang="en">The file/transcript could not be loaded! Please consult the log file for details.</text>
-    <text lang="zh">The file/transcript could not be loaded! Please consult the log file for details.</text>
+    <text lang="zh">这个文件/转录文本不能被加载!详细请参阅日志文件.</text>
   </message>
   <message id="FileCouldNotBeSaved">
     <text lang="en">The file/transcript could not be saved! Please consult the log file for details.</text>
-    <text lang="zh">The file/transcript could not be saved! Please consult the log file for details.</text>
+    <text lang="zh">这个文件/转录文本不能被保存!详细请参阅日志文件.</text>
   </message>
   <message id="BasicTranscriptViewMode">
         <text lang="en">Basic View</text>
-        <text lang="zh">Basic View</text>
+        <text lang="zh">基本视图</text>
   </message>
   <message id="ScrollingHighlightPolicy">
         <text lang="en">Scrolling Highlight Policy</text>
-        <text lang="zh">Scrolling Highlight Policy</text>
+        <text lang="zh">滚动加亮方法</text>
   </message>
   <message id="Options">
   	<text lang="en">Options</text>
@@ -1595,23 +1541,23 @@
   </message>
   <message id="Change">
   	<text lang="en">Change...</text>
-  	<text lang="zh">Change...</text>
+  	<text lang="zh">改变...</text>
   </message>
   <message id="TagColor">
   	<text lang="en">Tag Color:</text>
-  	<text lang="zh">Tag Color:</text>
+  	<text lang="zh">标签颜色:</text>
   </message>
   <message id="HighlightColor">
   	<text lang="en">Highlight Color:</text>
-  	<text lang="zh">Highlight Color:</text>
+  	<text lang="zh">加亮颜色:</text>
   </message>
   <message id="Colors">
   	<text lang="en">Colors</text>
-  	<text lang="zh">Colors</text>
+  	<text lang="zh">颜色</text>
   </message>
   <message id="EnglishPlusNotes">
   	<text lang="en">English + Notes</text>
-  	<text lang="zh">English + Notes</text>
+  	<text lang="zh">英语 + 注释</text>
   </message>
 </all-messages>
 
