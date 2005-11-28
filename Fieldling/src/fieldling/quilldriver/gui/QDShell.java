@@ -36,6 +36,7 @@ import javax.print.*;
 import javax.print.event.*;  
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
+import javax.xml.xpath.*;
 
 public class QDShell extends JFrame 
 {
@@ -422,16 +423,15 @@ public class QDShell extends JFrame
 									makeRecentlyOpened(transcriptString);
 									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
 									
-									if(openFileList.contains(saveAsFile.getName())==false){                                                       
+									if(!openFileList.contains(saveAsFile.getName())){                                                       
 										openFileList.add(saveAsFile.getName());                               
 										qdList.add(qd);
 										openTranscriptToQDMap.put(saveAsFile.getName(),qd);
 									}
 								}
-                                                              }
-                                                         if(saveAsFile==null)                                                             
-                                                             cancelAction=true; //when user chooses to cancel create a new transcript
-							      
+							}
+							if(saveAsFile==null)                                                             
+								cancelAction=true; //when user chooses to cancel create a new transcript  
 						} else if (command.equals(messages.getString("OpenExisting"))) {
 							File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 							if (transcriptFile != null) {
@@ -451,10 +451,11 @@ public class QDShell extends JFrame
 										openTranscriptToQDMap.put(transcriptFile.getName(),qd);
 									}              
 								}
-							}else
-                                                            cancelAction=true;// when user choose to cancel open existing
-							
-						} else { //must be recent file
+							}
+							else cancelAction=true;// when user choose to cancel open existing
+						} 
+						else 
+						{ //must be recent file
 							File transcriptFile = new File(command);
 							
 							if(openFileList.contains(transcriptFile.getName())){                                                                   
@@ -496,6 +497,7 @@ public class QDShell extends JFrame
 					
 					if (!cancelAction&&noProblems&&!sameTranscript) 
 					{       
+						QDShell.this.setTitle(qd.getWindowTitle());
 						contentPane.add(qd);
 						qd.videoFrame.pack();
 						numberOfQDsOpen++;  
@@ -515,7 +517,7 @@ public class QDShell extends JFrame
 							sameTranscript=false;                                                                                     
 						}
 						if(!noProblems)
-                                                    JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                                                                             
+							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                                                                             
 					}
 					tempQD=null;
 				}
@@ -546,8 +548,7 @@ public class QDShell extends JFrame
 	private void loadGenericInitialState()
 	{
 		//numberOfQDsOpen++;
-		@UNICODE@setTitle("QuillDriver");
-		@TIBETAN@setTitle("QuillDriver-TIBETAN");
+		setTitle(QD.productName);
 		defaultLanguage = null;
 		supportedFonts = null;
 		messages = I18n.getResourceBundle();
@@ -782,11 +783,14 @@ public class QDShell extends JFrame
 				if (numberOfQDsOpen == 0)
 				{				
 					hasLoadedTranscript = false;
+					QDShell.this.setTitle(qd.productName);
 				} else
 				{  
 					qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
 					contentPane.add(qd);
+					QDShell.this.setTitle(qd.getWindowTitle());
 					contentPane.repaint();
+					
 				}                                   
 				setJMenuBar(getQDShellMenu()); 
 				setVisible(true);
@@ -1117,6 +1121,7 @@ public class QDShell extends JFrame
 					}
 					qd = (QD)openTranscriptToQDMap.get(openFile);                                     
 					contentPane.add(qd);
+					QDShell.this.setTitle(qd.getWindowTitle());
 					contentPane.repaint();
 					//qd.setWindows(); 
 					//qd.videoFrame.pack();
