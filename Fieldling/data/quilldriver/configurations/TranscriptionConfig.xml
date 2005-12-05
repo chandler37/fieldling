@@ -69,13 +69,13 @@
 		</action>
                 <action name="InsertTibetanTitle" keystroke="control Q" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertTibetanTitle">		
 		</action>
-                <action name="InsertChineseTitle" keystroke="control R" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertChineseTitle">	
+                <action name="InsertChineseTitle" keystroke="control P" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertChineseTitle">	
 		</action>
                 <action name="DeleteTibetanTitle" keystroke="control alt Q" node="ancestor-or-self::TITLE_TIB" xsl-task="removeNode">		
 		</action>
                 <action name="DeleteEnglishTitle" keystroke="control alt I" node="ancestor-or-self::TITLE" xsl-task="removeNode">		
 		</action>
-                <action name="DeleteChineseTitle" keystroke="control alt R" node="ancestor-or-self::TITLE_ZH" xsl-task="removeNode">
+                <action name="DeleteChineseTitle" keystroke="control alt P" node="ancestor-or-self::TITLE_ZH" xsl-task="removeNode">
 		</action>
 		<action name="InsertAfter" keystroke="control M" node="ancestor-or-self::S" xsl-task="insertAfter">
 			<helptext ref="help27"/>
