@@ -58,12 +58,12 @@ public class QDShell extends JFrame
 	QD qd = null;
 	
 	QD tempQD=null;//save qd before open another transcript
-	boolean sameTranscript=false;
 	public static final int MAXIMUM_NUMBER_OF_OPEN_FILES = 4; 
 	private java.util.List openFileList = new ArrayList();
 	private java.util.List qdList = new ArrayList();
 	private Map openTranscriptToQDMap=new HashMap();
-	
+        public static boolean[] requestUniqueIndex=new boolean[4];
+        
 	Container contentPane;
 	private static boolean hasLoadedTranscript = false;
 	
@@ -196,7 +196,51 @@ public class QDShell extends JFrame
 			return null;
 		}
 	}
-	
+     /**
+      *change title with view  
+      */
+     public void changeTitle(int i){    
+        qd.setCurrentLang(i);
+        newTitle();
+        }
+     /**
+      *update title when title changed
+      */
+      public void updateWindowsTitle(){ 
+           if(qd.editor != null){
+               newTitle();
+           }
+       }
+      public void newTitle(){
+        //String topTitle=qd.getWindowTitle(false, qd.getCurrentLang());         
+        String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
+        if(openFileList.contains(menuTitle)){              
+              if(qd.index==0){
+                 QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
+                 String subStr="["+tempQD.index+"]";
+                 String title=menuTitle.concat(subStr);
+                 tempQD.setOldTitle(title);
+                 openFileList.set(openFileList.indexOf(menuTitle), title);
+                 openTranscriptToQDMap.remove(menuTitle);
+                 openTranscriptToQDMap.put(title,tempQD);
+              }
+              else
+                {
+                 String count=new Integer(qd.index).toString();
+                 String subStr="["+count+"]";
+                 menuTitle=menuTitle.concat(subStr);
+                }
+          }   
+        String oldTitle=qd.getOldTitle(); 
+        qd.setOldTitle(menuTitle);
+        //QDShell.this.setTitle(topTitle);
+        QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+        openFileList.set(openFileList.indexOf(oldTitle), menuTitle);   
+        qd=(QD)openTranscriptToQDMap.remove(oldTitle);
+        openTranscriptToQDMap.put(menuTitle,qd);     
+        setJMenuBar(getQDShellMenu());
+	setVisible(true);
+      }
 	class Wizard extends JDialog {
 		public Wizard() {
 			//choice of configuration
@@ -399,11 +443,9 @@ public class QDShell extends JFrame
 							/*if (!newTemplateFile.exists())
 							 System.exit(0); //FIX*/
 							
-							 File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));	 
-                                                         if(saveAsFile!=null&&openFileList.contains(saveAsFile.getName()))		
-								sameTranscript=true;//the save file name is same as one opened
-							
-							 if(saveAsFile!=null&&!sameTranscript){						
+							 File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
+                                                    
+                                                         if(saveAsFile!=null){
 								InputStream in = newTemplateURL.openStream();
 								OutputStream out = new FileOutputStream(saveAsFile);
 								// Transfer bytes from in to out
@@ -421,13 +463,7 @@ public class QDShell extends JFrame
 									String transcriptString = saveAsFile.getAbsolutePath();
 									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 									makeRecentlyOpened(transcriptString);
-									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-									
-									if(!openFileList.contains(saveAsFile.getName())){                                                       
-										openFileList.add(saveAsFile.getName());                               
-										qdList.add(qd);
-										openTranscriptToQDMap.put(saveAsFile.getName(),qd);
-									}
+									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());									
 								}
 							}
 							if(saveAsFile==null)                                                             
@@ -435,33 +471,20 @@ public class QDShell extends JFrame
 						} else if (command.equals(messages.getString("OpenExisting"))) {
 							File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 							if (transcriptFile != null) {
-								String transcriptString = transcriptFile.getAbsolutePath();
-								if(openFileList.contains(transcriptFile.getName())){                                                                     
-									sameTranscript=true;
-								} else{
+								        String transcriptString = transcriptFile.getAbsolutePath();
 									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
 									noProblems = qd.loadTranscript(transcriptFile);
 									if (noProblems)
 									{
 										makeRecentlyOpened(transcriptString);
-										makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-										
-										openFileList.add(transcriptFile.getName()); 
-										qdList.add(qd);
-										openTranscriptToQDMap.put(transcriptFile.getName(),qd);
-									}              
-								}
+										makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());                                                                              
+									}              								
 							}
 							else cancelAction=true;// when user choose to cancel open existing
 						} 
 						else 
 						{ //must be recent file
-							File transcriptFile = new File(command);
-							
-							if(openFileList.contains(transcriptFile.getName())){                                                                   
-								sameTranscript=true;
-							}
-							else{
+							        File transcriptFile = new File(command);
 								Object video = recentTranscriptToRecentVideoMap.get(command);
 								if (video == null)
 									noProblems = qd.loadTranscript(transcriptFile);
@@ -470,13 +493,8 @@ public class QDShell extends JFrame
 								if (noProblems)
 								{                                                        
 									makeRecentlyOpened(command);
-									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
-									
-									openFileList.add(transcriptFile.getName());
-									qdList.add(qd);
-									openTranscriptToQDMap.put(transcriptFile.getName(),qd);
+									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());                                                                    
 								}
-							}
 							
 						}
 						
@@ -495,13 +513,45 @@ public class QDShell extends JFrame
 						noProblems = false;
 					}
 					
-					if (!cancelAction&&noProblems&&!sameTranscript) 
+					if (!cancelAction&&noProblems) 
 					{       
-						QDShell.this.setTitle(qd.getWindowTitle());
+						String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
+						//String topTitle=qd.getWindowTitle(false,qd.getCurrentLang());                                      
+                                                for(int i=0;i<4;i++){
+                                                    if (requestUniqueIndex[i]==false){
+                                                        qd.index=i;
+                                                      requestUniqueIndex[i]=true;
+                                                      break;
+                                                    }
+                                                }
+                                                if(openFileList.contains(menuTitle)){                                                    
+                                                      if(qd.index==0){
+                                                          QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
+                                                          String subStr="["+tempQD.index+"]";
+                                                          String title=menuTitle.concat(subStr);
+                                                          tempQD.setOldTitle(title);
+                                                          openFileList.set(openFileList.indexOf(menuTitle), title);
+                                                          openTranscriptToQDMap.remove(menuTitle);
+                                                          openTranscriptToQDMap.put(title,tempQD);
+                                                       }
+                                                  else
+                                                      {
+                                                       String count=new Integer(qd.index).toString();
+                                                       String subStr="["+count+"]";
+                                                       menuTitle=menuTitle.concat(subStr);
+                                                       }
+                                                    
+                                                }                                                  
+                                                QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+                                                openFileList.add(menuTitle);
+						qdList.add(qd);
+						openTranscriptToQDMap.put(menuTitle,qd);
+                                                qd.setOldTitle(menuTitle);
 						contentPane.add(qd);
 						qd.videoFrame.pack();
 						numberOfQDsOpen++;  
-						hasLoadedTranscript = true;                    
+						hasLoadedTranscript = true;
+                                                qd.setQDShell(QDShell.this);
 					}
 					else
 					{
@@ -511,11 +561,7 @@ public class QDShell extends JFrame
 							qd=tempQD;                            
 							contentPane.add(qd);
 							contentPane.repaint();			        
-						}
-						if(sameTranscript){
-							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileAlreadyBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
-							sameTranscript=false;                                                                                     
-						}
+						}						
 						if(!noProblems)
 							JOptionPane.showMessageDialog(QDShell.this, messages.getString("FileCouldNotBeLoaded"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);                                                                                             
 					}
@@ -555,8 +601,10 @@ public class QDShell extends JFrame
 		setLocation(prefmngr.getInt(prefmngr.WINDOW_X_KEY, 0), prefmngr.getInt(prefmngr.WINDOW_Y_KEY, 0));
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
 		qd = new QD(prefmngr);
+                qd.setQDShell(QDShell.this);
 		contentPane = getContentPane();
-		
+		for (int i=0;i<4;i++)
+                    requestUniqueIndex[i]=false;
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
@@ -751,18 +799,21 @@ public class QDShell extends JFrame
 		}
 		if (hasLoadedTranscript)
 		{
-			Editor editor = qd.getEditor(); 
+			Editor editor = qd.getEditor();                     
 			if (editor != null) //no content in this QD window
 			{ //there's a QD editor: save and close
-				if (editor.isEditable() && editor.hasChangedSinceLastSaved())
+			      
+                               if (editor.isEditable() && editor.hasChangedSinceLastSaved())
 				{
-					int option = JOptionPane.showConfirmDialog(this, messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_OPTION);
-					if (option==JOptionPane.YES_OPTION)
-						qd.saveTranscript();
+				       
+                                       int option = JOptionPane.showConfirmDialog(this, messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_OPTION);					
+                                        if (option==JOptionPane.YES_OPTION)
+                                           qd.saveTranscript();                                          						
 				}
-				openFileList.remove(qd.transcriptFile.getName());            
-				openTranscriptToQDMap.remove(qd.transcriptFile.getName()); 
-				qdList.remove(qd);                              
+				openFileList.remove(qd.getOldTitle());            
+				openTranscriptToQDMap.remove(qd.getOldTitle()); 
+				qdList.remove(qd);                          
+                                requestUniqueIndex[qd.index]=false;
 			}                                                    
 			
 			numberOfQDsOpen--;
@@ -788,9 +839,8 @@ public class QDShell extends JFrame
 				{  
 					qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
 					contentPane.add(qd);
-					QDShell.this.setTitle(qd.getWindowTitle());
-					contentPane.repaint();
-					
+					QDShell.this.setTitle(qd.getOldTitle()+"-"+qd.productName);
+                                        contentPane.repaint();				
 				}                                   
 				setJMenuBar(getQDShellMenu()); 
 				setVisible(true);
@@ -824,7 +874,7 @@ public class QDShell extends JFrame
 	public QD getQD() {
 		return qd;
 	}
-	
+       //public QDShell getQDShell(){return QDShell.this;}
 	public JMenuBar getQDShellMenu() {
 		//File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
@@ -1086,7 +1136,8 @@ public class QDShell extends JFrame
 				getQD().setDefaultWindows();
 			}
 		});
-		windowMenu.add(defaultItem);
+
+		windowMenu.add(defaultItem);          
 		windowMenu.addSeparator();
 		
 		// the following code for open a few files in same window of qdshell
@@ -1095,14 +1146,12 @@ public class QDShell extends JFrame
 		int count =0;
 		ButtonGroup groupFile = new ButtonGroup( );
 		String activeTranscript=null;
-		
-		if(qd.transcriptFile!=null)
-			activeTranscript=getQD().transcriptFile.getName();        
+		if(qd.transcriptFile!=null)                 
+                       activeTranscript=getQD().getOldTitle();
 		while (itty.hasNext()) {                     
-			final String openFile = (String) itty.next();
-			
+			final String openFile = (String) itty.next();			
 			if(activeTranscript!=null&&openFile.equals(activeTranscript))
-				fileItem[count] = new JRadioButtonMenuItem(openFile,true);             
+				fileItem[count] = new JRadioButtonMenuItem(openFile,true);               
 			else 
 				fileItem[count] = new JRadioButtonMenuItem(openFile);
 			
@@ -1121,10 +1170,8 @@ public class QDShell extends JFrame
 					}
 					qd = (QD)openTranscriptToQDMap.get(openFile);                                     
 					contentPane.add(qd);
-					QDShell.this.setTitle(qd.getWindowTitle());
+					QDShell.this.setTitle(qd.getWindowTitle(qd.getCurrentLang())+ " - "+qd.productName);
 					contentPane.repaint();
-					//qd.setWindows(); 
-					//qd.videoFrame.pack();
 					setJMenuBar(getQDShellMenu()); 
 					setVisible(true);
 				}
@@ -1149,7 +1196,7 @@ public class QDShell extends JFrame
 		bar.add(betaMenu);
 		return bar;
 	}
-
+       
          public void saveTranscriptAs(){
              JFileChooser fd=new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
              fd.setDialogTitle(messages.getString("SaveAs"));

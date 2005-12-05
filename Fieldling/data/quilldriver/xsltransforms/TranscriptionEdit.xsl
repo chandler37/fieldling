@@ -38,6 +38,31 @@
 
 <xsl:template match="*">
 			<xsl:choose>
+                                <!-- title management tasks -->  
+                                 <xsl:when test="$qd.task='insertEnglishTitle'">
+					<HEADER>						
+						<xsl:element name="TITLE">                                               
+                                                        <xsl:text> </xsl:text>                                                                                                                                                	
+						</xsl:element>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
+					</HEADER>
+				</xsl:when>
+                                 <xsl:when test="$qd.task='insertTibetanTitle'">
+					<HEADER>				
+						<xsl:element name="TITLE_TIB">                                               
+                                                        <xsl:text> </xsl:text>                                                                                                                                                	
+						</xsl:element>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
+					</HEADER>
+				</xsl:when>
+                                <xsl:when test="$qd.task='insertChineseTitle'">
+					<HEADER>					
+						<xsl:element name="TITLE_ZH">							                                              
+                                                        <xsl:text> </xsl:text>                                                                                                                                                	
+						</xsl:element>
+                                                <xsl:copy-of select="*" copy-namespaces="no"/>
+					</HEADER>
+				</xsl:when>                         
                                 <!-- speaker management tasks -->
 				<xsl:when test="$qd.task='addSpeaker'">
                                         <xsl:variable name="speakers" select="ancestor-or-self::TEXT/HEADER"/>

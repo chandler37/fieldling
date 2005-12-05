@@ -85,6 +85,7 @@ public class I18n {
 		String languages[] = new String[2];
 		languages[0] = resources.getString("English");
 		languages[1] = resources.getString("Chinese");
+                //languages[2] = resources.getString("Tibetan");
 		return languages;
 	}
 	

@@ -5,6 +5,8 @@
 		<newtemplate val="TranscriptionNew.xml"/>
 		<xsltransform val="TranscriptionEdit.xsl"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
+                <parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB"/>
+                <parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
 		<parameter name="qd.timealignednodes" val="//*[AUDIO]"/>
 		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
@@ -12,10 +14,10 @@
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
 	</parameters>
 	<menus>
-		<menu name="Transcript" contains="Save FixMedia"/>
+		<menu name="Transcript" contains="Save FixMedia UpdateWindowTitle"/>
 		<menu name="Options" contains="TimeCoding"/>
 		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
-		<menu name="EditMenu" contains="InsertAfter InsertBefore DeleteSentence InsertTranslation_EN DeleteTranslation_EN InsertTranslation_ZH DeleteTranslation_ZH AddSpeaker DeleteSpeaker ChangeSpeaker AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
+		<menu name="EditMenu" contains="InsertEnglishTitle InsertTibetanTitle InsertChineseTitle DeleteEnglishTitle DeleteTibetanTitle DeleteChineseTitle InsertAfter InsertBefore DeleteSentence InsertTranslation_EN DeleteTranslation_EN InsertTranslation_ZH DeleteTranslation_ZH AddSpeaker DeleteSpeaker ChangeSpeaker AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
 		<menu name="TibetanKeyboard"/>
 		<menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
 	</menus>
@@ -25,6 +27,8 @@
 		</action>
 		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="saveTranscript">
 			<helptext ref="help34"/>
+		</action>
+                <action name="UpdateWindowTitle" keystroke="control U" node="." qd-command="updateWindowTitle">
 		</action>
 		<!-- preferences menu -->	
 		<action name="TimeCoding" keystroke="control T" node="." qd-command="timeCode">
@@ -61,6 +65,18 @@
 			<helptext ref="help33"/>
 		</action>
 		<!-- edit menu -->
+                 <action name="InsertEnglishTitle" keystroke="control I" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertEnglishTitle">			
+		</action>
+                <action name="InsertTibetanTitle" keystroke="control Q" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertTibetanTitle">		
+		</action>
+                <action name="InsertChineseTitle" keystroke="control R" node="ancestor-or-self::TEXT/HEADER" xsl-task="insertChineseTitle">	
+		</action>
+                <action name="DeleteTibetanTitle" keystroke="control alt Q" node="ancestor-or-self::TITLE_TIB" xsl-task="removeNode">		
+		</action>
+                <action name="DeleteEnglishTitle" keystroke="control alt I" node="ancestor-or-self::TITLE" xsl-task="removeNode">		
+		</action>
+                <action name="DeleteChineseTitle" keystroke="control alt R" node="ancestor-or-self::TITLE_ZH" xsl-task="removeNode">
+		</action>
 		<action name="InsertAfter" keystroke="control M" node="ancestor-or-self::S" xsl-task="insertAfter">
 			<helptext ref="help27"/>
 		</action>
@@ -160,14 +176,20 @@
 		<tag name="TEXT">
 			<attribute name="xml:lang" visible="false"/>
 		</tag>
-		<tag name="TITLE">
+		<!--<tag name="TITLE">
 			<attribute name="xml:lang" visible="false"/>
 		</tag>
-		<tag name="SPEAKER" tibetancontents="true"/>
+		<tag name="SPEAKER" tibetancontents="true"/>-->
 		<tag name="AUDIO" visible="false" visiblecontents="false"/>
 		<tag name="NOTE" visible="false" visiblecontents="false"/>
                 
 		<tagview name="TranscriptionOnly" keystroke="F1">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>                   		
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="who" visible="false"/>
 				<attribute name="id" visible="false"/>
@@ -180,6 +202,12 @@
 		</tagview>
 		
 		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -194,6 +222,12 @@
 		</tagview>
 		
 		<tagview name="TranscriptionPlusChinese" keystroke="F3">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -208,6 +242,12 @@
 		</tagview>
 		
 		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -224,6 +264,12 @@
 		</tagview>
 		
 		<tagview name="EnglishPlusChinese" keystroke="F5">
+                        <tag name="TITLE_ZH">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -238,6 +284,12 @@
 		</tagview>
 		
 		<tagview name="Translation_ENOnly" keystroke="F6">
+                        <tag name="TITLE">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -250,6 +302,12 @@
 		</tagview>
 		
 		<tagview name="Translation_ZHOnly" keystroke="F7">
+                        <tag name="TITLE_ZH">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -263,7 +321,13 @@
 		</tagview>
 
 		<tagview name="WylieOnly" keystroke="F8">
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
+                         <tag name="TITLE_TIB">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
@@ -275,7 +339,13 @@
 		</tagview>
 		
 		<tagview name="WylieAndEnglish" keystroke="F9">
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
+                         <tag name="TITLE_TIB">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
@@ -289,6 +359,12 @@
 		</tagview>
 		
 		<tagview name="NotesOnly" keystroke="F10">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -302,6 +378,12 @@
 		</tagview>
 
 		<tagview name="TranscriptionPlusNotes" keystroke="F11">
+                         <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="true" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -317,6 +399,12 @@
 		</tagview>
 
 		<tagview name="EnglishPlusNotes"  keystroke="F12">
+                         <tag name="TITLE">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -332,6 +420,12 @@
 		</tagview>
 		
 		<tagview name="ShowEverything">
+                        <tag name="TITLE_TIB" tibetancontents="true">
+                            <attribute name="xml:lang" visible="false"/>
+                        </tag>
+                        <tag name="TITLE" visible="false" visiblecontents="false"/>
+                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
+                        <tag name="SPEAKER" tibetancontents="true"/>
 			<tag name="S" visible="true" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>

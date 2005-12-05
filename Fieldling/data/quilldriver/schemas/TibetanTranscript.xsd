@@ -13,12 +13,32 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="TITLE" minOccurs="0"/>
+                                <xsd:element ref="TITLE_TIB" minOccurs="0"/>
+                                <xsd:element ref="TITLE_ZH" minOccurs="0"/>
 				<xsd:element ref="SOUNDFILE" minOccurs="0"/>
 				<xsd:element ref="SPEAKER" maxOccurs="unbounded"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="TITLE">
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="lang" type="xsd:language" use="optional"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+        <xsd:element name="TITLE_TIB">
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="lang" type="xsd:language" use="optional"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+        <xsd:element name="TITLE_ZH">
 		<xsd:complexType>
 			<xsd:simpleContent>
 				<xsd:extension base="xsd:string">

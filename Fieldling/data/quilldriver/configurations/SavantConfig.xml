@@ -4,6 +4,8 @@
 		<xmlschema val="TibetanTranscript.xsd"/>
 		<parameter name="qd.root.element" val="TEXT" type="text"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
+                <parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB"/>
+                <parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
 		<parameter name="qd.timealignednodes" val="//*[AUDIO]"/>
 		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
@@ -106,7 +108,7 @@
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
-            <tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+                        <tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
 				<attribute name="type" visible="false"/>
 			</tag>
 			<tag name="TRANSL" visible="false" visiblecontents="true">

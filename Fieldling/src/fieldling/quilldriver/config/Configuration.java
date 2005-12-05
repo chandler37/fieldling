@@ -21,6 +21,7 @@ import fieldling.util.GuiUtil;
 import fieldling.util.I18n;
 import fieldling.quilldriver.*;
 import fieldling.quilldriver.gui.QD;
+import fieldling.quilldriver.gui.QDShell;
 import fieldling.quilldriver.xml.*;
 import org.jdom.*;
 import org.xml.sax.SAXException;
@@ -40,6 +41,7 @@ public class Configuration
     static final String ONE_MENU_ELEMENT_NAME = "menu";
     
     static Map actionNameToActionDescription = new HashMap();
+    static String newTagInfo=null;
     
     JMenuBar jBar = null;
     String name = null;
@@ -290,7 +292,7 @@ public class Configuration
 	@TIBETAN@	return tibetanKeyboard;
 	@TIBETAN@}
     
-    private void setJMenuBar(org.jdom.Element allMenus, QD qd, PreferenceManager prefmngr)
+    private void setJMenuBar(org.jdom.Element allMenus, final QD qd, PreferenceManager prefmngr)
     {
     	String menuName;
         if (allMenus == null) return;
@@ -335,11 +337,11 @@ public class Configuration
             JMenu viewMenu = new JMenu(messages.getString("View"));
             ButtonGroup tagGroup = new ButtonGroup();
             for (int z=0; z<tagInfo.length; z++) {
-                final Action changeViewAction = getActionForTagInfoChange(tagInfo[z]);
+                final Action changeViewAction = getActionForTagInfoChange(tagInfo[z],z);
                 JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(messages.getString(tagInfo[z].getIdentifyingName()));
                 tagItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        changeViewAction.actionPerformed(e);
+                        changeViewAction.actionPerformed(e);                    
                     }
                 });
                 tagItem.setAccelerator(tagInfo[z].getKeyboardShortcut());
@@ -368,7 +370,8 @@ public class Configuration
     public JMenuBar getJMenuBar() {
         return jBar;
     }
-    public static Action getActionForTagInfoChange(final TagInfo tagInfo) {
+   
+    public static Action getActionForTagInfoChange(final TagInfo tagInfo, final int i) {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
@@ -382,8 +385,8 @@ public class Configuration
                     System.out.println("can't find any QD parent");
                     return;
                 }
-                qd.changeTagInfo(tagInfo);
-            }
+                qd.changeTagInfo(tagInfo,i);
+             }
         };
     }
                                      /*I added the boolean move parameter to actions in the
@@ -521,6 +524,7 @@ public class Configuration
             else return null;
         }
 
+
         /*
          * Get the top most component for a given MenuItem.
          * This is a little tricky
@@ -543,4 +547,6 @@ public class Configuration
             return qd;
         }
         */
+         
+         
 }

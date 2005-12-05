@@ -1559,5 +1559,57 @@
   	<text lang="en">English + Notes</text>
   	<text lang="zh">英语 + 注释</text>
   </message>
+    <message id="InsertEnglishName">
+  	<text lang="en">Insert English Name</text>
+  	<text lang="zh">插入英文名字</text>
+  </message>
+    <message id="InsertChineseName">
+  	<text lang="en">Insert Chinese Name</text>
+  	<text lang="zh">插入中文名字</text>
+  </message>
+  <message id="InsertEnglishTitle">
+  	<text lang="en">Insert English Title</text>
+  	<text lang="zh">插入英语标题</text>
+  </message>
+   <message id="InsertTibetanTitle">
+  	<text lang="en">Insert Tibetan Title</text>
+  	<text lang="zh">插入藏文标题</text>
+  </message>
+    <message id="InsertChineseTitle">
+  	<text lang="en">Insert Chinese Title</text>
+  	<text lang="zh">插入中文标题</text>
+  </message>
+  <message id="DeleteTibetanTitle">
+  	<text lang="en">Delete Tibetan Title</text>
+  	<text lang="zh">删除藏文标题</text>
+  </message> 
+   <message id="DeleteChineseTitle">
+  	<text lang="en">Delete Chinese Title</text>
+  	<text lang="zh">删除中文标题</text>
+  </message>
+   <message id="DeleteEnglishTitle">
+  	<text lang="en">Delete English Title</text>
+  	<text lang="zh">删除英文标题</text>
+  </message>
+   <message id="DeleteChineseName">
+  	<text lang="en">Delete Chinese Name</text>
+  	<text lang="zh">删除中文名字</text>
+  </message>
+   <message id="DeleteEnglishName">
+  	<text lang="en">Delete English Name</text>
+  	<text lang="zh">删除英文名字</text>
+  </message>
+  <message id="NewTranscript">
+  	<text lang="en">New Transcript</text>
+  	<text lang="zh">新转录文本</text>
+  </message>
+  <message id="UpdateTitle">
+  	<text lang="en">Update title</text>
+  	<text lang="zh">更新标题</text>
+  </message>UpdateWindowTitle
+   <message id="UpdateWindowTitle">
+  	<text lang="en">Update window title</text>
+  	<text lang="zh">更新窗口标题</text>
+  </message>
 </all-messages>
 
