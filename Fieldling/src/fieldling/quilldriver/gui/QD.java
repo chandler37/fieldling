@@ -209,8 +209,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			transcriptTitle = XPathUtilities.saxonSelectSingleDOMNodeToString(getEditor().getXMLDocument(), (XPathExpression)(configuration.getParameters().get(title)));			                                                               
                         transcriptTitle =transcriptTitle.trim();
                         if (transcriptTitle!=null && !transcriptTitle.equals("")){		                                
-                            //@TIBETAN@if(lang=="Tibetan"){ }//need rendering the tibetan string from Wylie
-                            //@UNICODE@if(lang=="Tibetan"){} //need rendering the unicode tibetan string                           
+                            //@TIBETAN@if(lang=="Tibetan"){ }//rendering the tibetan string from Wylie
+                            //@UNICODE@if(lang=="Tibetan"){transcriptTitle=org.thdl.tib.text.ttt.EwtsToUnicodeForXslt.convertEwtsTo(transcriptTitle);} //rendering the unicode tibetan string                           
                               return transcriptTitle; 
                         }
                         else

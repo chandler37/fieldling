@@ -211,9 +211,9 @@ public class QDShell extends JFrame
                newTitle();
            }
        }
-      public void newTitle(){
-        //String topTitle=qd.getWindowTitle(false, qd.getCurrentLang());         
+      public void newTitle(){ 
         String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
+        if(menuTitle.equals(qd.getOldTitle())) return;
         if(openFileList.contains(menuTitle)){              
               if(qd.index==0){
                  QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
@@ -1206,9 +1206,9 @@ public class QDShell extends JFrame
                    if(action==JFileChooser.APPROVE_OPTION){
                    File oldFile=qd.transcriptFile;
                    File newFile=fd.getSelectedFile();
-                   openFileList.set(openFileList.indexOf(oldFile.getName()), newFile.getName());
+                   /*openFileList.set(openFileList.indexOf(oldFile.getName()), newFile.getName());
                    qd=(QD)openTranscriptToQDMap.remove(oldFile.getName());
-                   openTranscriptToQDMap.put(newFile.getName(),qd);
+                   openTranscriptToQDMap.put(newFile.getName(),qd);*/
                    qd.transcriptFile=newFile;                              
                    qd.saveTranscript();
                    qd.textFrame.setTitle(newFile.getAbsolutePath());
