@@ -44,6 +44,8 @@ public abstract class PanelPlayer extends Panel {
 	private boolean isAutoScrolling = false;
     private boolean areMultipleSimultaneousAnnotationsAllowed = true;
 	private Set startedAnnotations;
+	protected URL mediaURL = null;
+
 	
 /*-----------------------------------------------------------------------*/
 	public PanelPlayer(LayoutManager layout) {
@@ -324,12 +326,16 @@ public abstract class PanelPlayer extends Panel {
 			}
 		}
 	}
-
+	
+	public URL getMediaURL()
+	{
+		return mediaURL;
+	}
 
 /*-----------------------------------------------------------------------*/
 //abstract methods
 	public abstract String getIdentifyingName();
-	public abstract URL getMediaURL();
+	//public abstract URL getMediaURL();
 	public abstract void setParentContainer(Container c);
 
 //helper methods - initialize

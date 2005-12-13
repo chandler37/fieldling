@@ -36,7 +36,6 @@ import quicktime.app.QTFactory;
 public class QT4JPlayer extends PanelPlayer {
 	private myJumpCallBack               theJumper = null;
 	private myRateCallBack               theRater = null;
-	private URL                          mediaUrl = null;
 	private TimeBase                     myMoviesTimeBase;
 	private QTCanvas                     canvas;
 	private QTPlayer                     player;
@@ -68,7 +67,7 @@ public class QT4JPlayer extends PanelPlayer {
 		removeAllAnnotationPlayers();
 		if (numberOfPlayersOpen == 1) QTSession.close();
 		removeAll();
-		mediaUrl = null;
+		this.mediaURL = null;
 		//LOGGINGSystem.out.println("Clean up performed.");
 		numberOfPlayersOpen--;
 	}
@@ -77,9 +76,9 @@ public class QT4JPlayer extends PanelPlayer {
 	public String getIdentifyingName() {
 		return "QuicktimeforJava";
 	}
-	public URL getMediaURL() {
+	/*public URL getMediaURL() {
 		return mediaUrl;
-	}
+	}*/
 	public void setParentContainer(Container c) {
 		parent = c;
 	}
@@ -154,7 +153,7 @@ public class QT4JPlayer extends PanelPlayer {
 			setPlayer(QTFactory.makeDrawable(mediaURL.toString()));
 			canvas.setClient(getPlayer(), true);
 			this.add("Center", canvas);
-			mediaUrl = mediaURL;
+			this.mediaURL = mediaURL;
 			
 			/*
 			this.remove( getCanvas() );

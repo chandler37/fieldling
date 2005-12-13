@@ -28,8 +28,6 @@ import javax.swing.event.*;
 /*-----------------------------------------------------------------------*/
 
 public class JMFPlayer extends PanelPlayer implements ControllerListener {
-		public URL 				mediaURL;
-
 		private Player			player = null;
 		private Component 		visualComponent = null;
 		private Component		controlComponent = null;
@@ -53,9 +51,9 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 	public String getIdentifyingName() {
 		return "JavaMediaFramework";
 	}
-	public URL getMediaURL() {
+	/*public URL getMediaURL() {
 		return mediaURL;
-	}
+	}*/
 	public JMFPlayer() {
 		super(new GridLayout());
 	}
