@@ -1401,23 +1401,32 @@ public class QDShell extends JFrame
 		
 		fontNames = genv.getAvailableFontFamilyNames();
 		
-		JPanel hPanel, interfacePanel = new JPanel(new GridLayout(2,2));
+		// main panels to be used
+		JPanel interfacePanel, transcriptPanel, highlightPanel;
+
+		JComboBox highlightPosition;
+		JCheckBox multipleHighlightPolicy, scrollingHighlightPolicy, showFileNameAsTitle;  		
+		
+		// intermediate panels for rendering
+		JPanel hPanel;
+		
+		interfacePanel = new JPanel(new GridLayout(3,2));
 		interfacePanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Interface")));
 		interfacePanel.add(new JLabel(messages.getString("Language")));
 		
 		if (supportedFonts==null)
 		{
-			/* Combo is not field yet, as the supported fonts
+			/* Combo is not filled yet, as the supported fonts
 			 * depend on the language selected.
 			 */
 			supportedFonts = new JComboBox();
 			supportedFonts.addItemListener(new ItemListener()
 					{
-				public void itemStateChanged(ItemEvent e) 
-				{
-					optionsChanged = true;
-					needsToRestart = true;
-				}				
+						public void itemStateChanged(ItemEvent e) 
+						{
+							optionsChanged = true;
+							needsToRestart = true;
+						}				
 					});
 		}			
 		
@@ -1468,40 +1477,60 @@ public class QDShell extends JFrame
 			 */
 			updateSupportedFonts();
 		}
-		
-		interfacePanel.add(defaultLanguage);
+		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hPanel.add(defaultLanguage);
+		interfacePanel.add(hPanel);
 		interfacePanel.add(new JLabel(messages.getString("Font")));
 		
-		interfacePanel.add(supportedFonts);
+		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hPanel.add(supportedFonts);
+		interfacePanel.add(hPanel);
 		
-		@TIBETAN@JPanel tibetanPanel;
-		@TIBETAN@JComboBox tibetanFontSizes;
-		@TIBETAN@tibetanPanel = new JPanel();
-		@TIBETAN@tibetanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("TibetanFontSize")));
-		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
-		@TIBETAN@tibetanFontSizes.addItemListener(new ItemListener()
-				@TIBETAN@{
-			@TIBETAN@public void itemStateChanged(ItemEvent e) 
-			@TIBETAN@{
-				@TIBETAN@optionsChanged = true;
-				@TIBETAN@}				
-			@TIBETAN@});
-		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.tibetan_font_size));
-		@TIBETAN@tibetanFontSizes.setEditable(true);
-		@TIBETAN@tibetanPanel.add(tibetanFontSizes);
-		JPanel romanPanel;
-		JComboBox romanFontFamilies;
-		JComboBox romanFontSizes;
-		romanPanel = new JPanel(new GridLayout(1,2));
-		romanPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("NonTibetanFontAndSize")));
-		romanFontFamilies = new JComboBox(fontNames);
-		romanFontFamilies.addItemListener(new ItemListener()
+		showFileNameAsTitle = new JCheckBox(messages.getString("ShowFileNameAsTitle"));
+		showFileNameAsTitle.setSelected(PreferenceManager.show_file_name_as_title==1);
+		showFileNameAsTitle.addItemListener(new ItemListener()
 				{
 			public void itemStateChanged(ItemEvent e) 
 			{
 				optionsChanged = true;
 			}				
+		});
+		interfacePanel.add(showFileNameAsTitle);
+		
+		transcriptPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+		
+		transcriptPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Transcript")));
+		
+		@TIBETAN@JComboBox tibetanFontSizes;
+		@TIBETAN@transcriptPanel.add(new JLabel(messages.getString("TibetanFontSize")));
+		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
+		@TIBETAN@tibetanFontSizes.addItemListener(new ItemListener()
+				@TIBETAN@{
+					@TIBETAN@public void itemStateChanged(ItemEvent e) 
+					@TIBETAN@{
+						@TIBETAN@optionsChanged = true;
+					@TIBETAN@}
+				@TIBETAN@});
+		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
+		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.tibetan_font_size));
+		@TIBETAN@tibetanFontSizes.setEditable(true);
+		@TIBETAN@hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		@TIBETAN@hPanel.add(tibetanFontSizes);
+		@TIBETAN@transcriptPanel.add(hPanel);
+		JComboBox romanFontFamilies;
+		JComboBox romanFontSizes;
+		String fontAndSizeLabel;
+		@TIBETAN@fontAndSizeLabel = messages.getString("NonTibetanFontAndSize");
+		@UNICODE@fontAndSizeLabel = messages.getString("FontAndSize");
+		transcriptPanel.add(new JLabel(fontAndSizeLabel));
+		
+		romanFontFamilies = new JComboBox(fontNames);
+		romanFontFamilies.addItemListener(new ItemListener()
+				{
+					public void itemStateChanged(ItemEvent e) 
+					{
+						optionsChanged = true;
+					}
 				});
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
 		romanFontFamilies.setSelectedItem(PreferenceManager.font_face);
@@ -1509,22 +1538,19 @@ public class QDShell extends JFrame
 		romanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
 		romanFontSizes.addItemListener(new ItemListener()
 				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
+					public void itemStateChanged(ItemEvent e) 
+					{
+						optionsChanged = true;
+					}		
 				});
 		romanFontSizes.setMaximumSize(romanFontSizes.getPreferredSize());
 		romanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.font_size));
 		romanFontSizes.setEditable(true);
-		
-		//JPanel romanUpperPanel = new JPanel(new GridLayout(1,2));
-		romanPanel.add(romanFontFamilies);
-		romanPanel.add(romanFontSizes);
-		//romanPanel.add(romanUpperPanel);
-		
-		JPanel colorPanel = new JPanel(new GridLayout(2,3,10,10));
-		colorPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Colors")));
+
+		hPanel = new JPanel(new BorderLayout(10,10));
+		hPanel.add(romanFontFamilies, BorderLayout.CENTER);
+		hPanel.add(romanFontSizes, BorderLayout.EAST);
+		transcriptPanel.add(hPanel);
 		
 		final JButton tagColorButton =new JButton(messages.getString("Change"));
 		tagColorButton.addActionListener(new ActionListener(){
@@ -1539,11 +1565,13 @@ public class QDShell extends JFrame
 				}
 			}
 		});	
-		colorPanel.add(new JLabel(messages.getString("TagColor")));		
+		transcriptPanel.add(new JLabel(messages.getString("TagColor")));		
 		tagColorPanel = new JPanel();
 		tagColorPanel.setBackground(tagColor);
-		colorPanel.add(tagColorPanel);
-		colorPanel.add(tagColorButton);		
+		hPanel = new JPanel(new BorderLayout(10,10));
+		hPanel.add(tagColorPanel, BorderLayout.CENTER);
+		hPanel.add(tagColorButton, BorderLayout.EAST);
+		transcriptPanel.add(hPanel);
 		
 		final JButton highlightColorButton =new JButton(messages.getString("Change"));
 		highlightColorButton.addActionListener(new ActionListener(){
@@ -1558,18 +1586,17 @@ public class QDShell extends JFrame
 				}
 			}
 		});	
-		colorPanel.add(new JLabel(messages.getString("HighlightColor")));		
+		transcriptPanel.add(new JLabel(messages.getString("HighlightColor")));		
 		highlightColorPanel = new JPanel();
 		highlightColorPanel.setBackground(highlightColor);
-		colorPanel.add(highlightColorPanel);
-		colorPanel.add(highlightColorButton);
+		hPanel = new JPanel(new BorderLayout(10,10));		
+		hPanel.add(highlightColorPanel, BorderLayout.CENTER);
+		hPanel.add(highlightColorButton, BorderLayout.EAST);
+		transcriptPanel.add(hPanel);
 		
-		JPanel highlightPanel;
-		JComboBox highlightPosition, multipleHighlightPolicy, scrollingHighlightPolicy;  
 		JTextField highlightField;
-		highlightPanel = new JPanel();                   
+		highlightPanel = new JPanel(new GridLayout(2,2));                   
 		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
-		highlightPanel.setLayout(new GridLayout(0,1));
 		
 		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
 		highlightPosition.addItemListener(new ItemListener()
@@ -1581,12 +1608,12 @@ public class QDShell extends JFrame
 				});
 		highlightPosition.setSelectedItem(PreferenceManager.highlight_position);
 		highlightPosition.setEditable(true);
-		hPanel = new JPanel();
-		hPanel.add(new JLabel(messages.getString("HighlightPosition")));
+		highlightPanel.add(new JLabel(messages.getString("HighlightPosition")));
+		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		hPanel.add(highlightPosition);
 		highlightPanel.add(hPanel);
 		
-		multipleHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+		multipleHighlightPolicy = new JCheckBox(messages.getString("AllowMultipleHighlighting"));
 		multipleHighlightPolicy.addItemListener(new ItemListener()
 				{
 					public void itemStateChanged(ItemEvent e) 
@@ -1594,9 +1621,9 @@ public class QDShell extends JFrame
 						optionsChanged = true;
 					}				
 				});
-		multipleHighlightPolicy.setSelectedItem(PreferenceManager.multiple_highlight_policy);
-		multipleHighlightPolicy.setEditable(true);
-		scrollingHighlightPolicy = new JComboBox(new String[] {messages.getString("Allowed"), messages.getString("Disallowed")});
+		multipleHighlightPolicy.setSelected(PreferenceManager.multiple_highlight_policy==0);
+		
+		scrollingHighlightPolicy = new JCheckBox(messages.getString("AllowScrollHighlighting"));
 		scrollingHighlightPolicy.addItemListener(new ItemListener()
 				{
 					public void itemStateChanged(ItemEvent e) 
@@ -1604,25 +1631,19 @@ public class QDShell extends JFrame
 						optionsChanged = true;
 					}				
 				});
-		scrollingHighlightPolicy.setSelectedItem(PreferenceManager.scrolling_highlight_policy);
-		scrollingHighlightPolicy.setEditable(true);
-		hPanel = new JPanel();
-		hPanel.add(new JLabel(messages.getString("MultipleHighlightPolicy")));
-		hPanel.add(multipleHighlightPolicy);
-		highlightPanel.add(hPanel);
+		scrollingHighlightPolicy.setSelected(PreferenceManager.scrolling_highlight_policy==0);
+
+		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hPanel.add(multipleHighlightPolicy);*/
+		highlightPanel.add(multipleHighlightPolicy);
 		
-		hPanel = new JPanel();
-		hPanel.add(new JLabel(messages.getString("ScrollingHighlightPolicy")));
-		hPanel.add(scrollingHighlightPolicy);
-		highlightPanel.add(hPanel);
+		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hPanel.add(scrollingHighlightPolicy);*/
+		highlightPanel.add(scrollingHighlightPolicy);
 		
 		JPanel preferencesPanel = new JPanel (new BorderLayout());
 		preferencesPanel.add(interfacePanel, BorderLayout.NORTH);
-		JPanel middlePanel = new JPanel(new GridLayout(0,1));
-		@TIBETAN@middlePanel.add(tibetanPanel);
-		middlePanel.add(romanPanel);
-		middlePanel.add(colorPanel);
-		preferencesPanel.add(middlePanel, BorderLayout.CENTER);
+		preferencesPanel.add(transcriptPanel, BorderLayout.CENTER);
 		preferencesPanel.add(highlightPanel, BorderLayout.SOUTH);
 		JOptionPane pane = new JOptionPane(preferencesPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
@@ -1691,25 +1712,22 @@ public class QDShell extends JFrame
 			}
 			editor.render();			
 		}
-		String multipleHighlightPolicyVal = (String)multipleHighlightPolicy.getSelectedItem();
+		int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
 		
-		PreferenceManager.multiple_highlight_policy = (String)multipleHighlightPolicy.getSelectedItem();
+		PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
 		PreferenceManager.highlight_position = highlightPosVal;
 		
 		prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-		prefmngr.setValue(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
+		prefmngr.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
 				
-		if (multipleHighlightPolicyVal.equals(messages.getString("Allowed")))
-			qd.player.setMultipleAnnotationPolicy(true);
-		else
-			qd.player.setMultipleAnnotationPolicy(false);
+		qd.player.setMultipleAnnotationPolicy(multipleHighlightPolicyVal==0);
 		
-		String scrollingHighlightPolicyVal = (String)scrollingHighlightPolicy.getSelectedItem();
+		int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
 		
-		PreferenceManager.scrolling_highlight_policy = (String) scrollingHighlightPolicy.getSelectedItem();
-		prefmngr.setValue(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
+		PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
+		prefmngr.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
 		
-		if (scrollingHighlightPolicyVal.equals(messages.getString("Allowed"))) {
+		if (scrollingHighlightPolicyVal==0) {
 			if (qd != null) {
 				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
 				qd.player.setAutoScrolling(true);
@@ -1719,6 +1737,16 @@ public class QDShell extends JFrame
 				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
 				qd.player.setAutoScrolling(false);
 			}
+		}
+		
+		PreferenceManager.show_file_name_as_title = showFileNameAsTitle.getSelectedObjects()!=null ? 1:0;
+		prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
+		Iterator iterator = qdList.iterator();
+		QD currentQD;
+		while (iterator.hasNext())
+		{
+			currentQD = (QD) iterator.next();
+			currentQD.updateTitles();
 		}
 		
 		if (needsToRestart)

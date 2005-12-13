@@ -63,10 +63,6 @@
     <text lang="en">All Files</text>
     <text lang="zh">所有文件</text>
   </message>
-  <message id="Allowed">
-    <text lang="en">Allowed</text>
-    <text lang="zh">允许</text>
-  </message>
   <message id="Annotate">
     <text lang="en">Annotate</text>
     <text lang="zh">注释</text>
@@ -174,10 +170,6 @@
   <message id="DESC">
     <text lang="en">DESC</text>
     <text lang="zh">除去</text>
-  </message>
-  <message id="Disallowed">
-    <text lang="en">Disallowed</text>
-    <text lang="zh">不允许</text>
   </message>
   <message id="Display">
     <text lang="en">Display...</text>
@@ -447,9 +439,9 @@
     <text lang="en">Mode</text>
     <text lang="zh">模式</text>
   </message>
-  <message id="MultipleHighlightPolicy">
-    <text lang="en">Multiple highlight policy:</text>
-    <text lang="zh">多重加亮方法：</text>
+  <message id="AllowMultipleHighlighting">
+    <text lang="en">Allow multiple hightlighting</text>
+    <text lang="zh">Allow multiple hightlighting</text>
   </message>
   <message id="Name">
     <text lang="en">Name</text>
@@ -492,8 +484,8 @@
     <text lang="zh">没有媒体</text>
   </message>
   <message id="NonTibetanFontAndSize">
-    <text lang="en">Non-Tibetan Font and Size</text>
-    <text lang="zh">非藏文的字体及其大小</text>
+    <text lang="en">Non-Tibetan Font and Size:</text>
+    <text lang="zh">非藏文的字体及其大小：</text>
   </message>
   <message id="NoReplace">
     <text lang="en">Don't replace</text>
@@ -709,7 +701,7 @@
   </message>
   <message id="SaveAs">
     <text lang="en">Save As...</text>
-    <text lang="zh">保存到...</text>
+    <text lang="zh">保存到…</text>
   </message>
     <message id="SaveError">
     <text lang="en">Errors are occured when saving!</text>
@@ -825,8 +817,8 @@
     <text lang="zh">藏文和英文</text>
   </message>
   <message id="TibetanFontSize">
-    <text lang="en">Tibetan Font Size</text>
-    <text lang="zh">藏文字体大小</text>
+    <text lang="en">Tibetan Font Size:</text>
+    <text lang="zh">藏文字体大小：</text>
   </message>
   <message id="TibetanOnly">
     <text lang="en">Tibetan Only</text>
@@ -1018,19 +1010,19 @@
   </message>
   <message id="Print">
     <text lang="en">Print...</text>
-    <text lang="zh">打印...</text>
+    <text lang="zh">打印…</text>
   </message>
   <message id="Printing">
     <text lang="en">Printing...</text>
-    <text lang="zh">正在打印...</text>
+    <text lang="zh">正在打印…</text>
   </message>
   <message id="PrintToRTF">
     <text lang="en">Print to RTF</text>
     <text lang="zh">打印到RTF</text>
   </message>
   <message id="PrintToFile">
-    <text lang="en">Print to file...</text>
-    <text lang="zh">打印到文件...</text>
+    <text lang="en">Print to File</text>
+    <text lang="zh">打印到文件…</text>
   </message>
   <message id="PrintToPS">
     <text lang="en">Print to PostScript</text>
@@ -1527,9 +1519,9 @@
         <text lang="en">Basic View</text>
         <text lang="zh">基本视图</text>
   </message>
-  <message id="ScrollingHighlightPolicy">
-        <text lang="en">Scrolling Highlight Policy</text>
-        <text lang="zh">滚动加亮方法</text>
+  <message id="AllowScrollHighlighting">
+        <text lang="en">Allow scroll highlighting</text>
+        <text lang="zh">Allow scroll highlighting</text>
   </message>
   <message id="Options">
   	<text lang="en">Options</text>
@@ -1541,19 +1533,15 @@
   </message>
   <message id="Change">
   	<text lang="en">Change...</text>
-  	<text lang="zh">改变...</text>
+  	<text lang="zh">改变…</text>
   </message>
   <message id="TagColor">
   	<text lang="en">Tag Color:</text>
-  	<text lang="zh">标签颜色:</text>
+  	<text lang="zh">标签颜色：</text>
   </message>
   <message id="HighlightColor">
   	<text lang="en">Highlight Color:</text>
-  	<text lang="zh">加亮颜色:</text>
-  </message>
-  <message id="Colors">
-  	<text lang="en">Colors</text>
-  	<text lang="zh">颜色</text>
+  	<text lang="zh">加亮颜色：</text>
   </message>
   <message id="EnglishPlusNotes">
   	<text lang="en">English + Notes</text>
@@ -1606,10 +1594,22 @@
   <message id="UpdateTitle">
   	<text lang="en">Update title</text>
   	<text lang="zh">更新标题</text>
-  </message>UpdateWindowTitle
+  </message>
    <message id="UpdateWindowTitle">
   	<text lang="en">Update window title</text>
   	<text lang="zh">更新窗口标题</text>
+  </message>
+   <message id="TranscriptionFonts">
+  	<text lang="en">Update window title</text>
+  	<text lang="zh">更新窗口标题</text>
+  </message>  
+  <message id="FontAndSize">
+    <text lang="en">Font and Size:</text>
+    <text lang="zh">Font and Size：</text>
+  </message>
+  <message id="ShowFileNameAsTitle">
+    <text lang="en">Show filename as title of inner windows</text>
+    <text lang="zh">Show filename as title of inner windows</text>
   </message>
 </all-messages>
 

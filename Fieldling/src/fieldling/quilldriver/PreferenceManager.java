@@ -82,6 +82,7 @@ public class PreferenceManager extends JPanel {
 	public static final String USE_WIZARD_KEY = "USE_WIZARD";
 	@TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
 	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
+	public static final String SHOW_FILE_NAME_AS_TITLE_KEY = "SHOW_FILE_NAME_AS_TITLE";
 	public static String media_directory;
 	public static int slow_adjust;
 	public static int rapid_adjust;
@@ -92,8 +93,9 @@ public class PreferenceManager extends JPanel {
 	public static int highlight_color_red, highlight_color_green, highlight_color_blue;
 	public static int tag_color_red, tag_color_green, tag_color_blue;	
 	public static String highlight_position;
-	public static String scrolling_highlight_policy;
-	public static String multiple_highlight_policy;
+	public static int scrolling_highlight_policy;
+	public static int multiple_highlight_policy;
+	public static int show_file_name_as_title;
 	@TIBETAN@public static int tibetan_font_size;
 	public static String working_directory;
 	@TIBETAN@public static String tibetan_keyboard;
@@ -156,12 +158,14 @@ public class PreferenceManager extends JPanel {
 		tag_color_blue = getInt(TAG_BLUE_KEY,225);
 		
 		highlight_position = getValue(HIGHLIGHT_POSITION_KEY, "Middle");
-		scrolling_highlight_policy = getValue(SCROLLING_HIGHLIGHT_POLICY_KEY, "Allowed");
-		multiple_highlight_policy = getValue(MULTIPLE_HIGHLIGHT_POLICY_KEY, "Allowed");
+		scrolling_highlight_policy = getInt(SCROLLING_HIGHLIGHT_POLICY_KEY, 0);
+		multiple_highlight_policy = getInt(MULTIPLE_HIGHLIGHT_POLICY_KEY, 0);
 		default_language = getInt(DEFAULT_LANGUAGE_KEY, -1);
 		default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
 		use_wizard = getInt(USE_WIZARD_KEY, 1);
 		@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
+		@TIBETAN@show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, 0);
+		@UNICODE@show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, 1);
 	}
 	
 	

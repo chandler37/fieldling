@@ -677,7 +677,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					if (value.startsWith("http:"))
 					{
 						player.loadMovie(new URL(value));
-						videoFrame.setTitle(value);
+						//videoFrame.setTitle(value);
 						nomedia = false;
 					}
 					else
@@ -702,14 +702,14 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						{
 							if (mediaFile.exists()) { //open the actual file
 								player.loadMovie(mediaFile.toURL());
-								videoFrame.setTitle(mediaFile.toString());
+								//videoFrame.setTitle(mediaFile.toString());
 								nomedia = false;
 							} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
 								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 								mediaFile = new File(PreferenceManager.media_directory, mediaName);
 								if (mediaFile.exists()) {
 									player.loadMovie(mediaFile.toURL());
-									videoFrame.setTitle(mediaFile.toString());
+									//videoFrame.setTitle(mediaFile.toString());
 									nomedia = false;
 									//INSERT VIDEO NAME INTO DATA FILE
 								}
@@ -726,7 +726,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				if (videoUrl != null) {
 					try {
 						player.loadMovie(new URL(videoUrl));
-						videoFrame.setTitle(videoUrl);
+						//videoFrame.setTitle(videoUrl);
 						nomedia = false;
 					} catch (MalformedURLException murle) {murle.printStackTrace();}
 				} else {
@@ -735,7 +735,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
-							videoFrame.setTitle(mediaFile.toString());
+							//videoFrame.setTitle(mediaFile.toString());
 							String mediaString = mediaFile.getAbsolutePath();
 							PreferenceManager.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 							nomedia = false;
@@ -758,7 +758,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			});
 			startTimer();
 			
-			textFrame.setTitle(transcriptString); //title=name of transcript file
+			//textFrame.setTitle(transcriptString); //title=name of transcript file
 			
 			final TimeCodeView tcv = new TimeCodeView(player, tcp);
 			checkTimeTimer = new Timer(true);
@@ -813,12 +813,29 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
 				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
+			
+			updateTitles();
+			
 			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
 			return true;
 		} catch (PanelPlayerException smpe) {
 			smpe.printStackTrace();
 			transcriptFile = null;
 			return false;
+		}
+	}
+	
+	public void updateTitles()
+	{
+		if (PreferenceManager.show_file_name_as_title==1)
+		{
+			textFrame.setTitle(transcriptFile.getAbsolutePath());
+			videoFrame.setTitle(player.getMediaURL().getFile());
+		}
+		else
+		{
+			textFrame.setTitle("");
+			videoFrame.setTitle("");			
 		}
 	}
 	
