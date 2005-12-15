@@ -829,7 +829,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	{
 		if (PreferenceManager.show_file_name_as_title==1)
 		{
-			textFrame.setTitle(transcriptFile.getAbsolutePath());
+			textFrame.setTitle(transcriptFile.getPath());
 			videoFrame.setTitle(player.getMediaURL().getFile());
 		}
 		else
