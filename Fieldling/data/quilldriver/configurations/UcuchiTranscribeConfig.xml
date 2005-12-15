@@ -12,7 +12,7 @@
 						<menu name="Options" contains="TimeCoding"/>
                         <menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine GotoNextLine GotoPreviousLine"/>
                         <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker NewClause DeleteClause"/>
-                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
+                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
                 </menus>
                 <actions>
 					<!-- file menu -->	
@@ -61,7 +61,7 @@
                                 <helptext ref="help27"/>
                         </action>
 			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::ucuchi:C" xsl-task="removeNode">
-                                <helptext ref="help27"/>
+                                <helptext ref="help45"/>
                         </action>
                         
                         <!-- timecode menu -->

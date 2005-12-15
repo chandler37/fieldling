@@ -1491,6 +1491,14 @@
     </text>
     <text lang="zh">为当前转录文本行删除中文翻译.</text>
   </message>
+  <message id="help45">
+        <text lang="en">
+                Deletes current clause.
+        </text>
+        <text lang="zh">
+                Deletes current clause.
+        </text>
+  </message>
   <message id="BrowseMenu">
     <text lang="en">Navigate</text>
     <text lang="zh">导航</text>
