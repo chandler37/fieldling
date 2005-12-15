@@ -2,7 +2,7 @@
 <xsd:schema
      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
      targetNamespace="http://altiplano.emich.edu/ucuchi"
-     xmlns:ucuchi="http://altiplano.emich.edu/ucuchi"
+     xmlns:qq="http://altiplano.emich.edu/ucuchi"
      elementFormDefault="qualified"
      attributeFormDefault="unqualified">
      
@@ -22,8 +22,8 @@
   <xsd:element name="TEXT">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:META" minOccurs="1" maxOccurs="1"/>
-        <xsd:element ref="ucuchi:C" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="qq:META" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="qq:C" minOccurs="0" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -31,7 +31,7 @@
   <xsd:element name="META">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:SPEAKER" minOccurs="1" maxOccurs="unbounded"/>
+        <xsd:element ref="qq:SPEAKER" minOccurs="1" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -49,7 +49,7 @@
   <xsd:element name="S">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:C" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="qq:C" minOccurs="0" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -57,15 +57,15 @@
   <xsd:element name="C">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:COMMENT" minOccurs="0" maxOccurs="1"/>
-        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
-        <!--<xsd:element ref="ucuchi:S-F" minOccurs="0" maxOccurs="1"/>-->
-        <xsd:element ref="ucuchi:TRANSL" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="qq:COMMENT" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="qq:F" minOccurs="0" maxOccurs="1"/>
+        <!--<xsd:element ref="qq:S-F" minOccurs="0" maxOccurs="1"/>-->
+        <xsd:element ref="qq:TRANSL" minOccurs="0" maxOccurs="1"/>
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="ucuchi:W"/>
-	  <xsd:element ref="ucuchi:PAUSE"/>
-	  <xsd:element ref="ucuchi:GOD-KNOWS"/>
-	  <xsd:element ref="ucuchi:TRANS"/>
+          <xsd:element ref="qq:W"/>
+	  <xsd:element ref="qq:PAUSE"/>
+	  <xsd:element ref="qq:GOD-KNOWS"/>
+	  <xsd:element ref="qq:TRANS"/>
         </xsd:choice>
       </xsd:sequence>
       <xsd:attribute name="id" type="xsd:ID" use="optional"/>
@@ -78,8 +78,8 @@
     <xsd:element name="W">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
-	<xsd:element ref="ucuchi:M" minOccurs="1" maxOccurs="unbounded"/>
+        <xsd:element ref="qq:F" minOccurs="0" maxOccurs="1"/>
+	<xsd:element ref="qq:M" minOccurs="1" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -87,8 +87,8 @@
   <xsd:element name="M">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ucuchi:F" minOccurs="0" maxOccurs="1"/>
-        <xsd:element ref="ucuchi:G" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="qq:F" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="qq:G" minOccurs="1" maxOccurs="1"/>
       </xsd:sequence>
       <xsd:attribute name="type" default="root">
         <xsd:simpleType>
