@@ -999,12 +999,13 @@ public class QDShell extends JFrame
 		preferencesMenu.add(fontItem);
 		// preferencesMenu.add(timeCodeItem);
 		
-		JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
+		/*I AM REMOVING THIS SINCE IT SELDOM WORKS PROPERLY (Ed: Dec. 15 2006)
+                JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
 		feedbackItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new fieldling.quilldriver.UserFeedback(QDShell.this);
 			}
-		});
+		});*/
 		JMenuItem aboutItem = new JMenuItem(messages.getString("AboutQuillDriver"));
 		try {
 			final JScrollPane sp = GuiUtil.getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
@@ -1021,7 +1022,7 @@ public class QDShell extends JFrame
 		}
 		JMenu betaMenu = new JMenu(messages.getString("About"));
 		betaMenu.add(aboutItem);
-		betaMenu.add(feedbackItem);
+		//SEE ABOVE COMMENT betaMenu.add(feedbackItem);
 		
 		
 		//-----------Windows Mode for TextFrame and VideoFrame----------------------------------------
