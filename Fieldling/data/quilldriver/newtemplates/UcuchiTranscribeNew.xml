@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucuchi:TEXT xmlns:ucuchi="http://altiplano.emich.edu/ucuchi" xmlns:qd="http://altiplano.emich.edu/quilldriver">
         <ucuchi:META>
-                <ucuchi:SPEAKER id="s1">SPEAKER NAME</ucuchi:SPEAKER>
+                <ucuchi:SPEAKER id="s1">Type speaker name here</ucuchi:SPEAKER>
         </ucuchi:META>
         <ucuchi:C spid="s1">
-                <ucuchi:F>SPEECH</ucuchi:F>
+                <ucuchi:F>Transcribe here</ucuchi:F>
         </ucuchi:C>
 </ucuchi:TEXT>
