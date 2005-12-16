@@ -177,7 +177,7 @@ a version optimized for use with Tibetan script.
 		
 		
 		<!-- compile unicode source -->
-		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/quilldriver/**" debug="on">
+		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${unicode.source}" destdir="${unicode.classes}" includes="fieldling/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		
@@ -190,19 +190,28 @@ a version optimized for use with Tibetan script.
                     <arg value="${temp.dir}/keep/TranscriptionConfig.xml"/>
                     <arg value="${data.dir}/quilldriver/i18n/InternationalizeConfigHelp.xsl"/>
                     <arg value="filename.minus.extension=${temp.dir}/keep/TranscriptionConfig"/>
-                    <classpath location="${ext}/saxon8.jar"/>
+                    <classpath>
+                        <pathelement location="${ext}/saxon8.jar"/>
+                        <pathelement path="${unicode.classes}"/>
+                    </classpath>
                 </java>
                 <java classname="net.sf.saxon.Transform" fork="true">
                     <arg value="${temp.dir}/keep/UcuchiTranscribeConfig.xml"/>
                     <arg value="${data.dir}/quilldriver/i18n/InternationalizeConfigHelp.xsl"/>
                     <arg value="filename.minus.extension=${temp.dir}/keep/UcuchiTranscribeConfig"/>
-                    <classpath location="${ext}/saxon8.jar"/>
+                    <classpath>
+                        <pathelement location="${ext}/saxon8.jar"/>
+                        <pathelement path="${unicode.classes}"/>
+                    </classpath>
                 </java>
                 <java classname="net.sf.saxon.Transform" fork="true">
                     <arg value="${temp.dir}/keep/SavantConfig.xml"/>
                     <arg value="${data.dir}/quilldriver/i18n/InternationalizeConfigHelp.xsl"/>
                     <arg value="filename.minus.extension=${temp.dir}/keep/SavantConfig"/>
-                    <classpath location="${ext}/saxon8.jar"/>
+                    <classpath>
+                        <pathelement location="${ext}/saxon8.jar"/>
+                        <pathelement path="${unicode.classes}"/>
+                    </classpath>
                 </java>
                 <copy todir="${temp.dir}/throwaway" file="${data.dir}/quilldriver/i18n/i18n.xml"/>
                 <java classname="net.sf.saxon.Transform" fork="true">
@@ -257,7 +266,7 @@ a version optimized for use with Tibetan script.
 		</copy>
 		
 		<!-- compile Tibetan source -->
-		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/quilldriver/**" debug="on">
+		<javac target="${target.jvm}" source="${source.jvm}" srcdir="${tibetan.source}" destdir="${tibetan.classes}" includes="fieldling/**" debug="on">
 			<classpath refid="my.classpath"/>
 		</javac>
 		

@@ -32,7 +32,7 @@
                     <dt>
                             <em><xsl:value-of select="id(@name)/text[@lang=$language]"/></em>
                             <xsl:text> (</xsl:text>
-                            <xsl:value-of select="@keystroke"/>
+                            <xsl:value-of select="keyutil:convertKeyDescriptionToReadableFormat(@keystroke)" xmlns:keyutil="java:fieldling.util.KeyStrokeUtils"/>
                             <xsl:text>)</xsl:text>
                     </dt>
                     <dd>
