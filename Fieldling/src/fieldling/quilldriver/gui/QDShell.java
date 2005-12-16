@@ -462,8 +462,7 @@ public class QDShell extends JFrame
 								{
 									String transcriptString = saveAsFile.getAbsolutePath();
 									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0, transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-									makeRecentlyOpened(transcriptString);
-									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());									
+									makeRecentlyOpened(transcriptString, qd.player.getMediaURL().toString());						
 								}
 							}
 							if(saveAsFile==null)                                                             
@@ -476,8 +475,7 @@ public class QDShell extends JFrame
 									noProblems = qd.loadTranscript(transcriptFile);
 									if (noProblems)
 									{
-										makeRecentlyOpened(transcriptString);
-										makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());                                                                              
+										makeRecentlyOpened(transcriptString, qd.player.getMediaURL().toString());                                                             
 									}              								
 							}
 							else cancelAction=true;// when user choose to cancel open existing
@@ -492,8 +490,7 @@ public class QDShell extends JFrame
 									noProblems = qd.loadTranscript(transcriptFile, (String) video);
 								if (noProblems)
 								{                                                        
-									makeRecentlyOpened(command);
-									makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());                                                                    
+									makeRecentlyOpened(command, qd.player.getMediaURL().toString());                                                     
 								}
 							
 						}
@@ -684,15 +681,13 @@ public class QDShell extends JFrame
 		if (mediaURL==null)
 		{
 			qd.loadTranscript(transcriptFile);
-			makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+			makeRecentlyOpened(transcriptString, qd.player.getMediaURL().toString());
 		}
 		else
 		{
 			qd.loadTranscript(transcriptFile, mediaURL);
-			makeRecentlyOpenedVideo(mediaURL);
+			makeRecentlyOpened(transcriptString, mediaURL);
 		}
-		makeRecentlyOpened(transcriptString);
-		
 	}
 	
 	public QDShell(int useWizard)
@@ -1139,7 +1134,7 @@ public class QDShell extends JFrame
 		});
 
 		windowMenu.add(defaultItem);          
-		windowMenu.addSeparator();
+		windowMenu.addSeparator(); //FIXME: should be dependent on whether anything follows within menu
 		
 		// the following code for open a few files in same window of qdshell
 		Iterator itty = openFileList.iterator();
@@ -1215,8 +1210,7 @@ public class QDShell extends JFrame
                    qd.textFrame.setTitle(newFile.getAbsolutePath());
                    setJMenuBar(getQDShellMenu());
 		   setVisible(true); 
-                   makeRecentlyOpened(newFile.getAbsolutePath());
-		   makeRecentlyOpenedVideo(qd.player.getMediaURL().toString());
+                   makeRecentlyOpened(newFile.getAbsolutePath(), qd.player.getMediaURL().toString());
                   }
                }catch(Exception ex){
                    System.out.println("Errors are occured when saving: "+ex.toString());
@@ -1309,56 +1303,41 @@ public class QDShell extends JFrame
           }
       }    
       
-	private void makeRecentlyOpened(String s) {
+	private void makeRecentlyOpened(String s, String t) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
-		if (r == null)
+                String q = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
+		if (r == null) {
 			prefmngr.setValue(prefmngr.RECENT_FILES_KEY, s);
+			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, s);
+                }
 		else {
-			LinkedList recents = new LinkedList();
-			recents.add(s);
-			StringTokenizer tok = new StringTokenizer(r, ",");
-			while (tok.hasMoreTokens()) {
-				String s2 = tok.nextToken();
-				if (!s.equals(s2))
-					recents.add(s2);
-			}
+			LinkedList recentTs = new LinkedList();
+                        LinkedList recentVs = new LinkedList();
+			recentTs.add(s);
+                        recentVs.add(t);
+                        String[] recentTranscripts = r.split(",");
+                        String[] recentVideos = q.split(",");
+                        for (int j=0; j<recentTranscripts.length; j++) {
+                            if (!recentTranscripts[j].equals(s)) {
+                                recentTs.add(recentTranscripts[j]);
+                                recentVs.add(recentVideos[j]);
+                            }
+                        }
 			int k;
-			if (recents.size() > MAXIMUM_NUMBER_OF_RECENT_FILES)
+			if (recentTs.size() > MAXIMUM_NUMBER_OF_RECENT_FILES)
 				k = MAXIMUM_NUMBER_OF_RECENT_FILES;
 			else
-				k = recents.size();
+				k = recentTs.size();
 			StringBuffer sb = new StringBuffer();
+                        StringBuffer sb2 = new StringBuffer();
 			for (int i = 0; i < k; i++) {
-				sb.append((String) recents.removeFirst());
+				sb.append((String) recentTs.removeFirst());
 				sb.append(',');
+                                sb2.append((String)recentVs.removeFirst());
+                                sb2.append(',');
 			}
 			prefmngr.setValue(prefmngr.RECENT_FILES_KEY, sb.toString());
-		}
-	}
-	
-	private void makeRecentlyOpenedVideo(String s) {
-		String r = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
-		if (r == null)
-			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, s);
-		else {
-			LinkedList recents = new LinkedList();
-			recents.add(s);
-			StringTokenizer tok = new StringTokenizer(r, ",");
-			while (tok.hasMoreTokens()) {
-				String s2 = tok.nextToken();
-				recents.add(s2);
-			}
-			int k;
-			if (recents.size() > MAXIMUM_NUMBER_OF_RECENT_FILES)
-				k = MAXIMUM_NUMBER_OF_RECENT_FILES;
-			else
-				k = recents.size();
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < k; i++) {
-				sb.append((String) recents.removeFirst());
-				sb.append(',');
-			}
-			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, sb.toString());
+                        prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, sb2.toString());
 		}
 	}
 	
