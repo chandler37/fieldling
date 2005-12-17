@@ -63,7 +63,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	
 	@UNICODE@public static final String productName = "QuillDriver";
 	@TIBETAN@public static final String productName = "QuillDriver-TIBETAN";
-	
+	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
 	
 	protected int windowsMode=0;                
 	
@@ -92,12 +92,12 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	protected boolean bothResize=false;
 	protected boolean firstVideoFrameResize = true;
 	protected boolean firstTextFrameResize = true;    
-        protected String oldTitle=null;
-        protected String newTitle=null;
-        protected String language=null;
-        protected QDShell qdShell=null;
-        protected int index=0;//save the index assigned when open a transcript which has same window title with one in window menu
-
+	protected String oldTitle=null;
+	protected String newTitle=null;
+	protected String language=null;
+	protected QDShell qdShell=null;
+	protected int index=0;//save the index assigned when open a transcript which has same window title with one in window menu
+	
 	static {
 		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
 		XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(qdNamespace);
@@ -122,12 +122,12 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			bothResize=true;
 		else
 			bothResize=false;
-                String lang=I18n.getDefaultDisplayLanguage();
-                if (lang==messages.getString("English")) language="English";
-                 else                
-                    if(lang==messages.getString("Chinese")) language="Chinese";
-                    else 
-                        if (lang==messages.getString("Tibetan")) language="Tibetan";
+		String lang=I18n.getDefaultDisplayLanguage();
+		if (lang==messages.getString("English")) language="English";
+		else                
+			if(lang==messages.getString("Chinese")) language="Chinese";
+			else 
+				if (lang==messages.getString("Tibetan")) language="Tibetan";
 	}
 	public QD(PreferenceManager prefs) {
 		prefmngr = prefs;
@@ -138,12 +138,12 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			bothResize=true;
 		else
 			bothResize=false;
-                String lang=I18n.getDefaultDisplayLanguage();
-                if (lang==messages.getString("English")) language="English";
-                 else                
-                    if(lang==messages.getString("Chinese")) language="Chinese";
-                    else 
-                        if (lang==messages.getString("Tibetan")) language="Tibetan";
+		String lang=I18n.getDefaultDisplayLanguage();
+		if (lang==messages.getString("English")) language="English";
+		else                
+			if(lang==messages.getString("Chinese")) language="Chinese";
+			else 
+				if (lang==messages.getString("Tibetan")) language="Tibetan";
 	}
 	private void setupGlobals() {
 		messages = I18n.getResourceBundle();
@@ -195,67 +195,68 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				} 
 			}});
 	}
-      
+	
 	public String getWindowTitle(String lang)
 	{       
-                String title=null;
-                if(lang=="English") title="qd.title";
-                else if(lang=="Chinese")title="qd.title_zh";
-                 else if(lang=="Tibetan"||lang=="Wylie") title="qd.title_tib";
-                   
-		if (configuration.getParameters().get(title)!=null)
+		String titleName=null;
+		if(lang=="English") titleName="qd.title";
+		else if(lang=="Chinese")titleName="qd.title_zh";
+		else if(lang=="Tibetan"||lang=="Wylie") titleName="qd.title_tib";
+		XPathExpression title = (XPathExpression) configuration.getParameters().get(titleName);
+		
+		if (title !=null)
 		{
 			String transcriptTitle;
-			transcriptTitle = XPathUtilities.saxonSelectSingleDOMNodeToString(getEditor().getXMLDocument(), (XPathExpression)(configuration.getParameters().get(title)));			                                                               
-                        transcriptTitle =transcriptTitle.trim();
-                        if (transcriptTitle!=null && !transcriptTitle.equals("")){		                                
-                            //@TIBETAN@if(lang=="Tibetan"){ }//rendering the tibetan string from Wylie
-                            //@UNICODE@if(lang=="Tibetan"){transcriptTitle=org.thdl.tib.text.ttt.EwtsToUnicodeForXslt.convertEwtsTo(transcriptTitle);} //rendering the unicode tibetan string                           
-                              return transcriptTitle; 
-                        }
-                        else
-                            return transcriptFile.getName();
+			transcriptTitle = XPathUtilities.saxonSelectSingleDOMNodeToString(getEditor().getXMLDocument(), title);			                                                               
+			transcriptTitle =transcriptTitle.trim();
+			if (transcriptTitle!=null && !transcriptTitle.equals("")){		                                
+				//@TIBETAN@if(lang=="Tibetan"){ }//rendering the tibetan string from Wylie
+				//@UNICODE@if(lang=="Tibetan"){transcriptTitle=org.thdl.tib.text.ttt.EwtsToUnicodeForXslt.convertEwtsTo(transcriptTitle);} //rendering the unicode tibetan string                           
+				return transcriptTitle; 
+			}
+			else
+				return transcriptFile.getName();
 		}               
-                  //return transcriptFile.getName() + " - " + QD.productName;
-                return transcriptFile.getName();
+		//return transcriptFile.getName() + " - " + QD.productName;
+		return transcriptFile.getName();
 	}
-        
-        public String getCurrentLang(){return language;}
+	
+	public String getCurrentLang(){return language;}
 	public void setOldTitle(String newTit){oldTitle=newTit;}
-        public String getOldTitle(){return oldTitle;}
-        public void setQDShell(QDShell shell){qdShell=shell;}
-        
-        public void setCurrentLang(int newTagInfo){  
-         switch(newTagInfo){
-             case 0://"TranscriptionOnly"
-                                                         language="Tibetan"; break;
-             case 1://"TranscriptionPlusEnglish"
-                                                         language="Tibetan"; break;  
-             case 2://"TranscriptionPlusChinese"
-                                                         language="Tibetan"; break;
-             case 3://"TranscriptionPlusEnglishPlusChinese"
-                                                         language="Tibetan"; break;
-             case 4://"EnglishPlusChinese"
-                                                         language="Chinese"; break;
-             case 5://"Translation_ENOnly"
-                                                         language="English"; break;
-             case 6://"Translation_ZHOnly"
-                                                         language="Chinese"; break;
-             case 7://"WylieOnly"
-                                                         language="Wylie"; break;
-             case 8://"WylieAndEnglish"
-                                                         language="Wylie"; break;
-             case 9://"NotesOnly"
-                                                         language="Tibetan"; break;
-             case 10://"TranscriptionPlusNotes"
-                                                         language="Tibetan"; break;
-             case 11://"EnglishPlusNotes"
-                                                         language="English"; break;
-             case 12://"ShowEverything"
-                                                         language="Tibetan"; break;
-            }       
-        }
-        
+	public String getOldTitle(){return oldTitle;}
+	public void setQDShell(QDShell shell){qdShell=shell;}
+	
+	public void setCurrentLang(int newTagInfo){  
+		switch(newTagInfo){
+		case 0://"TranscriptionOnly"
+			language="Tibetan"; break;
+		case 1://"TranscriptionPlusEnglish"
+			language="Tibetan"; break;  
+		case 2://"TranscriptionPlusChinese"
+			language="Tibetan"; break;
+		case 3://"TranscriptionPlusEnglishPlusChinese"
+			language="Tibetan"; break;
+		case 4://"EnglishPlusChinese"
+			language="Chinese"; break;
+		case 5://"Translation_ENOnly"
+			language="English"; break;
+		case 6://"Translation_ZHOnly"
+			language="Chinese"; break;
+		case 7://"WylieOnly"
+			language="Wylie"; break;
+		case 8://"WylieAndEnglish"
+			language="Wylie"; break;
+		case 9://"NotesOnly"
+			language="Tibetan"; break;
+		case 10://"TranscriptionPlusNotes"
+			language="Tibetan"; break;
+		case 11://"EnglishPlusNotes"
+			language="English"; break;
+		case 12://"ShowEverything"
+			language="Tibetan"; break;
+		}       
+	}
+	
 	class WindowsComponentAdapter extends ComponentAdapter {         
 		public void componentResized(ComponentEvent ce) {
 			if(!firstQDresize&&bothResize){                
@@ -827,15 +828,29 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	
 	public void updateTitles()
 	{
-		if (PreferenceManager.show_file_name_as_title==1)
+		XPathExpression showFileNameXPath;
+		if (PreferenceManager.show_file_name_as_title==-1)
 		{
-			textFrame.setTitle(transcriptFile.getPath());
-			videoFrame.setTitle(player.getMediaURL().getFile());
+			showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
+			if (showFileNameXPath==null)
+			{
+				PreferenceManager.show_file_name_as_title = 1;
+			}
+			else
+			{
+				PreferenceManager.show_file_name_as_title = Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0;
+			}
+			prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
 		}
-		else
+		if (PreferenceManager.show_file_name_as_title==0)
 		{
 			textFrame.setTitle("");
 			videoFrame.setTitle("");			
+		}
+		else
+		{
+			textFrame.setTitle(transcriptFile.getPath());
+			videoFrame.setTitle(player.getMediaURL().getFile());
 		}
 	}
 	
@@ -884,7 +899,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	public Editor getEditor() {
 		return editor;
 	}
-       
+	
 	public static String convertTimesForPanelPlayer(String s) {
 		StringBuffer sBuff = new StringBuffer();
 		StringTokenizer sTok = new StringTokenizer(s, ",");
@@ -899,11 +914,11 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			currentTagInfo = newTagInfo;
 			editor.setTagInfo(currentTagInfo);
 			hp.refresh();  
-                        String configName=configuration.getName();    
-                        if(configName!=messages.getString("TranscribeQuechua")) qdShell.changeTitle(i);
+			String configName=configuration.getName();    
+			if(configName!=messages.getString("TranscribeQuechua")) qdShell.changeTitle(i);
 		}
 	}
-        
+	
 	public boolean configure(Configuration configuration) {
 		if (transcriptFile != null) return false;
 		try {
@@ -942,50 +957,50 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 		}
 		//currentTagInfo = tagInfo[0];               
-                changeViewWithInterfaceLanguage(configuration,tagInfo);             
+		changeViewWithInterfaceLanguage(configuration,tagInfo);             
 		return true;
 	}
-       public void  changeViewWithInterfaceLanguage(Configuration configuration,TagInfo[] tagInfo){
-                JMenu viewMenu=null;
-                String configName=configuration.getName();
-                int currentConfig=0;
-                if(configName.equals("TranscribeQuechua")){
-                    currentConfig=0; 
-                }
-                 else 
-                  if (configName.equals("THDLTranscription")){
-                     @UNICODE@viewMenu=configuration.getJMenuBar().getMenu(5);
-                     @TIBETAN@viewMenu=configuration.getJMenuBar().getMenu(6);
-                    currentConfig=1;                   
-                  }
-                else 
-                     if (configName.equals("THDLReadonly")){ 
-                         currentConfig=2;
-                         viewMenu=configuration.getJMenuBar().getMenu(1);
-                     }
-                switch (currentConfig){
-                    case 0:                     
-                          currentTagInfo = tagInfo[0];     
-                        break;
-                    case 1:
-                    case 2:                       
-                        if(language=="English"){ //if interface is english, set view to 'English only'
-                             currentTagInfo = tagInfo[5];
-                             viewMenu.getItem(5).setSelected(true);
-                         }
-                     else 
-                        if(language=="Chinese"){ //if interface is chinese, set view to 'Chinese only'
-                             currentTagInfo = tagInfo[6];
-                             viewMenu.getItem(6).setSelected(true);
-                         }
-                       else 
-                         if(language=="tibetan") {//if interface is tibetan, set view to 'Tibetan only'
-                            currentTagInfo = tagInfo[0];
-                            viewMenu.getItem(0).setSelected(true);
-                       }
-                        break;
-                 }        
-       }
+	public void  changeViewWithInterfaceLanguage(Configuration configuration,TagInfo[] tagInfo){
+		JMenu viewMenu=null;
+		String configName=configuration.getName();
+		int currentConfig=0;
+		if(configName.equals("TranscribeQuechua")){
+			currentConfig=0; 
+		}
+		else 
+			if (configName.equals("THDLTranscription")){
+				@UNICODE@viewMenu=configuration.getJMenuBar().getMenu(5);
+				@TIBETAN@viewMenu=configuration.getJMenuBar().getMenu(6);
+				currentConfig=1;                   
+			}
+			else 
+				if (configName.equals("THDLReadonly")){ 
+					currentConfig=2;
+					viewMenu=configuration.getJMenuBar().getMenu(1);
+				}
+		switch (currentConfig){
+		case 0:                     
+			currentTagInfo = tagInfo[0];     
+			break;
+		case 1:
+		case 2:                       
+			if(language=="English"){ //if interface is english, set view to 'English only'
+				currentTagInfo = tagInfo[5];
+				viewMenu.getItem(5).setSelected(true);
+			}
+			else 
+				if(language=="Chinese"){ //if interface is chinese, set view to 'Chinese only'
+					currentTagInfo = tagInfo[6];
+					viewMenu.getItem(6).setSelected(true);
+				}
+				else 
+					if(language=="tibetan") {//if interface is tibetan, set view to 'Tibetan only'
+						currentTagInfo = tagInfo[0];
+						viewMenu.getItem(0).setSelected(true);
+					}
+			break;
+		}        
+	}
 	public void transformTranscript(Object domContextNode, XPathExpression nodeSelector, String task) {
 		editor.fireEndEditEvent();
 		editor.setEditabilityTracker(false);
@@ -1153,8 +1168,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		else if (command.equals("timeCode")) {
 			getTimeCodePreferences();
 		}
-                
-                else if (command.equals("updateWindowTitle")) {
+		
+		else if (command.equals("updateWindowTitle")) {
 			qdShell.updateWindowsTitle();
 		}
 	}

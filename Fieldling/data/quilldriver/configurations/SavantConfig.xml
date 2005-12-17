@@ -4,13 +4,14 @@
 		<xmlschema val="TibetanTranscript.xsd"/>
 		<parameter name="qd.root.element" val="TEXT" type="text"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
-                <parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB"/>
-                <parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH"/>
+		<parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB"/>
+		<parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH"/>
 		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
 		<parameter name="qd.timealignednodes" val="//*[AUDIO]"/>
 		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
 		<parameter name="qd.nodeends" val="AUDIO/@end"/>
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
+		<parameter name="qd.showfilenameastitlebydefault" val="false"/>
 	</parameters>
 	<menus>
 		<!-- <menu name="Transcript" contains="FixMedia"/> -->

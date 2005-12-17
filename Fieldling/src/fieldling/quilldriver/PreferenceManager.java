@@ -164,8 +164,7 @@ public class PreferenceManager extends JPanel {
 		default_interface_font = getValue(DEFAULT_INTERFACE_FONT_KEY, null);
 		use_wizard = getInt(USE_WIZARD_KEY, 1);
 		@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
-		@TIBETAN@show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, 0);
-		@UNICODE@show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, 1);
+		show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, -1);
 	}
 	
 	

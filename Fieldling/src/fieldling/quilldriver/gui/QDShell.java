@@ -62,8 +62,8 @@ public class QDShell extends JFrame
 	private java.util.List openFileList = new ArrayList();
 	private java.util.List qdList = new ArrayList();
 	private Map openTranscriptToQDMap=new HashMap();
-        public static boolean[] requestUniqueIndex=new boolean[4];
-        
+	public static boolean[] requestUniqueIndex=new boolean[4];
+	
 	Container contentPane;
 	private static boolean hasLoadedTranscript = false;
 	
@@ -82,7 +82,7 @@ public class QDShell extends JFrame
 	public static final int CLOSE_WINDOW = 1;
 	public static final int CLOSE_TRANSCRIPT = 2;
 	private JComboBox defaultLanguage, supportedFonts;
-        
+	
 	private static void printSyntax()
 	{
 		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file]");
@@ -196,51 +196,51 @@ public class QDShell extends JFrame
 			return null;
 		}
 	}
-     /**
-      *change title with view  
-      */
-     public void changeTitle(int i){    
-        qd.setCurrentLang(i);
-        newTitle();
-        }
-     /**
-      *update title when title changed
-      */
-      public void updateWindowsTitle(){ 
-           if(qd.editor != null){
-               newTitle();
-           }
-       }
-      public void newTitle(){ 
-        String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
-        if(menuTitle.equals(qd.getOldTitle())) return;
-        if(openFileList.contains(menuTitle)){              
-              if(qd.index==0){
-                 QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
-                 String subStr="["+tempQD.index+"]";
-                 String title=menuTitle.concat(subStr);
-                 tempQD.setOldTitle(title);
-                 openFileList.set(openFileList.indexOf(menuTitle), title);
-                 openTranscriptToQDMap.remove(menuTitle);
-                 openTranscriptToQDMap.put(title,tempQD);
-              }
-              else
-                {
-                 String count=new Integer(qd.index).toString();
-                 String subStr="["+count+"]";
-                 menuTitle=menuTitle.concat(subStr);
-                }
-          }   
-        String oldTitle=qd.getOldTitle(); 
-        qd.setOldTitle(menuTitle);
-        //QDShell.this.setTitle(topTitle);
-        QDShell.this.setTitle(menuTitle+"-"+qd.productName);
-        openFileList.set(openFileList.indexOf(oldTitle), menuTitle);   
-        qd=(QD)openTranscriptToQDMap.remove(oldTitle);
-        openTranscriptToQDMap.put(menuTitle,qd);     
-        setJMenuBar(getQDShellMenu());
-	setVisible(true);
-      }
+	/**
+	 *change title with view  
+	 */
+	public void changeTitle(int i){    
+		qd.setCurrentLang(i);
+		newTitle();
+	}
+	/**
+	 *update title when title changed
+	 */
+	public void updateWindowsTitle(){ 
+		if(qd.editor != null){
+			newTitle();
+		}
+	}
+	public void newTitle(){ 
+		String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
+		if(menuTitle.equals(qd.getOldTitle())) return;
+		if(openFileList.contains(menuTitle)){              
+			if(qd.index==0){
+				QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
+				String subStr="["+tempQD.index+"]";
+				String title=menuTitle.concat(subStr);
+				tempQD.setOldTitle(title);
+				openFileList.set(openFileList.indexOf(menuTitle), title);
+				openTranscriptToQDMap.remove(menuTitle);
+				openTranscriptToQDMap.put(title,tempQD);
+			}
+			else
+			{
+				String count=new Integer(qd.index).toString();
+				String subStr="["+count+"]";
+				menuTitle=menuTitle.concat(subStr);
+			}
+		}   
+		String oldTitle=qd.getOldTitle(); 
+		qd.setOldTitle(menuTitle);
+		//QDShell.this.setTitle(topTitle);
+		QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+		openFileList.set(openFileList.indexOf(oldTitle), menuTitle);   
+		qd=(QD)openTranscriptToQDMap.remove(oldTitle);
+		openTranscriptToQDMap.put(menuTitle,qd);     
+		setJMenuBar(getQDShellMenu());
+		setVisible(true);
+	}
 	class Wizard extends JDialog {
 		public Wizard() {
 			//choice of configuration
@@ -416,7 +416,7 @@ public class QDShell extends JFrame
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					boolean noProblems = true;
-                                        boolean cancelAction=false;
+					boolean cancelAction=false;
 					try {
 						
 						if(tempQD!=null){
@@ -443,9 +443,9 @@ public class QDShell extends JFrame
 							/*if (!newTemplateFile.exists())
 							 System.exit(0); //FIX*/
 							
-							 File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
-                                                    
-                                                         if(saveAsFile!=null){
+							File saveAsFile = selectTranscriptFile(messages.getString("SaveTranscriptAs"));
+							
+							if(saveAsFile!=null){
 								InputStream in = newTemplateURL.openStream();
 								OutputStream out = new FileOutputStream(saveAsFile);
 								// Transfer bytes from in to out
@@ -470,28 +470,28 @@ public class QDShell extends JFrame
 						} else if (command.equals(messages.getString("OpenExisting"))) {
 							File transcriptFile = selectTranscriptFile(messages.getString("OpenTranscript"));
 							if (transcriptFile != null) {
-								        String transcriptString = transcriptFile.getAbsolutePath();
-									prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
-									noProblems = qd.loadTranscript(transcriptFile);
-									if (noProblems)
-									{
-										makeRecentlyOpened(transcriptString, qd.player.getMediaURL().toString());                                                             
-									}              								
+								String transcriptString = transcriptFile.getAbsolutePath();
+								prefmngr.setValue(prefmngr.WORKING_DIRECTORY_KEY,transcriptString.substring(0,transcriptString.lastIndexOf(FILE_SEPARATOR) + 1));
+								noProblems = qd.loadTranscript(transcriptFile);
+								if (noProblems)
+								{
+									makeRecentlyOpened(transcriptString, qd.player.getMediaURL().toString());                                                             
+								}              								
 							}
 							else cancelAction=true;// when user choose to cancel open existing
 						} 
 						else 
 						{ //must be recent file
-							        File transcriptFile = new File(command);
-								Object video = recentTranscriptToRecentVideoMap.get(command);
-								if (video == null)
-									noProblems = qd.loadTranscript(transcriptFile);
-								else
-									noProblems = qd.loadTranscript(transcriptFile, (String) video);
-								if (noProblems)
-								{                                                        
-									makeRecentlyOpened(command, qd.player.getMediaURL().toString());                                                     
-								}
+							File transcriptFile = new File(command);
+							Object video = recentTranscriptToRecentVideoMap.get(command);
+							if (video == null)
+								noProblems = qd.loadTranscript(transcriptFile);
+							else
+								noProblems = qd.loadTranscript(transcriptFile, (String) video);
+							if (noProblems)
+							{                                                        
+								makeRecentlyOpened(command, qd.player.getMediaURL().toString());                                                     
+							}
 							
 						}
 						
@@ -514,41 +514,41 @@ public class QDShell extends JFrame
 					{       
 						String menuTitle=qd.getWindowTitle(qd.getCurrentLang());
 						//String topTitle=qd.getWindowTitle(false,qd.getCurrentLang());                                      
-                                                for(int i=0;i<4;i++){
-                                                    if (requestUniqueIndex[i]==false){
-                                                        qd.index=i;
-                                                      requestUniqueIndex[i]=true;
-                                                      break;
-                                                    }
-                                                }
-                                                if(openFileList.contains(menuTitle)){                                                    
-                                                      if(qd.index==0){
-                                                          QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
-                                                          String subStr="["+tempQD.index+"]";
-                                                          String title=menuTitle.concat(subStr);
-                                                          tempQD.setOldTitle(title);
-                                                          openFileList.set(openFileList.indexOf(menuTitle), title);
-                                                          openTranscriptToQDMap.remove(menuTitle);
-                                                          openTranscriptToQDMap.put(title,tempQD);
-                                                       }
-                                                  else
-                                                      {
-                                                       String count=new Integer(qd.index).toString();
-                                                       String subStr="["+count+"]";
-                                                       menuTitle=menuTitle.concat(subStr);
-                                                       }
-                                                    
-                                                }                                                  
-                                                QDShell.this.setTitle(menuTitle+"-"+qd.productName);
-                                                openFileList.add(menuTitle);
+						for(int i=0;i<4;i++){
+							if (requestUniqueIndex[i]==false){
+								qd.index=i;
+								requestUniqueIndex[i]=true;
+								break;
+							}
+						}
+						if(openFileList.contains(menuTitle)){                                                    
+							if(qd.index==0){
+								QD tempQD=(QD)openTranscriptToQDMap.get(menuTitle);
+								String subStr="["+tempQD.index+"]";
+								String title=menuTitle.concat(subStr);
+								tempQD.setOldTitle(title);
+								openFileList.set(openFileList.indexOf(menuTitle), title);
+								openTranscriptToQDMap.remove(menuTitle);
+								openTranscriptToQDMap.put(title,tempQD);
+							}
+							else
+							{
+								String count=new Integer(qd.index).toString();
+								String subStr="["+count+"]";
+								menuTitle=menuTitle.concat(subStr);
+							}
+							
+						}                                                  
+						QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+						openFileList.add(menuTitle);
 						qdList.add(qd);
 						openTranscriptToQDMap.put(menuTitle,qd);
-                                                qd.setOldTitle(menuTitle);
+						qd.setOldTitle(menuTitle);
 						contentPane.add(qd);
 						qd.videoFrame.pack();
 						numberOfQDsOpen++;  
 						hasLoadedTranscript = true;
-                                                qd.setQDShell(QDShell.this);
+						qd.setQDShell(QDShell.this);
 					}
 					else
 					{
@@ -598,10 +598,10 @@ public class QDShell extends JFrame
 		setLocation(prefmngr.getInt(prefmngr.WINDOW_X_KEY, 0), prefmngr.getInt(prefmngr.WINDOW_Y_KEY, 0));
 		setSize(new Dimension(prefmngr.getInt(prefmngr.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), prefmngr.getInt(prefmngr.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
 		qd = new QD(prefmngr);
-                qd.setQDShell(QDShell.this);
+		qd.setQDShell(QDShell.this);
 		contentPane = getContentPane();
 		for (int i=0;i<4;i++)
-                    requestUniqueIndex[i]=false;
+			requestUniqueIndex[i]=false;
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter () {
@@ -797,18 +797,18 @@ public class QDShell extends JFrame
 			Editor editor = qd.getEditor();                     
 			if (editor != null) //no content in this QD window
 			{ //there's a QD editor: save and close
-			      
-                               if (editor.isEditable() && editor.hasChangedSinceLastSaved())
+				
+				if (editor.isEditable() && editor.hasChangedSinceLastSaved())
 				{
-				       
-                                       int option = JOptionPane.showConfirmDialog(this, messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_OPTION);					
-                                        if (option==JOptionPane.YES_OPTION)
-                                           qd.saveTranscript();                                          						
+					
+					int option = JOptionPane.showConfirmDialog(this, messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_OPTION);					
+					if (option==JOptionPane.YES_OPTION)
+						qd.saveTranscript();                                          						
 				}
 				openFileList.remove(qd.getOldTitle());            
 				openTranscriptToQDMap.remove(qd.getOldTitle()); 
 				qdList.remove(qd);                          
-                                requestUniqueIndex[qd.index]=false;
+				requestUniqueIndex[qd.index]=false;
 			}                                                    
 			
 			numberOfQDsOpen--;
@@ -835,7 +835,7 @@ public class QDShell extends JFrame
 					qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
 					contentPane.add(qd);
 					QDShell.this.setTitle(qd.getOldTitle()+"-"+qd.productName);
-                                        contentPane.repaint();				
+					contentPane.repaint();				
 				}                                   
 				setJMenuBar(getQDShellMenu()); 
 				setVisible(true);
@@ -869,7 +869,7 @@ public class QDShell extends JFrame
 	public QD getQD() {
 		return qd;
 	}
-       //public QDShell getQDShell(){return QDShell.this;}
+	//public QDShell getQDShell(){return QDShell.this;}
 	public JMenuBar getQDShellMenu() {
 		//File menu
 		JMenu projectMenu = new JMenu(messages.getString("File"));
@@ -924,37 +924,37 @@ public class QDShell extends JFrame
 		printItem.setAccelerator(KeyStroke.getKeyStroke("control P"));		
 		printItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {      
-			        Thread runner = new Thread() {
-				public void run() { 
-                                    print();
-                                    }};
-                              runner.start();               
+				Thread runner = new Thread() {
+					public void run() { 
+						print();
+					}};
+					runner.start();               
 			}});
-                
-                JMenu printToFileMenu = new JMenu(messages.getString("PrintToFile"));		
-                JMenuItem printToPS=new JMenuItem(messages.getString("PrintToPS")); 
-                printToPS.addActionListener(new ActionListener() {
+		
+		JMenu printToFileMenu = new JMenu(messages.getString("PrintToFile"));		
+		JMenuItem printToPS=new JMenuItem(messages.getString("PrintToPS")); 
+		printToPS.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {    		         
-                                    printToPS();
-                              }});
-                JMenuItem printToRTF=new JMenuItem(messages.getString("PrintToRTF")); 
-                printToRTF.addActionListener(new ActionListener() {
+				printToPS();
+			}});
+		JMenuItem printToRTF=new JMenuItem(messages.getString("PrintToRTF")); 
+		printToRTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {    		         
-                                    printToRTF();
-                              }});
-                printToFileMenu.add(printToRTF);
-                printToFileMenu.add(printToPS);
-                
+				printToRTF();
+			}});
+		printToFileMenu.add(printToRTF);
+		printToFileMenu.add(printToPS);
+		
 		JMenuItem saveAsItem = new JMenuItem(messages.getString("SaveAs"));
 		//saveAsItem.setAccelerator(KeyStroke.getKeyStroke("control S"));		
 		saveAsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                                 if (!qd.getEditor().isEditable())
-                                      JOptionPane.showMessageDialog(QDShell.this, messages.getString("OnlyTranscriptionMode"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);        
-                                 else
-                                      saveTranscriptAs();                           
+				if (!qd.getEditor().isEditable())
+					JOptionPane.showMessageDialog(QDShell.this, messages.getString("OnlyTranscriptionMode"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);        
+				else
+					saveTranscriptAs();                           
 			}});
-                        
+		
 		JMenuItem quitItem = new JMenuItem(messages.getString("Exit"));
 		//Ed: can't use control X--that's cut: quitItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
 		quitItem.addActionListener(new ActionListener() {
@@ -970,9 +970,9 @@ public class QDShell extends JFrame
 		projectMenu.addSeparator();
 		projectMenu.add(saveAsItem);
 		projectMenu.addSeparator();
-                projectMenu.add(printItem);
-                projectMenu.add(printToFileMenu);
-                projectMenu.addSeparator();
+		projectMenu.add(printItem);
+		projectMenu.add(printToFileMenu);
+		projectMenu.addSeparator();
 		projectMenu.add(quitItem);
 		
 		//Preferences menu
@@ -995,12 +995,12 @@ public class QDShell extends JFrame
 		// preferencesMenu.add(timeCodeItem);
 		
 		/*I AM REMOVING THIS SINCE IT SELDOM WORKS PROPERLY (Ed: Dec. 15 2006)
-                JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
-		feedbackItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new fieldling.quilldriver.UserFeedback(QDShell.this);
-			}
-		});*/
+		 JMenuItem feedbackItem = new JMenuItem(messages.getString("Feedback"));
+		 feedbackItem.addActionListener(new ActionListener() {
+		 public void actionPerformed(ActionEvent e) {
+		 new fieldling.quilldriver.UserFeedback(QDShell.this);
+		 }
+		 });*/
 		JMenuItem aboutItem = new JMenuItem(messages.getString("AboutQuillDriver"));
 		try {
 			final JScrollPane sp = GuiUtil.getScrollPaneForTextFile(this.getClass().getClassLoader(), "about.txt");
@@ -1132,7 +1132,7 @@ public class QDShell extends JFrame
 				getQD().setDefaultWindows();
 			}
 		});
-
+		
 		windowMenu.add(defaultItem);          
 		windowMenu.addSeparator(); //FIXME: should be dependent on whether anything follows within menu
 		
@@ -1143,7 +1143,7 @@ public class QDShell extends JFrame
 		ButtonGroup groupFile = new ButtonGroup( );
 		String activeTranscript=null;
 		if(qd.transcriptFile!=null)                 
-                       activeTranscript=getQD().getOldTitle();
+			activeTranscript=getQD().getOldTitle();
 		while (itty.hasNext()) {                     
 			final String openFile = (String) itty.next();			
 			if(activeTranscript!=null&&openFile.equals(activeTranscript))
@@ -1192,152 +1192,152 @@ public class QDShell extends JFrame
 		bar.add(betaMenu);
 		return bar;
 	}
-       
-         public void saveTranscriptAs(){
-             JFileChooser fd=new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
-             fd.setDialogTitle(messages.getString("SaveAs"));
-             fd.addChoosableFileFilter(new QDFileFilter());
-             try{
-                   int action=fd.showSaveDialog(QDShell.this);                      
-                   if(action==JFileChooser.APPROVE_OPTION){
-                   File oldFile=qd.transcriptFile;
-                   File newFile=fd.getSelectedFile();
-                   /*openFileList.set(openFileList.indexOf(oldFile.getName()), newFile.getName());
-                   qd=(QD)openTranscriptToQDMap.remove(oldFile.getName());
-                   openTranscriptToQDMap.put(newFile.getName(),qd);*/
-                   qd.transcriptFile=newFile;                              
-                   qd.saveTranscript();
-                   qd.textFrame.setTitle(newFile.getAbsolutePath());
-                   setJMenuBar(getQDShellMenu());
-		   setVisible(true); 
-                   makeRecentlyOpened(newFile.getAbsolutePath(), qd.player.getMediaURL().toString());
-                  }
-               }catch(Exception ex){
-                   System.out.println("Errors are occured when saving: "+ex.toString());
-                   JOptionPane.showMessageDialog(this,messages.getString("SaveError"),"Alert",JOptionPane.ERROR_MESSAGE);
-               }
-          }
-   
-     public void print( ) {
-        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
-        PrintService[  ] services =PrintServiceLookup.lookupPrintServices(flavor, null);
-        PrintRequestAttributeSet printAttributes =new HashPrintRequestAttributeSet( );
-        PrintService service = ServiceUI.printDialog(null, 100, 100,services, null, null,printAttributes);
-        // If the user canceled, don't do anything
-        if (service == null) return;
-        printDocument(service, printAttributes);
-    }
-      public void printDocument(PrintService service,PrintRequestAttributeSet printAttributes)
-     {
-        DocumentRenderer printable = new DocumentRenderer(qd.getEditor().getTextPane().getStyledDocument());
-        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
-        Doc doc = new SimpleDoc(printable, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-
-        // Set up a dialog box to  monitor printing status
-        final JOptionPane pane = new JOptionPane(messages.getString("Printing"),JOptionPane.PLAIN_MESSAGE);
-        JDialog dialog = pane.createDialog(this, messages.getString("PrintStatus"));
-        // This listener object updates the dialog as the status changes
-        job.addPrintJobListener(new PrintJobAdapter( ) {
-                public void printJobCompleted(PrintJobEvent e) {
-                    pane.setMessage(messages.getString("PrintingComplete"));
-                }
-                public void printDataTransferCompleted(PrintJobEvent e) {
-                    pane.setMessage(messages.getString("DocumentTransferedToPrinter"));
-                }
-                public void printJobRequiresAttention(PrintJobEvent e) {
-                    pane.setMessage(messages.getString("OutOfPaper"));
-                }
-                public void printJobFailed(PrintJobEvent e) {
-                    pane.setMessage(messages.getString("PrintFailed"));
-                }
-            });
-
-        // Show the dialog, non-modal.
-        dialog.setModal(false);
-        dialog.setVisible(true);
-
-        // Now print the Doc to the DocPrintJob
-        try {
-            job.print(doc, printAttributes);
-        }
-        catch(PrintException e) {
-            // Display any errors to the dialog box
-            pane.setMessage(e.toString( ));
-        }
-    }
-    
-     public void printToPS( ){
-        try {
-        DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
-        String format = "application/postscript";// so far only support ps output
-        StreamPrintServiceFactory factory = StreamPrintServiceFactory.
-            lookupStreamPrintServiceFactories(flavor, format)[0];
-        JFileChooser chooser = new JFileChooser( );
-        chooser.setDialogTitle(messages.getString("PrintToPS"));
-        chooser.addChoosableFileFilter(new OutputFileFilter());
-        if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
-        File f = chooser.getSelectedFile( );
-        FileOutputStream out = new FileOutputStream(f);
-        StreamPrintService service = factory.getPrintService(out);
-        printDocument(service, null);
-        out.close( );
-      }catch(Exception e){
-          JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);   
-         }
-    }
-   
-      public void printToRTF(){
-          try{
-          RTFEditorKit rtf=new RTFEditorKit();
-          JFileChooser chooser = new JFileChooser( );
-          chooser.setDialogTitle(messages.getString("PrintToRTF"));
-          chooser.addChoosableFileFilter(new OutputFileFilter());
-          if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
-          File f = chooser.getSelectedFile( );
-          FileOutputStream out = new FileOutputStream(f);
-          StyledDocument doc=qd.getEditor().getTextPane().getStyledDocument();
-          rtf.write(out,(Document)doc,0,doc.getLength());
-          }catch(Exception e){
-            JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE); 
-          }
-      }    
-      
+	
+	public void saveTranscriptAs(){
+		JFileChooser fd=new JFileChooser(new File(prefmngr.getValue(prefmngr.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+		fd.setDialogTitle(messages.getString("SaveAs"));
+		fd.addChoosableFileFilter(new QDFileFilter());
+		try{
+			int action=fd.showSaveDialog(QDShell.this);                      
+			if(action==JFileChooser.APPROVE_OPTION){
+				File oldFile=qd.transcriptFile;
+				File newFile=fd.getSelectedFile();
+				/*openFileList.set(openFileList.indexOf(oldFile.getName()), newFile.getName());
+				 qd=(QD)openTranscriptToQDMap.remove(oldFile.getName());
+				 openTranscriptToQDMap.put(newFile.getName(),qd);*/
+				qd.transcriptFile=newFile;                              
+				qd.saveTranscript();
+				qd.textFrame.setTitle(newFile.getAbsolutePath());
+				setJMenuBar(getQDShellMenu());
+				setVisible(true); 
+				makeRecentlyOpened(newFile.getAbsolutePath(), qd.player.getMediaURL().toString());
+			}
+		}catch(Exception ex){
+			System.out.println("Errors are occured when saving: "+ex.toString());
+			JOptionPane.showMessageDialog(this,messages.getString("SaveError"),"Alert",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void print( ) {
+		DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+		PrintService[  ] services =PrintServiceLookup.lookupPrintServices(flavor, null);
+		PrintRequestAttributeSet printAttributes =new HashPrintRequestAttributeSet( );
+		PrintService service = ServiceUI.printDialog(null, 100, 100,services, null, null,printAttributes);
+		// If the user canceled, don't do anything
+		if (service == null) return;
+		printDocument(service, printAttributes);
+	}
+	public void printDocument(PrintService service,PrintRequestAttributeSet printAttributes)
+	{
+		DocumentRenderer printable = new DocumentRenderer(qd.getEditor().getTextPane().getStyledDocument());
+		DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+		Doc doc = new SimpleDoc(printable, flavor, null);
+		DocPrintJob job = service.createPrintJob();
+		
+		// Set up a dialog box to  monitor printing status
+		final JOptionPane pane = new JOptionPane(messages.getString("Printing"),JOptionPane.PLAIN_MESSAGE);
+		JDialog dialog = pane.createDialog(this, messages.getString("PrintStatus"));
+		// This listener object updates the dialog as the status changes
+		job.addPrintJobListener(new PrintJobAdapter( ) {
+			public void printJobCompleted(PrintJobEvent e) {
+				pane.setMessage(messages.getString("PrintingComplete"));
+			}
+			public void printDataTransferCompleted(PrintJobEvent e) {
+				pane.setMessage(messages.getString("DocumentTransferedToPrinter"));
+			}
+			public void printJobRequiresAttention(PrintJobEvent e) {
+				pane.setMessage(messages.getString("OutOfPaper"));
+			}
+			public void printJobFailed(PrintJobEvent e) {
+				pane.setMessage(messages.getString("PrintFailed"));
+			}
+		});
+		
+		// Show the dialog, non-modal.
+		dialog.setModal(false);
+		dialog.setVisible(true);
+		
+		// Now print the Doc to the DocPrintJob
+		try {
+			job.print(doc, printAttributes);
+		}
+		catch(PrintException e) {
+			// Display any errors to the dialog box
+			pane.setMessage(e.toString( ));
+		}
+	}
+	
+	public void printToPS( ){
+		try {
+			DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+			String format = "application/postscript";// so far only support ps output
+			StreamPrintServiceFactory factory = StreamPrintServiceFactory.
+			lookupStreamPrintServiceFactories(flavor, format)[0];
+			JFileChooser chooser = new JFileChooser( );
+			chooser.setDialogTitle(messages.getString("PrintToPS"));
+			chooser.addChoosableFileFilter(new OutputFileFilter());
+			if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
+			File f = chooser.getSelectedFile( );
+			FileOutputStream out = new FileOutputStream(f);
+			StreamPrintService service = factory.getPrintService(out);
+			printDocument(service, null);
+			out.close( );
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);   
+		}
+	}
+	
+	public void printToRTF(){
+		try{
+			RTFEditorKit rtf=new RTFEditorKit();
+			JFileChooser chooser = new JFileChooser( );
+			chooser.setDialogTitle(messages.getString("PrintToRTF"));
+			chooser.addChoosableFileFilter(new OutputFileFilter());
+			if (chooser.showSaveDialog(this)!=JFileChooser.APPROVE_OPTION) return;
+			File f = chooser.getSelectedFile( );
+			FileOutputStream out = new FileOutputStream(f);
+			StyledDocument doc=qd.getEditor().getTextPane().getStyledDocument();
+			rtf.write(out,(Document)doc,0,doc.getLength());
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(QDShell.this, messages.getString("PrintFail"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE); 
+		}
+	}    
+	
 	private void makeRecentlyOpened(String s, String t) {
 		String r = prefmngr.getValue(prefmngr.RECENT_FILES_KEY, null);
-                String q = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
+		String q = prefmngr.getValue(prefmngr.RECENT_VIDEOS_KEY, null);
 		if (r == null) {
 			prefmngr.setValue(prefmngr.RECENT_FILES_KEY, s);
 			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, s);
-                }
+		}
 		else {
 			LinkedList recentTs = new LinkedList();
-                        LinkedList recentVs = new LinkedList();
+			LinkedList recentVs = new LinkedList();
 			recentTs.add(s);
-                        recentVs.add(t);
-                        String[] recentTranscripts = r.split(",");
-                        String[] recentVideos = q.split(",");
-                        for (int j=0; j<recentTranscripts.length; j++) {
-                            if (!recentTranscripts[j].equals(s)) {
-                                recentTs.add(recentTranscripts[j]);
-                                recentVs.add(recentVideos[j]);
-                            }
-                        }
+			recentVs.add(t);
+			String[] recentTranscripts = r.split(",");
+			String[] recentVideos = q.split(",");
+			for (int j=0; j<recentTranscripts.length; j++) {
+				if (!recentTranscripts[j].equals(s)) {
+					recentTs.add(recentTranscripts[j]);
+					recentVs.add(recentVideos[j]);
+				}
+			}
 			int k;
 			if (recentTs.size() > MAXIMUM_NUMBER_OF_RECENT_FILES)
 				k = MAXIMUM_NUMBER_OF_RECENT_FILES;
 			else
 				k = recentTs.size();
 			StringBuffer sb = new StringBuffer();
-                        StringBuffer sb2 = new StringBuffer();
+			StringBuffer sb2 = new StringBuffer();
 			for (int i = 0; i < k; i++) {
 				sb.append((String) recentTs.removeFirst());
 				sb.append(',');
-                                sb2.append((String)recentVs.removeFirst());
-                                sb2.append(',');
+				sb2.append((String)recentVs.removeFirst());
+				sb2.append(',');
 			}
 			prefmngr.setValue(prefmngr.RECENT_FILES_KEY, sb.toString());
-                        prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, sb2.toString());
+			prefmngr.setValue(prefmngr.RECENT_VIDEOS_KEY, sb2.toString());
 		}
 	}
 	
@@ -1383,7 +1383,7 @@ public class QDShell extends JFrame
 		
 		// main panels to be used
 		JPanel interfacePanel, transcriptPanel, highlightPanel;
-
+		
 		JComboBox highlightPosition;
 		JCheckBox multipleHighlightPolicy, scrollingHighlightPolicy, showFileNameAsTitle;  		
 		
@@ -1402,11 +1402,11 @@ public class QDShell extends JFrame
 			supportedFonts = new JComboBox();
 			supportedFonts.addItemListener(new ItemListener()
 					{
-						public void itemStateChanged(ItemEvent e) 
-						{
-							optionsChanged = true;
-							needsToRestart = true;
-						}				
+				public void itemStateChanged(ItemEvent e) 
+				{
+					optionsChanged = true;
+					needsToRestart = true;
+				}				
 					});
 		}			
 		
@@ -1467,14 +1467,14 @@ public class QDShell extends JFrame
 		interfacePanel.add(hPanel);
 		
 		showFileNameAsTitle = new JCheckBox(messages.getString("ShowFileNameAsTitle"));
-		showFileNameAsTitle.setSelected(PreferenceManager.show_file_name_as_title==1);
+		showFileNameAsTitle.setSelected(PreferenceManager.show_file_name_as_title!=0);
 		showFileNameAsTitle.addItemListener(new ItemListener()
 				{
 			public void itemStateChanged(ItemEvent e) 
 			{
 				optionsChanged = true;
 			}				
-		});
+				});
 		interfacePanel.add(showFileNameAsTitle);
 		
 		transcriptPanel = new JPanel(new GridLayout(0, 2, 10, 10));
@@ -1486,11 +1486,11 @@ public class QDShell extends JFrame
 		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
 		@TIBETAN@tibetanFontSizes.addItemListener(new ItemListener()
 				@TIBETAN@{
-					@TIBETAN@public void itemStateChanged(ItemEvent e) 
-					@TIBETAN@{
-						@TIBETAN@optionsChanged = true;
-					@TIBETAN@}
-				@TIBETAN@});
+			@TIBETAN@public void itemStateChanged(ItemEvent e) 
+			@TIBETAN@{
+				@TIBETAN@optionsChanged = true;
+				@TIBETAN@}
+			@TIBETAN@});
 		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
 		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.tibetan_font_size));
 		@TIBETAN@tibetanFontSizes.setEditable(true);
@@ -1507,10 +1507,10 @@ public class QDShell extends JFrame
 		romanFontFamilies = new JComboBox(fontNames);
 		romanFontFamilies.addItemListener(new ItemListener()
 				{
-					public void itemStateChanged(ItemEvent e) 
-					{
-						optionsChanged = true;
-					}
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}
 				});
 		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
 		romanFontFamilies.setSelectedItem(PreferenceManager.font_face);
@@ -1518,15 +1518,15 @@ public class QDShell extends JFrame
 		romanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
 		romanFontSizes.addItemListener(new ItemListener()
 				{
-					public void itemStateChanged(ItemEvent e) 
-					{
-						optionsChanged = true;
-					}		
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}		
 				});
 		romanFontSizes.setMaximumSize(romanFontSizes.getPreferredSize());
 		romanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.font_size));
 		romanFontSizes.setEditable(true);
-
+		
 		hPanel = new JPanel(new BorderLayout(10,10));
 		hPanel.add(romanFontFamilies, BorderLayout.CENTER);
 		hPanel.add(romanFontSizes, BorderLayout.EAST);
@@ -1581,10 +1581,10 @@ public class QDShell extends JFrame
 		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
 		highlightPosition.addItemListener(new ItemListener()
 				{
-					public void itemStateChanged(ItemEvent e) 
-					{
-						optionsChanged = true;
-					}				
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
 				});
 		highlightPosition.setSelectedItem(PreferenceManager.highlight_position);
 		highlightPosition.setEditable(true);
@@ -1596,29 +1596,29 @@ public class QDShell extends JFrame
 		multipleHighlightPolicy = new JCheckBox(messages.getString("AllowMultipleHighlighting"));
 		multipleHighlightPolicy.addItemListener(new ItemListener()
 				{
-					public void itemStateChanged(ItemEvent e) 
-					{
-						optionsChanged = true;
-					}				
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
 				});
 		multipleHighlightPolicy.setSelected(PreferenceManager.multiple_highlight_policy==0);
 		
 		scrollingHighlightPolicy = new JCheckBox(messages.getString("AllowScrollHighlighting"));
 		scrollingHighlightPolicy.addItemListener(new ItemListener()
 				{
-					public void itemStateChanged(ItemEvent e) 
-					{
-						optionsChanged = true;
-					}				
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
 				});
 		scrollingHighlightPolicy.setSelected(PreferenceManager.scrolling_highlight_policy==0);
-
+		
 		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hPanel.add(multipleHighlightPolicy);*/
+		 hPanel.add(multipleHighlightPolicy);*/
 		highlightPanel.add(multipleHighlightPolicy);
 		
 		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hPanel.add(scrollingHighlightPolicy);*/
+		 hPanel.add(scrollingHighlightPolicy);*/
 		highlightPanel.add(scrollingHighlightPolicy);
 		
 		JPanel preferencesPanel = new JPanel (new BorderLayout());
@@ -1630,7 +1630,7 @@ public class QDShell extends JFrame
 		
 		optionsChanged = false;
 		needsToRestart = false;
-
+		
 		// This returns only when the user has closed the dialog
 		dialog.setVisible(true);
 		
@@ -1666,7 +1666,7 @@ public class QDShell extends JFrame
 		prefmngr.setInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.font_size);
 		@TIBETAN@prefmngr.setInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.tibetan_font_size);
 		Editor editor = qd.getEditor();
-
+		
 		fieldling.quilldriver.xml.Renderer.setTagColor(tagColor);
 		PreferenceManager.tag_color_red = tagColor.getRed();
 		PreferenceManager.tag_color_green = tagColor.getGreen();
@@ -1674,96 +1674,96 @@ public class QDShell extends JFrame
 		prefmngr.setInt(PreferenceManager.TAG_RED_KEY, PreferenceManager.tag_color_red);
 		prefmngr.setInt(PreferenceManager.TAG_GREEN_KEY, PreferenceManager.tag_color_green);
 		prefmngr.setInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.tag_color_blue);		
-
+		
 		String highlightPosVal = (String)highlightPosition.getSelectedItem();
 		
 		if (editor != null)
 		{
 			@UNICODE@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face))){
-			@TIBETAN@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face) && old_tibetan_font_size == PreferenceManager.tibetan_font_size)) {
-				@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
-				@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-				@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
-				@UNICODE@editor.getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
+				@TIBETAN@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face) && old_tibetan_font_size == PreferenceManager.tibetan_font_size)) {
+					@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
+					@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+					@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+					@UNICODE@editor.getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
+				}
+				qd.hp.setHighlightPosition(highlightPosVal);
+				if (qd.hp != null) {
+					qd.hp.setHighlightColor(highlightColor);
+				}
+				editor.render();			
 			}
-			qd.hp.setHighlightPosition(highlightPosVal);
-			if (qd.hp != null) {
-				qd.hp.setHighlightColor(highlightColor);
+			int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
+			
+			PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
+			PreferenceManager.highlight_position = highlightPosVal;
+			
+			prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
+			prefmngr.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
+			
+			qd.player.setMultipleAnnotationPolicy(multipleHighlightPolicyVal==0);
+			
+			int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
+			
+			PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
+			prefmngr.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
+			
+			if (scrollingHighlightPolicyVal==0) {
+				if (qd != null) {
+					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
+					qd.player.setAutoScrolling(true);
+				}
+			} else {
+				if (qd != null) {
+					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
+					qd.player.setAutoScrolling(false);
+				}
 			}
-			editor.render();			
+			
+			PreferenceManager.show_file_name_as_title = showFileNameAsTitle.getSelectedObjects()!=null ? 1:0;
+			prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
+			Iterator iterator = qdList.iterator();
+			QD currentQD;
+			while (iterator.hasNext())
+			{
+				currentQD = (QD) iterator.next();
+				currentQD.updateTitles();
+			}
+			
+			if (needsToRestart)
+			{
+				JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
+				PreferenceManager.default_interface_font = (String) supportedFonts.getSelectedItem();
+				PreferenceManager.default_language = defaultLanguage.getSelectedIndex();
+				prefmngr.setValue(PreferenceManager.DEFAULT_INTERFACE_FONT_KEY, PreferenceManager.default_interface_font);
+				prefmngr.setInt(PreferenceManager.DEFAULT_LANGUAGE_KEY, PreferenceManager.default_language);
+			}
 		}
-		int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
 		
-		PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
-		PreferenceManager.highlight_position = highlightPosVal;
-		
-		prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-		prefmngr.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
-				
-		qd.player.setMultipleAnnotationPolicy(multipleHighlightPolicyVal==0);
-		
-		int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
-		
-		PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
-		prefmngr.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
-		
-		if (scrollingHighlightPolicyVal==0) {
-			if (qd != null) {
-				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
-				qd.player.setAutoScrolling(true);
+		private class QDFileFilter extends javax.swing.filechooser.FileFilter {
+			// accepts all directories and all savant files
+			public boolean accept(File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+				return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
 			}
-		} else {
-			if (qd != null) {
-				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
-				qd.player.setAutoScrolling(false);
+			//the description of this filter
+			public String getDescription() {
+				return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
 			}
 		}
-		
-		PreferenceManager.show_file_name_as_title = showFileNameAsTitle.getSelectedObjects()!=null ? 1:0;
-		prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
-		Iterator iterator = qdList.iterator();
-		QD currentQD;
-		while (iterator.hasNext())
-		{
-			currentQD = (QD) iterator.next();
-			currentQD.updateTitles();
-		}
-		
-		if (needsToRestart)
-		{
-			JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
-			PreferenceManager.default_interface_font = (String) supportedFonts.getSelectedItem();
-			PreferenceManager.default_language = defaultLanguage.getSelectedIndex();
-			prefmngr.setValue(PreferenceManager.DEFAULT_INTERFACE_FONT_KEY, PreferenceManager.default_interface_font);
-			prefmngr.setInt(PreferenceManager.DEFAULT_LANGUAGE_KEY, PreferenceManager.default_language);
+		private class OutputFileFilter extends javax.swing.filechooser.FileFilter {
+			// accepts all directories and all savant files
+			public boolean accept(File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+				return f.getName().toLowerCase().endsWith(".rtf") || f.getName().toLowerCase().endsWith(".ps");
+			}
+			//the description of this filter
+			public String getDescription() {
+				return "QD Output File Format (" + ".rtf" + ", " + ".ps" + ")";
+			}
 		}
 	}
 	
-	private class QDFileFilter extends javax.swing.filechooser.FileFilter {
-		// accepts all directories and all savant files
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
-			}
-			return f.getName().toLowerCase().endsWith(QDShell.dotQuillDriver) || f.getName().toLowerCase().endsWith(QDShell.dotQuillDriverTibetan);
-		}
-		//the description of this filter
-		public String getDescription() {
-			return "QD File Format (" + QDShell.dotQuillDriver + ", " + QDShell.dotQuillDriverTibetan + ")";
-		}
-	}
-        private class OutputFileFilter extends javax.swing.filechooser.FileFilter {
-		// accepts all directories and all savant files
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
-			}
-			return f.getName().toLowerCase().endsWith(".rtf") || f.getName().toLowerCase().endsWith(".ps");
-		}
-		//the description of this filter
-		public String getDescription() {
-			return "QD Output File Format (" + ".rtf" + ", " + ".ps" + ")";
-		}
-	}
-}
-		
