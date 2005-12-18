@@ -234,7 +234,7 @@ public class QDShell extends JFrame
 		String oldTitle=qd.getOldTitle(); 
 		qd.setOldTitle(menuTitle);
 		//QDShell.this.setTitle(topTitle);
-		QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+		QDShell.this.setTitle(menuTitle + " (" + qd.productName + ": " + messages.getString(qd.configuration.getName()) + ")");
 		openFileList.set(openFileList.indexOf(oldTitle), menuTitle);   
 		qd=(QD)openTranscriptToQDMap.remove(oldTitle);
 		openTranscriptToQDMap.put(menuTitle,qd);     
@@ -538,8 +538,8 @@ public class QDShell extends JFrame
 								menuTitle=menuTitle.concat(subStr);
 							}
 							
-						}                                                  
-						QDShell.this.setTitle(menuTitle+"-"+qd.productName);
+						}
+						QDShell.this.setTitle(menuTitle + " (" + qd.productName + ": " + messages.getString(qd.configuration.getName()) + ")");
 						openFileList.add(menuTitle);
 						qdList.add(qd);
 						openTranscriptToQDMap.put(menuTitle,qd);
@@ -834,7 +834,7 @@ public class QDShell extends JFrame
 				{  
 					qd=(QD)openTranscriptToQDMap.get(openFileList.get(0));
 					contentPane.add(qd);
-					QDShell.this.setTitle(qd.getOldTitle()+"-"+qd.productName);
+					QDShell.this.setTitle(qd.getOldTitle() + " (" + qd.productName + ": " + messages.getString(qd.configuration.getName()) + ")");
 					contentPane.repaint();				
 				}                                   
 				setJMenuBar(getQDShellMenu()); 
@@ -1166,7 +1166,7 @@ public class QDShell extends JFrame
 					}
 					qd = (QD)openTranscriptToQDMap.get(openFile);                                     
 					contentPane.add(qd);
-					QDShell.this.setTitle(qd.getWindowTitle(qd.getCurrentLang())+ " - "+qd.productName);
+					QDShell.this.setTitle(qd.getWindowTitle(qd.getCurrentLang()) + " (" + qd.productName + ": " + messages.getString(qd.configuration.getName()) + ")");					
 					contentPane.repaint();
 					setJMenuBar(getQDShellMenu()); 
 					setVisible(true);
