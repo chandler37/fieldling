@@ -64,6 +64,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	@UNICODE@public static final String productName = "QuillDriver";
 	@TIBETAN@public static final String productName = "QuillDriver-TIBETAN";
 	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
+	public static final String CONTENT_EDITABLE_NAME = "qd.contentEditable";
 	
 	protected int windowsMode=0;                
 	
@@ -801,8 +802,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					}
 				}
 			});
-			if (!configuration.canEdit()) editor.setEditable(false);
-			else editor.setEditabilityTracker(true);
+			Boolean contentEditable = (Boolean) configuration.getParameters().get(CONTENT_EDITABLE_NAME);
+			if (contentEditable==null)
+			{
+				if (!configuration.canEdit()) editor.setEditable(false);
+				else editor.setEditabilityTracker(true);
+			}
+			else
+			{
+				if (contentEditable.booleanValue()) editor.setEditabilityTracker(true);
+				else editor.setEditable(false);
+			}
 			try
 			{
 				//File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
@@ -828,17 +838,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	
 	public void updateTitles()
 	{
-		XPathExpression showFileNameXPath;
+		Boolean showFileNameBoolean;
 		if (PreferenceManager.show_file_name_as_title==-1)
 		{
-			showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
-			if (showFileNameXPath==null)
+			showFileNameBoolean = (Boolean) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
+			if (showFileNameBoolean==null)
 			{
 				PreferenceManager.show_file_name_as_title = 1;
 			}
 			else
 			{
-				PreferenceManager.show_file_name_as_title = Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0;
+				PreferenceManager.show_file_name_as_title = showFileNameBoolean.booleanValue()?1:0;
 			}
 			prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
 		}
@@ -1029,13 +1039,19 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	}
 	private Map getParametersForTransform(Object domContextNode) {
 		Map parameters = new HashMap();
+		XPathExpression xpath;
+		Object obj;
 		Iterator itty = configuration.getParameters().keySet().iterator();
 		while (itty.hasNext()) {
 			String key = (String)itty.next();
-			XPathExpression xpath = (XPathExpression)configuration.getParameters().get(key);
 			if (!key.startsWith("qd.")) {
-				org.w3c.dom.Node domNodeParam = XPathUtilities.saxonSelectSingleDOMNode(domContextNode, xpath);
-				parameters.put(key, domNodeParam);
+				obj = configuration.getParameters().get(key);
+				if (obj instanceof XPathExpression)
+				{
+					xpath = (XPathExpression) obj;
+					org.w3c.dom.Node domNodeParam = XPathUtilities.saxonSelectSingleDOMNode(domContextNode, xpath);
+					parameters.put(key, domNodeParam);
+				}
 			}
 		}
 		float inSeconds = tcp.getInTime().floatValue() / 1000; //convert from milliseconds

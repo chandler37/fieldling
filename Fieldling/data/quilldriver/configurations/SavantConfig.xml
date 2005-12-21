@@ -2,27 +2,29 @@
 <qd-configuration>
 	<parameters>
 		<xmlschema val="TibetanTranscript.xsd"/>
-		<parameter name="qd.root.element" val="TEXT" type="text"/>
-		<parameter name="qd.title" val="/TEXT/HEADER/TITLE"/>
-		<parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB"/>
-		<parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH"/>
-		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href"/>
-		<parameter name="qd.timealignednodes" val="//*[AUDIO]"/>
-		<parameter name="qd.nodebegins" val="AUDIO/@start"/>
-		<parameter name="qd.nodeends" val="AUDIO/@end"/>
-		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]"/>
-		<parameter name="qd.showfilenameastitlebydefault" val="false"/>
+		<!--<xsltransform val="TranscriptionRead.xsl"/>-->
+		<parameter name="qd.root.element" val="TEXT" type="XPathExpression"/>
+		<parameter name="qd.title" val="/TEXT/HEADER/TITLE" type="XPathExpression"/>
+		<parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB" type="XPathExpression"/>
+		<parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH" type="XPathExpression"/>
+		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href" type="XPathExpression"/>
+		<parameter name="qd.timealignednodes" val="//*[AUDIO]" type="XPathExpression"/>
+		<parameter name="qd.nodebegins" val="AUDIO/@start" type="XPathExpression"/>
+		<parameter name="qd.nodeends" val="AUDIO/@end" type="XPathExpression"/>
+		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]" type="XPathExpression"/>
+		<parameter name="qd.showfilenameastitlebydefault" val="false" type="Boolean"/>
+		<parameter name="qd.contentEditable" val="false" type="Boolean"/>
 	</parameters>
 	<menus>
-		<!-- <menu name="Transcript" contains="FixMedia"/> -->
+		<menu name="Transcript" contains="FixMedia"/>
 		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine NextSentence PreviousSentence GotoStart GotoEnd"/>
 	</menus>
 	<actions>
-		<!-- file menu -->	
-		<!-- <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="saveTranscript">
+		<!-- file menu -->
+		<action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="saveTranscript">
 			<helptext ref="help34"/>
-		</action> -->
-		<!-- browse menu -->			
+		</action>
+		<!-- browse menu -->
 		<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
 			<helptext ref="help1"/>
 		</action>
@@ -52,7 +54,7 @@
 		</action>
 		<action name="GotoEnd" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="seekEnd">
 			<helptext ref="help33"/>
-		</action>		
+		</action>
 	</actions>
 	<rendering-instructions>
 		<tag name="TEXT" visible="false">
@@ -63,7 +65,6 @@
 			<attribute name="type" visible="false"/>
 		</tag>
 		<tag name="AUDIO" visible="false" visiblecontents="false"/>
-		
 		<tagview name="TranscriptionOnly" keystroke="F1">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true" tibetancontents="true">
 				<attribute name="id" visible="false"/>
@@ -75,7 +76,6 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
@@ -89,7 +89,6 @@
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="TranscriptionPlusChinese" keystroke="F3">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
@@ -103,13 +102,12 @@
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 		</tagview>
-		
 		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
-                        <tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
 				<attribute name="type" visible="false"/>
 			</tag>
 			<tag name="TRANSL" visible="false" visiblecontents="true">
@@ -119,7 +117,6 @@
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 		</tagview>
-		
 		<tagview name="EnglishPlusChinese" keystroke="F5">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -133,7 +130,6 @@
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 		</tagview>
-		
 		<tagview name="Translation_ENOnly" keystroke="F6">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -145,7 +141,6 @@
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="Translation_ZHOnly" keystroke="F7">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -156,8 +151,7 @@
 				<attribute name="xml:lang" visible="false"/>
 			</tag>
 			<tag name="FORM" visible="false" visiblecontents="false"/>
-		</tagview>		
-
+		</tagview>
 		<tagview name="WylieOnly" keystroke="F8">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -169,7 +163,6 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="WylieAndEnglish" keystroke="F9">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -183,7 +176,6 @@
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="NotesOnly" keystroke="F10">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -196,7 +188,6 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-
 		<tagview name="TranscriptionPlusNotes" keystroke="F11">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
@@ -211,7 +202,6 @@
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-
 		<tagview name="EnglishPlusNotes" keystroke="F12">
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
@@ -226,9 +216,8 @@
 			</tag>
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
-		
 		<tagview name="ShowEverything">
-			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))"  tibetan="true">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>

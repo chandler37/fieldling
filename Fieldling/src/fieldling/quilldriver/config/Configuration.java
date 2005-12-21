@@ -102,12 +102,21 @@ public class Configuration
 		parameters = new HashMap(defaultProperties);
 		List parameterList = parameterSet.getChildren(ONE_PARAMETER_ELEMENT_NAME);
 		Iterator it = parameterList.iterator();
+		String type;
 		while (it.hasNext()) {
 			org.jdom.Element e = (org.jdom.Element)it.next();
-			try {
-				parameters.put(e.getAttributeValue("name"), xpathEnvironment.compile(e.getAttributeValue("val")));
-			} catch (XPathExpressionException xpe) {
-				xpe.printStackTrace();
+			type = e.getAttributeValue("type");
+			if (type.equals("XPathExpression"))
+			{
+				try {
+					parameters.put(e.getAttributeValue("name"), xpathEnvironment.compile(e.getAttributeValue("val")));
+				} catch (XPathExpressionException xpe) {
+					xpe.printStackTrace();
+				}
+			}
+			else if (type.equals("Boolean"))
+			{
+				parameters.put(e.getAttributeValue("name"), new Boolean(e.getAttributeValue("val")));
 			}
 		}
 		actionProfiles = new HashMap();
@@ -213,6 +222,7 @@ public class Configuration
 		else
 			return new HashMap();
 	}
+	
 	public Map getActionProfiles() {
 		if (isConfigured)
 			return actionProfiles;
@@ -473,7 +483,8 @@ public class Configuration
 						System.out.println("can't find any QD parent");
 						return;
 					}
-					qd.transformTranscript(qd.getEditor().getNodeForOffset(qd.getEditor().getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
+					Editor editor = qd.getEditor();
+					qd.transformTranscript(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
 					if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
 				}
 			};
@@ -543,6 +554,4 @@ public class Configuration
 	 return qd;
 	 }
 	 */
-	
-	
 }

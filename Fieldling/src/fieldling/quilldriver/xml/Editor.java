@@ -36,17 +36,17 @@ import org.w3c.dom.Attr;
 
 public class Editor {
 	private EventListenerList listenerList = new EventListenerList();
-        private Document xml;
+	private Document xml;
 	private JTextPane pane;
 	private StyledDocument doc;
-
+	
 	//listeners
 	private DocumentListener docListener;
 	private MouseMotionAdapter mouseMotionListener;
 	private MouseAdapter mouseListener;
 	private FocusListener focusListener;
 	private CaretListener editabilityTracker;
-
+	
 	private Map startOffsets, endOffsets;
 	private final float indentIncrement = 15.0F;
 	private final Color tagColor = Color.magenta;
@@ -60,37 +60,37 @@ public class Editor {
 	private boolean changedSinceLastSaved = false;
 	private Hashtable actions;
 	private TagInfo tagInfo;
-
-        public Editor(Document xmlDoc, JTextPane textPane, TagInfo tagInfo) {
-                    xml = xmlDoc;
-                    pane = textPane;
-                    this.tagInfo = tagInfo;
-                    startOffsets = new HashMap();
-                    endOffsets = new HashMap();
-            //For some reason uppercase color names, e.g. Color.CYAN and Color.RED,
-            //are not recognized on Mac OS X, for Java 1.3.1 at least!!
-                    pane.setSelectionColor(Color.cyan);
-                    pane.setSelectedTextColor(Color.red);
-                    doc = pane.getStyledDocument();
-                    textCursor = new Cursor(Cursor.TEXT_CURSOR);
-                    defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-                    initializeListeners();
-                    render();
-                    installKeymap();
-            }
-            public void setTagInfo(TagInfo tagInfo) {
-                    this.tagInfo = tagInfo;
-                    render();
-            }
-        public TagInfo getTagInfo() {
-            return tagInfo;
-        }
-        public Map getStartOffsets() {
-            return startOffsets;
-        }
-        public Map getEndOffsets() {
-            return endOffsets;
-        }
+	
+	public Editor(Document xmlDoc, JTextPane textPane, TagInfo tagInfo) {
+		xml = xmlDoc;
+		pane = textPane;
+		this.tagInfo = tagInfo;
+		startOffsets = new HashMap();
+		endOffsets = new HashMap();
+		//For some reason uppercase color names, e.g. Color.CYAN and Color.RED,
+		//are not recognized on Mac OS X, for Java 1.3.1 at least!!
+		pane.setSelectionColor(Color.cyan);
+		pane.setSelectedTextColor(Color.red);
+		doc = pane.getStyledDocument();
+		textCursor = new Cursor(Cursor.TEXT_CURSOR);
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		initializeListeners();
+		render();
+		installKeymap();
+	}
+	public void setTagInfo(TagInfo tagInfo) {
+		this.tagInfo = tagInfo;
+		render();
+	}
+	public TagInfo getTagInfo() {
+		return tagInfo;
+	}
+	public Map getStartOffsets() {
+		return startOffsets;
+	}
+	public Map getEndOffsets() {
+		return endOffsets;
+	}
 	private void installKeymap() {
 		Action selForwardAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -140,7 +140,7 @@ public class Editor {
 		};
 		createActionTable(pane);
 		Keymap keymap = pane.addKeymap("QDBindings", pane.getKeymap());
-
+		
 		//backspace
 		Action deletePrevAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -159,25 +159,25 @@ public class Editor {
 		};
 		KeyStroke backSpace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
 		keymap.addActionForKeyStroke(backSpace, deletePrevAction);
-
+		
 		/* The Java bug database has several related bugs concerning the treatment
-		of backspace. Here I adopt solution based on fix of bug 4402080:
-		Evaluation  The text components now key off of KEY_TYPED with a keyChar == 8 to do the
-		deletion. The motivation for this can be found in bug 4256901.
-		xxxxx@xxxxx 2001-01-05 */
+		 of backspace. Here I adopt solution based on fix of bug 4402080:
+		 Evaluation  The text components now key off of KEY_TYPED with a keyChar == 8 to do the
+		 deletion. The motivation for this can be found in bug 4256901.
+		 xxxxx@xxxxx 2001-01-05 */
 		pane.addKeyListener(new java.awt.event.KeyAdapter() {
 			/* NOT ACTUALLY NEEDED, AT LEAST FOR WINDOWS
-			public void keyReleased(KeyEvent kev) {
-				if (kev.getKeyCode() == KeyEvent.VK_DELETE) {//LOGGINGSystem.out.println("delete released"); kev.consume();}
-			}*/
+			 public void keyReleased(KeyEvent kev) {
+			 if (kev.getKeyCode() == KeyEvent.VK_DELETE) {//LOGGINGSystem.out.println("delete released"); kev.consume();}
+			 }*/
 			public void keyTyped(KeyEvent kev) {
 				if (kev.getKeyChar() == 8) kev.consume();
 				/* Above is equivalent to:
-					if(kev.paramString().indexOf("Backspace") != -1) kev.consume();	*/
+				 if(kev.paramString().indexOf("Backspace") != -1) kev.consume();	*/
 				else if (kev.getKeyCode() == KeyEvent.VK_TAB) kev.consume();
 			}
 		});
-
+		
 		//delete
 		Action deleteNextAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -196,7 +196,7 @@ public class Editor {
 		};
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
 		keymap.addActionForKeyStroke(delete, deleteNextAction);
-
+		
 		KeyStroke[] selEndLineKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.selectionEndLineAction));
 		if (selEndLineKeys != null)
 			for (int i=0; i<selEndLineKeys.length; i++)
@@ -213,7 +213,7 @@ public class Editor {
 		if (selBegParaKeys != null)
 			for (int i=0; i<selBegParaKeys.length; i++)
 				keymap.addActionForKeyStroke(selBegParaKeys[i], selectToNodeStartAction);
-
+		
 		//home
 		Action begNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -223,7 +223,7 @@ public class Editor {
 			}
 		};
 		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), begNodeAction);
-
+		
 		//end
 		Action endNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -233,7 +233,7 @@ public class Editor {
 			}
 		};
 		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), endNodeAction);
-
+		
 		//select all (Ctrl-A)
 		Action selectNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -248,7 +248,7 @@ public class Editor {
 			}
 		};
 		keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), selectNodeAction);
-
+		
 		//cut (Ctrl-X)
 		Action cutAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -266,7 +266,7 @@ public class Editor {
 		};
 		KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(cut, cutAction);
-
+		
 		//copy (Ctrl-C)
 		Action copyAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -284,7 +284,7 @@ public class Editor {
 		};
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(copy, copyAction);
-
+		
 		//paste (Ctrl-V)
 		Action pasteAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -302,24 +302,24 @@ public class Editor {
 					@TIBETAN@if (node instanceof Text) {
 						@TIBETAN@Text nodeText = (Text)node;
 						@TIBETAN@isTibetan = Editor.this.tagInfo.areTagContentsTibetan(nodeText.getParentNode().getNodeName());
-					@TIBETAN@}
-
+						@TIBETAN@}
+					
 					//if Tibetan, then use DuffPane's build-in RTF copy and paste support, which means
 					//that it will be possible to paste non-Tibetan into Tibetan field
 					@TIBETAN@if (isTibetan) p.paste();
 					@TIBETAN@else { // use String flavor of system clipboard for all else
 						@TIBETAN@Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 						@TIBETAN@try {
-						    @TIBETAN@if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-							@TIBETAN@String text = (String)t.getTransferData(DataFlavor.stringFlavor);
-							@TIBETAN@p.replaceSelection(text);
-						    @TIBETAN@}
-						@TIBETAN@} catch (UnsupportedFlavorException ufe) {
-						@TIBETAN@	ufe.printStackTrace();
-						@TIBETAN@} catch (IOException ioe) {
-						@TIBETAN@	ioe.printStackTrace();
-						@TIBETAN@}
-					@TIBETAN@}
+							@TIBETAN@if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+								@TIBETAN@String text = (String)t.getTransferData(DataFlavor.stringFlavor);
+								@TIBETAN@p.replaceSelection(text);
+								@TIBETAN@}
+							@TIBETAN@} catch (UnsupportedFlavorException ufe) {
+								@TIBETAN@	ufe.printStackTrace();
+								@TIBETAN@} catch (IOException ioe) {
+									@TIBETAN@	ioe.printStackTrace();
+									@TIBETAN@}
+								@TIBETAN@}
 					@UNICODE@p.paste();
 					SimpleAttributeSet sas = new SimpleAttributeSet();
 					sas.addAttribute("xmlnode", node);
@@ -329,7 +329,7 @@ public class Editor {
 		};
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
 		keymap.addActionForKeyStroke(paste, pasteAction);
-
+		
 		//left arrow key
 		Action backwardAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -348,7 +348,7 @@ public class Editor {
 		};
 		KeyStroke back = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 		keymap.addActionForKeyStroke(back, backwardAction);
-
+		
 		//right arrow key
 		Action forwardAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -367,7 +367,7 @@ public class Editor {
 		};
 		KeyStroke forward = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 		keymap.addActionForKeyStroke(forward, forwardAction);
-
+		
 		//previous node: up arrow
 		Action prevNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -385,7 +385,7 @@ public class Editor {
 		};
 		KeyStroke up = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
 		keymap.addActionForKeyStroke(up, prevNodeAction);
-
+		
 		//next node: down arrow, TAB, and ENTER
 		Action nextNodeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -409,7 +409,7 @@ public class Editor {
 		if (tabKey != null) keymap.addActionForKeyStroke(tabKey, nextNodeAction);
 		KeyStroke enterKey = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		if (enterKey != null) keymap.addActionForKeyStroke(enterKey, nextNodeAction);
-
+		
 		KeyStroke[] forwardKeys = keymap.getKeyStrokesForAction(getActionByName(DefaultEditorKit.forwardAction));
 		if (forwardKeys != null)
 			for (int i=0; i<forwardKeys.length; i++)
@@ -422,19 +422,19 @@ public class Editor {
 		if (selBackKeys != null)
 			for (int i=0; i<selBackKeys.length; i++)
 				keymap.addActionForKeyStroke(selBackKeys[i], selBackwardAction);
-
+		
 		//escape
 		KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		if (escapeKey != null) keymap.addActionForKeyStroke(escapeKey, loseFocusAction);
-
+		
 		//default keypress
 		final Action parentDefault = keymap.getDefaultAction();
 		Action thisDefault = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) ||
-				((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) ||
-				((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK)) return;
-
+						((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) ||
+						((e.getModifiers() & ActionEvent.META_MASK) == ActionEvent.META_MASK)) return;
+				
 				if (e.getActionCommand() != null) {
 					int p = pane.getCaretPosition();
 					if (editingNode != getNodeForOffset(p)) {
@@ -451,21 +451,21 @@ public class Editor {
 		};
 		keymap.setDefaultAction(thisDefault);
 		pane.setKeymap(keymap);
-/*
-Actions that still need to be defined:
-Fields inherited from class javax.swing.text.DefaultEditorKit
-beepAction, beginAction, beginWordAction, copyAction, cutAction,
-defaultKeyTypedAction,
-downAction, endAction, EndOfLineStringProperty,
-endWordAction, insertBreakAction, insertContentAction,
-nextWordAction, pageDownAction, pageUpAction,
-pasteAction, previousWordAction, readOnlyAction
-selectionBeginAction, selectionBeginWordAction,
-selectionDownAction, selectionEndAction, selectionEndWordAction,
-selectionNextWordAction, selectionPreviousWordAction,
-selectionUpAction, selectWordAction,
-upAction, writableAction
-*/
+		/*
+		 Actions that still need to be defined:
+		 Fields inherited from class javax.swing.text.DefaultEditorKit
+		 beepAction, beginAction, beginWordAction, copyAction, cutAction,
+		 defaultKeyTypedAction,
+		 downAction, endAction, EndOfLineStringProperty,
+		 endWordAction, insertBreakAction, insertContentAction,
+		 nextWordAction, pageDownAction, pageUpAction,
+		 pasteAction, previousWordAction, readOnlyAction
+		 selectionBeginAction, selectionBeginWordAction,
+		 selectionDownAction, selectionEndAction, selectionEndWordAction,
+		 selectionNextWordAction, selectionPreviousWordAction,
+		 selectionUpAction, selectWordAction,
+		 upAction, writableAction
+		 */
 	}
 	public void setEditabilityTracker(boolean bool) {
 		if (bool) {
@@ -541,17 +541,17 @@ upAction, writableAction
 		};
 		mouseListener = new MouseAdapter() {
 			/* Here's when these methods get called:
-				mousePressed: always
-				mouseClicked: only when you don't move the mouse in between pressing and releasing
-				mouseReleased: always
-			This is crucial info for handling cut, copy and paste, since making a selection
-			involves pressing, moving, and then releasing the mouse. */
-
+			 mousePressed: always
+			 mouseClicked: only when you don't move the mouse in between pressing and releasing
+			 mouseReleased: always
+			 This is crucial info for handling cut, copy and paste, since making a selection
+			 involves pressing, moving, and then releasing the mouse. */
+			
 			public void mouseClicked(MouseEvent e) {
 				JTextPane p = (JTextPane)e.getSource();
 				int offset = p.viewToModel(e.getPoint());
 				if (!isEditable(offset)) {
-//LOGGING//LOGGINGSystem.out.println("clicked on uneditable " + String.valueOf(offset));
+//					LOGGING//LOGGINGSystem.out.println("clicked on uneditable " + String.valueOf(offset));
 					Object node = getNodeForOffset(offset);
 					if (isEditing) fireEndEditEvent();
 					if (node != null) fireCantEditEvent(getNodeForOffset(offset));
@@ -561,7 +561,7 @@ upAction, writableAction
 				JTextPane p = (JTextPane)e.getSource();
 				int offset = p.viewToModel(e.getPoint());
 				if (isEditable(offset)) {
-//LOGGING//LOGGINGSystem.out.println("clicked on editable " + String.valueOf(offset));
+//					LOGGING//LOGGINGSystem.out.println("clicked on editable " + String.valueOf(offset));
 					p.requestFocus();
 					if (isEditing) fireEndEditEvent();
 					fireStartEditEvent(getNodeForOffset(offset));
@@ -612,15 +612,15 @@ upAction, writableAction
 		};
 	}
 	private void createActionTable(JTextComponent textComponent) {
-	    actions = new Hashtable();
-	    Action[] actionsArray = textComponent.getActions();
-	    for (int i = 0; i < actionsArray.length; i++) {
-		Action a = actionsArray[i];
-		actions.put(a.getValue(Action.NAME), a);
-	    }
+		actions = new Hashtable();
+		Action[] actionsArray = textComponent.getActions();
+		for (int i = 0; i < actionsArray.length; i++) {
+			Action a = actionsArray[i];
+			actions.put(a.getValue(Action.NAME), a);
+		}
 	}
 	private Action getActionByName(String name) {
-	    return (Action)(actions.get(name));
+		return (Action)(actions.get(name));
 	}
 	public void updateNode(Object node) {
 		//LOGGINGSystem.out.println("updating: " + node.toString());
@@ -630,15 +630,15 @@ upAction, writableAction
 			if (node instanceof Text) {
 				int p1 = ((Position)startOffsets.get(node)).getOffset();
 				int p2 = ((Position)endOffsets.get(node)).getOffset();
-
+				
 				String val;
-
+				
 				@TIBETAN@Text t = (Text)node;
 				@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && tagInfo.areTagContentsTibetan(t.getParentNode().getNodeName())) {
 					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
-                    @TIBETAN@boolean[] noSuchWylie = new boolean[1];
+					@TIBETAN@boolean[] noSuchWylie = new boolean[1];
 					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2, noSuchWylie);
-				@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
+					@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
 				@UNICODE@val = pane.getDocument().getText(p1, p2-p1).trim();
 				if (val.length()==0) val=new String(" ");
 				Text text = (Text)node;
@@ -666,7 +666,7 @@ upAction, writableAction
 	}
 	public class NodeEditEvent extends EventObject {
 		Object node;
-
+		
 		NodeEditEvent(Object node) {
 			super(node);
 			this.node = node;
@@ -699,29 +699,29 @@ upAction, writableAction
 			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 			@TIBETAN@if (tagInfo.areTagContentsTibetan(t.getParentNode().getNodeName())) {
 				@TIBETAN@if (duff.isRomanMode()) duff.toggleLanguage();
-			@TIBETAN@} else if (!duff.isRomanMode()) duff.toggleLanguage();
-		@TIBETAN@}
-
+				@TIBETAN@} else if (!duff.isRomanMode()) duff.toggleLanguage();
+			@TIBETAN@}
+		
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 		for (int i = listeners.length-2; i>=0; i-=2) {
 			if (listeners[i]==NodeEditListener.class)
 				((NodeEditListener)listeners[i+1]).nodeEditPerformed(new StartEditEvent(node));
 		}
-
+		
 		isEditing = true;
 		editingNode = node;
 		hasChanged = false;
 	}
 	public void fireEndEditEvent() {
 		if (!isEditing) return;
-
+		
 		@TIBETAN@if (pane instanceof org.thdl.tib.input.DuffPane && editingNode instanceof Text) {
 			@TIBETAN@Text t = (Text)editingNode;
 			@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 			@TIBETAN@if (!duff.isRomanMode()) duff.toggleLanguage();
-		@TIBETAN@}
-
+			@TIBETAN@}
+		
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 		for (int i = listeners.length-2; i>=0; i-=2) {
@@ -731,8 +731,8 @@ upAction, writableAction
 		if (hasChanged) { //FIXME allows text on screen to be changed even when node itself cannot be changed!
 			if (editingNode instanceof Text) {
 				Text t = (Text)editingNode;
-                if (tagInfo.isTagEditable(t.getParentNode().getNodeName()))
-                        updateNode(editingNode);
+				if (tagInfo.isTagEditable(t.getParentNode().getNodeName()))
+					updateNode(editingNode);
 			} else if (editingNode instanceof Attr) {
 				Attr a = (Attr)editingNode;
 				if (tagInfo.isTagEditable(a.getOwnerElement().getNodeName()))
@@ -755,7 +755,7 @@ upAction, writableAction
 		xml = d;
 		render();
 	}
-    public void render() {
+	public void render() {
 		//LOGGINGSystem.out.println("rendering xml");
 		boolean makeUneditable = false;
 		if (!isEditable()) { //if you don't make the pane editable while rendering, then icons cannot be inserted
@@ -774,11 +774,11 @@ upAction, writableAction
 		}
 		startOffsets.clear();
 		endOffsets.clear();
-
-        Element root = xml.getDocumentElement();
+		
+		Element root = xml.getDocumentElement();
 		Renderer.renderElement(root, pane, doc.getLength(), 0.0F, tagInfo, startOffsets, endOffsets);
 		
-        SimpleAttributeSet eColor = new SimpleAttributeSet();
+		SimpleAttributeSet eColor = new SimpleAttributeSet();
 		eColor.addAttribute("xmlnode", root);
 		doc.setParagraphAttributes(doc.getLength(), 1, eColor, false);
 		fixOffsets();
@@ -820,54 +820,54 @@ upAction, writableAction
 			endOffsets.remove(node);
 		}
 	}
-            //FIXME: this whole section needs to be sensitive to whether or
-            //not node is visible on screen, and whether or not what replaces
-            //it should be visible or not. right now, the following code won't
-            //work right if the transformed node is not visible
-            //boolean redraw = true;
-            //if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
-            //if (redraw) {
-        public void replaceNode(Node removedNode, Node firstNodeInReplacement, Node firstNodeAfterReplacement) {
-            int start = getStartOffsetForNode(removedNode);
-            int end = getEndOffsetForNode(removedNode);
-            removeNode(removedNode);
-            StyledDocument tDoc = getTextPane().getStyledDocument();
-            AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
-            float indent = StyleConstants.getLeftIndent(attSet);
-            try {
-                tDoc.insertString(end, "\n", null);
-                tDoc.remove(start, end-start);
-                //tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
-            } catch (BadLocationException ble) {
-                ble.printStackTrace();
-                return;
-            }
-            int insertPos = start;
-            Node next = firstNodeInReplacement;
-            while ( !(next == null || next.isSameNode(firstNodeAfterReplacement)) ) {
-                insertPos = Renderer.render(next, getTextPane(), insertPos, indent, getTagInfo(), getStartOffsets(), getEndOffsets());
-                next = next.getNextSibling();
-            }
-            try {
-                tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
-                String s = tDoc.getText(insertPos-1, 2);
-                if (s.charAt(1)=='\n') {
-                    if (s.charAt(0)=='\n') {
-                        tDoc.remove(insertPos-1, 1); //if two newlines, delete first
-                        AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
-                        tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
-                    } else {
-                        AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
-                        tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
-                    }
-                    //LOGGINGSystem.out.println("carriage return detected");
-                }
-            } catch (BadLocationException ble) {	
-                ble.printStackTrace();
-                return;
-            }
-            fixOffsets();
-        }
+	//FIXME: this whole section needs to be sensitive to whether or
+	//not node is visible on screen, and whether or not what replaces
+	//it should be visible or not. right now, the following code won't
+	//work right if the transformed node is not visible
+	//boolean redraw = true;
+	//if (start == -1 || end == -1) redraw = false; //node is visible, so redraw transformed text segment
+	//if (redraw) {
+	public void replaceNode(Node removedNode, Node firstNodeInReplacement, Node firstNodeAfterReplacement) {
+		int start = getStartOffsetForNode(removedNode);
+		int end = getEndOffsetForNode(removedNode);
+		removeNode(removedNode);
+		StyledDocument tDoc = getTextPane().getStyledDocument();
+		AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
+		float indent = StyleConstants.getLeftIndent(attSet);
+		try {
+			tDoc.insertString(end, "\n", null);
+			tDoc.remove(start, end-start);
+			//tDoc.insertString(PUT A CARRIAGE RETURN HERE... FOR TEXT)
+		} catch (BadLocationException ble) {
+			ble.printStackTrace();
+			return;
+		}
+		int insertPos = start;
+		Node next = firstNodeInReplacement;
+		while ( !(next == null || next.isSameNode(firstNodeAfterReplacement)) ) {
+			insertPos = Renderer.render(next, getTextPane(), insertPos, indent, getTagInfo(), getStartOffsets(), getEndOffsets());
+			next = next.getNextSibling();
+		}
+		try {
+			tDoc.remove(insertPos, 1); //removes extra dummy new line inserted above to protect indentation
+			String s = tDoc.getText(insertPos-1, 2);
+			if (s.charAt(1)=='\n') {
+				if (s.charAt(0)=='\n') {
+					tDoc.remove(insertPos-1, 1); //if two newlines, delete first
+					AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-2).getAttributes();
+					tDoc.setCharacterAttributes(insertPos-1, 1, attSet2, false);
+				} else {
+					AttributeSet attSet2 = tDoc.getCharacterElement(insertPos-1).getAttributes();
+					tDoc.setCharacterAttributes(insertPos, 1, attSet2, false);
+				}
+				//LOGGINGSystem.out.println("carriage return detected");
+			}
+		} catch (BadLocationException ble) {	
+			ble.printStackTrace();
+			return;
+		}
+		fixOffsets();
+	}
 	public Object getNodeForOffset(int offset) {
 		AttributeSet attSet = doc.getCharacterElement(offset).getAttributes();
 		return attSet.getAttribute("xmlnode");
@@ -882,39 +882,39 @@ upAction, writableAction
 		if (pos == null) return -1;
 		else return pos.getOffset();
 	}
-        public Object getNextVisibleNode(int offset, XPathExpression nodeSelector) {
-            int k=0;
-            Object context = getNodeForOffset(offset);
-            boolean keepSearching;
-            do {
-                keepSearching = false;
-                if (context != null) {
-                    try {
-                        k++; 
-                        Object moveTo = nodeSelector.evaluate(context, XPathConstants.NODE);
-                        if (k == 100) return null; //FIXME -- prevents a potential endless loop
-                        if (getStartOffsetForNode(moveTo) > -1) {
-                            return moveTo;
-                        } else {
-                            keepSearching = true; //search again
-                            context = moveTo;
-                        }
-                    } catch (XPathExpressionException xpee) {
-                        xpee.printStackTrace();
-                        return null;
-                    }
-                }
-            } while (keepSearching);
-            return null;
-        }
+	public Object getNextVisibleNode(int offset, XPathExpression nodeSelector) {
+		int k=0;
+		Object context = getNodeForOffset(offset);
+		boolean keepSearching;
+		do {
+			keepSearching = false;
+			if (context != null) {
+				try {
+					k++; 
+					Object moveTo = nodeSelector.evaluate(context, XPathConstants.NODE);
+					if (k == 100) return null; //FIXME -- prevents a potential endless loop
+					if (getStartOffsetForNode(moveTo) > -1) {
+						return moveTo;
+					} else {
+						keepSearching = true; //search again
+						context = moveTo;
+					}
+				} catch (XPathExpressionException xpee) {
+					xpee.printStackTrace();
+					return null;
+				}
+			}
+		} while (keepSearching);
+		return null;
+	}
 	public boolean isEditable(int offset) {
 		Object node = getNodeForOffset(offset);
 		if ((node instanceof Text) &&
-			(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)))
-				return false;
+				(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)))
+			return false;
 		else if (node instanceof Attr &&
-			(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)-1))
-				return false;
+				(offset<getStartOffsetForNode(node) || offset>getEndOffsetForNode(node)-1))
+			return false;
 		else
 			return isEditable(node);
 	}
