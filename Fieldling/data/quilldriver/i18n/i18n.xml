@@ -1619,5 +1619,21 @@
     <text lang="en">Show filename as title of inner windows</text>
     <text lang="zh">Show filename as title of inner windows</text>
   </message>
+  <message id="ConfigurationDefault">
+    <text lang="en">Configuration's default</text>
+    <text lang="zh">Configuration's default</text>
+  </message>  
+  <message id="Never">
+    <text lang="en">Never</text>
+    <text lang="zh">Never</text>
+  </message>
+  <message id="Always">
+    <text lang="en">Always</text>
+    <text lang="zh">Always</text>
+  </message>
+  <message id="ShowTimeCodingBar">
+    <text lang="en">Show time coding bar:</text>
+    <text lang="zh">Show time coding bar：</text>
+  </message>
 </all-messages>
 

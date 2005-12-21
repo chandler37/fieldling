@@ -14,6 +14,7 @@
 		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]" type="XPathExpression"/>
 		<parameter name="qd.showfilenameastitlebydefault" val="false" type="Boolean"/>
 		<parameter name="qd.contentEditable" val="false" type="Boolean"/>
+		<parameter name="qd.showtimecodingbydefault" val="false" type="Boolean"/>
 	</parameters>
 	<menus>
 		<menu name="Transcript" contains="FixMedia"/>

@@ -83,6 +83,7 @@ public class PreferenceManager extends JPanel {
 	@TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
 	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 	public static final String SHOW_FILE_NAME_AS_TITLE_KEY = "SHOW_FILE_NAME_AS_TITLE";
+	public static final String SHOW_TIME_CODING_KEY = "SHOW_TIME_CODING";
 	public static String media_directory;
 	public static int slow_adjust;
 	public static int rapid_adjust;
@@ -96,6 +97,7 @@ public class PreferenceManager extends JPanel {
 	public static int scrolling_highlight_policy;
 	public static int multiple_highlight_policy;
 	public static int show_file_name_as_title;
+	public static int show_time_coding;
 	@TIBETAN@public static int tibetan_font_size;
 	public static String working_directory;
 	@TIBETAN@public static String tibetan_keyboard;
@@ -165,6 +167,7 @@ public class PreferenceManager extends JPanel {
 		use_wizard = getInt(USE_WIZARD_KEY, 1);
 		@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, -1);
+		show_time_coding = getInt(SHOW_TIME_CODING_KEY, -1);
 	}
 	
 	

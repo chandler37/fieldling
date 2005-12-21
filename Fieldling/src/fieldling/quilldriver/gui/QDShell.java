@@ -1384,13 +1384,13 @@ public class QDShell extends JFrame
 		// main panels to be used
 		JPanel interfacePanel, transcriptPanel, highlightPanel;
 		
-		JComboBox highlightPosition;
+		JComboBox highlightPosition, showTimeCoding;
 		JCheckBox multipleHighlightPolicy, scrollingHighlightPolicy, showFileNameAsTitle;  		
 		
 		// intermediate panels for rendering
 		JPanel hPanel;
 		
-		interfacePanel = new JPanel(new GridLayout(3,2));
+		interfacePanel = new JPanel(new GridLayout(4,2));
 		interfacePanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Interface")));
 		interfacePanel.add(new JLabel(messages.getString("Language")));
 		
@@ -1460,10 +1460,28 @@ public class QDShell extends JFrame
 		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		hPanel.add(defaultLanguage);
 		interfacePanel.add(hPanel);
-		interfacePanel.add(new JLabel(messages.getString("Font")));
 		
+		interfacePanel.add(new JLabel(messages.getString("Font")));
 		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		hPanel.add(supportedFonts);
+		interfacePanel.add(hPanel);
+
+		showTimeCoding = new JComboBox();
+		showTimeCoding.addItem(messages.getString("ConfigurationDefault"));
+		showTimeCoding.addItem(messages.getString("Never"));
+		showTimeCoding.addItem(messages.getString("Always"));
+		showTimeCoding.setSelectedIndex(PreferenceManager.show_time_coding + 1);
+		showTimeCoding.addItemListener(new ItemListener()
+				{
+			public void itemStateChanged(ItemEvent e) 
+			{
+				optionsChanged = true;
+			}				
+				});
+
+		interfacePanel.add(new JLabel(messages.getString("ShowTimeCodingBar")));
+		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hPanel.add(showTimeCoding);
 		interfacePanel.add(hPanel);
 		
 		showFileNameAsTitle = new JCheckBox(messages.getString("ShowFileNameAsTitle"));
@@ -1476,7 +1494,7 @@ public class QDShell extends JFrame
 			}				
 				});
 		interfacePanel.add(showFileNameAsTitle);
-		
+				
 		transcriptPanel = new JPanel(new GridLayout(0, 2, 10, 10));
 		
 		transcriptPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Transcript")));
@@ -1665,7 +1683,10 @@ public class QDShell extends JFrame
 		prefmngr.setValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.font_face);
 		prefmngr.setInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.font_size);
 		@TIBETAN@prefmngr.setInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.tibetan_font_size);
-		Editor editor = qd.getEditor();
+		
+		Editor editor;
+		if (qd!=null) editor = qd.getEditor();
+		else editor = null;
 		
 		fieldling.quilldriver.xml.Renderer.setTagColor(tagColor);
 		PreferenceManager.tag_color_red = tagColor.getRed();
@@ -1676,6 +1697,16 @@ public class QDShell extends JFrame
 		prefmngr.setInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.tag_color_blue);		
 		
 		String highlightPosVal = (String)highlightPosition.getSelectedItem();
+		int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
+		
+		PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
+		PreferenceManager.highlight_position = highlightPosVal;
+		prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
+		prefmngr.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
+
+		int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;			
+		PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
+		prefmngr.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
 		
 		if (editor != null)
 		{
@@ -1692,41 +1723,32 @@ public class QDShell extends JFrame
 				}
 				editor.render();			
 			}
-			int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
-			
-			PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
-			PreferenceManager.highlight_position = highlightPosVal;
-			
-			prefmngr.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-			prefmngr.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
 			
 			qd.player.setMultipleAnnotationPolicy(multipleHighlightPolicyVal==0);
-			
-			int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
-			
-			PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
-			prefmngr.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
-			
+						
 			if (scrollingHighlightPolicyVal==0) {
-				if (qd != null) {
-					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
-					qd.player.setAutoScrolling(true);
-				}
+				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
+				qd.player.setAutoScrolling(true);
 			} else {
-				if (qd != null) {
-					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
-					qd.player.setAutoScrolling(false);
-				}
+				qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
+				qd.player.setAutoScrolling(false);
 			}
 			
 			PreferenceManager.show_file_name_as_title = showFileNameAsTitle.getSelectedObjects()!=null ? 1:0;
 			prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
+			
+			i = showTimeCoding.getSelectedIndex();
+			if (i==-1) PreferenceManager.show_time_coding =  - 1;
+			else PreferenceManager.show_time_coding = i - 1;
+			prefmngr.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
+			
 			Iterator iterator = qdList.iterator();
 			QD currentQD;
 			while (iterator.hasNext())
 			{
 				currentQD = (QD) iterator.next();
 				currentQD.updateTitles();
+				currentQD.updateTimeCodeBarVisibility();
 			}
 			
 			if (needsToRestart)

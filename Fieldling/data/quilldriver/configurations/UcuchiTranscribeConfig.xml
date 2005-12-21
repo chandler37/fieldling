@@ -8,6 +8,7 @@
 		<parameter name="qd.root.element" val="qq:TEXT" type="XPathExpression"/>
 		<parameter name="qd.showfilenameastitlebydefault" val="true" type="Boolean"/>
 		<parameter name="qd.contentEditable" val="true" type="Boolean"/>
+		<parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>		
 	</parameters>
 	<menus>
 		<menu name="Transcript" contains="Save"/>

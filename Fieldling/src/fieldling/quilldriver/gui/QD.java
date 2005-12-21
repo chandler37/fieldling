@@ -98,6 +98,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	protected String language=null;
 	protected QDShell qdShell=null;
 	protected int index=0;//save the index assigned when open a transcript which has same window title with one in window menu
+	protected TimeCodeView tcv;
 	
 	static {
 		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
@@ -762,7 +763,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			
 			//textFrame.setTitle(transcriptString); //title=name of transcript file
 			
-			final TimeCodeView tcv = new TimeCodeView(player, tcp);
+			tcv = new TimeCodeView(player, tcp);
+			updateTimeCodeBarVisibility();
+			
 			checkTimeTimer = new Timer(true);
 			checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
 				public void run() {
@@ -834,6 +837,24 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			transcriptFile = null;
 			return false;
 		}
+	}
+	
+	public void updateTimeCodeBarVisibility()
+	{
+		int showTimeCoding = PreferenceManager.show_time_coding;
+		if (showTimeCoding == -1)
+		{
+			// if preferences have not been set, get the default from the configuration file.
+			Boolean showTimeCodingBoolean = (Boolean) configuration.getParameters().get("qd.showtimecodingbydefault");
+			if (showTimeCodingBoolean!=null)
+				showTimeCoding = showTimeCodingBoolean.booleanValue()?1:0;
+			/*
+			I am purposefully not saving!
+			prefmngr.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
+			*/
+		}
+		if (showTimeCoding == 0) tcv.setVisible(false);
+		else tcv.setVisible(true);
 	}
 	
 	public void updateTitles()
