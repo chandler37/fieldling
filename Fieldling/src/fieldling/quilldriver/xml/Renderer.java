@@ -300,14 +300,17 @@ public class Renderer {
 				@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
 				@TIBETAN@tibAtt.addAttribute("xmlnode", t);
 				@TIBETAN@doc.setCharacterAttributes(start, pos.getOffset()-start, tibAtt, false);
+				@TIBETAN@doc.insertString(pos.getOffset(), "\n", tibAtt);
 				@TIBETAN@}
 			@TIBETAN@else {
 				@TIBETAN@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
+				@TIBETAN@doc.insertString(pos.getOffset(), "\n", tAttributes);
 			@TIBETAN@}
 			@UNICODE@doc.insertString(pos.getOffset(), s, tAttributes); //insert text
-			int end = pos.getOffset();
+			@UNICODE@doc.insertString(pos.getOffset(), "\n", tAttributes);
+			int end = pos.getOffset()-1;
 			endOffsets.put(t, new Integer(end));
-			doc.insertString(pos.getOffset(), "\n", minimalTAttributes);
+			//doc.insertString(pos.getOffset(), "\n", minimalTAttributes);
 			//doc.insertString(pos.getOffset(), "\n", tAttributes);
 			return pos.getOffset();
 		} catch (BadLocationException ble) {
