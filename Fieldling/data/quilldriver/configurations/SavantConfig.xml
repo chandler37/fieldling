@@ -67,11 +67,11 @@
 		</tag>
 		<tag name="AUDIO" visible="false" visiblecontents="false"/>
 		<tagview name="TranscriptionOnly" keystroke="F1">
-			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true" tibetancontents="true">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
 			</tag>
-			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+			<tag name="FORM" tibetan="true" icon="play.gif" tibetancontents="true">
 				<attribute name="type" visible="false"/>
 			</tag>
 			<tag name="TRANSL" visible="false" visiblecontents="false"/>
