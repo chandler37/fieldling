@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0" codebase="http://orion.lib.virginia.edu/thdl/tools/nightly/buildsQD/Fieldling/build/webapp/amontano"
+<jnlp spec="1.0" codebase="http://www.thdl.org/thdl/tools/nightly/buildsQD/Fieldling/build/webapp/amontano"
       href="QuillDriver-TIB-simple.jnlp">
 <information>
   <title>QuillDriver Tibetan</title>

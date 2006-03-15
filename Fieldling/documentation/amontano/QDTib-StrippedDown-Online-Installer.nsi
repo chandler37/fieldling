@@ -2,13 +2,13 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 25-Sep-2005"
+!define PRODUCT_VERSION "Version 14-Mar-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
-!define JNLP_URL "http://orion.lib.virginia.edu/thdl/tools/nightly/buildsQD/Fieldling/build/webapp/amontano/QuillDriver-TIB-simple.jnlp"
+!define JNLP_URL "http://www.thdl.org/thdl/tools/quilldriver/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -197,21 +197,24 @@ Function GetJRE
   ClearErrors
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
-  IfErrors 0 JreFound
+  IfErrors 0 +2
+    Goto NoJre
+  StrCmp $R1 "1.5" JreFound
 
+  NoJre:
   ; Was not found. Install.
   StrCmp $LANGUAGE "1033" wantjre_eng
   
   ; message in chinese
   MessageBox MB_ICONEXCLAMATION|MB_OK \
-  'Could not find a Java Runtime Environment installed on $\n\
+  'Could not find a Java Runtime Environment 1.5 installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
   You should install it later.'
   goto JreFound
       
   wantjre_eng:
   MessageBox MB_ICONEXCLAMATION|MB_OK \
-  'Could not find a Java Runtime Environment installed on $\n\
+  'Could not find a Java Runtime Environment 1.5 installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
   You should install it later.'
   

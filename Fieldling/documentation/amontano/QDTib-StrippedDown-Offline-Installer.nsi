@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 7-Oct-2005"
+!define PRODUCT_VERSION "Version 14-Mar-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -182,21 +182,24 @@ Function GetJRE
   ClearErrors
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
-  IfErrors 0 JreFound
+  IfErrors 0 +2
+    Goto NoJre
+  StrCmp $R1 "1.5" JreFound
 
+  NoJre:
   ; Was not found. Install.
   StrCmp $LANGUAGE "1033" wantjre_eng
   
   ; message in chinese
   MessageBox MB_ICONEXCLAMATION|MB_OK \
-  'Could not find a Java Runtime Environment installed on $\n\
+  'Could not find a Java Runtime Environment 1.5 installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
   You should install it later.'
   goto JreFound
       
   wantjre_eng:
   MessageBox MB_ICONEXCLAMATION|MB_OK \
-  'Could not find a Java Runtime Environment installed on $\n\
+  'Could not find a Java Runtime Environment 1.5 installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
   You should install it later.'
   

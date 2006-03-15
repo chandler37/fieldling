@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 25-Sep-2005"
+!define PRODUCT_VERSION "Version 14-Mar-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -10,7 +10,7 @@
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
 !define QUICKTIME_INSTALLER "QuickTimeInstaller.exe"
-!define JRE_INSTALLER "jre-1_5_0_05-windows-i586-p.exe"
+!define JRE_INSTALLER "jre-1_5_0_06-windows-i586-p.exe"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -95,9 +95,6 @@ Section -AdditionalIcons
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
   StrCpy $R1 '-cp quilldriver-TIB.jar;activation.jar;core-renderer.jar;cssparser-0-9-4-fs.jar;jdom.jar;Jskad.jar;mail.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell'
-  
-
-  
   push $R0
   
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" "$R1" "$INSTDIR\QuillDriver.ico"
@@ -175,9 +172,6 @@ Function GetJRE
   ; 1 - in JAVA_HOME environment variable
   ; 2 - in the registry
   
-  Push $R0
-  Push $R1
-   
   ;ClearErrors
   ;ReadEnvStr $R0 "JAVA_HOME"
   ;IfErrors 0 JreFound
@@ -185,14 +179,17 @@ Function GetJRE
   ClearErrors
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
-  IfErrors 0 JreFound
+  IfErrors 0 +2
+    Goto NoJre
+  StrCmp $R1 "1.5" JreFound
 
+  NoJre:
   ; Was not found. Install.
   StrCmp $LANGUAGE "1033" wantjre_eng
   
   ; message in chinese
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
-  '在你的计算机上未安装过Java运行环境，$\n\
+  '在你的计算机上未安装过Java 1.5运行环境，$\n\
   没有它不能运行${PRODUCT_NAME}。$\n$\n\
   你现在要安装它吗？' \
   IDYES InstallJre
@@ -200,7 +197,7 @@ Function GetJRE
     
   wantjre_eng:
   MessageBox MB_ICONEXCLAMATION|MB_YESNO \
-  'Could not find a Java Runtime Environment installed on $\n\
+  'Could not find a Java Runtime Environment 1.5 installed on $\n\
   your computer. Without it you cannot run ${PRODUCT_NAME}. $\n$\n\
   Would you like to install it now?' \
   IDYES InstallJre
@@ -211,14 +208,14 @@ Function GetJRE
   
   ; warning in Chinese
   MessageBox MB_OK \
-  '安装程序将开始安装Java虚拟机。$\n$\n\
+  '安装程序将开始安装Java 1.5虚拟机。$\n$\n\
   提示：若询问重新启动计算机请点击NO(不)$\n\
   使之继续安装${PRODUCT_NAME}。'
   goto resume_after_jrewarning
   
   jrewarning_eng:
   MessageBox MB_OK \
-  'The installer for the Java Runtime Enviroment will begin now. $\n$\n\
+  'The installer for the Java Runtime Enviroment 1.5 will begin now. $\n$\n\
   IMPORTANT: If it asks to restart the computer please click NO$\n\
   in order to complete the ${PRODUCT_NAME} installation.'
   
@@ -236,30 +233,37 @@ Function GetJRE
   ClearErrors
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
-  IfErrors 0 JreFound
-
+  IfErrors 0 +2
+    Goto AgainNoJre
+  StrCmp $R1 "1.5" JreFound
+  
+  AgainNoJre:
   StrCmp $LANGUAGE "1033" abortjre_eng
   
   ; Abort in Chinese
-  Abort '未能找到Java运行环境，安装失败。'
+  Abort '未能找到Java 1.5运行环境，安装失败。'
   
   abortjre_eng:  
-  Abort 'Unable to find Java Runtime Environment. Installation failed.'
+  Abort 'Unable to find Java Runtime Environment 1.5. Installation failed.'
   
   JreFound:
-  Pop $R1
-  Exch $R0
+  Push $R0
 FunctionEnd
 
 Function getQTJava
-  Push $R0
-  ;Push $R1
   
-  ;StrCpy $R1 "$R0\lib\ext\QTJava.zip"
-  ;IfFileExists "$R1" allSet
-  ReadRegDWORD $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
-  IfErrors 0 allSet
+  ReadRegDWORD $R1 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
+  IfErrors qtnotfound
+  pop $R0
+  StrCpy $R1 "$R0\lib\ext\QTJava.zip"
+  IfFileExists "$R1" allSet
 
+  ; QTJava not found
+  SetOutPath "$R0\lib\ext"
+  File "${PATH_TO_INSTALLERS}\QTJava.zip"
+  Goto allSet
+
+  qtnotfound:
   ; Was not found. Install.
   StrCmp $LANGUAGE "1033" wantqt_eng
   
@@ -283,25 +287,41 @@ Function getQTJava
   
   ; warning in Chinese
   MessageBox MB_OK \
-  'The installer for QuickTime will begin now. $\n$\n\
-  Afterwards the ${PRODUCT_NAME} installation will resume automatically.'
+  'The installer for QuickTime will begin now.'
   Goto resume_after_qtwarning
   
   warningqt_eng:
   MessageBox MB_OK \
-  'The installer for QuickTime will begin now. $\n$\n\
-  Afterwards the ${PRODUCT_NAME} installation will resume automatically.'
+  'The installer for QuickTime will begin now.'
   
   resume_after_qtwarning:
   SetOutPath "$TEMP"
   File "${PATH_TO_INSTALLERS}\${QUICKTIME_INSTALLER}"
   ExecWait "$TEMP\${QUICKTIME_INSTALLER}"
+  
+  StrCmp $LANGUAGE "1033" pleasewaitafterqt_eng
+  
+  ; warning in Chinese
+  MessageBox MB_OK \
+  'After the QuickTime installer has finished completely,$\n\
+  click OK to resume the installation of ${PRODUCT_NAME}.'
+  Goto resume_after_qtwait
+  
+  pleasewaitafterqt_eng:
+  MessageBox MB_OK \
+  'After the QuickTime installer has finished completely,$\n\
+  click OK to resume the installation of ${PRODUCT_NAME}.'
+  
+  resume_after_qtwait:  
+
   Delete "$TEMP\${QUICKTIME_INSTALLER}"
   
-  ;IfFileExists "$R1" allSet
-  ReadRegDWORD $R0 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
-  IfErrors 0 allSet
+  ReadRegDWORD $R1 HKLM "SOFTWARE\Apple Computer, Inc.\QuickTime" "Version"
+  IfErrors gtjavanotfound_notfound
+  StrCpy $R1 "$R0\lib\ext\QTJava.zip"
+  IfFileExists "$R1" allSet
   
+  gtjavanotfound_notfound:
   StrCmp $LANGUAGE "1033" abortqt_eng
   
   ;Abort in Chinese
@@ -311,8 +331,6 @@ Function getQTJava
   Abort 'Unable to find QuickTime for Java. Installation failed.'
   
   allSet:
-  ;Pop $R1
-  Pop $R0
 FunctionEnd
 
 Function un.onUninstSuccess
