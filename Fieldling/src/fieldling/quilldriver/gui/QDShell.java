@@ -1695,6 +1695,13 @@ public class QDShell extends JFrame
 		prefmngr.setInt(PreferenceManager.TAG_RED_KEY, PreferenceManager.tag_color_red);
 		prefmngr.setInt(PreferenceManager.TAG_GREEN_KEY, PreferenceManager.tag_color_green);
 		prefmngr.setInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.tag_color_blue);		
+
+		PreferenceManager.highlight_color_red = highlightColor.getRed();
+		PreferenceManager.highlight_color_green = highlightColor.getGreen();
+		PreferenceManager.highlight_color_blue = highlightColor.getBlue();
+		prefmngr.setInt(PreferenceManager.HIGHLIGHT_RED_KEY, PreferenceManager.highlight_color_red);
+		prefmngr.setInt(PreferenceManager.HIGHLIGHT_GREEN_KEY, PreferenceManager.highlight_color_green);
+		prefmngr.setInt(PreferenceManager.HIGHLIGHT_BLUE_KEY, PreferenceManager.highlight_color_blue);		
 		
 		String highlightPosVal = (String)highlightPosition.getSelectedItem();
 		int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
