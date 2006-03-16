@@ -247,12 +247,7 @@ public class QDShell extends JFrame
 	}
 	class Wizard extends JDialog {
 		
-		public Wizard()
-		{
-			this(null, null);
-		}
-		
-		public Wizard(String defaultConfigName, String defaultPlayer) {
+		public Wizard() {
 			//choice of configuration
 			super(QDShell.this, messages.getString("Open"), true);
 			setSize(new Dimension(600,400));
@@ -272,8 +267,8 @@ public class QDShell extends JFrame
 				configItems[i].setActionCommand(String.valueOf(i));
 				configGroup.add(configItems[i]);
 			}
-			if (defaultConfigName == null) defaultConfigName = configurations[0].getName();
-			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY, defaultConfigName);
+			
+			String configName = prefmngr.configuration!=null ? prefmngr.configuration : configurations[0].getName();
 			int j = 0;
 			for (j = 0; j < configItems.length; j++) {
 				if (configName.equals(configurations[j].getName())) {
@@ -315,15 +310,21 @@ public class QDShell extends JFrame
 				mediaItems[i].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						qd.setMediaPlayer(mPlayer);
-						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
+						prefmngr.media_player = mPlayer.getIdentifyingName();
+						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, prefmngr.media_player);
 					}
 				});
 				mediaGroup.add(mediaItems[i]);
 			}
 			
 			if (mediaItems.length > 0) {
+				String defaultPlayer;
 				PanelPlayer mPlayer = (PanelPlayer) moviePlayers.get(0);
-				if (defaultPlayer==null) defaultPlayer = prefmngr.getValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
+				if (prefmngr.media_player!=null) defaultPlayer = prefmngr.media_player;
+				else
+				{
+					defaultPlayer = mPlayer.getIdentifyingName();					
+				}
 				if (defaultPlayer.equals(mPlayer.getIdentifyingName())) { //user's player identical to QD's default player
 					mediaItems[0].setSelected(true);
 					qd.setMediaPlayer(mPlayer);
@@ -436,8 +437,10 @@ public class QDShell extends JFrame
 						String configCommand = selectedConfiguration.getActionCommand();
 						int i = Integer.parseInt(configCommand);
 						qd.configure(configurations[i]);
-						prefmngr.setValue(prefmngr.CONFIGURATION_KEY,configurations[i].getName());
-						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, qd.player.getIdentifyingName());
+						prefmngr.configuration = configurations[i].getName();
+						prefmngr.setValue(prefmngr.CONFIGURATION_KEY, prefmngr.configuration);
+						prefmngr.media_player = qd.player.getIdentifyingName(); 
+						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, prefmngr.media_player);
 						
 						ButtonModel selectedRb = dataSourceGroup.getSelection();
 						String command = selectedRb.getActionCommand();
@@ -737,7 +740,11 @@ public class QDShell extends JFrame
 	{
 		loadGenericInitialState();
 		
-		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1);
+		int useWizard = prefmngr.use_wizard;
+		if (prefmngr.configuration==null && defaultConfigName!=null)
+			prefmngr.configuration=defaultConfigName;
+		if (prefmngr.media_player==null && defaultPlayer!=null)
+			prefmngr.media_player = defaultPlayer;
 		
 		/*try
 		 {
@@ -753,7 +760,7 @@ public class QDShell extends JFrame
 		
 		if (useWizard==1) // load wizard
 		{
-			Wizard wiz = new Wizard(defaultConfigName, defaultPlayer);
+			Wizard wiz = new Wizard();
 			wiz.setVisible(true);
 		}
 	}

@@ -103,7 +103,7 @@ public class PreferenceManager extends JPanel {
 	@TIBETAN@public static String tibetan_keyboard;
 	public static String recent_files;
 	public static String recent_videos;
-	public static String configuration_key;
+	public static String configuration;
 	public static String media_player;
 	public static int default_language;
 	public static String default_interface_font;
@@ -168,6 +168,8 @@ public class PreferenceManager extends JPanel {
 		@TIBETAN@tibetan_font_size =getInt(TIBETAN_FONT_SIZE_KEY, 36);
 		show_file_name_as_title = getInt(SHOW_FILE_NAME_AS_TITLE_KEY, -1);
 		show_time_coding = getInt(SHOW_TIME_CODING_KEY, -1);
+		configuration = getValue(CONFIGURATION_KEY, null);
+		media_player = getValue(MEDIA_PLAYER_KEY, null);
 	}
 	
 	
