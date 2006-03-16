@@ -146,9 +146,9 @@ public class QDShell extends JFrame
 				return;
 			}
 			
-			if (args.length==1)
+			if (args.length>2)
 			{
-				System.out.println("Syntax error: missing arguments!");
+				System.out.println("Syntax error: too many arguments!");
 				printSyntax();
 				return;
 			}
@@ -160,12 +160,16 @@ public class QDShell extends JFrame
 			}
 			
 			String option = args[0].substring(1);
-			String configName;
 			// for now only these two options are available. More to come...
 			if (!option.equals("THDLTranscription") && !option.equals("THDLReadonly"))
 			{
 				System.out.println("Syntax error: invalid option \"" + option + "\"!");
 				printSyntax();
+				return;
+			}
+			if (args.length==1)
+			{
+				new QDShell(option, "QuicktimeforJava");
 				return;
 			}
 			
@@ -242,7 +246,13 @@ public class QDShell extends JFrame
 		setVisible(true);
 	}
 	class Wizard extends JDialog {
-		public Wizard() {
+		
+		public Wizard()
+		{
+			this(null, null);
+		}
+		
+		public Wizard(String defaultConfigName, String defaultPlayer) {
 			//choice of configuration
 			super(QDShell.this, messages.getString("Open"), true);
 			setSize(new Dimension(600,400));
@@ -262,7 +272,8 @@ public class QDShell extends JFrame
 				configItems[i].setActionCommand(String.valueOf(i));
 				configGroup.add(configItems[i]);
 			}
-			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY,configurations[0].getName());
+			if (defaultConfigName == null) defaultConfigName = configurations[0].getName();
+			String configName = prefmngr.getValue(prefmngr.CONFIGURATION_KEY, defaultConfigName);
 			int j = 0;
 			for (j = 0; j < configItems.length; j++) {
 				if (configName.equals(configurations[j].getName())) {
@@ -304,18 +315,16 @@ public class QDShell extends JFrame
 				mediaItems[i].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						qd.setMediaPlayer(mPlayer);
-						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer
-								.getIdentifyingName());
+						prefmngr.setValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
 					}
 				});
 				mediaGroup.add(mediaItems[i]);
 			}
+			
 			if (mediaItems.length > 0) {
 				PanelPlayer mPlayer = (PanelPlayer) moviePlayers.get(0);
-				String myPlayerName = prefmngr
-				.getValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer
-						.getIdentifyingName());
-				if (myPlayerName.equals(mPlayer.getIdentifyingName())) { //user's player identical to QD's default player
+				if (defaultPlayer==null) defaultPlayer = prefmngr.getValue(prefmngr.MEDIA_PLAYER_KEY, mPlayer.getIdentifyingName());
+				if (defaultPlayer.equals(mPlayer.getIdentifyingName())) { //user's player identical to QD's default player
 					mediaItems[0].setSelected(true);
 					qd.setMediaPlayer(mPlayer);
 				} else {
@@ -323,8 +332,7 @@ public class QDShell extends JFrame
 					PanelPlayer thisPlayer = null;
 					for (i = 0; i < mediaItems.length; i++) {
 						thisPlayer = (PanelPlayer) moviePlayers.get(i);
-						if (thisPlayer.getIdentifyingName()
-								.equals(myPlayerName))
+						if (thisPlayer.getIdentifyingName().equals(defaultPlayer))
 							break;
 					}
 					if (i == mediaItems.length) { //could not find user's chosen media player
@@ -722,6 +730,11 @@ public class QDShell extends JFrame
 	
 	public QDShell()
 	{
+		this(null, null);
+	}
+	
+	public QDShell(String defaultConfigName, String defaultPlayer)
+	{
 		loadGenericInitialState();
 		
 		int useWizard = prefmngr.getInt(prefmngr.USE_WIZARD_KEY, 1);
@@ -740,11 +753,10 @@ public class QDShell extends JFrame
 		
 		if (useWizard==1) // load wizard
 		{
-			Wizard wiz = new Wizard();
+			Wizard wiz = new Wizard(defaultConfigName, defaultPlayer);
 			wiz.setVisible(true);
 		}
 	}
-	
 	
 	public QDShell(File transcriptFile, String configName, String mediaName)
 	{
