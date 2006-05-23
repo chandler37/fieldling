@@ -29,7 +29,7 @@ import javax.swing.event.*;
 import javax.xml.xpath.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
+//import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.w3c.dom.Attr;
@@ -48,10 +48,10 @@ public class Editor {
 	private CaretListener editabilityTracker;
 	
 	private Map startOffsets, endOffsets;
-	private final float indentIncrement = 15.0F;
-	private final Color tagColor = Color.magenta;
-	private final Color attColor = Color.pink;
-	private final Color textColor = Color.darkGray;
+	//private final float indentIncrement = 15.0F;
+	//private final Color tagColor = Color.magenta;
+	//private final Color attColor = Color.pink;
+	//private final Color textColor = Color.darkGray;
 	private Cursor textCursor;
 	private Cursor defaultCursor;
 	private boolean isEditing = false;
@@ -441,11 +441,12 @@ public class Editor {
 						fireEndEditEvent();
 						fireStartEditEvent(getNodeForOffset(p));
 					}
-					Object xmlNode = pane.getCharacterAttributes().getAttribute("xmlnode");
-					SimpleAttributeSet sas = new SimpleAttributeSet();
-					sas.addAttribute("xmlnode", xmlNode);
+					AttributeSet currAtt = pane.getCharacterAttributes(); 
+					Object xmlNode = currAtt.getAttribute("xmlnode");
+					SimpleAttributeSet sas = new SimpleAttributeSet(currAtt);
+					// sas.addAttribute("xmlnode", xmlNode);
 					parentDefault.actionPerformed(e);
-					pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);
+					//pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);
 				}
 			}
 		};
