@@ -89,7 +89,7 @@ a version optimized for use with Tibetan script.
     </taskdef>
 
     <target name="cvs-update" description="Performs a CVS update using anonymous pserver.">
-        <cvs cvsRoot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/fieldling"
+        <cvs cvsRoot=":pserver:anonymous@fieldling.cvs.sourceforge.net:/cvsroot/fieldling"
              command="-f -z3 -q update -d -P" failonerror="true"/>
     </target>
 
