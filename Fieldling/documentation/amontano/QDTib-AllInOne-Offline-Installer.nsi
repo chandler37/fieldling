@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 14-Mar-2006"
+!define PRODUCT_VERSION "Version 22-May-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -94,7 +94,7 @@ Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
-  StrCpy $R1 '-cp quilldriver-TIB.jar;activation.jar;core-renderer.jar;cssparser-0-9-4-fs.jar;jdom.jar;Jskad.jar;mail.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell'
+  StrCpy $R1 '-cp quilldriver-TIB.jar;activation.jar;core-renderer.jar;cssparser-0-9-4-fs.jar;jdom.jar;Jskad.jar;mail.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell "-THDLReadonly"'
   push $R0
   
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" "$R1" "$INSTDIR\QuillDriver.ico"

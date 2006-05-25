@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 14-Mar-2006"
+!define PRODUCT_VERSION "Version 22-May-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -82,7 +82,7 @@ Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
-  StrCpy $R1 '-jar "$INSTDIR\netx.jar" -jnlp "${JNLP_URL}"'
+  StrCpy $R1 '-jar "$INSTDIR\netx.jar" -jnlp "${JNLP_URL}" -arg "-THDLReadonly"'
   push $R1
   push $R0
 
