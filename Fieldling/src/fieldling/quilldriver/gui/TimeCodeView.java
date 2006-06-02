@@ -23,7 +23,7 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 		outButton.setBorder(null);
 		inButton.setPreferredSize(new Dimension(inButton.getIcon().getIconWidth(), inButton.getIcon().getIconHeight()));
 		outButton.setPreferredSize(new Dimension(outButton.getIcon().getIconWidth(), outButton.getIcon().getIconHeight()));
-		inButton.addActionListener(new ActionListener() {
+		/*inButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				long t = player.getCurrentTime();
 				if (t != -1) {
@@ -45,7 +45,7 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 					}
 				}
 			}
-		});
+		});*/
 		TEXT_WIDTH = 60;
 		TEXT_HEIGHT = inButton.getPreferredSize().height;
 		currentTimeField = new JTextField();
@@ -55,8 +55,10 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 		stopSpinner = new fieldling.util.SimpleSpinner();
 		startSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
 		stopSpinner.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
-		startSpinner.addSimpleSpinnerListener(this);
-		stopSpinner.addSimpleSpinnerListener(this);
+                startSpinner.setEditable(false);
+                stopSpinner.setEditable(false);
+		//startSpinner.addSimpleSpinnerListener(this);
+		//stopSpinner.addSimpleSpinnerListener(this);
 		setCurrentTime(0);
 		setStartTime(0);
 		setStopTime(0);

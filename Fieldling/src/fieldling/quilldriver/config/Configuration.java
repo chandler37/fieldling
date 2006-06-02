@@ -1,6 +1,3 @@
-/* Configuration - Decompiled by JCavaj
- * Visit http://www.bysoft.se/sureshot/jcavaj/
- */
 package fieldling.quilldriver.config;
 
 import java.net.*;
@@ -23,6 +20,7 @@ import fieldling.quilldriver.*;
 import fieldling.quilldriver.gui.QD;
 import fieldling.quilldriver.gui.QDShell;
 import fieldling.quilldriver.xml.*;
+import fieldling.quilldriver.task.BasicTask;
 import org.jdom.*;
 import org.xml.sax.SAXException;
 import javax.xml.XMLConstants;
@@ -40,7 +38,9 @@ public class Configuration
 	static final String ALL_MENUS_ELEMENT_NAME = "menus";
 	static final String ONE_MENU_ELEMENT_NAME = "menu";
 	
+	static Map qdDefaultProperties;
 	static Map actionNameToActionDescription = new HashMap();
+        static Map tagNameToTag = new HashMap();
 	static String newTagInfo=null;
 	
 	JMenuBar jBar = null;
@@ -51,16 +51,31 @@ public class Configuration
 	String newTemplate;
 	String[] schemaList = null;
 	String schemaListAsString = null;
-	boolean isConfigured = false;
 	TagInfo[] tagInfo;
 	Map parameters;
 	Map actionProfiles;
+        Map keyActions;
 	Transformer transformer;
 	org.jdom.Namespace[] namespaces;
 	org.w3c.dom.Document docDoc = null;
-	
-	Configuration(Element e, ClassLoader loader) throws JDOMException, IOException {
-		name = e.getAttributeValue("menu-name");
+        JScrollPane helpScrollPane = null;
+        
+	static {
+		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
+		javax.xml.xpath.XPath xpathEnvironment = fieldling.quilldriver.xml.XPathUtilities.getXPathEnvironmentForDOM(qdNamespace);
+		qdDefaultProperties = new HashMap();
+		try {
+			qdDefaultProperties.put("qd.timealignednodes", xpathEnvironment.compile("//*[@qd:*]"));
+			qdDefaultProperties.put("qd.nodebegins", xpathEnvironment.compile("@qd:t1"));
+			qdDefaultProperties.put("qd.nodeends", xpathEnvironment.compile("@qd:t2"));
+			qdDefaultProperties.put("qd.nearestplayableparent", xpathEnvironment.compile("ancestor-or-self::*[@qd:*]"));
+		} catch (javax.xml.xpath.XPathExpressionException xpe) {
+			xpe.printStackTrace();
+		}
+	}
+
+	public Configuration(Element e, ClassLoader loader) throws JDOMException, IOException, TransformerException, ParserConfigurationException, SAXException {
+		name = e.getAttributeValue("name");
 		String configString = e.getAttributeValue("href");
 		org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder();
 		configDoc = builder.build(loader.getResource(configString));
@@ -78,12 +93,19 @@ public class Configuration
 		org.jdom.Element editElem = parameterElement.getChild(XSL_TRANSFORM_ELEMENT_NAME);
 		if (editElem != null)
 			editURL = loader.getResource(editElem.getAttributeValue("val"));
+                configure();
 	}
-	public void configure(Map defaultProperties, QD qd, PreferenceManager prefmngr) throws IOException, TransformerException, ParserConfigurationException, SAXException
+	private void configure() throws IOException, TransformerException, ParserConfigurationException, SAXException
 	{
 		docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
+                org.xhtmlrenderer.simple.XHTMLPanel helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
+                helpPanel.setDocument(getHelpDocument());
+                helpScrollPane = GuiUtil.getScrollPaneForJPanel(helpPanel);
 		org.jdom.Element cRoot = configDoc.getRootElement();
 		tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
+                for (int i=0; i<tagInfo.length; i++) {
+                    tagNameToTag.put(tagInfo[i].getIdentifyingName(), tagInfo[i]);
+                }
 		org.jdom.Element parameterSet = cRoot.getChild(ALL_PARAMETERS_ELEMENT_NAME);
 		org.jdom.Element schemaParam = parameterSet.getChild(XML_SCHEMA_ELEMENT_NAME);
 				
@@ -99,7 +121,7 @@ public class Configuration
 		for (int i=0; i<tagInfo.length; i++)
 			tagInfo[i].useNamespaces(namespaces);
 		XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(namespaces);
-		parameters = new HashMap(defaultProperties);
+		parameters = new HashMap(qdDefaultProperties);
 		List parameterList = parameterSet.getChildren(ONE_PARAMETER_ELEMENT_NAME);
 		Iterator it = parameterList.iterator();
 		String type;
@@ -129,13 +151,32 @@ public class Configuration
 					e.getAttributeValue("node"), e.getAttributeValue("move"), 
 					e.getAttributeValue("qd-command"), e.getAttributeValue("xsl-task")));
 		}
-		setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME), qd, prefmngr);
+                keyActions = new HashMap();
+		Iterator itty = actionProfiles.values().iterator();
+		while (itty.hasNext()) {
+			QdActionDescription qdActionDesc = (QdActionDescription)itty.next();
+                        Action keyAction = getActionForActionDescription(qdActionDesc);
+                        /*if (qdActionDesc.getXSLTask() != null && qdActionDesc.getXSLTask().equals("qd.insertTimes"))
+                            insertTimesAction = keyAction;*/
+                        if (qdActionDesc.getKeyboardShortcut() != null) {
+                            keyActions.put(qdActionDesc.getKeyboardShortcut(), keyAction); //eventually to be registered with transcript's JTextPane
+                        }
+		}
+		if (tagInfo.length > 1) {
+			for (int i=0; i<tagInfo.length; i++) {
+				KeyStroke key = tagInfo[i].getKeyboardShortcut();
+				Action keyAction = getActionForTagInfoChange(tagInfo[i]);
+				if ( !(key == null || keyAction == null) )
+					keyActions.put(key, keyAction);
+			}
+		}
+		setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME));
+		//setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME), qd, prefmngr);
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		if (canEdit())
 			transformer = transformerFactory.newTransformer(new StreamSource(editURL.openStream()));
 		else
 			transformer = null;
-		isConfigured = true;
 	}
 	public String getName() {
 		return name;
@@ -204,37 +245,28 @@ public class Configuration
 	public org.w3c.dom.Document getHelpDocument() {
 		return docDoc;
 	}
+        public JScrollPane getHelpScrollPane() {
+                return helpScrollPane;
+        }
 	public Transformer getTranscriptTransformer() {
-		if (isConfigured)
-			return transformer;
-		else
-			return null;
+                return transformer;
 	}
 	public TagInfo[] getTagInfo() {
-		if (isConfigured)
-			return tagInfo;
-		else
-			return new TagInfo[0];
+		return tagInfo;
 	}
 	public Map getParameters() {
-		if (isConfigured)
-			return parameters;
-		else
-			return new HashMap();
+		return parameters;
 	}
-	
 	public Map getActionProfiles() {
-		if (isConfigured)
-			return actionProfiles;
-		else
-			return new HashMap();
+		return actionProfiles;
 	}
 	public org.jdom.Namespace[] getNamespaces() {
-		if (isConfigured)
-			return namespaces;
-		else
-			return new org.jdom.Namespace[0];
+		return namespaces;
 	}
+        public Map getKeyActions() {
+                return keyActions;
+        }
+
 	private List parseNamespaces(String nsList) {
 		List namespaces = new ArrayList();
 		StringTokenizer tok = new StringTokenizer(nsList, ",");
@@ -244,140 +276,59 @@ public class Configuration
 		}
 		return namespaces;
 	}
-	
-	@TIBETAN@private static JMenu getTibetanKeyboardMenu(QD qd, PreferenceManager pm)
-	@TIBETAN@{
-		@TIBETAN@	org.thdl.tib.input.JskadKeyboardManager keybdMgr = null;
-		@TIBETAN@	JMenuItem[] keyboardItems = null;
-		@TIBETAN@	JMenu tibetanKeyboard = null;
-		@TIBETAN@	final PreferenceManager prefmngr = pm;
-		@TIBETAN@	final ResourceBundle messages = I18n.getResourceBundle();	
-		@TIBETAN@	try {
-			@TIBETAN@		keybdMgr = new org.thdl.tib.input.JskadKeyboardManager(org.thdl.tib.input.JskadKeyboardFactory.getAllAvailableJskadKeyboards());
-			@TIBETAN@	}catch (Exception e) {}
-			@TIBETAN@	if (keybdMgr != null) {
-				@TIBETAN@		ButtonGroup keyboardGroup = new ButtonGroup();
-				@TIBETAN@		keyboardItems = new JRadioButtonMenuItem[keybdMgr.size()];
-				@TIBETAN@		for (int i=0; i<keybdMgr.size(); i++) {
-					@TIBETAN@			final org.thdl.tib.input.JskadKeyboard kbd = keybdMgr.elementAt(i);
-					//if (kbd.hasQuickRefFile()) {
-					@TIBETAN@			keyboardItems[i] = new JRadioButtonMenuItem(kbd.getIdentifyingString());
-					@TIBETAN@			keyboardItems[i].addActionListener(new ActionListener() {
-						@TIBETAN@				public void actionPerformed(ActionEvent e) {
-							@TIBETAN@					Object source = e.getSource();
-							@TIBETAN@					if (!(source instanceof Component))
-								@TIBETAN@					{
-								@TIBETAN@						System.out.println("no component for event--what to do?");
-								@TIBETAN@						return;
-								@TIBETAN@					}
-							@TIBETAN@					QD qd = getQdParentForComponent((Component)source);
-							@TIBETAN@					if (qd == null) {
-								@TIBETAN@						System.out.println("can't find any QD parent");
-								@TIBETAN@						return;
-								@TIBETAN@					}
-							@TIBETAN@					qd.changeKeyboard(kbd);
-							@TIBETAN@					prefmngr.setValue(prefmngr.TIBETAN_KEYBOARD_KEY, kbd.getIdentifyingString());
-							@TIBETAN@				}
-						@TIBETAN@			});
-					@TIBETAN@			keyboardGroup.add(keyboardItems[i]);
-					@TIBETAN@		}
-				@TIBETAN@		String userKeyboard = prefmngr.getValue(prefmngr.TIBETAN_KEYBOARD_KEY, keybdMgr.elementAt(0).getIdentifyingString());
-				@TIBETAN@		int i;
-				@TIBETAN@		for (i=0; i<keybdMgr.size(); i++)
-					@TIBETAN@			if (userKeyboard.equals(keybdMgr.elementAt(i).getIdentifyingString())) break;
-				@TIBETAN@		if (i == 0 || i == keybdMgr.size()) //keyboard either can't be found or is default Wylie
-					@TIBETAN@			keyboardItems[0].setSelected(true);
-				@TIBETAN@		else { //keyboard is other than default Wylie keyboard: must explicitly change keyboard
-					@TIBETAN@			keyboardItems[i].setSelected(true);
-					@TIBETAN@			qd.changeKeyboard(keybdMgr.elementAt(i));
-					@TIBETAN@		}
-				@TIBETAN@		tibetanKeyboard = new JMenu(messages.getString("KeyboardInputMethod"));
-				@TIBETAN@		for (int k=0; k<keyboardItems.length; k++)
-					@TIBETAN@			tibetanKeyboard.add(keyboardItems[k]);
-				@TIBETAN@	}
-			@TIBETAN@	return tibetanKeyboard;
-			@TIBETAN@}
-	
-	private void setJMenuBar(org.jdom.Element allMenus, final QD qd, PreferenceManager prefmngr)
+	private void setJMenuBar(org.jdom.Element allMenus)
+	//private void setJMenuBar(org.jdom.Element allMenus, QD qd, PreferenceManager prefmngr)
 	{
 		String menuName;
 		if (allMenus == null) return;
 		ResourceBundle messages = fieldling.util.I18n.getResourceBundle();
 		jBar = new JMenuBar();
 		List menuElems = allMenus.getChildren(ONE_MENU_ELEMENT_NAME);
-		int possibleTagInfoMenu = tagInfo.length > 1 ? 1 : 0 ;
-		//JMenu[] jMenu = new JMenu[menuElems.size() + possibleTagInfoMenu + 1];
 		JMenu jMenu;
 		Iterator itty = menuElems.iterator();
-		//int i=0;
 		while (itty.hasNext()) {
 			org.jdom.Element elem = (org.jdom.Element)itty.next();
 			menuName = elem.getAttributeValue("name");
-			if (menuName.equals("TibetanKeyboard"))
-			{
-				@TIBETAN@jMenu = getTibetanKeyboardMenu(qd, prefmngr);
-				@TIBETAN@jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-				@TIBETAN@jBar.add(jMenu);
-			} 
-			else
-			{
-				jMenu = new JMenu(messages.getString(menuName));
-				String[] menuItems = elem.getAttributeValue("contains").split(" ");
-				for (int j=0; j<menuItems.length; j++) {
-					QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
-					final Action menuAction = getActionForActionDescription(actDesc);
-					JMenuItem jItem = new JMenuItem(messages.getString(menuItems[j]));
-					jItem.setAccelerator(actDesc.getKeyboardShortcut());
-					jItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ae) {
-							menuAction.actionPerformed(ae);
-						}
-					});
-					jMenu.add(jItem);
-				}
-				jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
-				jBar.add(jMenu);
-			}
+                        jMenu = new JMenu(messages.getString(menuName));
+                        String[] menuItems = elem.getAttributeValue("contains").split(" ");
+                        for (int j=0; j<menuItems.length; j++) {
+                            if (menuItems[j].equals("|")) jMenu.addSeparator();
+                            else {
+                            QdActionDescription actDesc = getActionDescriptionForActionName(menuItems[j]);
+                            if (actDesc != null) { //it's an action, so execute action
+                                final Action menuAction = getActionForActionDescription(actDesc);
+                                JMenuItem jItem = new JMenuItem(messages.getString(menuItems[j]));
+                                jItem.setAccelerator(actDesc.getKeyboardShortcut());
+                                jItem.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent ae) {
+                                        menuAction.actionPerformed(ae);
+                                    }
+                                });
+                                jMenu.add(jItem);
+                            } else if (tagNameToTag.containsKey(menuItems[j])) { //it's a tag view, so change tag view
+                                TagInfo tagView = (TagInfo)tagNameToTag.get(menuItems[j]);
+                                final Action tagViewAction = getActionForTagInfoChange(tagView);
+                                //final Action tagViewAction = getActionForTagInfoChange(qd, tagView);
+                                JMenuItem tagItem = new JMenuItem(messages.getString(tagView.getIdentifyingName()));
+                                tagItem.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        tagViewAction.actionPerformed(e);  
+                                    }
+                                });
+                                tagItem.setAccelerator(tagView.getKeyboardShortcut());
+                                jMenu.add(tagItem);
+                            }
+                            }
+                        }
+                        jMenu.getPopupMenu().setLightWeightPopupEnabled(false);
+                        jBar.add(jMenu);
 		}
-		if (possibleTagInfoMenu == 1) {
-			JMenu viewMenu = new JMenu(messages.getString("View"));
-			ButtonGroup tagGroup = new ButtonGroup();
-			for (int z=0; z<tagInfo.length; z++) {
-				final Action changeViewAction = getActionForTagInfoChange(tagInfo[z],z);
-				JRadioButtonMenuItem tagItem = new JRadioButtonMenuItem(messages.getString(tagInfo[z].getIdentifyingName()));
-				tagItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						changeViewAction.actionPerformed(e);                    
-					}
-				});
-				tagItem.setAccelerator(tagInfo[z].getKeyboardShortcut());
-				tagGroup.add(tagItem);
-				if (z == 0) tagItem.setSelected(true);
-				viewMenu.add(tagItem);
-			}
-			jBar.add(viewMenu);
-		}
-		JMenu helpMenu = new JMenu(messages.getString("Help"));
-		org.xhtmlrenderer.simple.XHTMLPanel helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
-		helpPanel.setDocument(getHelpDocument());
-		final JScrollPane sp = GuiUtil.getScrollPaneForJPanel(helpPanel);
-		JMenuItem helpItem = new JMenuItem(messages.getString("Help"));
-		helpItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFrame f = new JFrame();
-				f.setSize(500, 400);
-				f.getContentPane().add(sp);
-				f.setVisible(true);
-			}
-		});
-		helpMenu.add(helpItem);
-		jBar.add(helpMenu);
 	}
 	public JMenuBar getJMenuBar() {
 		return jBar;
 	}
-	
-	public static Action getActionForTagInfoChange(final TagInfo tagInfo, final int i) {
+	public static Action getActionForTagInfoChange(final TagInfo tagInfo) {
+	//public static Action getActionForTagInfoChange(final QD qd, final TagInfo tagInfo) {
 		return new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
@@ -386,12 +337,13 @@ public class Configuration
 					System.out.println("no component for event--what to do?");
 					return;
 				}
-				QD qd = getQdParentForComponent((Component)source);
+				QD qd = getQDShellParentForComponent((Component)source).getQD();
 				if (qd == null) {
 					System.out.println("can't find any QD parent");
 					return;
 				}
-				qd.changeTagInfo(tagInfo,i);
+                                qd.changeTagInfo(tagInfo);
+				//qd.changeTagInfo(tagInfo,i);
 			}
 		};
 	}
@@ -404,17 +356,32 @@ public class Configuration
 	 hack won't work below for those actions involving xsl-
 	 transforms, since these transforms actually change the data.*/
 	public class QdActionDescription {
-		private String name, command, task;
+		//private String name, command, task;
+                private String name, task;
+                private BasicTask command;
 		private KeyStroke keyStroke;
 		private XPathExpression nodeSelector;
 		private boolean move;
 		
 		public QdActionDescription(XPath xpathEnvironment, String name, String keyStroke, String nodeSelector, String move, String command, String task) {
-			this.name = name;
-			this.command = command;
+			this.name = name;;
 			this.task = task;
 			this.move = Boolean.valueOf(move).booleanValue();
 			this.keyStroke = KeyStroke.getKeyStroke(keyStroke);
+			//this.command = command
+                        try {
+                            if (command == null) this.command = null;
+                            else this.command =BasicTask.getTaskForClass(command);
+                        } catch (ClassNotFoundException cnfe) {
+                            cnfe.printStackTrace();
+                            this.command = null;
+                        } catch (InstantiationException ie) {
+                            ie.printStackTrace();
+                            this.command = null;
+                        } catch (IllegalAccessException iae) {
+                            iae.printStackTrace();
+                            this.command = null;
+                        }
 			try {
 				this.nodeSelector = xpathEnvironment.compile(nodeSelector);
 			} catch (XPathExpressionException xpe) {
@@ -426,7 +393,7 @@ public class Configuration
 		public String getName() {
 			return name;
 		}
-		public String getCommand() {
+		public BasicTask getCommand() {
 			return command;
 		}
 		public String getXSLTask() {
@@ -455,19 +422,19 @@ public class Configuration
 						System.out.println("no component for event--what to do?");
 						return;
 					}
-					QD qd = getQdParentForComponent((Component)source);
+                                        QD qd = getQDShellParentForComponent((Component)source).getQD();
 					if (qd == null) {
 						System.out.println("can't find any QD parent");
 						return;
 					}
-					if (qdActionDesc.getNodeSelector() != null) {
+					if (qd.getEditor() != null && qdActionDesc.getNodeSelector() != null) {
 						qd.getEditor().fireEndEditEvent();
 						Object moveTo = qd.getEditor().getNextVisibleNode(qd.getEditor().getTextPane().getCaret().getMark(), qdActionDesc.getNodeSelector());
 						qd.getEditor().getTextPane().requestFocus();
 						if (qdActionDesc.shouldMove())
 							qd.getEditor().getTextPane().setCaretPosition(qd.getEditor().getStartOffsetForNode(moveTo));
-						if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
-					}
+                                        }
+					if (qdActionDesc.getCommand() != null) qdActionDesc.getCommand().execute(qd, "");
 				}
 			};
 		} else { //xsl transform
@@ -478,14 +445,15 @@ public class Configuration
 						System.out.println("no component for event--what to do?");
 						return;
 					}
-					QD qd = getQdParentForComponent((Component)source);
+                                        QD qd = getQDShellParentForComponent((Component)source).getQD();
 					if (qd == null) {
 						System.out.println("can't find any QD parent");
 						return;
 					}
-					Editor editor = qd.getEditor();
-					qd.transformTranscript(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
-					if (qdActionDesc.getCommand() != null) qd.executeCommand(qdActionDesc.getCommand());
+                                        if (qd.getEditor() != null) {
+                                            qd.transformTranscript(qd.getEditor().getNodeForOffset(qd.getEditor().getTextPane().getCaret().getMark()), qdActionDesc.getNodeSelector(), qdActionDesc.getXSLTask());
+                                            if (qdActionDesc.getCommand() != null) qdActionDesc.getCommand().execute(qd, "");
+                                        } 
 				}
 			};
 		}
@@ -494,8 +462,8 @@ public class Configuration
 	/*
 	 * Get the top most component for a given component
 	 */
-	public static QD getQdParentForComponent(Component comp) {
-		if (comp instanceof QD) return (QD)comp;
+	public static QDShell getQDShellParentForComponent(Component comp) {
+		if (comp instanceof QDShell) return (QDShell)comp;
 		Component tcomp = comp;
 		MenuElement mi;
 		if (comp instanceof MenuElement) {
@@ -506,7 +474,7 @@ public class Configuration
 			}
 		}
 		Component parent = tcomp.getParent();
-		if (parent instanceof QD) return (QD)parent;
+		if (parent instanceof QDShell) return (QDShell)parent;
 		if (parent instanceof MenuElement) {
 			if (parent instanceof JPopupMenu) {
 				parent = ((JPopupMenu)parent).getInvoker();
@@ -514,11 +482,11 @@ public class Configuration
 				parent = ((MenuElement)parent).getComponent();
 			}
 		}
-		if (parent instanceof QD) return (QD)parent;
+		if (parent instanceof QDShell) return (QDShell)parent;
 		while (parent != null) {
 			tcomp = parent;
 			parent = tcomp.getParent();
-			if (parent instanceof QD) return (QD)parent;
+			if (parent instanceof QDShell) return (QDShell)parent;
 			if (parent instanceof MenuElement) {
 				if (parent instanceof JPopupMenu) {
 					parent = ((JPopupMenu)parent).getInvoker();
@@ -527,31 +495,7 @@ public class Configuration
 				}
 			}
 		}
-		if (tcomp instanceof QD) return (QD)tcomp;
+		if (tcomp instanceof QDShell) return (QDShell)tcomp;
 		else return null;
 	}
-	
-	
-	/*
-	 * Get the top most component for a given MenuItem.
-	 * This is a little tricky
-	 */
-	/*       public static QD getQdParentForMenuItem(MenuItem mi) {
-	 MenuContainer tmcont = mi.getParent();;
-	 MenuContainer parent = tmcont;
-	 while (parent != null) {
-	 if (parent instanceof Component) {
-	 break;
-	 }
-	 tmcont = parent;
-	 parent = ((MenuComponent)tmcont).getParent();
-	 }
-	 
-	 if (parent == null) {
-	 return null;
-	 }
-	 QD qd = getQdParentForComponent((Component) parent);
-	 return qd;
-	 }
-	 */
 }

@@ -6,5 +6,5 @@
      configurations. -->
 <!ELEMENT qd-configurations (configuration+)>
 <!ELEMENT configuration EMPTY>
-<!ATTLIST configuration menu-name CDATA #REQUIRED>
+<!ATTLIST configuration name CDATA #REQUIRED>
 <!ATTLIST configuration href CDATA #REQUIRED>

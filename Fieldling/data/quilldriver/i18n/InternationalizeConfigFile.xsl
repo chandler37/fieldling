@@ -30,7 +30,9 @@
 <!ELEMENT menus (menu+)>
 <!ELEMENT menu EMPTY>
 <!ATTLIST menu name IDREF #REQUIRED
-                        contains IDREFS #REQUIRED>
+                        contains CDATA #REQUIRED>
+<!--<!ATTLIST menu name IDREF #REQUIRED
+                        contains IDREFS #REQUIRED>-->
 <!ELEMENT actions (action+)>
 <!ELEMENT action (helptext?)>
 <!ATTLIST action name IDREF #REQUIRED

@@ -25,59 +25,64 @@ import java.util.ArrayList;
 import fieldling.util.*;
 
 public class PlayerFactory {
-	public static List mediaPlayers;
+    //public static List mediaPlayers;
 
     /** You cannot instantiate this class. */
     private PlayerFactory() { }
-
-	public static List getAllAvailablePlayers() {
-		String defaultPlayer, player;
+    
+    public static List getAllAvailablePlayers() {
+        List mediaPlayers;
+        String defaultPlayer, player;
+      
         switch (OperatingSystemUtils.getOSType()) {
-        case OperatingSystemUtils.MAC:
-            //macs default to org.thdl.media.SmartQT4JPlayer
-			defaultPlayer = "fieldling.mediaplayer.QT4JPlayer";
-            break;
-        case OperatingSystemUtils.WIN32:
-            //windows defaults to SmartJMFPlayer
-			defaultPlayer = "fieldling.mediaplayer.JMFPlayer";
-            break;
-        default:
-            //put linux etc. here
-			defaultPlayer = "fieldling.mediaplayer.JMFPlayer";
-            break;
-        }
+            case OperatingSystemUtils.MAC: //macs default to org.thdl.media.SmartQT4JPlayer
+	        defaultPlayer = "fieldling.mediaplayer.QT4JPlayer";
+                break;
+            case OperatingSystemUtils.WIN32: //windows defaults to SmartJMFPlayer
+		defaultPlayer = "fieldling.mediaplayer.JMFPlayer";
+                break;
+            default: //put linux etc. here
+                defaultPlayer = "fieldling.mediaplayer.JMFPlayer";
+                break;
+       }
 
        // player  = ThdlOptions.getStringOption("thdl.media.player", defaultPlayer);
        player = "fieldling.mediaplayer.JMFPlayer";
+       String[] possiblePlayers;
+       if (player.equals("fieldling.mediaplayer.JMFPlayer"))
+           possiblePlayers = new String[] {"fieldling.mediaplayer.JMFPlayer", "fieldling.mediaplayer.QT4JPlayer"};
+	else
+            possiblePlayers = new String[] {"fieldling.mediaplayer.QT4JPlayer", "fieldling.mediaplayer.JMFPlayer"};
 
-		String[] possiblePlayers;
-		if (player.equals("fieldling.mediaplayer.JMFPlayer"))
-			possiblePlayers = new String[] {"fieldling.mediaplayer.JMFPlayer", "fieldling.mediaplayer.QT4JPlayer"};
-		else
-			possiblePlayers = new String[] {"fieldling.mediaplayer.QT4JPlayer", "fieldling.mediaplayer.JMFPlayer"};
-
-		mediaPlayers = new ArrayList();
-		for (int i=0; i<possiblePlayers.length; i++) {
-			try {
-				Class mediaClass = Class.forName(possiblePlayers[i]);
-
+	mediaPlayers = new ArrayList();
+	for (int i=0; i<possiblePlayers.length; i++) {
+            try {
+		Class mediaClass = Class.forName(possiblePlayers[i]);
                 //FIXME:				playerClasses.add(mediaClass);
-
-				PanelPlayer smp = (PanelPlayer)mediaClass.newInstance();
-				mediaPlayers.add(smp);
-			} catch (ClassNotFoundException cnfe) {
-				//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
-			} catch (LinkageError lie) {
-				//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
-			} catch (InstantiationException ie) {
-				ie.printStackTrace();
-			} catch (SecurityException se) {
-				se.printStackTrace();
-			} catch (IllegalAccessException iae) {
-				iae.printStackTrace();
-				//ThdlDebug.noteIffyCode();
-			}
-		}
-		return mediaPlayers;
+		PanelPlayer smp = (PanelPlayer)mediaClass.newInstance();
+                mediaPlayers.add(smp);
+            } catch (ClassNotFoundException cnfe) {
+		//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
+            } catch (LinkageError lie) {
+		//LOGGINGSystem.out.println("No big deal: class " + possiblePlayers[i] + " not found.");
+            } catch (InstantiationException ie) {
+		ie.printStackTrace();
+            } catch (SecurityException se) {
+		se.printStackTrace();
+            } catch (IllegalAccessException iae) {
+		iae.printStackTrace();
+                //ThdlDebug.noteIffyCode();
+            }
 	}
+	return mediaPlayers;
+    }
+    public static PanelPlayer getPlayerForClass(String className) throws PanelPlayerException {
+            try {
+		Class mediaClass = Class.forName(className);
+		PanelPlayer smp = (PanelPlayer)mediaClass.newInstance();
+                return smp;
+            } catch (Exception e) {
+                throw new PanelPlayerException("player " + className + " doesn't exist");
+            }
+    }
 }

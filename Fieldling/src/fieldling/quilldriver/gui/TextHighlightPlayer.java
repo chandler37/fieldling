@@ -34,7 +34,8 @@ import fieldling.quilldriver.xml.View;
 
 public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 {
-	protected JTextComponent text;
+	public JTextComponent text; //public--really?
+        
 	protected Hashtable hashStart, hashEnd, highlights;
 	protected Highlighter highlighter;
 	protected Highlighter.HighlightPainter highlightPainter;

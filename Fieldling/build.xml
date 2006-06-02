@@ -187,9 +187,9 @@ a version optimized for use with Tibetan script.
                         extension=".xml"
                         style="${data.dir}/quilldriver/i18n/InternationalizeConfigFile.xsl"/>
                 <java classname="net.sf.saxon.Transform" fork="true">
-                    <arg value="${temp.dir}/keep/TranscriptionConfig.xml"/>
+                    <arg value="${temp.dir}/keep/THDLTranscription.xml"/>
                     <arg value="${data.dir}/quilldriver/i18n/InternationalizeConfigHelp.xsl"/>
-                    <arg value="filename.minus.extension=${temp.dir}/keep/TranscriptionConfig"/>
+                    <arg value="filename.minus.extension=${temp.dir}/keep/THDLTranscription"/>
                     <classpath>
                         <pathelement location="${ext}/saxon8.jar"/>
                         <pathelement path="${unicode.classes}"/>
@@ -205,9 +205,9 @@ a version optimized for use with Tibetan script.
                     </classpath>
                 </java>
                 <java classname="net.sf.saxon.Transform" fork="true">
-                    <arg value="${temp.dir}/keep/SavantConfig.xml"/>
+                    <arg value="${temp.dir}/keep/THDLReadonly.xml"/>
                     <arg value="${data.dir}/quilldriver/i18n/InternationalizeConfigHelp.xsl"/>
-                    <arg value="filename.minus.extension=${temp.dir}/keep/SavantConfig"/>
+                    <arg value="filename.minus.extension=${temp.dir}/keep/THDLReadonly"/>
                     <classpath>
                         <pathelement location="${ext}/saxon8.jar"/>
                         <pathelement path="${unicode.classes}"/>

@@ -1,133 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <qd-configuration>
-	<parameters>
-		<namespaces val="qq http://altiplano.emich.edu/ucuchi"/>
-		<xmlschema val="http://altiplano.emich.edu/ucuchi QuechuaTranscript.xsd"/>
-		<newtemplate val="UcuchiTranscribeNew.xml"/>
-		<xsltransform val="UcuchiTranscribeEdit.xsl"/>
-		<parameter name="qd.root.element" val="qq:TEXT" type="XPathExpression"/>
-		<parameter name="qd.showfilenameastitlebydefault" val="true" type="Boolean"/>
-		<parameter name="qd.contentEditable" val="true" type="Boolean"/>
-		<parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>		
-	</parameters>
-	<menus>
-		<menu name="Transcript" contains="Save"/>
-		<menu name="BrowseMenu" contains="PlayPause PlayBack PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine GotoNextLine GotoPreviousLine"/>
-		<menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker NewClause DeleteClause"/>
-		<menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
-	</menus>
-	<actions>
-		<!-- file menu -->
-		<action name="Save" keystroke="control S" node="." qd-command="saveTranscript">
-					</action>
-		<!-- browse menu -->
-		<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="playPause">
-			<helptext ref="help1"/>
-		</action>
-		<action name="PlayBack" keystroke="control QUOTE" node="." move="false" qd-command="playBack">
-			<helptext ref="help2"/>
-		</action>
-		<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="playNode">
-			<helptext ref="help3"/>
-		</action>
-		<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playNode">
-			<helptext ref="help4"/>
-		</action>
-		<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="playEdge">
-			<helptext ref="help5"/>
-		</action>
-		<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*][1]" qd-command="playNode">
-			<helptext ref="help6"/>
-		</action>
-		<action name="GotoNextLine" keystroke="control DOWN" node="following::qq:C">
-			<helptext ref="help7"/>
-		</action>
-		<action name="GotoPreviousLine" keystroke="control UP" node="preceding::qq:C[1]">
-			<helptext ref="help8"/>
-		</action>
-		<!-- edit menu -->
-		<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::qq:TEXT/qq:META" xsl-task="addSpeaker">
-			<helptext ref="help9"/>
-		</action>
-		<action name="DeleteSpeaker" keystroke="control K" node="ancestor-or-self::qq:SPEAKER" xsl-task="removeNode">
-			<helptext ref="help10"/>
-		</action>
-		<action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::qq:C" xsl-task="changeSpeaker">
-			<helptext ref="help11"/>
-		</action>
-		<action name="NewClause" keystroke="control M" node="ancestor-or-self::qq:C" xsl-task="newClause">
-			<helptext ref="help27"/>
-		</action>
-		<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::qq:C" xsl-task="removeNode">
-			<helptext ref="help45"/>
-		</action>
-		<!-- timecode menu -->
-		<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::qq:C" xsl-task="markStart">
-			<helptext ref="help12"/>
-		</action>
-		<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::qq:C" xsl-task="markStop" qd-command="stopMedia">
-			<helptext ref="help13"/>
-		</action>
-		<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::qq:C" xsl-task="increaseStart">
-			<helptext ref="help16"/>
-		</action>
-		<action name="RapidIncreaseStart" keystroke="alt control EQUALS" node="ancestor-or-self::qq:C" xsl-task="rapidIncreaseStart">
-			<helptext ref="help17"/>
-		</action>
-		<action name="DecreaseStartTime" keystroke="control MINUS" node="ancestor-or-self::qq:C" xsl-task="decreaseStart">
-			<helptext ref="help18"/>
-		</action>
-		<action name="RapidDecreaseStart" keystroke="alt control MINUS" node="ancestor-or-self::qq:C" xsl-task="rapidDecreaseStart">
-			<helptext ref="help19"/>
-		</action>
-		<action name="IncreaseStopTime" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::qq:C" xsl-task="increaseStop">
-			<helptext ref="help20"/>
-		</action>
-		<action name="RapidIncreaseStop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::qq:C" xsl-task="rapidIncreaseStop">
-			<helptext ref="help21"/>
-		</action>
-		<action name="MaximizeStop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::qq:C" xsl-task="maximizeStop">
-			<helptext ref="help22"/>
-		</action>
-		<action name="DecreaseStopTime" keystroke="control OPEN_BRACKET" node="ancestor-or-self::qq:C" xsl-task="decreaseStop">
-			<helptext ref="help23"/>
-		</action>
-		<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::qq:C" xsl-task="rapidDecreaseStop">
-			<helptext ref="help24"/>
-		</action>
-		<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::qq:C" xsl-task="zapTimes">
-			<helptext ref="help15"/>
-		</action>
-	</actions>
-	<rendering-instructions>
-		<tag name="qq:TEXT" visible="false"/>
-		<tag name="qq:META" visible="false"/>
-		<tag name="qq:W" visible="false" visiblecontents="false"/>
-		<tag name="qq:TRANS" visible="false" visiblecontents="false"/>
-		<tag name="qq:PAUSE" visible="false" visiblecontents="false"/>
-		<tag name="qq:GOD-KNOWS" visible="false" visiblecontents="false"/>
-		<tag name="qq:COMMENT" visible="false" visiblecontents="false"/>
-		<tag name="qq:SPEAKER" visible="true" displayas="'SPEAKER'"/>
-		<tagview name="QuechuaOnly" keystroke="F1">
-			<tag name="qq:C" visible="false" visiblecontents="true">
-				<attribute name="qd:t1" visible="false"/>
-				<attribute name="qd:t2" visible="false"/>
-				<attribute name="spid" visible="false"/>
-			</tag>
-			<tag name="qq:F" visible="true" displayas="if (../@spid=../preceding-sibling::qq:C[1]/@spid) then '          ' else (id(../@spid))" visiblecontents="true"/>
-			<tag name="qq:TRANSL" visiblecontents="false" visible="false"/>
-		</tagview>
-		<tagview name="QuechuaAndEnglish" keystroke="F2">
-			<tag name="qq:C" visible="true" displayas="if (./@spid=./preceding-sibling::qq:C[1]/@spid) then '          ' else (id(./@spid))" visiblecontents="true">
-				<attribute name="qd:t1" visible="false"/>
-				<attribute name="qd:t2" visible="false"/>
-				<attribute name="spid" visible="false"/>
-				<attribute name="id" visible="false"/>
-				<attribute name="xmlns:qd" visible="false"/>
-				<attribute name="xmlns:qq" visible="false"/>
-			</tag>
-			<tag name="qq:F" visible="false" visiblecontents="true"/>
-			<tag name="qq:TRANSL" visiblecontents="true" visible="false"/>
-		</tagview>
-	</rendering-instructions>
+                <parameters>
+                    <namespaces val="qq http://altiplano.emich.edu/ucuchi"/>
+                    <xmlschema val="http://altiplano.emich.edu/ucuchi QuechuaTranscript.xsd"/>
+                    <newtemplate val="UcuchiTranscribeNew.xml"/>
+                    <xsltransform val="UcuchiTranscribeEdit.xsl"/>
+                    <parameter name="qd.root.element" val="qq:TEXT" type="XPathExpression"/>
+                    <parameter name="qd.showfilenameastitlebydefault" val="true" type="Boolean"/>
+                    <parameter name="qd.contentEditable" val="true" type="Boolean"/>
+                    <parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>
+                </parameters>
+                <menus>
+                        <menu name="FileMenu" contains="NewTranscript OpenTranscript | Save SaveAs | Close | Print PrintToPS PrintToRTF | Exit"/>
+                        <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker | NewClause DeleteClause"/>
+                        <menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | GotoNextLine GotoPreviousLine"/>
+                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
+                        <menu name="ToolsMenu" contains="FontAndStylePreferences TimeCodingPreferences"/>
+                        <menu name="View" contains="QuechuaOnly QuechuaAndEnglish"/>
+                        <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly"/>   
+                        <menu name="Help" contains="AboutQuillDriver Help"/>
+                </menus>
+                <actions>
+                        <!-- window menu -->
+                        <action name="MediaToRight" keystroke="shift F1" node="." qd-command="fieldling.quilldriver.task.MediaToRight">
+                        </action>
+                        <action name="MediaToLeft" keystroke="shift F2" node="." qd-command="fieldling.quilldriver.task.MediaToLeft">
+                        </action>
+                        <action name="MediaOnTop" keystroke="shift F3" node="." qd-command="fieldling.quilldriver.task.MediaOnTop">
+                        </action>
+                        <action name="SubtitleBelow" keystroke="shift F4" node="." qd-command="fieldling.quilldriver.task.SubtitleBelow">
+                        </action>
+                        <action name="MediaOverTranscript" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.MediaOverTranscript">
+                        </action>
+                        <action name="FullScreenVideoOnly" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.FullScreenVideoOnly">
+                        </action>
+                        <action name="NormalSizeVideoOnly" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
+                        </action>
+                        <action name="TranscriptOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
+                        </action>
+                        <!-- about menu -->
+                        <action name="AboutQuillDriver" node="." qd-command="fieldling.quilldriver.task.AboutQD">
+                        </action>
+                        <action name="Help" node="." qd-command="fieldling.quilldriver.task.ShowHelp">
+                        </action>
+                        <!-- file menu -->
+                        <action name="NewTranscript" keystroke="control N" node="." qd-command="fieldling.quilldriver.task.NewTranscript"/>
+                        <action name="OpenTranscript" keystroke="control O" node="." qd-command="fieldling.quilldriver.task.OpenTranscript">
+                        </action>
+                        <action name="Save" keystroke="control S" node="." qd-command="fieldling.quilldriver.task.SaveTranscript">
+                        </action>
+                        <action name="SaveAs" node="." qd-command="fieldling.quilldriver.task.SaveTranscriptAs"/>
+                        <action name="Close" keystroke="control W" node="." qd-command="fieldling.quilldriver.task.CloseTranscript">
+                        </action>
+                        <action name="Print" keystroke="control P" node="." qd-command="fieldling.quilldriver.task.PrintTranscript">
+                        </action>
+                        <action name="PrintToPS" node="." qd-command="fieldling.quilldriver.task.PrintToPS">
+                        </action>
+                        <action name="PrintToRTF" node="." qd-command="fieldling.quilldriver.task.PrintToRTF">
+                        </action>
+                        <action name="Exit" node="." qd-command="fieldling.quilldriver.task.ExitQD">
+                        </action>
+                        <!-- tools menu -->
+                        <action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
+                        </action>
+                        <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
+                        </action>
+                        <!-- browse menu -->
+                        <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="fieldling.quilldriver.task.PlayPause">
+                                <helptext ref="help1"/>
+                        </action>
+			<action name="PlayBack" keystroke="control QUOTE" node="." move="false" qd-command="fieldling.quilldriver.task.PlayBack">
+                                <helptext ref="help2"/>
+                        </action>
+			<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[@qd:*]" qd-command="fieldling.quilldriver.task.PlayNode">
+                                <helptext ref="help3"/>
+                        </action>
+			<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="fieldling.quilldriver.task.PlayNode">
+                                <helptext ref="help4"/>
+                        </action>
+			<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[@qd:*]" move="false" qd-command="fieldling.quilldriver.task.PlayEdge">
+                                <helptext ref="help5"/>
+                        </action>
+			<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[@qd:*][1]" qd-command="fieldling.quilldriver.task.PlayNode">
+                                <helptext ref="help6"/>
+                        </action>
+			<action name="GotoNextLine" keystroke="control DOWN" node="following::qq:C">
+                                <helptext ref="help7"/>
+                        </action>
+			<action name="GotoPreviousLine" keystroke="control UP" node="preceding::qq:C[1]">
+                                <helptext ref="help8"/>
+                        </action>
+                        
+                        <!-- edit menu -->
+			<action name="AddSpeaker" keystroke="control J" node="ancestor-or-self::qq:TEXT/qq:META" xsl-task="addSpeaker">
+                                <helptext ref="help9"/>
+                        </action>
+			<action name="DeleteSpeaker" keystroke="control K" node="ancestor-or-self::qq:SPEAKER" xsl-task="removeNode">
+                                <helptext ref="help10"/>
+                        </action>
+                        <action name="ChangeSpeaker" keystroke="control 1" node="ancestor-or-self::qq:C" xsl-task="changeSpeaker">
+                                <helptext ref="help11"/>
+                        </action>
+			<action name="NewClause" keystroke="control M" node="ancestor-or-self::qq:C" xsl-task="newClause">
+                                <helptext ref="help27"/>
+                        </action>
+			<action name="DeleteClause" keystroke="control R" node="ancestor-or-self::qq:C" xsl-task="removeNode">
+                                <helptext ref="help45"/>
+                        </action>
+                        
+                        <!-- timecode menu -->
+			<action name="MarkStartTime" keystroke="control COMMA" node="ancestor-or-self::qq:C" xsl-task="markStart">
+                                <helptext ref="help12"/>
+                        </action>
+			<action name="MarkStopTime" keystroke="control PERIOD" node="ancestor-or-self::qq:C" xsl-task="markStop" qd-command="fieldling.quilldriver.task.StopMedia">
+                                <helptext ref="help13"/>
+                        </action>
+			<action name="IncreaseStartTime" keystroke="control EQUALS" node="ancestor-or-self::qq:C" xsl-task="increaseStart">
+                                <helptext ref="help16"/>
+                        </action>
+			<action name="RapidIncreaseStart" keystroke="alt control EQUALS" node="ancestor-or-self::qq:C" xsl-task="rapidIncreaseStart">
+                                <helptext ref="help17"/>
+                        </action>
+			<action name="DecreaseStartTime" keystroke="control MINUS" node="ancestor-or-self::qq:C" xsl-task="decreaseStart">
+                                <helptext ref="help18"/>
+                        </action>
+			<action name="RapidDecreaseStart" keystroke="alt control MINUS" node="ancestor-or-self::qq:C" xsl-task="rapidDecreaseStart">
+                                <helptext ref="help19"/>
+                        </action>
+			<action name="IncreaseStopTime" keystroke="control CLOSE_BRACKET" node="ancestor-or-self::qq:C" xsl-task="increaseStop">
+                                <helptext ref="help20"/>
+                        </action>
+			<action name="RapidIncreaseStop" keystroke="alt control CLOSE_BRACKET" node="ancestor-or-self::qq:C" xsl-task="rapidIncreaseStop">
+                                <helptext ref="help21"/>
+                        </action>
+			<action name="MaximizeStop" keystroke="alt control BACK_SLASH" node="ancestor-or-self::qq:C" xsl-task="maximizeStop">
+                                <helptext ref="help22"/>
+                        </action>
+			<action name="DecreaseStopTime" keystroke="control OPEN_BRACKET" node="ancestor-or-self::qq:C" xsl-task="decreaseStop">
+                                <helptext ref="help23"/>
+                        </action>
+			<action name="RapidDecreaseStop" keystroke="alt control OPEN_BRACKET" node="ancestor-or-self::qq:C" xsl-task="rapidDecreaseStop">
+                                <helptext ref="help24"/>
+                        </action>
+			<action name="ZapTimeCodes" keystroke="control shift SLASH" node="ancestor-or-self::qq:C" xsl-task="zapTimes">
+                                <helptext ref="help15"/>
+                        </action>
+                </actions>
+		<rendering-instructions>
+			<tag name="qq:TEXT" visible="false"/>
+                        <tag name="qq:META" visible="false"/>
+                        <tag name="qq:W" visible="false" visiblecontents="false"/>
+                        <tag name="qq:TRANS" visible="false" visiblecontents="false"/>
+                        <tag name="qq:PAUSE" visible="false" visiblecontents="false"/>
+                        <tag name="qq:GOD-KNOWS" visible="false" visiblecontents="false"/>
+                        <tag name="qq:COMMENT" visible="false" visiblecontents="false"/>
+                        <tag name="qq:SPEAKER" visible="true" displayas="'SPEAKER'"/>
+                        <tagview name="QuechuaOnly" keystroke="F1">
+                            <tag name="qq:C" visible="false" visiblecontents="true">
+                                <attribute name="qd:t1" visible="false"/>
+                                <attribute name="qd:t2" visible="false"/>
+                                <attribute name="spid" visible="false"/>
+                            </tag>
+                            <tag name="qq:F" visible="true" displayas="if (../@spid=../preceding-sibling::qq:C[1]/@spid) then '          ' else (id(../@spid))" visiblecontents="true"/>
+                            <tag name="qq:TRANSL" visiblecontents="false" visible="false"/>
+                        </tagview>
+                        <tagview name="QuechuaAndEnglish" keystroke="F2">
+                            <tag name="qq:C" visible="true" displayas="if (./@spid=./preceding-sibling::qq:C[1]/@spid) then '          ' else (id(./@spid))" visiblecontents="true">
+                                <attribute name="qd:t1" visible="false"/>
+                                <attribute name="qd:t2" visible="false"/>
+                                <attribute name="spid" visible="false"/>
+                                <attribute name="id" visible="false"/>
+                                <attribute name="xmlns:qd" visible="false"/>
+                                <attribute name="xmlns:qq" visible="false"/>
+                            </tag>
+                            <tag name="qq:F" visible="false" visiblecontents="true"/>
+                            <tag name="qq:TRANSL" visiblecontents="true" visible="false"/>
+                        </tagview>
+		</rendering-instructions>
 </qd-configuration>

@@ -36,7 +36,6 @@ public class Renderer {
 	private static final float indentIncrement = 15.0F;
 	private static final Color attColor = Color.pink;
 	private static final Color textColor = Color.darkGray;
-	private static PreferenceManager prefmngr; 
 
 	private static Color tagColor;
 	

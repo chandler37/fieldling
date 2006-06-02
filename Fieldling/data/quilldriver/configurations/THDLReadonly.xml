@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qd-configuration>
+	<parameters>
+		<xmlschema val="TibetanTranscript.xsd"/>
+		<!--<xsltransform val="TranscriptionRead.xsl"/>-->
+		<parameter name="qd.root.element" val="TEXT" type="XPathExpression"/>
+		<parameter name="qd.title" val="/TEXT/HEADER/TITLE" type="XPathExpression"/>
+		<parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB" type="XPathExpression"/>
+		<parameter name="qd.title_zh" val="/TEXT/HEADER/TITLE_ZH" type="XPathExpression"/>
+		<parameter name="qd.mediaurl" val="/TEXT/HEADER/SOUNDFILE/@href" type="XPathExpression"/>
+		<parameter name="qd.timealignednodes" val="//*[AUDIO]" type="XPathExpression"/>
+		<parameter name="qd.nodebegins" val="AUDIO/@start" type="XPathExpression"/>
+		<parameter name="qd.nodeends" val="AUDIO/@end" type="XPathExpression"/>
+		<parameter name="qd.nearestplayableparent" val="ancestor-or-self::*[AUDIO]" type="XPathExpression"/>
+		<parameter name="qd.showfilenameastitlebydefault" val="false" type="Boolean"/>
+		<parameter name="qd.contentEditable" val="false" type="Boolean"/>
+		<parameter name="qd.showtimecodingbydefault" val="false" type="Boolean"/>
+	</parameters>
+	<menus>
+		<menu name="FileMenu" contains="OpenTranscript Close | FixMedia | Print PrintToPS PrintToRTF | Exit"/>
+		<menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | NextSentence PreviousSentence GotoStart GotoEnd"/>
+                <menu name="ToolsMenu" contains="FontAndStylePreferences"/>
+                <menu name="View" contains="TranscriptionOnly | TranscriptionPlusEnglish TranscriptionPlusChinese TranscriptionPlusEnglishPlusChinese | EnglishPlusChinese Translation_ENOnly Translation_ZHOnly | WylieOnly WylieAndEnglish | NotesOnly TranscriptionPlusNotes EnglishPlusNotes | ShowEverything | THDLTranscription"/>          
+                <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly"/>   
+                <!--<menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript FullScreenVideoOnly NormalSizeVideoOnly TranscriptOnly DefaultSizeAndPlacement"/>-->                
+                <menu name="Help" contains="AboutQuillDriver Help"/>
+        </menus>
+	<actions>
+                        <!-- file menu -->
+                        <action name="OpenTranscript" keystroke="control O" node="." qd-command="fieldling.quilldriver.task.OpenTranscript">
+                        </action>
+                        <action name="Save" keystroke="control S" node="." qd-command="fieldling.quilldriver.task.SaveTranscript">
+                        </action>
+                        <action name="SaveAs" node="." qd-command="fieldling.quilldriver.task.SaveTranscriptAs"/>
+                        <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="fieldling.quilldriver.task.SaveTranscript">
+                                <helptext ref="help34"/>
+                        </action>
+                        <!--<action name="UpdateWindowTitle" keystroke="control U" node="." qd-command="fieldling.quilldriver.task.UpdateWindowTitle">
+                        </action>-->
+                        <action name="Close" keystroke="control W" node="." qd-command="fieldling.quilldriver.task.CloseTranscript">
+                        </action>
+                        <action name="Print" keystroke="control P" node="." qd-command="fieldling.quilldriver.task.PrintTranscript">
+                        </action>
+                        <action name="PrintToPS" node="." qd-command="fieldling.quilldriver.task.PrintToPS">
+                        </action>
+                        <action name="PrintToRTF" node="." qd-command="fieldling.quilldriver.task.PrintToRTF">
+                        </action>
+                        <action name="Exit" node="." qd-command="fieldling.quilldriver.task.ExitQD">
+                        </action>
+		<!-- browse menu -->			
+		<action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="fieldling.quilldriver.task.PlayPause">
+			<helptext ref="help1"/>
+		</action>
+		<action name="PlayBack" keystroke="control QUOTE" node="." move="false" qd-command="fieldling.quilldriver.task.PlayBack">
+			<helptext ref="help2"/>
+		</action>
+		<action name="PlayNextLine" keystroke="control shift DOWN" node="following::*[AUDIO]" qd-command="fieldling.quilldriver.task.PlayNode">
+			<helptext ref="help3"/>
+		</action>
+		<action name="PlayCurrentLine" keystroke="control LEFT" node="ancestor-or-self::*[AUDIO]" move="false" qd-command="fieldling.quilldriver.task.PlayNode">
+			<helptext ref="help4"/>
+		</action>
+		<action name="PlayEndofCurrentLine" keystroke="control RIGHT" node="ancestor-or-self::*[AUDIO]" move="false" qd-command="fieldling.quilldriver.task.PlayEdge">
+			<helptext ref="help5"/>
+		</action>
+		<action name="PlayPreviousLine" keystroke="control shift UP" node="preceding::*[AUDIO][1]" qd-command="fieldling.quilldriver.task.PlayNode">
+			<helptext ref="help6"/>
+		</action>
+		<action name="NextSentence" keystroke="control DOWN" node="following::S">
+			<helptext ref="help7"/>
+		</action>
+		<action name="PreviousSentence" keystroke="control UP" node="preceding::S[1]">
+			<helptext ref="help8"/>
+		</action>
+		<action name="GotoStart" keystroke="control L" node="ancestor-or-self::S" qd-command="fieldling.quilldriver.task.SeekStart">
+			<helptext ref="help32"/>
+		</action>
+		<action name="GotoEnd" keystroke="control SEMICOLON" node="ancestor-or-self::S" qd-command="fieldling.quilldriver.task.SeekEnd">
+			<helptext ref="help33"/>
+		</action>
+                        <!-- tools menu -->
+                        <action name="ChangeKeyboard" node="." qd-command="fieldling.quilldriver.task.thdl.ChangeKeyboard">
+                        </action>
+                        <action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
+                        </action>
+                        <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
+                        </action>
+                        <!-- view menu: NOTE also includes tag views -->
+                        <action name="THDLTranscription" node="." qd-command="fieldling.quilldriver.task.thdl.THDLTranscription"/>
+                        <!-- window menu -->
+                        <action name="MediaToRight" keystroke="shift F1" node="." qd-command="fieldling.quilldriver.task.MediaToRight">
+                        </action>
+                        <action name="MediaToLeft" keystroke="shift F2" node="." qd-command="fieldling.quilldriver.task.MediaToLeft">
+                        </action>
+                        <action name="MediaOnTop" keystroke="shift F3" node="." qd-command="fieldling.quilldriver.task.MediaOnTop">
+                        </action>
+                        <action name="SubtitleBelow" keystroke="shift F4" node="." qd-command="fieldling.quilldriver.task.SubtitleBelow">
+                        </action>
+                        <action name="MediaOverTranscript" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.MediaOverTranscript">
+                        </action>
+                        <action name="FullScreenVideoOnly" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.FullScreenVideoOnly">
+                        </action>
+                        <action name="NormalSizeVideoOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
+                        </action>
+                        <action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
+                        </action>
+                        <!--<action name="DefaultSizeAndPlacement" keystroke="shift F9" node="." qd-command="fieldling.quilldriver.task.DefaultSizeAndPlacement">
+                        </action>-->
+                        <!-- about menu -->
+                        <action name="AboutQuillDriver" node="." qd-command="fieldling.quilldriver.task.AboutQD">
+                        </action>
+                        <action name="Help" node="." qd-command="fieldling.quilldriver.task.ShowHelp">
+                        </action>
+	</actions>
+	<rendering-instructions>
+		<tag name="TEXT" visible="false">
+			<attribute name="xml:lang" visible="false"/>
+		</tag>
+		<tag name="HEADER" visible="false" visiblecontents="false"/>
+		<tag name="NOTE" visible="false" visiblecontents="false" displayas="@type">
+			<attribute name="type" visible="false"/>
+		</tag>
+		<tag name="AUDIO" visible="false" visiblecontents="false"/>
+		<tagview name="TranscriptionOnly" keystroke="F1">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="TranscriptionPlusChinese" keystroke="F3">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		<tagview name="EnglishPlusChinese" keystroke="F5">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		<tagview name="Translation_ENOnly" keystroke="F6">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="Translation_ZHOnly" keystroke="F7">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="WylieOnly" keystroke="F8">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="WylieAndEnglish" keystroke="F9">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="NotesOnly" keystroke="F10">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="TranscriptionPlusNotes" keystroke="F11">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="EnglishPlusNotes" keystroke="F12">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		<tagview name="ShowEverything">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="NOTE" displayas="@type">
+				<attribute name="type" visible="false"/>
+			</tag>
+		</tagview>
+	</rendering-instructions>
+	<!--<rendering-instructions>
+		<tag name="TEXT" visible="false">
+			<attribute name="xml:lang" visible="false"/>
+		</tag>
+		<tag name="HEADER" visible="false" visiblecontents="false"/>
+		<tag name="NOTE" visible="false" visiblecontents="false" displayas="@type">
+			<attribute name="type" visible="false"/>
+		</tag>
+		<tag name="AUDIO" visible="false" visiblecontents="false"/>
+		
+		<tagview name="TranscriptionOnly" keystroke="F1">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true" tibetancontents="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="TranscriptionPlusChinese" keystroke="F3">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+                        <tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="EnglishPlusChinese" keystroke="F5">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+		</tagview>
+		
+		<tagview name="Translation_ENOnly" keystroke="F6">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="Translation_ZHOnly" keystroke="F7">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+		</tagview>		
+
+		<tagview name="WylieOnly" keystroke="F8">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="WylieAndEnglish" keystroke="F9">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="NotesOnly" keystroke="F10">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="true" icon="play.gif">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+
+		<tagview name="TranscriptionPlusNotes" keystroke="F11">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))" tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+
+		<tagview name="EnglishPlusNotes" keystroke="F12">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="false" visiblecontents="false"/>
+			<tag name="TRANSL" visible="true" icon="play.gif" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="NOTE" visible="false" visiblecontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
+		</tagview>
+		
+		<tagview name="ShowEverything">
+			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))"  tibetan="true">
+				<attribute name="id" visible="false"/>
+				<attribute name="who" visible="false"/>
+			</tag>
+			<tag name="FORM" visible="true" tibetan="true" icon="play.gif" tibetancontents="true">
+				<attribute name="type" visible="false"/>
+			</tag>
+			<tag name="TRANSL" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
+				<attribute name="xml:lang" visible="false"/>
+			</tag>
+			<tag name="NOTE" displayas="@type">
+				<attribute name="type" visible="false"/>
+			</tag>
+		</tagview>
+	</rendering-instructions>-->
+</qd-configuration>

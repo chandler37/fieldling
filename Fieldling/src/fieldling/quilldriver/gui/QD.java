@@ -1,4 +1,4 @@
-/******* BEGIN LICENSE BLOCK *****
+/* ****** BEGIN LICENSE BLOCK *****
  *
  *    Copyright 2003 Edward Garrett
  *
@@ -46,84 +46,52 @@ import fieldling.quilldriver.PreferenceManager;
 import fieldling.quilldriver.config.*;
 import fieldling.quilldriver.xml.*;
 import fieldling.quilldriver.xml.View;
-import fieldling.quilldriver.gui.QDShell;
+import fieldling.quilldriver.task.*;
 
 public class QD extends JDesktopPane implements DOMErrorHandler {
 	public static final int SCROLLING_HIGHLIGHT_IS_ON = 0;
 	public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
 	protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
-	
-	public static final int HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT=0;
-	public static final int HORIZONTAL_WINDOWS_MEDIA_TO_LEFT=1;
-	public static final int VERTICAL_WINDOWS_MEDIA_TOP=2;
-	public static final int SUBTITLE_BELOW=3;
-	public static final int VIDEO_ONLY_FULL_SCREEN=4;
-	public static final int VIDEO_ONLY_NORMAL_SIZE=5;
-	public static final int TRANSCRIPT_ONLY=6;
-	
 	@UNICODE@public static final String productName = "QuillDriver";
 	@TIBETAN@public static final String productName = "QuillDriver-TIBETAN";
 	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
-	public static final String CONTENT_EDITABLE_NAME = "qd.contentEditable";
-	
-	protected int windowsMode=0;                
-	
+        public static final String DEFAULT_WINDOW_POSITIONING_CLASS_NAME = "fieldling.quilldriver.gui.MediaToRight";
+        public static TranscriptToggler transcriptToggler = new TranscriptToggler();
+	public JInternalFrame videoFrame = null;
+	public JInternalFrame textFrame = null;	
+        public static QD lastQD = null;
+	public static Configuration configuration = null;
+	public static ResourceBundle messages = I18n.getResourceBundle();
+	//public PreferenceManager prefmngr;
+	public TextHighlightPlayer hp;
+	public File transcriptFile = null;
+        
+	protected static TagInfo currentTagInfo = null;
 	protected static Color hColor = Color.cyan;
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected Editor editor = null;
-	protected JInternalFrame videoFrame = null;
-	protected JInternalFrame textFrame = null;
-	protected Map keyActions = null;
-	protected ResourceBundle messages;
 	protected TimeCodeModel tcp = null;
 	protected Hashtable actions;
-	static protected Map qdDefaultProperties;
-	//protected JMenu[] configMenus;
 	protected View view;
-	protected TextHighlightPlayer hp;
 	protected DocumentBuilder docBuilder;
-	protected File transcriptFile = null;
-	protected TagInfo currentTagInfo = null;
-	protected Configuration configuration = null;
+	protected org.w3c.dom.Document xmlDoc = null;
 	public Timer checkTimeTimer = null;
-	protected PreferenceManager prefmngr;
-	protected Action insertTimesAction = null;
+	//protected Action insertTimesAction = null;
 	protected boolean firstQDresize = true;
-	protected boolean bothResize=false;
-	protected boolean firstVideoFrameResize = true;
-	protected boolean firstTextFrameResize = true;    
-	protected String oldTitle=null;
-	protected String newTitle=null;
 	protected String language=null;
-	protected QDShell qdShell=null;
-	protected int index=0;//save the index assigned when open a transcript which has same window title with one in window menu
+	private QDShell qdShell=null;
+        private String title = "";
 	protected TimeCodeView tcv;
+        protected JPanel buttonPanel = null;
+        protected JComboBox togglerComboBox;
 	
-	static {
-		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
-		XPath xpathEnvironment = XPathUtilities.getXPathEnvironmentForDOM(qdNamespace);
-		qdDefaultProperties = new HashMap();
-		try {
-			qdDefaultProperties.put("qd.timealignednodes", xpathEnvironment.compile("//*[@qd:*]"));
-			qdDefaultProperties.put("qd.nodebegins", xpathEnvironment.compile("@qd:t1"));
-			qdDefaultProperties.put("qd.nodeends", xpathEnvironment.compile("@qd:t2"));
-			qdDefaultProperties.put("qd.nearestplayableparent", xpathEnvironment.compile("ancestor-or-self::*[@qd:*]"));
-		} catch (XPathExpressionException xpe) {
-			xpe.printStackTrace();
-		}
-	}
-	
-	public QD(Configuration configuration, PreferenceManager prefs) {
-		prefmngr = prefs;
-		setupGlobals();
+	public QD(Configuration configuration, PanelPlayer player) {
+	//public QD(Configuration configuration, PanelPlayer player, PreferenceManager prefs) {
+                setConfiguration(configuration);
+                setMediaPlayer(player);
+		//prefmngr = prefs;
 		setupGUI();
-		configure(configuration);
-		windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);
-		if(prefmngr.getInt(PreferenceManager.BOTH_RESIZE_KEY, 0)==1)
-			bothResize=true;
-		else
-			bothResize=false;
 		String lang=I18n.getDefaultDisplayLanguage();
 		if (lang==messages.getString("English")) language="English";
 		else                
@@ -131,29 +99,14 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			else 
 				if (lang==messages.getString("Tibetan")) language="Tibetan";
 	}
-	public QD(PreferenceManager prefs) {
-		prefmngr = prefs;
-		setupGlobals();
-		setupGUI();
-		windowsMode=prefmngr.getInt(PreferenceManager.WINDOW_MODE_KEY, 0);
-		if(prefmngr.getInt(PreferenceManager.BOTH_RESIZE_KEY, 0)==1)
-			bothResize=true;
-		else
-			bothResize=false;
-		String lang=I18n.getDefaultDisplayLanguage();
-		if (lang==messages.getString("English")) language="English";
-		else                
-			if(lang==messages.getString("Chinese")) language="Chinese";
-			else 
-				if (lang==messages.getString("Tibetan")) language="Tibetan";
-	}
-	private void setupGlobals() {
-		messages = I18n.getResourceBundle();
-	}
+        
 	private void setupGUI() {
 		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
+                videoFrame = new JInternalFrame();
+                videoFrame.setBorder(null);
+                ((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
+		//videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
 		videoFrame.setVisible(true);
 		videoFrame.setLocation(0,0);
 		videoFrame.setSize(0,0);
@@ -161,7 +114,10 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		invalidate();
 		validate();
 		repaint();
-		textFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
+                textFrame = new JInternalFrame();             
+                textFrame.setBorder(null);
+                ((javax.swing.plaf.basic.BasicInternalFrameUI) textFrame.getUI()).setNorthPane(null);
+		//textFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
 		textFrame.setVisible(true);
 		textFrame.setLocation(0,0);
 		textFrame.setSize(0,0);
@@ -169,31 +125,28 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		invalidate();
 		validate();
 		repaint();
-		textFrame.addComponentListener(new WindowsComponentAdapter());
-		videoFrame.addComponentListener(new WindowsComponentAdapter()); 
 		
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
-				if (firstQDresize) { 
-					/*
-					 videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 
-					 getSize().width - videoFrame.getSize().width),
-					 prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                      
-					 textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
-					 prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
-					 textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY, 
-					 getSize().width - videoFrame.getSize().width),
-					 prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY, 
-					 getSize().height)); */   
-					textFrame.setLocation(prefmngr.getInt(PreferenceManager.TRANSCRIPT_X_KEY, 0),
-							prefmngr.getInt(PreferenceManager.TRANSCRIPT_Y_KEY, 0));
-					textFrame.setSize(prefmngr.getInt(PreferenceManager.TRANSCRIPT_WIDTH_KEY,0),
-							prefmngr.getInt(PreferenceManager.TRANSCRIPT_HEIGHT_KEY,0));                                  
-					videoFrame.setLocation(prefmngr.getInt(PreferenceManager.VIDEO_X_KEY, 0 ),
-							prefmngr.getInt(PreferenceManager.VIDEO_Y_KEY, 0));                                    
-					videoFrame.setSize(prefmngr.getInt(PreferenceManager.VIDEO_WIDTH_KEY, 0),
-							prefmngr.getInt(PreferenceManager.VIDEO_HEIGHT_KEY,0));                                                                              
-					firstQDresize = false;                                        
+				if (firstQDresize) {
+                                    String windowPositioningClassName = PreferenceManager.getValue(PreferenceManager.WINDOW_MODE_KEY, DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
+                                    try {
+                                        Class c = Class.forName(windowPositioningClassName);
+                                        if (BasicTask.tasksOnOffer.containsKey(c) && BasicTask.tasksOnOffer.get(c) instanceof WindowPositioningTask) {
+                                            WindowPositioningTask wTask = (WindowPositioningTask)BasicTask.tasksOnOffer.get(c);
+                                            wTask.execute(QD.this, null);
+                                            firstQDresize = false;
+                                            return;
+                                        }
+                                    } catch (Exception e1) {
+                                        try {
+                                            Class c = Class.forName(DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
+                                            WindowPositioningTask wTask = (WindowPositioningTask)BasicTask.tasksOnOffer.get(c);
+                                            wTask.execute(QD.this, null);
+                                            firstQDresize = false;
+                                        } catch (Exception e2) {
+                                        }
+                                    }
 				} 
 			}});
 	}
@@ -218,208 +171,16 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			}
 			else
 				return transcriptFile.getName();
-		}               
+		}
 		//return transcriptFile.getName() + " - " + QD.productName;
 		return transcriptFile.getName();
 	}
 	
 	public String getCurrentLang(){return language;}
-	public void setOldTitle(String newTit){oldTitle=newTit;}
-	public String getOldTitle(){return oldTitle;}
-	public void setQDShell(QDShell shell){qdShell=shell;}
-	
-	public void setCurrentLang(int newTagInfo){  
-		switch(newTagInfo){
-		case 0://"TranscriptionOnly"
-			language="Tibetan"; break;
-		case 1://"TranscriptionPlusEnglish"
-			language="Tibetan"; break;  
-		case 2://"TranscriptionPlusChinese"
-			language="Tibetan"; break;
-		case 3://"TranscriptionPlusEnglishPlusChinese"
-			language="Tibetan"; break;
-		case 4://"EnglishPlusChinese"
-			language="Chinese"; break;
-		case 5://"Translation_ENOnly"
-			language="English"; break;
-		case 6://"Translation_ZHOnly"
-			language="Chinese"; break;
-		case 7://"WylieOnly"
-			language="Wylie"; break;
-		case 8://"WylieAndEnglish"
-			language="Wylie"; break;
-		case 9://"NotesOnly"
-			language="Tibetan"; break;
-		case 10://"TranscriptionPlusNotes"
-			language="Tibetan"; break;
-		case 11://"EnglishPlusNotes"
-			language="English"; break;
-		case 12://"ShowEverything"
-			language="Tibetan"; break;
-		}       
-	}
-	
-	class WindowsComponentAdapter extends ComponentAdapter {         
-		public void componentResized(ComponentEvent ce) {
-			if(!firstQDresize&&bothResize){                
-				switch(windowsMode){
-				case 0:                                       
-					if(ce.getComponent()==(Component)textFrame){
-						textFrame.setLocation(0,0);
-						videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().width-textFrame.getSize().width);                                                                          
-						videoFrame.setLocation(getSize().width-textFrame.getSize().width,0);                    
-					}
-					else
-					{   
-						videoFrame.setLocation(getSize().width-videoFrame.getSize().width,0);                                                                               
-						textFrame.setLocation(0,0); 
-						textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height); 
-					}
-					break;
-				case 1:
-					if(ce.getComponent()==(Component)textFrame){                                      
-						videoFrame.setLocation(0,0);    
-						videoFrame.setSize(getSize().width-textFrame.getSize().width,getSize().width-textFrame.getSize().width);
-						textFrame.setLocation(getSize().width-textFrame.getSize().width,0);                   
-					}
-					else
-					{                           
-						videoFrame.setLocation(0,0);
-						textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
-						textFrame.setLocation(getSize().width-textFrame.getSize().width,0);
-					}
-					break;
-				case 2:
-					if(ce.getComponent()==(Component)textFrame){
-						videoFrame.setLocation(getSize().width/3,0);
-						videoFrame.setSize(getSize().height-textFrame.getSize().height,getSize().height-textFrame.getSize().height);
-						textFrame.setLocation(0,videoFrame.getSize().height);                                                         
-					}
-					else
-					{   
-						videoFrame.setLocation(getSize().width/3,0);
-						textFrame.setSize(getSize().width,getSize().height-videoFrame.getSize().height);
-						textFrame.setLocation(0,videoFrame.getSize().height); 
-					}
-					break; 
-				case 3:
-					if(ce.getComponent()==(Component)textFrame){
-						videoFrame.setLocation(getSize().width/3,0);
-						videoFrame.setSize(getSize().height-textFrame.getSize().height,getSize().height-textFrame.getSize().height);
-						textFrame.setLocation(0,videoFrame.getSize().height);                                                         
-					}
-					else
-					{   
-						videoFrame.setLocation(getSize().width/3,0);  
-						textFrame.setSize(getSize().width,getSize().height-videoFrame.getSize().height);
-						textFrame.setLocation(0,videoFrame.getSize().height); 
-					}
-					break;                                                                    
-				}
-			}
-			
-		}
-	}
-	
-	//------setting textframe and videoframe windows mode--------------
-	public void setHorizontalWindowsMediaToRight(){          
-		videoFrame.setSize(getSize().width/4,getSize().height/3);
-		videoFrame.pack();                             
-		videoFrame.setLocation(getSize().width - videoFrame.getSize().width,0);
-		//videoFrame.pack();
-		textFrame.setLocation(0,0);
-		textFrame.setSize(getSize().width - videoFrame.getSize().width, getSize().height);
-		
-		windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_RIGHT;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-	}
-	
-	public void setHorizontalWindowsMediaToLeft(){                                                           
-		videoFrame.setSize(getSize().width/4,getSize().height/3);
-		videoFrame.setLocation(0,0);
-		videoFrame.pack();
-		textFrame.setSize(getSize().width-videoFrame.getSize().width,getSize().height);
-		textFrame.setLocation(videoFrame.getSize().width,0);  
-		
-		windowsMode=HORIZONTAL_WINDOWS_MEDIA_TO_LEFT;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-	}   
-	
-	public void setVerticalWindowsMediaTop(){                        
-		videoFrame.setLocation(getSize().width/3,0);
-		videoFrame.setSize(getSize().width/2,getSize().height/2);                               
-		videoFrame.pack();                            
-		textFrame.setLocation(0,videoFrame.getSize().height);
-		textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
-		
-		windowsMode=VERTICAL_WINDOWS_MEDIA_TOP;
-	}
-	
-	public void setSubtitleWindows(){                 
-		videoFrame.setLocation(getSize().width/3,0);
-		videoFrame.setSize(getSize().width/2,getSize().height*7/10);                      
-		//videoFrame.pack();
-		textFrame.setLocation(0,videoFrame.getSize().height);
-		textFrame.setSize(getSize().width, getSize().height-videoFrame.getSize().height);
-		
-		windowsMode=SUBTITLE_BELOW;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-		
-	}
-	
-	public void setVideoOnlyFullScreen(){                             
-		videoFrame.setLocation(0,0);                        
-		videoFrame.setSize(getSize().width, getSize().height);
-		//videoFrame.pack();
-		textFrame.setSize(0,0);
-		textFrame.setLocation(0,0);                      
-		
-		windowsMode=VIDEO_ONLY_FULL_SCREEN;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-	}
-	
-	public void setVideoOnlyNormalSize(){ 
-		
-		textFrame.setSize(0,0);
-		textFrame.setLocation(0,0);
-		videoFrame.setSize(getSize().width/4,getSize().height/3);
-		videoFrame.setLocation(getSize().width/4, getSize().height/4);
-		videoFrame.pack();                              
-		
-		windowsMode=VIDEO_ONLY_NORMAL_SIZE;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-	}
-	
-	public void setTranscriptOnly(){                          
-		videoFrame.setSize(0,0);
-		videoFrame.setLocation(0,0);                              
-		//videoFrame.pack();                               
-		textFrame.setLocation(0,0);                        
-		textFrame.setSize(getSize().width,getSize().height);                              
-		
-		windowsMode=TRANSCRIPT_ONLY;
-		prefmngr.setInt(prefmngr.WINDOW_MODE_KEY, windowsMode);
-	}
-	
-	public void setDefaultWindows(){                     
-		switch(windowsMode){
-		case 0: setHorizontalWindowsMediaToRight(); break;
-		case 1: setHorizontalWindowsMediaToLeft(); break;
-		case 2: setVerticalWindowsMediaTop();break;
-		case 3: setSubtitleWindows(); break;
-		case 4: setVideoOnlyFullScreen(); break;
-		case 5: setVideoOnlyNormalSize(); break;
-		case 6: setTranscriptOnly(); break;
-		}                                          
-	} 
-	
-	public int getWindowsMode(){
-		return windowsMode;
-	}
-	
-	public boolean getBothResize(){
-		return bothResize;
-	}
+
+	public void setQDShell(QDShell shell) {
+                qdShell=shell;
+        }
 	
 	private void startTimer() {
 		final java.util.Timer timer = new java.util.Timer(true);
@@ -456,93 +217,18 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		}
 	}
 	
-	private void getTimeCodePreferences() {
-		//allows user to change slow adjust, rapid adjust, and play minus parameters
-		JPanel slowAdjustPanel = new JPanel(new BorderLayout());
-		slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("SlowIncreaseDecreaseValue")));
-		JTextField slowAdjustField = new JTextField(String
-				.valueOf(prefmngr.slow_adjust));
-		slowAdjustField.setPreferredSize(new Dimension(240, 30));
-		slowAdjustPanel.add(slowAdjustField);
-		JPanel rapidAdjustPanel = new JPanel(new BorderLayout());
-		rapidAdjustPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("RapidDncreaseDecreaseValue")));
-		JTextField rapidAdjustField = new JTextField(String
-				.valueOf(prefmngr.rapid_adjust));
-		rapidAdjustField.setPreferredSize(new Dimension(240, 30));
-		rapidAdjustPanel.add(rapidAdjustField);
-		JPanel playMinusPanel = new JPanel(new BorderLayout());
-		playMinusPanel.setBorder(BorderFactory.createTitledBorder(messages
-				.getString("PlayVinusValue")));
-		JTextField playMinusField = new JTextField(String
-				.valueOf(prefmngr.play_minus));
-		playMinusField.setPreferredSize(new Dimension(240, 30));
-		playMinusPanel.add(playMinusField);
-		JPanel preferencesPanel = new JPanel();
-		preferencesPanel.setLayout(new GridLayout(3, 1));
-		preferencesPanel.add(slowAdjustPanel);
-		preferencesPanel.add(rapidAdjustPanel);
-		preferencesPanel.add(playMinusPanel);
-		JOptionPane pane = new JOptionPane(preferencesPanel);
-		JDialog dialog = pane.createDialog(this, messages
-				.getString("TimeCodingPreferences"));
-		// This returns only when the user has closed the dialog
-		dialog.show();
-		int old_slow_adjust = prefmngr.slow_adjust;
-		try {
-			prefmngr.slow_adjust = Integer.parseInt(slowAdjustField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		int old_rapid_adjust = prefmngr.rapid_adjust;
-		try {
-			prefmngr.rapid_adjust = Integer
-			.parseInt(rapidAdjustField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		int old_play_minus = prefmngr.play_minus;
-		try {
-			prefmngr.play_minus = Integer.parseInt(playMinusField.getText());
-		} catch (NumberFormatException ne) {
-		}
-		// note: if these become negative numbers no error
-		if (old_slow_adjust != prefmngr.slow_adjust)
-			prefmngr.setInt(prefmngr.SLOW_ADJUST_KEY, prefmngr.slow_adjust);
-		if (old_rapid_adjust != prefmngr.rapid_adjust)
-			prefmngr.setInt(prefmngr.RAPID_ADJUST_KEY, prefmngr.rapid_adjust);
-		if (old_play_minus != prefmngr.play_minus)
-			prefmngr.setInt(prefmngr.PLAY_MINUS_KEY, prefmngr.play_minus);
-	}	
-	
 	public PanelPlayer getMediaPlayer() {
 		return player;
 	}
-	
-	protected void changeTranscriptFile(File newFile) {
-		if (transcriptFile != null)
-			transcriptFile = newFile;
-	}
-	//DOM FIX!!!
-	public boolean saveTranscript() {
-		if (transcriptFile == null)
-			return true;
-		try {
-			//serialize XML to file, prettified with indents, and encoded as Unicode (UTF-8)
-			org.apache.xml.serialize.OutputFormat formatter = new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true);
-			formatter.setPreserveSpace(true); //so as not to remove text nodes that consist only of whitespace, which are significant to QD
-			formatter.setLineWidth(0); //prevents line-wrapping (so as not to introduce element-internal whitespace)
-			org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(formatter);
-			FileOutputStream fous = new FileOutputStream(transcriptFile);
-			ser.setOutputByteStream(fous);
-			org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
-			domser.serialize(editor.getXMLDocument());
-			editor.resetChangedSinceLastSaved();
-			return true;
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			return false;
-		}
-	}
+        
+        public PanelPlayer getPlayer() {
+            return player;
+        }
+
+        public boolean hasContent() {
+            return editor != null;
+        }
+        
 	public void removeContent() {
 		if (transcriptFile == null) return;
 		try { //dispose of media player
@@ -552,6 +238,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			ppe.printStackTrace();
 		}
 		transcriptFile = null;
+                transcriptToggler.remove(this);
 		removeAll(); //remove sub-windows
 		editor = null;
 		setupGUI(); //set up GUI for another transcript
@@ -589,8 +276,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		}
 		try
 		{
-			org.w3c.dom.Document xmlDoc = null;
-			try {                       
+			try { //load xml document                       
 				/* I use the xerces-2-java parser because, to my knowledge, it is the only parser that supports
 				 DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
 				 after each call to NodeTransformer, without reloading the entire document. See.
@@ -609,51 +295,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				ioe.printStackTrace();
 				return false;
 			}
-			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
-			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
-			
-			@UNICODE@final JTextPane t = new JTextPane();
-			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
-			
-			editor = new Editor(xmlDoc, t, currentTagInfo);
-			
-			Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
-			Set keys = keyActions.keySet();
-			Iterator keyIter = keys.iterator();
-			while (keyIter.hasNext()) {
-				KeyStroke key = (KeyStroke)keyIter.next();
-				Action action = (Action)keyActions.get(key);
-				keymap.addActionForKeyStroke(key, action);
-			}
-			editor.getTextPane().setKeymap(keymap);
-			view = new View(editor, editor.getXMLDocument(), (XPathExpression)configuration.getParameters().get("qd.timealignednodes"), (XPathExpression)configuration.getParameters().get("qd.nodebegins"), (XPathExpression)configuration.getParameters().get("qd.nodeends"));          
-			try {
-				//hColor = Color.decode("0x"+PreferenceManager.highlight_color);
-				hColor=new Color(prefmngr.highlight_color_red,prefmngr.highlight_color_green,prefmngr.highlight_color_blue);
-			} catch (NumberFormatException nfe) {
-				nfe.printStackTrace();
-			}
-			hp = new TextHighlightPlayer(view, hColor, prefmngr.highlight_position);
-			
-			/*LOGGING
-			 for (int ok=0; ok<namespaces.length; ok++)
-			 System.out.println(namespaces[ok].toString());*/
-			
-			//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
-			//Ctrl-Page_Down and so on... surely there is a better way to do this....
-			JScrollBar sb = hp.getScroller().getVerticalScrollBar();
-			if (sb != null) {
-				keyIter = keys.iterator();
-				while (keyIter.hasNext()) {
-					KeyStroke key = (KeyStroke)keyIter.next();
-					Action action = (Action)keyActions.get(key);
-					sb.getInputMap().put(key, action);
-					sb.getActionMap().put(action, action);
-				}
-			}
-			tcp = new TimeCodeModel(hp, configuration.getParameters(), configuration.getNamespaces(), insertTimesAction);
 			if (player.getMediaURL() != null) {
 				try {
 					player.cmd_stop();
@@ -671,7 +312,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			String value;
 			if (configuration.getParameters().get("qd.mediaurl") == null) value = null;
 			else {
-				value = XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), (XPathExpression)(configuration.getParameters().get("qd.mediaurl")));
+				value = XPathUtilities.saxonSelectSingleDOMNodeToString(xmlDoc, (XPathExpression)(configuration.getParameters().get("qd.mediaurl")));
 				if (value!=null) value = value.trim();
 			}
 			boolean nomedia = true;
@@ -751,6 +392,74 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				transcriptFile = null;
 				return false;
 			}
+			try
+			{
+				//File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
+				transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace(System.err);
+			}
+                        transcriptToggler.add(this);
+                        layoutTranscript();
+			return true;
+		} catch (PanelPlayerException smpe) {
+			smpe.printStackTrace();
+			transcriptFile = null;
+			return false;
+		}
+	}
+        
+        public void layoutTranscript() {
+			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
+			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
+			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
+			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+			
+			@UNICODE@final JTextPane t = new JTextPane();
+			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+			
+			editor = new Editor(xmlDoc, t, currentTagInfo);
+			
+			Keymap keymap = editor.getTextPane().addKeymap("Config-Bindings", editor.getTextPane().getKeymap());
+                        Map keyActions = configuration.getKeyActions();
+			Set keys = keyActions.keySet();
+			Iterator keyIter = keys.iterator();
+			while (keyIter.hasNext()) {
+				KeyStroke key = (KeyStroke)keyIter.next();
+				Action action = (Action)keyActions.get(key);
+				keymap.addActionForKeyStroke(key, action);
+			}
+			editor.getTextPane().setKeymap(keymap);
+			view = new View(editor, editor.getXMLDocument(), (XPathExpression)configuration.getParameters().get("qd.timealignednodes"), (XPathExpression)configuration.getParameters().get("qd.nodebegins"), (XPathExpression)configuration.getParameters().get("qd.nodeends"));          
+			try {
+				//hColor = Color.decode("0x"+PreferenceManager.highlight_color);
+				hColor=new Color(PreferenceManager.highlight_color_red, PreferenceManager.highlight_color_green, PreferenceManager.highlight_color_blue);
+			} catch (NumberFormatException nfe) {
+				nfe.printStackTrace();
+			}
+			hp = new TextHighlightPlayer(view, hColor, PreferenceManager.highlight_position);
+			
+			/*LOGGING
+			 for (int ok=0; ok<namespaces.length; ok++)
+			 System.out.println(namespaces[ok].toString());*/
+			
+			//FIXME: otherwise JScrollPane's scrollbar will intercept key codes like
+			//Ctrl-Page_Down and so on... surely there is a better way to do this....
+			JScrollBar sb = hp.getScroller().getVerticalScrollBar();
+			if (sb != null) {
+				keyIter = keys.iterator();
+				while (keyIter.hasNext()) {
+					KeyStroke key = (KeyStroke)keyIter.next();
+					Action action = (Action)keyActions.get(key);
+					sb.getInputMap().put(key, action);
+					sb.getActionMap().put(action, action);
+				}
+			}
+			tcp = new TimeCodeModel(hp, configuration.getParameters(), configuration.getNamespaces());
+			//tcp = new TimeCodeModel(hp, configuration.getParameters(), configuration.getNamespaces(), insertTimesAction);
+                        player.removeAllAnnotationPlayers();
 			player.addAnnotationPlayer(hp);
 			player.initForSavant(convertTimesForPanelPlayer(view.getT1s()), convertTimesForPanelPlayer(view.getT2s()), view.getIDs());
 			videoFrame.addMouseListener(new MouseAdapter() {
@@ -764,22 +473,24 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			//textFrame.setTitle(transcriptString); //title=name of transcript file
 			
 			tcv = new TimeCodeView(player, tcp);
-			updateTimeCodeBarVisibility();
-			
+                        updateTimeCodeBarVisibility();
 			checkTimeTimer = new Timer(true);
 			checkTimeTimer.scheduleAtFixedRate(new TimerTask() {
 				public void run() {
 					tcv.setCurrentTime(player.getCurrentTime());
 				}
 			}, 0, 50);
-			JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
-			buttonPanel.add(tcv);
+			buttonPanel = new JPanel(new BorderLayout());
+                        buttonPanel.add(tcv, BorderLayout.SOUTH);
+			//JPanel buttonPanel = new JPanel(new Layout(FlowLayout.LEFT,0,0));
+                        //buttonPanel.add(tcv);
 			JPanel jp = new JPanel(new BorderLayout());
 			jp.add("North", buttonPanel);
 			jp.add("Center", hp);
 			//JTabbedPane tabbedPane = new JTabbedPane();
 			//tabbedPane.add(messages.getString("BasicTranscriptViewMode"), jp);
 			JComponent c = (JComponent)textFrame.getContentPane();
+                        c.removeAll();
 			c.setLayout(new BorderLayout());
 			//c.add("Center", tabbedPane);
 			c.add("Center", jp);
@@ -805,86 +516,82 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					}
 				}
 			});
-			Boolean contentEditable = (Boolean) configuration.getParameters().get(CONTENT_EDITABLE_NAME);
-			if (contentEditable==null)
-			{
-				if (!configuration.canEdit()) editor.setEditable(false);
-				else editor.setEditabilityTracker(true);
-			}
-			else
-			{
-				if (contentEditable.booleanValue()) editor.setEditabilityTracker(true);
-				else editor.setEditable(false);
-			}
-			try
-			{
-				//File transcriptFile = new File (transcriptURL.toURI()); //URL.toURI() is only supported in Java 5.0
-				transcriptFile = new File(new URI(transcriptURL.toString())); //URI supported as of Java 1.4
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace(System.err);
-			}
+			if (!configuration.canEdit()) editor.setEditable(false);
+			else editor.setEditabilityTracker(true);
 			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
 				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
 			
-			updateTitles();
-			
+                        togglerComboBox = new JComboBox();
+                        buttonPanel.add(togglerComboBox, BorderLayout.CENTER);
+                        //transcriptToggler.add(this);
+			//register();			
 			@TIBETAN@if (activeKeyboard != null) changeKeyboard(activeKeyboard); //this means that keyboard was changed before constructing a DuffPane
-			return true;
-		} catch (PanelPlayerException smpe) {
-			smpe.printStackTrace();
-			transcriptFile = null;
-			return false;
-		}
-	}
-	
-	public void updateTimeCodeBarVisibility()
+        }
+        
+ 	public void updateTimeCodeBarVisibility()
+ 	{
+ 		int showTimeCoding = PreferenceManager.show_time_coding;
+ 		if (showTimeCoding == -1)
+ 		{
+ 			// if preferences have not been set, get the default from the configuration file.
+ 			Boolean showTimeCodingBoolean = (Boolean) configuration.getParameters().get("qd.showtimecodingbydefault");
+ 			if (showTimeCodingBoolean!=null)
+ 				showTimeCoding = showTimeCodingBoolean.booleanValue()?1:0;
+ 			/*
+ 			I am purposefully not saving!
+ 			prefmngr.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
+ 			*/
+ 		}
+ 		if (showTimeCoding == 0) tcv.setVisible(false);
+ 		else tcv.setVisible(true);
+ 	}
+        
+	public void register()
 	{
-		int showTimeCoding = PreferenceManager.show_time_coding;
-		if (showTimeCoding == -1)
-		{
-			// if preferences have not been set, get the default from the configuration file.
-			Boolean showTimeCodingBoolean = (Boolean) configuration.getParameters().get("qd.showtimecodingbydefault");
-			if (showTimeCodingBoolean!=null)
-				showTimeCoding = showTimeCodingBoolean.booleanValue()?1:0;
-			/*
-			I am purposefully not saving!
-			prefmngr.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
-			*/
-		}
-		if (showTimeCoding == 0) tcv.setVisible(false);
-		else tcv.setVisible(true);
-	}
-	
-	public void updateTitles()
-	{
-		Boolean showFileNameBoolean;
+		XPathExpression showFileNameXPath;
 		if (PreferenceManager.show_file_name_as_title==-1)
 		{
-			showFileNameBoolean = (Boolean) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
-			if (showFileNameBoolean==null)
+			showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
+			if (showFileNameXPath==null)
 			{
 				PreferenceManager.show_file_name_as_title = 1;
 			}
 			else
 			{
-				PreferenceManager.show_file_name_as_title = showFileNameBoolean.booleanValue()?1:0;
+				PreferenceManager.show_file_name_as_title = Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0;
 			}
-			prefmngr.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
+			PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
 		}
-		if (PreferenceManager.show_file_name_as_title==0)
-		{
-			textFrame.setTitle("");
-			videoFrame.setTitle("");			
-		}
-		else
-		{
-			textFrame.setTitle(transcriptFile.getPath());
-			videoFrame.setTitle(player.getMediaURL().getFile());
-		}
+		if (PreferenceManager.show_file_name_as_title==0 || PreferenceManager.show_file_name_as_title == 1)
+                {
+                    if (transcriptToggler.getNumberOfTranscripts() == 0)
+                        title = new String(productName + " (" + messages.getString(configuration.getName()) + ")");
+                    else { //qd has content
+                        title = new String(getWindowTitle(getCurrentLang()) + " (" + productName + ": " + messages.getString(configuration.getName()) + ")");
+                        buttonPanel.remove(togglerComboBox);
+                        togglerComboBox = transcriptToggler.getToggler(this);
+                        togglerComboBox.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                JComboBox box = (JComboBox)e.getSource();
+                                try {
+                                    QD switchTo = transcriptToggler.getQDForIndex(box.getSelectedIndex());
+                                    if (QD.this != switchTo) { //switch to different QD
+                                        QDShell qdShell = QD.this.getParentQDShell();
+                                        qdShell.deActivateQD(QD.this);
+                                        lastQD = QD.this;
+                                        qdShell.activateQD(switchTo, true);
+                                    }
+                                } catch (IndexOutOfBoundsException iobe) {
+                                    iobe.printStackTrace();
+                                }
+                            }
+                        });
+                        buttonPanel.add(togglerComboBox, BorderLayout.CENTER);
+                        buttonPanel.validate();
+                    }
+                }
 	}
-	
+        
 	public void playNode(Object node) {
 		Node playableparent = XPathUtilities.saxonSelectSingleDOMNode(node, (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
 		if (playableparent == null) return;
@@ -901,6 +608,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			player.cmd_playS(nodeid);
 		}
 	}
+        
 	public void setEditable(boolean bool) {
 	}
 	
@@ -927,6 +635,30 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		return object;
 	}
 	
+        public TimeCodeModel getTimeCodeModel() {
+            return tcp;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+        
+        public Configuration getConfiguration() {
+            return configuration;
+        }
+        
+        public QDShell getParentQDShell() {
+            return qdShell;
+        }
+        
+        public int getMode() {
+            return mode;
+        }
+        
+        public ResourceBundle getMessages() {
+            return messages;
+        }
+        
 	public Editor getEditor() {
 		return editor;
 	}
@@ -940,98 +672,43 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		}
 		return sBuff.toString();
 	}
-	public void changeTagInfo(TagInfo newTagInfo,int i) {
-		if (editor != null) {
+        
+	public void changeTagInfo(TagInfo newTagInfo) {
+		if (hasContent()) {
 			currentTagInfo = newTagInfo;
 			editor.setTagInfo(currentTagInfo);
-			hp.refresh();  
-			String configName=configuration.getName();    
-			if(configName!=messages.getString("TranscribeQuechua")) qdShell.changeTitle(i);
+			hp.refresh();
+		}
+	}
+        
+	public void changeTagInfo(TagInfo newTagInfo,int i) {
+		if (hasContent()) {
+			currentTagInfo = newTagInfo;
+			editor.setTagInfo(currentTagInfo);
+			hp.refresh();
 		}
 	}
 	
-	public boolean configure(Configuration configuration) {
-		if (transcriptFile != null) return false;
-		try {
-			configuration.configure(qdDefaultProperties, this, prefmngr);
-			if (configuration.getJMenuBar() != null)
-				textFrame.setJMenuBar(configuration.getJMenuBar());
-			this.configuration = configuration;
-		} catch (TransformerException tre) {
-			tre.printStackTrace();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (javax.xml.parsers.ParserConfigurationException pce) {
-			pce.printStackTrace();
-		} catch (org.xml.sax.SAXException saxe) {
-			saxe.printStackTrace();
-		}
-		Map parameters = configuration.getParameters();
-		Transformer transformer = configuration.getTranscriptTransformer();
-		TagInfo[] tagInfo = configuration.getTagInfo();
-		Map actionProfiles = configuration.getActionProfiles();
-		keyActions = new HashMap(); //maps keys to actions
-		Iterator itty = actionProfiles.values().iterator();
-		while (itty.hasNext()) {
-			final Configuration.QdActionDescription qdActionDesc = (Configuration.QdActionDescription)itty.next();
-			Action keyAction = Configuration.getActionForActionDescription(qdActionDesc);
-			if (qdActionDesc.getXSLTask() != null && qdActionDesc.getXSLTask().equals("qd.insertTimes"))
-				insertTimesAction = keyAction;
-			keyActions.put(qdActionDesc.getKeyboardShortcut(), keyAction); //eventually to be registered with transcript's JTextPane
-		}
-		if (tagInfo.length > 1) {
-			for (int i=0; i<tagInfo.length; i++) {
-				KeyStroke key = tagInfo[i].getKeyboardShortcut();
-				Action keyAction = Configuration.getActionForTagInfoChange(tagInfo[i],i);
-				if ( !(key == null || keyAction == null) )
-					keyActions.put(key, keyAction);
-			}
-		}
-		//currentTagInfo = tagInfo[0];               
-		changeViewWithInterfaceLanguage(configuration,tagInfo);             
-		return true;
+        public void setConfiguration(Configuration configuration) {
+            if (QD.configuration == configuration)
+                return; //do nothing--not a change
+            
+            //to switch back, uncomment B and comment A
+            TagInfo[] tagInfo = configuration.getTagInfo();
+            currentTagInfo = tagInfo[0]; //line A
+            //changeViewWithInterfaceLanguage(configuration,tagInfo); //line B
+            
+            if (!hasContent()) {
+                QD.configuration = configuration; //no content in QD, so effortless to change
+            } else { //must re-configure currently loaded transcript(s)
+                QD.configuration = configuration;
+                for (int k=0; k<transcriptToggler.getNumberOfTranscripts(); k++) {
+                    QD qd = transcriptToggler.getQDForIndex(k);
+                    qd.layoutTranscript();
+                }
+            }
 	}
-	public void  changeViewWithInterfaceLanguage(Configuration configuration,TagInfo[] tagInfo){
-		JMenu viewMenu=null;
-		String configName=configuration.getName();
-		int currentConfig=0;
-		if(configName.equals("TranscribeQuechua")){
-			currentConfig=0; 
-		}
-		else 
-			if (configName.equals("THDLTranscription")){
-				@UNICODE@viewMenu=configuration.getJMenuBar().getMenu(5);
-				@TIBETAN@viewMenu=configuration.getJMenuBar().getMenu(6);
-				currentConfig=1;                   
-			}
-			else 
-				if (configName.equals("THDLReadonly")){ 
-					currentConfig=2;
-					viewMenu=configuration.getJMenuBar().getMenu(1);
-				}
-		switch (currentConfig){
-		case 0:                     
-			currentTagInfo = tagInfo[0];     
-			break;
-		case 1:
-		case 2:                       
-			if(language=="English"){ //if interface is english, set view to 'English only'
-				currentTagInfo = tagInfo[5];
-				viewMenu.getItem(5).setSelected(true);
-			}
-			else 
-				if(language=="Chinese"){ //if interface is chinese, set view to 'Chinese only'
-					currentTagInfo = tagInfo[6];
-					viewMenu.getItem(6).setSelected(true);
-				}
-				else 
-					if(language=="tibetan") {//if interface is tibetan, set view to 'Tibetan only'
-						currentTagInfo = tagInfo[0];
-						viewMenu.getItem(0).setSelected(true);
-					}
-			break;
-		}        
-	}
+        
 	public void transformTranscript(Object domContextNode, XPathExpression nodeSelector, String task) {
 		editor.fireEndEditEvent();
 		editor.setEditabilityTracker(false);
@@ -1053,11 +730,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			xpee.printStackTrace();
 		}
 		editor.setEditabilityTracker(true);
-	}  
+	}
+        
 	public boolean handleError(DOMError error) {
 		System.out.println(error.getMessage());
 		return true;
 	}
+        
 	private Map getParametersForTransform(Object domContextNode) {
 		Map parameters = new HashMap();
 		XPathExpression xpath;
@@ -1102,115 +781,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		parameters.put("qd.mediaurlstring", player.getMediaURL().toString());
 		return parameters;
 	}
-	
-	/*The DOM2DTM class serves up a DOM's contents via the DTM API. 
-	 Note that it doesn't necessarily represent a full Document tree. You can 
-	 wrap a DOM2DTM around a specific node and its subtree and the right 
-	 things should happen. (I don't _think_ we currently support DocumentFrgment 
-	 nodes as roots, though that might be worth considering.) Note too that we 
-	 do not currently attempt to track document mutation. If you alter the DOM 
-	 after wrapping DOM2DTM around it, all bets are off.                               
-	 *///LOGGING
-	/* org.w3c.dom.Element nd = (org.w3c.dom.Element)obj;
-	 try {
-	 System.out.println("\n------OBJ\n");
-	 org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));
-	 ser.setOutputByteStream(System.out);
-	 org.apache.xml.serialize.DOMSerializer domser = ser.asDOMSerializer();
-	 domser.serialize(nd);
-	 } catch (IOException ioe) {
-	 ioe.printStackTrace();
-	 }*/
-	//ENDLOGGING
-	
-	public void executeCommand(String command) {
-		//FIXME: These commands should be defined elsewhere, in programmatically extensible classes
-		boolean result=true;
-		
-		if (command.equals("playNode")) {
-			Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-			playNode(nearestParent);
-		}
-		else if (command.equals("playPause")) {
-			try {
-				/* by transferring focus, we don't have to worry about problems caused by
-				 the cursor position in the editor being different from the highlight,
-				 since users will have to click on the editor to get back into editing */
-				if (mode == SCROLLING_HIGHLIGHT_IS_ON)
-					editor.getTextPane().transferFocus();
-				if (player.isPlaying()) player.cmd_stop();
-				else player.cmd_playOn();
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("playBack")) {
-			try {
-				long t = player.getCurrentTime() - PreferenceManager.play_minus;
-				if (t < 0) t = 0;
-				if (player.isPlaying()) player.cmd_stop();
-				player.setCurrentTime(t);
-				player.cmd_playOn();
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("playEdge")) {
-			try {
-				Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-				tcp.setNode(nearestParent);
-				Long t2 = tcp.getOutTime();
-				long t1 = t2.longValue() - PreferenceManager.play_minus;
-				if (t1 < 0) t1 = 0;
-				player.cmd_playSegment(new Long(t1), t2);
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("seekStart")) {
-			try {
-				Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-				tcp.setNode(nearestParent);
-				Long t = tcp.getInTime();
-				if (player.isPlaying()) player.cmd_stop();
-				player.setCurrentTime(t.longValue());
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("seekEnd")) {
-			try {
-				Node nearestParent = XPathUtilities.saxonSelectSingleDOMNode(editor.getNodeForOffset(editor.getTextPane().getCaret().getMark()), (XPathExpression)(configuration.getParameters().get("qd.nearestplayableparent")));
-				tcp.setNode(nearestParent);
-				Long t = tcp.getOutTime();
-				if (player.isPlaying()) player.cmd_stop();
-				player.setCurrentTime(t.longValue());
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("stopMedia")) {
-			try {
-				if (player.isPlaying()) player.cmd_stop();
-			} catch (PanelPlayerException ppe) {
-				ppe.printStackTrace();
-			}
-		}
-		else if (command.equals("saveTranscript")) {
-			if (getEditor().isEditable())
-				result = saveTranscript();
-			if (!result)
-				JOptionPane.showMessageDialog(null, messages.getString("FileCouldNotBeSaved"), messages.getString("Alert"), JOptionPane.ERROR_MESSAGE);
-		}
-		else if (command.equals("timeCode")) {
-			getTimeCodePreferences();
-		}
-		
-		else if (command.equals("updateWindowTitle")) {
-			qdShell.updateWindowsTitle();
-		}
-	}
-	
+
 	@TIBETAN@public org.thdl.tib.input.JskadKeyboard getKeyboard() {
 		@TIBETAN@	return activeKeyboard;
 		@TIBETAN@}
@@ -1386,19 +957,79 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
     <xsl:value-of select="/Description/text()"/>
     </fo:block>
     */
-
-
-
-
-/*               Iterator pitty = keyActions.keySet().iterator();
- while (pitty.hasNext()) {
- Object next = (pitty.next();
- 
- mItem.setAccelerator(key);
- mItem.addActionListener(new ActionListener() { //so that keystrokes are valid even when transcript is not in focus
- public void actionPerformed(ActionEvent e) {
- keyAction.actionPerformed(e);
- }
- });
- configMenus[xCount].add(mItem);
- */
+    
+    	
+        
+	/*public void  changeViewWithInterfaceLanguage(Configuration configuration,TagInfo[] tagInfo){
+		JMenu viewMenu=null;
+		String configName=configuration.getName();
+		int currentConfig=0;
+		if(configName.equals("TranscribeQuechua")){
+			currentConfig=0; 
+		}
+		else 
+			if (configName.equals("THDLTranscription")){
+				@UNICODE@viewMenu=configuration.getJMenuBar().getMenu(5);
+				@TIBETAN@viewMenu=configuration.getJMenuBar().getMenu(6);
+				currentConfig=1;                   
+			}
+			else 
+				if (configName.equals("THDLReadonly")){ 
+					currentConfig=2;
+					viewMenu=configuration.getJMenuBar().getMenu(1);
+				}
+		switch (currentConfig){
+		case 0:                     
+			currentTagInfo = tagInfo[0];     
+			break;
+		case 1:
+		case 2:                       
+			if(language=="English"){ //if interface is english, set view to 'English only'
+				currentTagInfo = tagInfo[5];
+				viewMenu.getItem(5).setSelected(true);
+			}
+			else 
+				if(language=="Chinese"){ //if interface is chinese, set view to 'Chinese only'
+					currentTagInfo = tagInfo[6];
+					viewMenu.getItem(6).setSelected(true);
+				}
+				else 
+					if(language=="tibetan") {//if interface is tibetan, set view to 'Tibetan only'
+						currentTagInfo = tagInfo[0];
+						viewMenu.getItem(0).setSelected(true);
+					}
+			break;
+		}        
+	}*/
+        
+                /* EDGE FIX ME! gotta get this out!! what if order in config file changes?? this doesn't belong here
+	public void setCurrentLang(int newTagInfo){  
+		switch(newTagInfo){
+		case 0://"TranscriptionOnly"
+			language="Tibetan"; break;
+		case 1://"TranscriptionPlusEnglish"
+			language="Tibetan"; break;  
+		case 2://"TranscriptionPlusChinese"
+			language="Tibetan"; break;
+		case 3://"TranscriptionPlusEnglishPlusChinese"
+			language="Tibetan"; break;
+		case 4://"EnglishPlusChinese"
+			language="Chinese"; break;
+		case 5://"Translation_ENOnly"
+			language="English"; break;
+		case 6://"Translation_ZHOnly"
+			language="Chinese"; break;
+		case 7://"WylieOnly"
+			language="Wylie"; break;
+		case 8://"WylieAndEnglish"
+			language="Wylie"; break;
+		case 9://"NotesOnly"
+			language="Tibetan"; break;
+		case 10://"TranscriptionPlusNotes"
+			language="Tibetan"; break;
+		case 11://"EnglishPlusNotes"
+			language="English"; break;
+		case 12://"ShowEverything"
+			language="Tibetan"; break;
+		}       
+	}*/

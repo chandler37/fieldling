@@ -15,14 +15,15 @@ public class TimeCodeModel {
 		private Object currentNode = null;
                 private Map config;
                 private org.jdom.Namespace[] namespaces;
-                private Action insertTimesAction;
-
-		TimeCodeModel(TextHighlightPlayer thp, Map config, org.jdom.Namespace[] namespaces, Action insertTimesIntoXMLAction) {
+                //private Action insertTimesAction;
+                
+                TimeCodeModel(TextHighlightPlayer thp, Map config, org.jdom.Namespace[] namespaces) {
+		//TimeCodeModel(TextHighlightPlayer thp, Map config, org.jdom.Namespace[] namespaces, Action insertTimesIntoXMLAction) {
 			listenerList = new EventListenerList();
 			this.thp = thp;
                         this.config = config;
                         this.namespaces = namespaces;
-                        insertTimesAction = insertTimesIntoXMLAction;
+                        //insertTimesAction = insertTimesIntoXMLAction;
 			t1 = 0;
 			t2 = 0;
 		}
@@ -44,12 +45,12 @@ public class TimeCodeModel {
 		public Object getCurrentNode() {
 			return currentNode;
 		}
-		private void changeTimeCodesInXML() {
+		/*private void changeTimeCodesInXML() {
                     if (getCurrentNode() != null)
                         insertTimesAction.actionPerformed(new ActionEvent(TimeCodeModel.this, 0, "no.command"));
 			//if (taskActions != null) {
 			//	AbstractAction action = (AbstractAction)taskActions.get("qd.insertTimes");
-		}
+		}*/
 		public void setTimeCodes(long t1, long t2, Object node) {
 			Object oldNode = currentNode;
 			currentNode = node;
@@ -64,9 +65,9 @@ public class TimeCodeModel {
 						((TimeCodeModelListener)listeners[i+1]).setStopTime(t2);
 					}
 				}
-				if (currentNode == oldNode) {
+				/*if (currentNode == oldNode) {
 					if ((t2 >= t1 && t1 > -1) || (t1 > -1 && t2 == -1)) changeTimeCodesInXML(); //update the XML file
-				}
+				}*/
 			}
 		}
 		public void setNode(Object node) {

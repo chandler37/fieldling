@@ -66,6 +66,9 @@ public class SimpleSpinner extends JPanel implements FocusListener { //ChangeLis
 			add("Center", (JComponent)jSpinner);
 		}
 	}
+        public void setEditable(boolean editable) {
+            textSpinner.setEditable(editable);
+        }
 	public void focusGained(FocusEvent e) {
 		//LOGGINGSystem.out.println("focus gained");
 	}

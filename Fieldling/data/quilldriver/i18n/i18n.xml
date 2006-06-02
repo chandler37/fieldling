@@ -95,6 +95,10 @@
     <text lang="en">Change Speaker</text>
     <text lang="zh">切换发言者</text>
   </message>
+  <message id="ChangeKeyboard">
+    <text lang="en">Change Keyboard</text>
+    <text lang="zh">Change Keyboard</text>
+  </message>
   <message id="CheckIn">
     <text lang="en">Check In</text>
     <text lang="zh">登记</text>
@@ -231,7 +235,7 @@
     <text lang="en">Feedback to Developers</text>
     <text lang="zh">反馈给开发者</text>
   </message>
-  <message id="File">
+  <message id="FileMenu">
     <text lang="en">File</text>
     <text lang="zh">文件</text>
   </message>
@@ -284,7 +288,7 @@
     <text lang="zh">字体和样式选项</text>
   </message>
   <message id="GotoEnd">
-    <text lang="en">Goto End</text>
+    <text lang="en">Go to End</text>
     <text lang="zh">到末尾处</text>
   </message>
   <message id="GotoNextLine">
@@ -296,7 +300,7 @@
     <text lang="zh">到前一行</text>
   </message>
   <message id="GotoStart ">
-    <text lang="en">Goto Start</text>
+    <text lang="en">Go to Start</text>
     <text lang="zh">到开始处</text>
   </message>
   <message id="Help">
@@ -396,7 +400,7 @@
     <text lang="zh">键盘</text>
   </message>
   <message id="KeyboardInputMethod">
-    <text lang="en">Tibetan Keyboard</text>
+    <text lang="en">Select Tibetan keyboard to use:</text>
     <text lang="zh">藏文键盘</text>
   </message>
   <message id="Language">
@@ -781,7 +785,7 @@
     <text lang="zh">你已经到达文档末尾，是否继续从头查找？</text>
   </message>
   <message id="SupportedMediaError">
-    <text lang="en">Consult your THDL documentation and install a supported media player.</text>
+    <text lang="en">Consult your QuillDriver documentation and install a supported media player.</text>
     <text lang="zh">请参考THDL文档并安装一个支持的媒体播放器。</text>
   </message>
   <message id="SuppressTimes">
@@ -795,6 +799,10 @@
   <message id="SurroundwithPageLineBreaks">
     <text lang="en">Surround with Page-Line Breaks</text>
     <text lang="zh">周围超出页面界线</text>
+  </message>
+  <message id="SwitchWindow">
+    <text lang="en">Switch active window</text>
+    <text lang="zh">Switch active window</text>
   </message>
   <message id="TextFound">
     <text lang="en">Text found.</text>
@@ -956,7 +964,7 @@
     <text lang="en">Low</text>
     <text lang="zh">低</text>
   </message>
-  <message id=" TibetanKeyboard">
+  <message id="TibetanKeyboard">
     <text lang="en">TibetanKeyboard</text>
     <text lang="zh">藏文键盘</text>
   </message>
@@ -979,6 +987,10 @@
   <message id="MediaOnTop">
     <text lang="en">Media on top</text>
     <text lang="zh">媒体在顶部</text>
+  </message>
+  <message id="MediaOverTranscript">
+    <text lang="en">Media over transcript</text>
+    <text lang="zh">Media over transcript</text>
   </message>
   <message id="FullScreenVideoOnly">
     <text lang="en">Fullscreen video only</text>
@@ -1535,7 +1547,7 @@
   	<text lang="en">Options</text>
   	<text lang="zh">选项</text>
   </message>
-  <message id="Tools">
+  <message id="ToolsMenu">
   	<text lang="en">Tools</text>
   	<text lang="zh">工具</text>
   </message>
@@ -1619,21 +1631,21 @@
     <text lang="en">Show filename as title of inner windows</text>
     <text lang="zh">Show filename as title of inner windows</text>
   </message>
-  <message id="ConfigurationDefault">
-    <text lang="en">Configuration's default</text>
-    <text lang="zh">Configuration's default</text>
-  </message>  
-  <message id="Never">
-    <text lang="en">Never</text>
-    <text lang="zh">Never</text>
-  </message>
-  <message id="Always">
-    <text lang="en">Always</text>
-    <text lang="zh">Always</text>
-  </message>
-  <message id="ShowTimeCodingBar">
-    <text lang="en">Show time coding bar:</text>
-    <text lang="zh">Show time coding bar：</text>
-  </message>
+   <message id="ConfigurationDefault">
+     <text lang="en">Configuration's default</text>
+     <text lang="zh">Configuration's default</text>
+   </message>  
+   <message id="Never">
+     <text lang="en">Never</text>
+     <text lang="zh">Never</text>
+   </message>
+   <message id="Always">
+     <text lang="en">Always</text>
+     <text lang="zh">Always</text>
+   </message>
+   <message id="ShowTimeCodingBar">
+     <text lang="en">Show time coding bar:</text>
+     <text lang="zh">Show time coding bar：</text>
+   </message>
 </all-messages>
 
