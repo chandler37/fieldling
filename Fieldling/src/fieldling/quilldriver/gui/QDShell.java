@@ -109,12 +109,12 @@ public class QDShell extends JFrame
 				return;
 			}
 			
-			if (args.length==1)
+			/*if (args.length==1)
 			{
 				System.out.println("Syntax error: missing arguments!");
 				printSyntax();
 				return;
-			}
+			}*/
                         
 			if (args[0].charAt(0)!='-')
 			{
