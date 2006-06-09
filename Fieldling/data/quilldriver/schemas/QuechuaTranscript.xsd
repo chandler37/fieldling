@@ -9,7 +9,8 @@
      <xsd:import namespace="http://altiplano.emich.edu/quilldriver"
          schemaLocation="QuillDriver.xsd"/>
 	 
-  <!-- definition of simple type elements --> 
+  <!-- definition of simple type elements -->
+  <xsd:element name="MEDIAREF" type="xsd:string"/>
   <xsd:element name="COMMENT" type="xsd:string"/>
   <xsd:element name="TRANSL" type="xsd:string"/>
   <xsd:element name="F" type="xsd:string"/>
@@ -31,6 +32,7 @@
   <xsd:element name="META">
     <xsd:complexType>
       <xsd:sequence>
+        <xsd:element ref="qq:MEDIAREF" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="qq:SPEAKER" minOccurs="1" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>

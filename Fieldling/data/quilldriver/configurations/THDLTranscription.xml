@@ -17,13 +17,13 @@
 		<parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>
 	</parameters>
 	<menus>
-                <menu name="FileMenu" contains="NewTranscript OpenTranscript Close | FixMedia Save SaveAs | Print PrintToPS PrintToRTF | Exit"/>
+                <menu name="FileMenu" contains="NewTranscript OpenTranscript Close | FixMedia | Save SaveAs SaveAll | Print PrintToPS PrintToRTF | Exit"/>
 		<menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | NextSentence PreviousSentence GotoStart GotoEnd"/>
 		<menu name="EditMenu" contains="InsertEnglishTitle InsertTibetanTitle InsertChineseTitle DeleteEnglishTitle DeleteTibetanTitle DeleteChineseTitle | InsertAfter InsertBefore DeleteSentence | InsertTranslation_EN DeleteTranslation_EN InsertTranslation_ZH DeleteTranslation_ZH | AddSpeaker DeleteSpeaker ChangeSpeaker | AddGeneralNote AddLexicalNote AddGrammaticalNote AddPronunciationNote AddInterpretiveNote AddSociolinguisticNote AddCulturalNote DeleteNote"/>
 		<menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart | IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop | ZapTimeCodes"/>
-                <menu name="ToolsMenu" contains="ChangeKeyboard | FontAndStylePreferences TimeCodingPreferences"/>
+                <menu name="ToolsMenu" contains="ChangeKeyboard | FontAndStylePreferences | TimeCodingPreferences | SavingPreferences"/>
                 <menu name="View" contains="TranscriptionOnly | TranscriptionPlusEnglish TranscriptionPlusChinese TranscriptionPlusEnglishPlusChinese | EnglishPlusChinese Translation_ENOnly Translation_ZHOnly | WylieOnly WylieAndEnglish | NotesOnly TranscriptionPlusNotes EnglishPlusNotes | ShowEverything | THDLReadonly"/>     
-                <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly"/>     
+                <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>     
                 <!--<menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript FullScreenVideoOnly NormalSizeVideoOnly TranscriptOnly DefaultSizeAndPlacement"/>-->
                 <menu name="Help" contains="AboutQuillDriver Help"/>
 	</menus>
@@ -35,6 +35,7 @@
                         <action name="Save" keystroke="control S" node="." qd-command="fieldling.quilldriver.task.SaveTranscript">
                         </action>
                         <action name="SaveAs" node="." qd-command="fieldling.quilldriver.task.SaveTranscriptAs"/>
+                        <action name="SaveAll" node="." qd-command="fieldling.quilldriver.task.SaveAllTranscripts"/>
                         <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::TEXT/HEADER/SOUNDFILE" xsl-task="fixMedia" qd-command="fieldling.quilldriver.task.SaveTranscript">
                                 <helptext ref="help34"/>
                         </action>
@@ -192,6 +193,7 @@
                         </action>
                         <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
                         </action>
+                        <action name="SavingPreferences" node="." qd-command="fieldling.quilldriver.task.SetSavingPreferences"/>
                         <!-- view menu: NOTE also includes tag views -->
                         <action name="THDLReadonly" node="." qd-command="fieldling.quilldriver.task.thdl.THDLReadonly"/>
                         <!-- window menu -->
@@ -211,6 +213,7 @@
                         </action>
                         <action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
                         </action>
+                        <action name="ToggleVideoBorder" keystroke="shift F10" node="." qd-command="fieldling.quilldriver.task.ToggleVideoBorder"/>
                         <!--<action name="DefaultSizeAndPlacement" keystroke="shift F9" node="." qd-command="fieldling.quilldriver.task.DefaultSizeAndPlacement">
                         </action>-->
                         <!-- about menu -->

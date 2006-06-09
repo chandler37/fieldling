@@ -21,7 +21,7 @@
 		<menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | NextSentence PreviousSentence GotoStart GotoEnd"/>
                 <menu name="ToolsMenu" contains="FontAndStylePreferences"/>
                 <menu name="View" contains="TranscriptionOnly | TranscriptionPlusEnglish TranscriptionPlusChinese TranscriptionPlusEnglishPlusChinese | EnglishPlusChinese Translation_ENOnly Translation_ZHOnly | WylieOnly WylieAndEnglish | NotesOnly TranscriptionPlusNotes EnglishPlusNotes | ShowEverything | THDLTranscription"/>          
-                <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly"/>   
+                <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>   
                 <!--<menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript FullScreenVideoOnly NormalSizeVideoOnly TranscriptOnly DefaultSizeAndPlacement"/>-->                
                 <menu name="Help" contains="AboutQuillDriver Help"/>
         </menus>
@@ -104,6 +104,7 @@
                         </action>
                         <action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
                         </action>
+                        <action name="ToggleVideoBorder" keystroke="shift F10" node="." qd-command="fieldling.quilldriver.task.ToggleVideoBorder"/>
                         <!--<action name="DefaultSizeAndPlacement" keystroke="shift F9" node="." qd-command="fieldling.quilldriver.task.DefaultSizeAndPlacement">
                         </action>-->
                         <!-- about menu -->

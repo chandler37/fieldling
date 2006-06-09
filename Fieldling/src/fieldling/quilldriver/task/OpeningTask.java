@@ -8,9 +8,14 @@ import fieldling.quilldriver.gui.*;
 
 public abstract class OpeningTask extends BasicTask {
     public abstract void execute(QD qd, String parameters);
-
-    public File selectTranscriptFile(String message, QD qd) {
+    
+    public static File selectTranscriptFile(String message, QD qd) {
+        return selectFileOrDirectory(JFileChooser.FILES_ONLY, message, qd);
+    }
+    
+    public static File selectFileOrDirectory(int fileSelectionMode, String message, QD qd) {
         JFileChooser fc = new JFileChooser(new File(PreferenceManager.getValue(PreferenceManager.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+        fc.setFileSelectionMode(fileSelectionMode);
         fc.addChoosableFileFilter(new QDFileFilter());
 	if (fc.showDialog(qd, message) == JFileChooser.APPROVE_OPTION) {
             File transcriptFile = fc.getSelectedFile();
@@ -19,7 +24,7 @@ public abstract class OpeningTask extends BasicTask {
             return null;
 	}
     }
-    public void open(File transcriptFile, QD qd) {
+    public static void open(File transcriptFile, QD qd) {
         QDShell qdShell = qd.getParentQDShell();
         if (!qdShell.hasLoadedTranscript) {
             String transcriptString = transcriptFile.getAbsolutePath();

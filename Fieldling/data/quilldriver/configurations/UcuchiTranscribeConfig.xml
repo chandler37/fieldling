@@ -5,19 +5,20 @@
                     <xmlschema val="http://altiplano.emich.edu/ucuchi QuechuaTranscript.xsd"/>
                     <newtemplate val="UcuchiTranscribeNew.xml"/>
                     <xsltransform val="UcuchiTranscribeEdit.xsl"/>
+                    <parameter name="qd.mediaurl" val="/qq:TEXT/qq:META/qq:MEDIAREF" type="XPathExpression"/>
                     <parameter name="qd.root.element" val="qq:TEXT" type="XPathExpression"/>
                     <parameter name="qd.showfilenameastitlebydefault" val="true" type="Boolean"/>
                     <parameter name="qd.contentEditable" val="true" type="Boolean"/>
                     <parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>
                 </parameters>
                 <menus>
-                        <menu name="FileMenu" contains="NewTranscript OpenTranscript | Save SaveAs | Close | Print PrintToPS PrintToRTF | Exit"/>
+                        <menu name="FileMenu" contains="NewTranscript OpenTranscript | FixMedia | Save SaveAs SaveAll | ExportToText | Close | Print PrintToPS PrintToRTF | Exit"/>
                         <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker | NewClause DeleteClause"/>
                         <menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | GotoNextLine GotoPreviousLine"/>
-                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop ZapTimeCodes"/>
-                        <menu name="ToolsMenu" contains="FontAndStylePreferences TimeCodingPreferences"/>
+                        <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart | IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop | ZapTimeCodes"/>
+                        <menu name="ToolsMenu" contains="FontAndStylePreferences | TimeCodingPreferences | SavingPreferences"/>
                         <menu name="View" contains="QuechuaOnly QuechuaAndEnglish"/>
-                        <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly"/>   
+                        <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>   
                         <menu name="Help" contains="AboutQuillDriver Help"/>
                 </menus>
                 <actions>
@@ -32,12 +33,13 @@
                         </action>
                         <action name="MediaOverTranscript" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.MediaOverTranscript">
                         </action>
-                        <action name="FullScreenVideoOnly" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.FullScreenVideoOnly">
+                        <action name="FullScreenVideoOnly" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.FullScreenVideoOnly">
                         </action>
-                        <action name="NormalSizeVideoOnly" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
+                        <action name="NormalSizeVideoOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
                         </action>
-                        <action name="TranscriptOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
+                        <action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
                         </action>
+                        <action name="ToggleVideoBorder" keystroke="shift F10" node="." qd-command="fieldling.quilldriver.task.ToggleVideoBorder"/>
                         <!-- about menu -->
                         <action name="AboutQuillDriver" node="." qd-command="fieldling.quilldriver.task.AboutQD">
                         </action>
@@ -47,9 +49,14 @@
                         <action name="NewTranscript" keystroke="control N" node="." qd-command="fieldling.quilldriver.task.NewTranscript"/>
                         <action name="OpenTranscript" keystroke="control O" node="." qd-command="fieldling.quilldriver.task.OpenTranscript">
                         </action>
+                        <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::qq:TEXT/qq:META" xsl-task="fixMedia" qd-command="fieldling.quilldriver.task.SaveTranscript">
+                                <helptext ref="help34"/>
+                        </action>
                         <action name="Save" keystroke="control S" node="." qd-command="fieldling.quilldriver.task.SaveTranscript">
                         </action>
                         <action name="SaveAs" node="." qd-command="fieldling.quilldriver.task.SaveTranscriptAs"/>
+                        <action name="SaveAll" node="." qd-command="fieldling.quilldriver.task.SaveAllTranscripts"/>
+                        <action name="ExportToText" node="." qd-command="fieldling.quilldriver.task.que.ExportToDelimitedText"/>
                         <action name="Close" keystroke="control W" node="." qd-command="fieldling.quilldriver.task.CloseTranscript">
                         </action>
                         <action name="Print" keystroke="control P" node="." qd-command="fieldling.quilldriver.task.PrintTranscript">
@@ -65,6 +72,7 @@
                         </action>
                         <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
                         </action>
+                        <action name="SavingPreferences" node="." qd-command="fieldling.quilldriver.task.SetSavingPreferences"/>
                         <!-- browse menu -->
                         <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="fieldling.quilldriver.task.PlayPause">
                                 <helptext ref="help1"/>
@@ -154,6 +162,7 @@
                         <tag name="qq:PAUSE" visible="false" visiblecontents="false"/>
                         <tag name="qq:GOD-KNOWS" visible="false" visiblecontents="false"/>
                         <tag name="qq:COMMENT" visible="false" visiblecontents="false"/>
+                        <tag name="qq:MEDIAREF" visible="true" displayas="'MEDIA'"/>
                         <tag name="qq:SPEAKER" visible="true" displayas="'SPEAKER'"/>
                         <tagview name="QuechuaOnly" keystroke="F1">
                             <tag name="qq:C" visible="false" visiblecontents="true">

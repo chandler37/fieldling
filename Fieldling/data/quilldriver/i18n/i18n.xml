@@ -191,6 +191,10 @@
     <text lang="en">Email Address</text>
     <text lang="zh">电子邮件地址</text>
   </message>
+  <message id="ToggleVideoBorder">
+    <text lang="en">Toggle Video Border</text>
+    <text lang="zh">Toggle Video Border</text>
+  </message>
   <message id="English">
     <text lang="en">English</text>
     <text lang="zh">英文</text>
@@ -699,6 +703,26 @@
     <text lang="en">Replace with</text>
     <text lang="zh">一起替换</text>
   </message>
+  <message id="SavingPreferences">
+    <text lang="en">Saving Preferences</text>
+    <text lang="zh">Saving Preferences</text>
+  </message>
+  <message id="AutoSaveMinutesQuestion">
+    <text lang="en">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
+    <text lang="zh">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
+  </message>
+  <message id="BackupDirectoryQuestion">
+    <text lang="en">Back transcripts up to the following directory (leave blank to ignore):</text>
+    <text lang="zh">Back transcripts up to the following directory (leave blank to ignore):</text>
+  </message>
+  <message id="SelectDirectoryMessage">
+    <text lang="en">Select a directory</text>
+    <text lang="zh">Select a directory</text>
+  </message>
+  <message id="NamespaceNormalizerQuestion">
+    <text lang="en">Use namespace normalizer to remove inconsistent or redundant namespace declarations?</text>
+    <text lang="zh">Use namespace normalizer to remove inconsistent or redundant namespace declarations?</text>
+  </message>
   <message id="Save">
     <text lang="en">Save</text>
     <text lang="zh">保存</text>
@@ -707,8 +731,16 @@
     <text lang="en">Save As...</text>
     <text lang="zh">保存到…</text>
   </message>
+  <message id="SaveAll">
+    <text lang="en">Save All</text>
+    <text lang="zh">Save All</text>
+  </message>
+  <message id="ExportToText">
+    <text lang="en">Export to Text</text>
+    <text lang="zh">Export to Text</text>
+  </message>
     <message id="SaveError">
-    <text lang="en">Errors are occured when saving!</text>
+    <text lang="en">Errors while saving!</text>
     <text lang="zh">保存时遇到错误!</text>
   </message>
   
@@ -1510,6 +1542,10 @@
         <text lang="zh">
                 Deletes current clause.
         </text>
+  </message>
+  <message id="Browse">
+    <text lang="en">Browse</text>
+    <text lang="zh">Browse</text>
   </message>
   <message id="BrowseMenu">
     <text lang="en">Navigate</text>

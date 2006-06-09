@@ -71,6 +71,11 @@ public class PreferenceManager extends JPanel {
 	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
 	public static final String SHOW_FILE_NAME_AS_TITLE_KEY = "SHOW_FILE_NAME_AS_TITLE";
         public static final String SHOW_TIME_CODING_KEY = "SHOW_TIME_CODING";
+        public static final String VIDEO_HAS_BORDER_KEY = "VIDEO_HAS_BORDER";
+        public static final String NORMALIZE_NAMESPACES_KEY = "NORMALIZE_NAMESPACES";
+        public static final String AUTO_SAVE_MINUTES_KEY = "AUTO_SAVE_MINUTES";
+        public static final String BACKUP_DIRECTORY_KEY = "BACKUP_DIRECTORY";
+        public static final String NEXT_BACKUP_ID_KEY = "NEXT_BACKUP_ID";
 	public static String media_directory;
 	public static int slow_adjust;
 	public static int rapid_adjust;

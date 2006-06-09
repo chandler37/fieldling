@@ -60,6 +60,8 @@ public class Configuration
 	org.w3c.dom.Document docDoc = null;
         JScrollPane helpScrollPane = null;
         
+        private static TransformerFactory transformerFactory = null;
+        
 	static {
 		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
 		javax.xml.xpath.XPath xpathEnvironment = fieldling.quilldriver.xml.XPathUtilities.getXPathEnvironmentForDOM(qdNamespace);
@@ -72,8 +74,13 @@ public class Configuration
 		} catch (javax.xml.xpath.XPathExpressionException xpe) {
 			xpe.printStackTrace();
 		}
+                transformerFactory = TransformerFactory.newInstance();
 	}
 
+        public static TransformerFactory getTransformerFactory() {
+            return transformerFactory;
+        }
+        
 	public Configuration(Element e, ClassLoader loader) throws JDOMException, IOException, TransformerException, ParserConfigurationException, SAXException {
 		name = e.getAttributeValue("name");
 		String configString = e.getAttributeValue("href");
@@ -172,7 +179,6 @@ public class Configuration
 		}
 		setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME));
 		//setJMenuBar(cRoot.getChild(ALL_MENUS_ELEMENT_NAME), qd, prefmngr);
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		if (canEdit())
 			transformer = transformerFactory.newTransformer(new StreamSource(editURL.openStream()));
 		else

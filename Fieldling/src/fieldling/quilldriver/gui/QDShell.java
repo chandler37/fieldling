@@ -103,18 +103,12 @@ public class QDShell extends JFrame
 				System.setErr(ps);
 			} catch (FileNotFoundException fnfe) {
 			}
+                        
 			if (args.length==0) 
 			{
 				new QDShell();
 				return;
 			}
-			
-			/*if (args.length==1)
-			{
-				System.out.println("Syntax error: missing arguments!");
-				printSyntax();
-				return;
-			}*/
                         
 			if (args[0].charAt(0)!='-')
 			{
@@ -204,9 +198,10 @@ public class QDShell extends JFrame
             setTitle(qd.getTitle());
             if (hasLoadedTranscript) {
                 this.hasLoadedTranscript = true;
-                qd.setSize(0,0);
-                qd.setSize(contentPane.getSize());
+                //qd.setSize(0,0);
+                //qd.setSize(contentPane.getSize());
                 contentPane.add(qd);
+                WindowPositioningTask.repositionWithActiveWindowPositioner(qd);
                 qd.requestFocus();
                 /*contentPane.validate();
                 contentPane.repaint();*/

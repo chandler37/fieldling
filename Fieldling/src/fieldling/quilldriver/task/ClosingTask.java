@@ -15,7 +15,7 @@ public abstract class ClosingTask extends BasicTask {
                 int option = JOptionPane.showConfirmDialog(qdShell, qd.messages.getString("WantToSaveChanges"), "QuillDriver", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (option==JOptionPane.YES_OPTION) {
                     try {
-                        BasicTask saveTask = BasicTask.getTaskForClass("fieldling.quilldriver.gui.SaveTranscript");
+                        BasicTask saveTask = BasicTask.getTaskForClass("fieldling.quilldriver.task.SaveTranscript");
                         saveTask.execute(qd, null);
                     } catch (Exception e) {
                         e.printStackTrace();

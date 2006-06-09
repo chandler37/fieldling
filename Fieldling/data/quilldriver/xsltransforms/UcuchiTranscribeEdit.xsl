@@ -80,7 +80,15 @@
 					</qq:META>
 				</xsl:when>
 		
-                                <!-- insertions and deletions -->
+                                <!-- insertions and deletions -->				
+                                <xsl:when test="$qd.task='fixMedia'">
+                                        <qq:META>
+					        <qq:MEDIAREF><xsl:value-of select="$qd.mediaurlstring"/></qq:MEDIAREF>
+                                                <xsl:for-each select="qq:SPEAKER">
+                                                        <xsl:copy-of select="."/>
+                                                </xsl:for-each>
+                                        </qq:META>
+				</xsl:when>
 				<xsl:when test="$qd.task='removeNode'"/> <!-- delete current node -->
 				<xsl:when test="$qd.task='newClause'">
                                         <xsl:copy-of select="." copy-namespaces="no"/>

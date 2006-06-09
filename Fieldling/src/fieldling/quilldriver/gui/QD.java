@@ -42,55 +42,62 @@ import javax.xml.transform.*;
 import javax.xml.xpath.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
-import fieldling.quilldriver.PreferenceManager;
+import fieldling.quilldriver.*;
 import fieldling.quilldriver.config.*;
 import fieldling.quilldriver.xml.*;
 import fieldling.quilldriver.xml.View;
 import fieldling.quilldriver.task.*;
 
 public class QD extends JDesktopPane implements DOMErrorHandler {
+        //CLASS CONSTANTS
+	protected static TagInfo currentTagInfo = null;
+	protected static Color hColor = Color.cyan;
 	public static final int SCROLLING_HIGHLIGHT_IS_ON = 0;
 	public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
 	protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
-	@UNICODE@public static final String productName = "QuillDriver";
-	@TIBETAN@public static final String productName = "QuillDriver-TIBETAN";
+	@UNICODE@public static final String PRODUCT_NAME = "QuillDriver";
+	@TIBETAN@public static final String PRODUCT_NAME = "QuillDriver-TIBETAN";
 	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
-        public static final String DEFAULT_WINDOW_POSITIONING_CLASS_NAME = "fieldling.quilldriver.gui.MediaToRight";
-        public static TranscriptToggler transcriptToggler = new TranscriptToggler();
-	public JInternalFrame videoFrame = null;
-	public JInternalFrame textFrame = null;	
+
+        //CLASS ACTION
+        public static TranscriptToggler transcriptToggler;
+        public static AutoSave autoSaver;
+        static {
+            transcriptToggler = new TranscriptToggler();
+            autoSaver = new AutoSave(transcriptToggler, PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, 0) * 60000);
+            autoSaver.start();
+        }
+        
+        //MORE CLASS FIELDS
         public static QD lastQD = null;
 	public static Configuration configuration = null;
+	public static DocumentBuilder docBuilder = null;
 	public static ResourceBundle messages = I18n.getResourceBundle();
-	//public PreferenceManager prefmngr;
-	public TextHighlightPlayer hp;
-	public File transcriptFile = null;
         
-	protected static TagInfo currentTagInfo = null;
-	protected static Color hColor = Color.cyan;
+        //INSTANCE FIELDS
+	private QDShell qdShell=null;
+        private String title = "";
+        private boolean hasVideoFrameBeenResizedByDragging = false;
 	@TIBETAN@protected org.thdl.tib.input.JskadKeyboard activeKeyboard = null;
 	protected PanelPlayer player = null;
 	protected Editor editor = null;
 	protected TimeCodeModel tcp = null;
 	protected Hashtable actions;
 	protected View view;
-	protected DocumentBuilder docBuilder;
 	protected org.w3c.dom.Document xmlDoc = null;
-	public Timer checkTimeTimer = null;
-	//protected Action insertTimesAction = null;
-	protected boolean firstQDresize = true;
 	protected String language=null;
-	private QDShell qdShell=null;
-        private String title = "";
 	protected TimeCodeView tcv;
         protected JPanel buttonPanel = null;
         protected JComboBox togglerComboBox;
+	public JInternalFrame videoFrame = null;
+	public JInternalFrame textFrame = null;	
+	public TextHighlightPlayer hp;
+	public File transcriptFile = null;
+	public Timer checkTimeTimer = null;
 	
 	public QD(Configuration configuration, PanelPlayer player) {
-	//public QD(Configuration configuration, PanelPlayer player, PreferenceManager prefs) {
                 setConfiguration(configuration);
                 setMediaPlayer(player);
-		//prefmngr = prefs;
 		setupGUI();
 		String lang=I18n.getDefaultDisplayLanguage();
 		if (lang==messages.getString("English")) language="English";
@@ -106,10 +113,24 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 videoFrame = new JInternalFrame();
                 videoFrame.setBorder(null);
                 ((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
-		//videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
 		videoFrame.setVisible(true);
 		videoFrame.setLocation(0,0);
 		videoFrame.setSize(0,0);
+                videoFrame.addMouseMotionListener(new MouseMotionAdapter() {
+                    public void mouseDragged(MouseEvent me) {
+                        hasVideoFrameBeenResizedByDragging = true;
+                    }
+                });
+                videoFrame.addComponentListener(new ComponentAdapter() {
+                    public void componentResized(ComponentEvent ce) {
+                        if (hasVideoFrameBeenResizedByDragging) {
+                            player.setPreferredSize(new Dimension(player.getComponent(0).getSize()));
+                            videoFrame.pack();
+                            hasVideoFrameBeenResizedByDragging = false;
+                            WindowPositioningTask.repositionWithActiveWindowPositioner(QD.this);
+                        }
+                    }
+                });
 		add(videoFrame, JLayeredPane.PALETTE_LAYER);
 		invalidate();
 		validate();
@@ -128,27 +149,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
-				if (firstQDresize) {
-                                    String windowPositioningClassName = PreferenceManager.getValue(PreferenceManager.WINDOW_MODE_KEY, DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
-                                    try {
-                                        Class c = Class.forName(windowPositioningClassName);
-                                        if (BasicTask.tasksOnOffer.containsKey(c) && BasicTask.tasksOnOffer.get(c) instanceof WindowPositioningTask) {
-                                            WindowPositioningTask wTask = (WindowPositioningTask)BasicTask.tasksOnOffer.get(c);
-                                            wTask.execute(QD.this, null);
-                                            firstQDresize = false;
-                                            return;
-                                        }
-                                    } catch (Exception e1) {
-                                        try {
-                                            Class c = Class.forName(DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
-                                            WindowPositioningTask wTask = (WindowPositioningTask)BasicTask.tasksOnOffer.get(c);
-                                            wTask.execute(QD.this, null);
-                                            firstQDresize = false;
-                                        } catch (Exception e2) {
-                                        }
-                                    }
-				} 
-			}});
+                            WindowPositioningTask.repositionWithActiveWindowPositioner(QD.this);
+			}
+                });
 	}
 	
 	public String getWindowTitle(String lang)
@@ -172,7 +175,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			else
 				return transcriptFile.getName();
 		}
-		//return transcriptFile.getName() + " - " + QD.productName;
+		//return transcriptFile.getName() + " - " + QD.PRODUCT_NAME;
 		return transcriptFile.getName();
 	}
 	
@@ -281,8 +284,10 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				 DOM revalidation as part of DOM Level 3 Core. This allows documents to be revalidated
 				 after each call to NodeTransformer, without reloading the entire document. See.
 				 http://xml.apache.org/xerces2-j/faq-dom.html#faq-9*/
-				System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-				DocumentBuilder docBuilder = configuration.getDocumentBuilder(DocumentBuilderFactory.newInstance());
+                                 if (docBuilder == null) {
+                                    System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+                                    docBuilder = configuration.getDocumentBuilder(DocumentBuilderFactory.newInstance());
+                                }
 				xmlDoc = docBuilder.parse(transcriptString);
 				/* handler = new SAXValidator();
 				 docBuilder.setErrorHandler(handler);*/
@@ -565,9 +570,9 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		if (PreferenceManager.show_file_name_as_title==0 || PreferenceManager.show_file_name_as_title == 1)
                 {
                     if (transcriptToggler.getNumberOfTranscripts() == 0)
-                        title = new String(productName + " (" + messages.getString(configuration.getName()) + ")");
+                        title = new String(PRODUCT_NAME + " (" + messages.getString(configuration.getName()) + ")");
                     else { //qd has content
-                        title = new String(getWindowTitle(getCurrentLang()) + " (" + productName + ": " + messages.getString(configuration.getName()) + ")");
+                        title = new String(getWindowTitle(getCurrentLang()) + " (" + PRODUCT_NAME + ": " + messages.getString(configuration.getName()) + ")");
                         buttonPanel.remove(togglerComboBox);
                         togglerComboBox = transcriptToggler.getToggler(this);
                         togglerComboBox.addActionListener(new ActionListener() {
