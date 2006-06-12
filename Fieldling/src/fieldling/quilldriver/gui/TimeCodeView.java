@@ -8,14 +8,17 @@ import fieldling.util.*;
 import fieldling.mediaplayer.*;
 import fieldling.quilldriver.gui.*;
 
-public class TimeCodeView extends JPanel implements TimeCodeModelListener, SimpleSpinnerListener {
+public class TimeCodeView extends JPanel implements TimeCodeModelListener, SimpleSpinnerListener, FocusListener, ActionListener {
+        PanelPlayer player;
 	TimeCodeModel tcm;
 	JTextField currentTimeField;
 	SimpleSpinner startSpinner, stopSpinner;
 	long currentTime=-1, startTime=-1, stopTime=-1;
 	final int TEXT_WIDTH, TEXT_HEIGHT;
+        boolean isUserEditing = false;
 	
-	TimeCodeView(final PanelPlayer player, TimeCodeModel time_model) {
+	TimeCodeView(PanelPlayer media_player, TimeCodeModel time_model) {
+                player = media_player;
 		tcm = time_model;
 		JButton inButton = new JButton(new ImageIcon(QD.class.getResource("right-arrow.gif")));
 		JButton outButton = new JButton(new ImageIcon(QD.class.getResource("left-arrow.gif")));
@@ -49,7 +52,9 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 		TEXT_WIDTH = 60;
 		TEXT_HEIGHT = inButton.getPreferredSize().height;
 		currentTimeField = new JTextField();
-		currentTimeField.setEditable(false);
+                currentTimeField.addFocusListener(this);
+                currentTimeField.addActionListener(this);
+		//currentTimeField.setEditable(false);
 		currentTimeField.setPreferredSize(new Dimension(TEXT_WIDTH, TEXT_HEIGHT));
 		startSpinner = new fieldling.util.SimpleSpinner();
 		stopSpinner = new fieldling.util.SimpleSpinner();
@@ -73,6 +78,26 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 		tcm.addTimeCodeModelListener(this);
 	}
 	
+        public void focusGained(FocusEvent e) {
+            isUserEditing = true;
+        }
+        
+        public void focusLost(FocusEvent e) {
+            endCurrentTimeEdit();
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("edited!");
+            currentTimeField.transferFocus();
+        }
+        
+        public void endCurrentTimeEdit() {
+            isUserEditing = false;
+            try {
+                player.setCurrentTime(Long.parseLong(currentTimeField.getText()));
+            } catch (NumberFormatException nfe) {
+        }
+        
 	public void valueChanged(ChangeEvent e) {
 		Object obj = e.getSource();
 		if (obj == startSpinner) startTime = startSpinner.getValue().longValue();
@@ -84,7 +109,8 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
 	void setCurrentTime(long t) {
 		if (t != currentTime) {
 			currentTime = t;
-			currentTimeField.setText(String.valueOf(new Long(t)));
+			if (!isUserEditing)
+                            currentTimeField.setText(String.valueOf(new Long(t)));
 		}
 	}
 	public void setStartTime(long t) {

@@ -283,6 +283,10 @@
     <text lang="en">Fix Media</text>
     <text lang="zh">连接媒体</text>
   </message>
+  <message id="LinkMedia">
+    <text lang="en">Link Media</text>
+    <text lang="zh">Link Media</text>
+  </message>
   <message id="Font">
     <text lang="en">Font:</text>
     <text lang="zh">字体：</text>

@@ -12,7 +12,7 @@
                     <parameter name="qd.showtimecodingbydefault" val="true" type="Boolean"/>
                 </parameters>
                 <menus>
-                        <menu name="FileMenu" contains="NewTranscript OpenTranscript | FixMedia | Save SaveAs SaveAll | ExportToText | Close | Print PrintToPS PrintToRTF | Exit"/>
+                        <menu name="FileMenu" contains="NewTranscript OpenTranscript | LinkMedia | Save SaveAs SaveAll | ExportToText | Close | Print PrintToPS PrintToRTF | Exit"/>
                         <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker | NewClause DeleteClause"/>
                         <menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | GotoNextLine GotoPreviousLine"/>
                         <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart | IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop | ZapTimeCodes"/>
@@ -49,7 +49,7 @@
                         <action name="NewTranscript" keystroke="control N" node="." qd-command="fieldling.quilldriver.task.NewTranscript"/>
                         <action name="OpenTranscript" keystroke="control O" node="." qd-command="fieldling.quilldriver.task.OpenTranscript">
                         </action>
-                        <action name="FixMedia" keystroke="control INSERT" node="ancestor-or-self::qq:TEXT/qq:META" xsl-task="fixMedia" qd-command="fieldling.quilldriver.task.SaveTranscript">
+                        <action name="LinkMedia" keystroke="control INSERT" node="ancestor-or-self::qq:TEXT/qq:META" xsl-task="fixMedia" qd-command="fieldling.quilldriver.task.SaveTranscript">
                                 <helptext ref="help34"/>
                         </action>
                         <action name="Save" keystroke="control S" node="." qd-command="fieldling.quilldriver.task.SaveTranscript">
