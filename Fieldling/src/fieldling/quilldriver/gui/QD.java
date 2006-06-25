@@ -146,7 +146,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	
 	public String getWindowTitle(String lang)
 	{       
-                titleName="qd.title";
+                String titleName="qd.title";
                 /*String titleName=null;
 		if(lang=="English") titleName="qd.title";
 		else if(lang=="Chinese")titleName="qd.title_zh";
