@@ -6,7 +6,7 @@ import fieldling.quilldriver.PreferenceManager;
 public class ToggleVideoBorder extends BasicTask {
     public void execute(QD qd, String parameters) {
         if (qd.hasContent()) {
-            if (PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, -1) == -1) {
+            if (PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, PreferenceManager.VIDEO_HAS_BORDER_DEFAULT) == -1) {
                 PreferenceManager.setInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, 1);
             } else {
                 PreferenceManager.setInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, -1);

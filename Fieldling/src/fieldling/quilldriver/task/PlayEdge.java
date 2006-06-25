@@ -11,9 +11,9 @@ public class PlayEdge extends BasicTask {
         try {
             qd.getTimeCodeModel().setNode(XPathUtilities.saxonSelectSingleDOMNode(qd.getEditor().getNodeForOffset(qd.getEditor().getTextPane().getCaret().getMark()), (XPathExpression)(qd.getConfiguration().getParameters().get("qd.nearestplayableparent"))));
             Long t2 = qd.getTimeCodeModel().getOutTime();
-            long t1 = t2.longValue() - PreferenceManager.play_minus;
+            long t1 = t2.longValue() - PreferenceManager.getInt(PreferenceManager.PLAY_MINUS_KEY, PreferenceManager.PLAY_MINUS_DEFAULT);
             if (t1 < 0) t1 = 0;
-            qd.getPlayer().cmd_playSegment(new Long(t1), t2);
+            qd.getMediaPlayer().cmd_playSegment(new Long(t1), t2);
         } catch (PanelPlayerException ppe) {
             ppe.printStackTrace();
         }

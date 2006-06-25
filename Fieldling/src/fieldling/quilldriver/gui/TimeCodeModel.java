@@ -6,21 +6,22 @@ import java.awt.event.*;
 import javax.swing.*;
 import org.w3c.dom.Node;
 import javax.xml.xpath.XPathExpression;
+import fieldling.mediaplayer.AnnotationPlayer;
 import fieldling.quilldriver.xml.XPathUtilities;
 
 public class TimeCodeModel {
 		private EventListenerList listenerList;
 		long t1, t2; //start and stop times in milliseconds
-		private TextHighlightPlayer thp;
+		private AnnotationPlayer ap;
 		private Object currentNode = null;
                 private Map config;
                 private org.jdom.Namespace[] namespaces;
                 //private Action insertTimesAction;
                 
-                TimeCodeModel(TextHighlightPlayer thp, Map config, org.jdom.Namespace[] namespaces) {
-		//TimeCodeModel(TextHighlightPlayer thp, Map config, org.jdom.Namespace[] namespaces, Action insertTimesIntoXMLAction) {
+                TimeCodeModel(AnnotationPlayer ap, Map config, org.jdom.Namespace[] namespaces) {
+		//TimeCodeModel(AnnotationPlayer ap, Map config, org.jdom.Namespace[] namespaces, Action insertTimesIntoXMLAction) {
 			listenerList = new EventListenerList();
-			this.thp = thp;
+			this.ap = ap;
                         this.config = config;
                         this.namespaces = namespaces;
                         //insertTimesAction = insertTimesIntoXMLAction;
@@ -74,7 +75,7 @@ public class TimeCodeModel {
 			Node playableparent = XPathUtilities.saxonSelectSingleDOMNode(node, (XPathExpression)(config.get("qd.nearestplayableparent")));
 			if (playableparent == null) {
 				setTimeCodes(-1, -1, node);
-				thp.unhighlightAll();
+				ap.stopAllAnnotations();
 				return;
 			} else {
 				String t1 = XPathUtilities.saxonSelectSingleDOMNodeToString(playableparent, (XPathExpression)(config.get("qd.nodebegins")));
@@ -85,7 +86,7 @@ public class TimeCodeModel {
 				if (t2 == null) f2 = -1;
 				else f2 = new Float(t2).floatValue()*1000;
 				setTimeCodes(new Float(f1).longValue(), new Float(f2).longValue(), node);
-				thp.unhighlightAll();
+				ap.stopAllAnnotations();
 			}
 		}
 }

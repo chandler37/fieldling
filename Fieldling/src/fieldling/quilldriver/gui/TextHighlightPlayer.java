@@ -42,7 +42,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	protected JViewport viewport;
 	protected JScrollPane scrollPane;
 	protected TranscriptView view;
-    protected boolean isHighlightInMiddle = true;
+        protected boolean isHighlightInMiddle = true;
 
 	public TextHighlightPlayer(TranscriptView tView, Color highlightColor, String highlightPosition)
 	{
@@ -80,15 +80,25 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		setLayout(new GridLayout(1,1));
 		add(scrollPane);
 	}
-    public void setHighlightColor(Color highlightColor) {
-        highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightColor);
-    }
-    public void setHighlightPosition(String highlightPosition) {
-        if (highlightPosition.equals("Middle"))
-            isHighlightInMiddle = true;
-        else
-            isHighlightInMiddle = false;
-    }
+        public void setHighlightColor(Color highlightColor) {
+            highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(highlightColor);
+        }
+        public Color getHighlightColor() {
+            DefaultHighlighter.DefaultHighlightPainter dhp = (DefaultHighlighter.DefaultHighlightPainter)highlightPainter;
+            return dhp.getColor();
+        }
+        public void setHighlightPosition(String highlightPosition) {
+            if (highlightPosition.equals("Middle"))
+                isHighlightInMiddle = true;
+            else
+                isHighlightInMiddle = false;
+        }
+        public String getHighlightPosition() {
+            if (isHighlightInMiddle)
+                return "Middle";
+            else
+                return "Bottom";
+        }
 	public void refresh() {
 		//FIXME FIXME FIXME!!!
 		if (view instanceof View) {
@@ -138,7 +148,11 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 		if (isPlayableAnnotation(id))
 			unhighlight(id);
 	}
-	public void highlight(String id)
+	public void stopAllAnnotations() {
+		highlighter.removeAllHighlights();
+		highlights.clear();
+	}
+	private void highlight(String id)
 	{
 		if (!highlights.containsKey(id)) {
 			try
@@ -150,7 +164,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 				Object tag = highlighter.addHighlight(start, end, highlightPainter);
 				highlights.put(id, tag);
 	
-                if (isHighlightInMiddle) {
+                                if (isHighlightInMiddle) {
 					JViewport viewport = (JViewport)SwingUtilities.getAncestorOfClass(JViewport.class, text);
 					int halfViewHeight = viewport.getExtentSize().height / 2;
 					Rectangle textRectangle = text.modelToView(end);
@@ -159,11 +173,11 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 						viewport.setViewPosition(new Point(0, yFactor));
 						text.repaint();
 					}
-                } else { //highlighting should be at bottom
+                                } else { //highlighting should be at bottom
 					Rectangle rect = text.modelToView(end);
 					text.scrollRectToVisible(rect);
 					text.repaint();
-                }
+                                }
 			}
 			catch (BadLocationException ble)
 			{
@@ -172,16 +186,12 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 			}
 		}
 	}
-	public void unhighlight(String id)
+	private void unhighlight(String id)
 	{
 		if (highlights.containsKey(id))
 		{
 			highlighter.removeHighlight(highlights.get(id));
 			highlights.remove(id);
 		}
-	}
-	public void unhighlightAll() {
-		highlighter.removeAllHighlights();
-		highlights.clear();
 	}
 }

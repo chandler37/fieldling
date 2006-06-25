@@ -291,8 +291,8 @@
     <text lang="en">Font:</text>
     <text lang="zh">字体：</text>
   </message>
-  <message id="FontAndStylePreferences">
-    <text lang="en">Font and Style Preferences</text>
+  <message id="InterfacePreferences">
+    <text lang="en">Interface</text>
     <text lang="zh">字体和样式选项</text>
   </message>
   <message id="GotoEnd">
@@ -320,7 +320,7 @@
     <text lang="zh">加亮位置：</text>
   </message>
   <message id="HighlightRelatedPreferences">
-    <text lang="en">Highlight-Related Preferences</text>
+    <text lang="en">Highlighting</text>
     <text lang="zh">有关加亮的选项</text>
   </message>
   <message id="Icon">
@@ -603,13 +603,13 @@
     <text lang="en">Play Segment</text>
     <text lang="zh">播放一段</text>
   </message>
-  <message id="PlayVinusValue">
+  <message id="PlayMinusValue">
     <text lang="en">Play minus value (in milliseconds)</text>
     <text lang="zh">播放时间值（按毫秒）</text>
   </message>
   <message id="Preferences">
-    <text lang="en">Preferences...</text>
-    <text lang="zh">设置选择…</text>
+    <text lang="en">Preferences</text>
+    <text lang="zh">设置选择</text>
   </message>
   <message id="Previous">
     <text lang="en">Previous</text>
@@ -667,7 +667,7 @@
     <text lang="en">Rapid Decrease Stop</text>
     <text lang="zh">快速减少结尾时间</text>
   </message>
-  <message id="RapidDncreaseDecreaseValue">
+  <message id="RapidIncreaseDecreaseValue">
     <text lang="en">Rapid increase/decrease value (in milliseconds)</text>
     <text lang="zh">快速增加/减少值（按毫秒）</text>
   </message>
@@ -708,8 +708,8 @@
     <text lang="zh">一起替换</text>
   </message>
   <message id="SavingPreferences">
-    <text lang="en">Saving Preferences</text>
-    <text lang="zh">Saving Preferences</text>
+    <text lang="en">Saving</text>
+    <text lang="zh">Saving</text>
   </message>
   <message id="AutoSaveMinutesQuestion">
     <text lang="en">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
@@ -734,6 +734,10 @@
   <message id="SaveAs">
     <text lang="en">Save As...</text>
     <text lang="zh">保存到…</text>
+  </message>
+  <message id="SaveAsPDF">
+    <text lang="en">Save as PDF</text>
+    <text lang="zh">Save as PDF</text>
   </message>
   <message id="SaveAll">
     <text lang="en">Save All</text>
@@ -873,7 +877,7 @@
     <text lang="zh">时间参数…</text>
   </message>
   <message id="TimeCodingPreferences">
-    <text lang="en">Time Coding Preferences</text>
+    <text lang="en">Time Coding</text>
     <text lang="zh">时间参数选择</text>
   </message>
   <message id="TitleColon">

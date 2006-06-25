@@ -14,7 +14,7 @@ public abstract class OpeningTask extends BasicTask {
     }
     
     public static File selectFileOrDirectory(int fileSelectionMode, String message, QD qd) {
-        JFileChooser fc = new JFileChooser(new File(PreferenceManager.getValue(PreferenceManager.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+        JFileChooser fc = new JFileChooser(new File(PreferenceManager.getValue(PreferenceManager.WORKING_DIRECTORY_KEY, PreferenceManager.WORKING_DIRECTORY_DEFAULT)));
         fc.setFileSelectionMode(fileSelectionMode);
         fc.addChoosableFileFilter(new QDFileFilter());
 	if (fc.showDialog(qd, message) == JFileChooser.APPROVE_OPTION) {

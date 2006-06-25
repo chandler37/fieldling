@@ -36,7 +36,6 @@ import javax.xml.xpath.*;
 
 public class QDShell extends JFrame 
 {
-        public static final String DEFAULT_MEDIA_PLAYER = "fieldling.mediaplayer.QT4JPlayer";
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final int MAXIMUM_NUMBER_OF_RECENT_FILES = 4;
 	public static final int CLOSE_APPLICATION = 0;
@@ -129,7 +128,7 @@ public class QDShell extends JFrame
 			
  			if (args.length==1)
  			{
- 				new QDShell(option, DEFAULT_MEDIA_PLAYER);
+ 				new QDShell(option, PreferenceManager.MEDIA_PLAYER_DEFAULT);
  				return;
  			}
 
@@ -143,14 +142,15 @@ public class QDShell extends JFrame
                             }
                         }
 			// if arguments are passed through the command-line default to Quick-time for Java
-			new QDShell(transcriptFile[0], option, DEFAULT_MEDIA_PLAYER);
+			new QDShell(transcriptFile[0], option, PreferenceManager.MEDIA_PLAYER_DEFAULT);
 		} catch (NoClassDefFoundError err) {
 		}
 	}
 
         public QDShell()
         {
-            this(PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, null), DEFAULT_MEDIA_PLAYER);
+            this(PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, PreferenceManager.CONFIGURATION_DEFAULT), 
+                PreferenceManager.MEDIA_PLAYER_DEFAULT);
         }
         
 	public QDShell(String configName, String mediaPlayer)
@@ -184,7 +184,7 @@ public class QDShell extends JFrame
 		PreferenceManager.setInt(PreferenceManager.WINDOW_Y_KEY, getY());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_WIDTH_KEY, getWidth());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_HEIGHT_KEY, getHeight());
-		PreferenceManager.setValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.media_directory);
+		PreferenceManager.setValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT);
 	}
 	
 	public QD getQD() {
@@ -228,8 +228,8 @@ public class QDShell extends JFrame
 		supportedFonts = null;
 		contentPane = getContentPane();
 		messages = I18n.getResourceBundle();
-		setLocation(PreferenceManager.getInt(PreferenceManager.WINDOW_X_KEY, 0), PreferenceManager.getInt(PreferenceManager.WINDOW_Y_KEY, 0));
-		setSize(new Dimension(PreferenceManager.getInt(PreferenceManager.WINDOW_WIDTH_KEY, getToolkit().getScreenSize().width), PreferenceManager.getInt(PreferenceManager.WINDOW_HEIGHT_KEY, getToolkit().getScreenSize().height)));
+		setLocation(PreferenceManager.getInt(PreferenceManager.WINDOW_X_KEY, PreferenceManager.WINDOW_X_DEFAULT), PreferenceManager.getInt(PreferenceManager.WINDOW_Y_KEY, PreferenceManager.WINDOW_Y_DEFAULT));
+		setSize(new Dimension(PreferenceManager.getInt(PreferenceManager.WINDOW_WIDTH_KEY, PreferenceManager.WINDOW_WIDTH_DEFAULT), PreferenceManager.getInt(PreferenceManager.WINDOW_HEIGHT_KEY, PreferenceManager.WINDOW_HEIGHT_DEFAULT)));
                 setJMenuBar(QD.configuration.getJMenuBar());
                 activateQD(qd, false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -260,7 +260,7 @@ public class QDShell extends JFrame
 		pos = s.indexOf(",");
 		if (pos==-1) mediaURL = s.trim();
 		else mediaURL = s.substring(0,pos).trim();
-		configName = PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, null);
+		configName = PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, PreferenceManager.CONFIGURATION_DEFAULT);
 		loadSpecificInitialState(transcriptFile, mediaURL);
 	}
 	
@@ -285,440 +285,7 @@ public class QDShell extends JFrame
 		}
 		qd.setQDShell(QDShell.this);
 	}
-	
-	private void updateSupportedFonts()
-	{
-		int i;
-		String [] fontNames = I18n.getSupportedFonts(defaultLanguage.getSelectedIndex());
-		DefaultComboBoxModel model = new DefaultComboBoxModel(fontNames);
-		supportedFonts.setModel(model);
-		String defaultFont;	
-		/* if there is no default language font set for Quilldriver,
-		 * use the system default font.
-		 */ 
-		if (PreferenceManager.default_interface_font==null)
-			defaultFont = ((Font)UIManager.get("Label.font")).getFamily();
-		else
-			defaultFont = PreferenceManager.default_interface_font;
-		for (i=0; i<fontNames.length; i++)
-			if (fontNames[i].equals(defaultFont))
-			{
-				supportedFonts.setSelectedIndex(i);
-				break;
-			}
-		if (i>=fontNames.length)
-			supportedFonts.setSelectedIndex(0);
-	}
-	
-        
-        
-        
-        
-        
-        //GET ALL OF THE FOLLOWING INTO A SEPARATE FILE!!
-        
-        
-        
-        
-        
-
-	
-	public void getDisplayPreferences()
-	{
-		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		String[] fontNames;
-		int i;
-		highlightColor = new Color(PreferenceManager.highlight_color_red, PreferenceManager.highlight_color_green, PreferenceManager.highlight_color_blue);
-		tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
-		
-		fontNames = genv.getAvailableFontFamilyNames();
-		
-		// main panels to be used
-		JPanel interfacePanel, transcriptPanel, highlightPanel;
-		
-		JComboBox highlightPosition, showTimeCoding;
-		JCheckBox multipleHighlightPolicy, scrollingHighlightPolicy, showFileNameAsTitle;  		
-		
-		// intermediate panels for rendering
-		JPanel hPanel;
-		
-		interfacePanel = new JPanel(new GridLayout(4,2));
-		interfacePanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Interface")));
-		interfacePanel.add(new JLabel(messages.getString("Language")));
-		
-		if (supportedFonts==null)
-		{
-			/* Combo is not filled yet, as the supported fonts
-			 * depend on the language selected.
-			 */
-			supportedFonts = new JComboBox();
-			supportedFonts.addItemListener(new ItemListener()
-					{
-				public void itemStateChanged(ItemEvent e) 
-				{
-					optionsChanged = true;
-					needsToRestart = true;
-				}				
-					});
-		}			
-		
-		if (defaultLanguage==null)
-		{
-			String[] languageLabels = I18n.getSupportedLanguages();
-			defaultLanguage = new JComboBox(languageLabels);
-			defaultLanguage.addItemListener(new ItemListener()
-					{
-				public void itemStateChanged(ItemEvent e) 
-				{
-					optionsChanged = true;
-					needsToRestart = true;
-					updateSupportedFonts();
-				}				
-					});
-			
-			/* If there is no default language set for Quilldriver, use the system
-			 * default language.
-			 */
-			if (PreferenceManager.default_language>-1)
-			{
-				defaultLanguage.setSelectedIndex(PreferenceManager.default_language);
-			}
-			else
-			{
-				String defaultLangLabel = I18n.getDefaultDisplayLanguage();
-				
-				for (i=0; i<languageLabels.length; i++)
-					if (languageLabels[i].equals(defaultLangLabel))
-					{
-						defaultLanguage.setSelectedIndex(i);
-						break;
-					}
-				
-				/* if the user's default language is not supported
-				 * by Quill-driver, for Quill-driver's sake, english
-				 * would be the default language.
-				 */
-				if (i>=languageLabels.length)
-				{
-					defaultLanguage.setSelectedIndex(0);
-				}
-			}
-			
-			/* calling this directly since itemStateChanged
-			 * is not invoked by setSelectedIndex.
-			 */
-			updateSupportedFonts();
-		}
-		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hPanel.add(defaultLanguage);
-		interfacePanel.add(hPanel);
-		interfacePanel.add(new JLabel(messages.getString("Font")));
-		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hPanel.add(supportedFonts);
-		interfacePanel.add(hPanel);
- 		showTimeCoding = new JComboBox();
- 		showTimeCoding.addItem(messages.getString("ConfigurationDefault"));
- 		showTimeCoding.addItem(messages.getString("Never"));
- 		showTimeCoding.addItem(messages.getString("Always"));
- 		showTimeCoding.setSelectedIndex(PreferenceManager.show_time_coding + 1);
- 		showTimeCoding.addItemListener(new ItemListener()
- 				{
- 			public void itemStateChanged(ItemEvent e) 
- 			{
- 				optionsChanged = true;
- 			}				
- 				});
- 
- 		interfacePanel.add(new JLabel(messages.getString("ShowTimeCodingBar")));
- 		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
- 		hPanel.add(showTimeCoding);
- 		interfacePanel.add(hPanel);		
-		showFileNameAsTitle = new JCheckBox(messages.getString("ShowFileNameAsTitle"));
-		showFileNameAsTitle.setSelected(PreferenceManager.show_file_name_as_title!=0);
-		showFileNameAsTitle.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
-				});
-		interfacePanel.add(showFileNameAsTitle);
-		
-		transcriptPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-		
-		transcriptPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("Transcript")));
-		
-		@TIBETAN@JComboBox tibetanFontSizes;
-		@TIBETAN@transcriptPanel.add(new JLabel(messages.getString("TibetanFontSize")));
-		@TIBETAN@tibetanFontSizes = new JComboBox(new String[] {"22","24","26","28","30","32","34","36","48","72"});
-		@TIBETAN@tibetanFontSizes.addItemListener(new ItemListener()
-				@TIBETAN@{
-			@TIBETAN@public void itemStateChanged(ItemEvent e) 
-			@TIBETAN@{
-				@TIBETAN@optionsChanged = true;
-				@TIBETAN@}
-			@TIBETAN@});
-		@TIBETAN@tibetanFontSizes.setMaximumSize(tibetanFontSizes.getPreferredSize());
-		@TIBETAN@tibetanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.tibetan_font_size));
-		@TIBETAN@tibetanFontSizes.setEditable(true);
-		@TIBETAN@hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		@TIBETAN@hPanel.add(tibetanFontSizes);
-		@TIBETAN@transcriptPanel.add(hPanel);
-		JComboBox romanFontFamilies;
-		JComboBox romanFontSizes;
-		String fontAndSizeLabel;
-		@TIBETAN@fontAndSizeLabel = messages.getString("NonTibetanFontAndSize");
-		@UNICODE@fontAndSizeLabel = messages.getString("FontAndSize");
-		transcriptPanel.add(new JLabel(fontAndSizeLabel));
-		
-		romanFontFamilies = new JComboBox(fontNames);
-		romanFontFamilies.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}
-				});
-		romanFontFamilies.setMaximumSize(romanFontFamilies.getPreferredSize());
-		romanFontFamilies.setSelectedItem(PreferenceManager.font_face);
-		romanFontFamilies.setEditable(true);
-		romanFontSizes = new JComboBox(new String[] {"8","10","12","14","16","18","20","22","24","26","28","30","32","34","36","48","72"});
-		romanFontSizes.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}		
-				});
-		romanFontSizes.setMaximumSize(romanFontSizes.getPreferredSize());
-		romanFontSizes.setSelectedItem(String.valueOf(PreferenceManager.font_size));
-		romanFontSizes.setEditable(true);
-		
-		hPanel = new JPanel(new BorderLayout(10,10));
-		hPanel.add(romanFontFamilies, BorderLayout.CENTER);
-		hPanel.add(romanFontSizes, BorderLayout.EAST);
-		transcriptPanel.add(hPanel);
-		
-		final JButton tagColorButton =new JButton(messages.getString("Change"));
-		tagColorButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ev){
-				Color newColor = JColorChooser.showDialog(tagColorButton, "Choose a color", tagColor);                 
-				if(newColor!=null)
-				{
-					optionsChanged = true;
-					tagColor = newColor;
-					tagColorPanel.setBackground(newColor);
-					tagColorPanel.repaint();
-				}
-			}
-		});	
-		transcriptPanel.add(new JLabel(messages.getString("TagColor")));		
-		tagColorPanel = new JPanel();
-		tagColorPanel.setBackground(tagColor);
-		hPanel = new JPanel(new BorderLayout(10,10));
-		hPanel.add(tagColorPanel, BorderLayout.CENTER);
-		hPanel.add(tagColorButton, BorderLayout.EAST);
-		transcriptPanel.add(hPanel);
-		
-		final JButton highlightColorButton =new JButton(messages.getString("Change"));
-		highlightColorButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ev){
-				Color newColor = JColorChooser.showDialog(highlightColorButton, "Choose a color", highlightColor);                 
-				if(newColor!=null)
-				{
-					optionsChanged = true;
-					highlightColor = newColor;
-					highlightColorPanel.setBackground(newColor);
-					highlightColorPanel.repaint();
-				}
-			}
-		});	
-		transcriptPanel.add(new JLabel(messages.getString("HighlightColor")));		
-		highlightColorPanel = new JPanel();
-		highlightColorPanel.setBackground(highlightColor);
-		hPanel = new JPanel(new BorderLayout(10,10));		
-		hPanel.add(highlightColorPanel, BorderLayout.CENTER);
-		hPanel.add(highlightColorButton, BorderLayout.EAST);
-		transcriptPanel.add(hPanel);
-		
-		JTextField highlightField;
-		highlightPanel = new JPanel(new GridLayout(2,2));                   
-		highlightPanel.setBorder(BorderFactory.createTitledBorder(messages.getString("HighlightRelatedPreferences")));      
-		
-		highlightPosition = new JComboBox(new String[] {messages.getString("Middle"), messages.getString("Bottom")});
-		highlightPosition.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
-				});
-		highlightPosition.setSelectedItem(PreferenceManager.highlight_position);
-		highlightPosition.setEditable(true);
-		highlightPanel.add(new JLabel(messages.getString("HighlightPosition")));
-		hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		hPanel.add(highlightPosition);
-		highlightPanel.add(hPanel);
-		
-		multipleHighlightPolicy = new JCheckBox(messages.getString("AllowMultipleHighlighting"));
-		multipleHighlightPolicy.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
-				});
-		multipleHighlightPolicy.setSelected(PreferenceManager.multiple_highlight_policy==0);
-		
-		scrollingHighlightPolicy = new JCheckBox(messages.getString("AllowScrollHighlighting"));
-		scrollingHighlightPolicy.addItemListener(new ItemListener()
-				{
-			public void itemStateChanged(ItemEvent e) 
-			{
-				optionsChanged = true;
-			}				
-				});
-		scrollingHighlightPolicy.setSelected(PreferenceManager.scrolling_highlight_policy==0);
-		
-		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		 hPanel.add(multipleHighlightPolicy);*/
-		highlightPanel.add(multipleHighlightPolicy);
-		
-		/*hPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		 hPanel.add(scrollingHighlightPolicy);*/
-		highlightPanel.add(scrollingHighlightPolicy);
-		
-		JPanel preferencesPanel = new JPanel (new BorderLayout());
-		preferencesPanel.add(interfacePanel, BorderLayout.NORTH);
-		preferencesPanel.add(transcriptPanel, BorderLayout.CENTER);
-		preferencesPanel.add(highlightPanel, BorderLayout.SOUTH);
-		JOptionPane pane = new JOptionPane(preferencesPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog = pane.createDialog(this, messages.getString("FontAndStylePreferences"));
-		
-		optionsChanged = false;
-		needsToRestart = false;
-		
-		// This returns only when the user has closed the dialog
-		dialog.setVisible(true);
-		
-		Object selectedValue = pane.getValue();
-		
-		if (!optionsChanged || selectedValue==null || !(selectedValue instanceof Integer))
-			return;
-		
-		Integer selectedInteger = (Integer) selectedValue;
-		if (selectedInteger.intValue() != JOptionPane.OK_OPTION)
-			return;
-		
-		@TIBETAN@int old_tibetan_font_size = PreferenceManager.tibetan_font_size;
-		@TIBETAN@try {
-			@TIBETAN@PreferenceManager.tibetan_font_size = Integer.parseInt(tibetanFontSizes.getSelectedItem().toString());
-			@TIBETAN@}
-		@TIBETAN@catch (NumberFormatException ne) {
-			@TIBETAN@PreferenceManager.tibetan_font_size = old_tibetan_font_size;
-			@TIBETAN@}
-		
-		String old_font_face = new String(PreferenceManager.font_face);
-		
-		PreferenceManager.font_face = romanFontFamilies.getSelectedItem().toString();
-		int old_font_size = PreferenceManager.font_size;
-		try {
-			PreferenceManager.font_size = Integer.parseInt(romanFontSizes.getSelectedItem().toString());
-		}
-		catch (NumberFormatException ne) {
-			PreferenceManager.font_size = old_font_size;
-		}
-		
-		PreferenceManager.setValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.font_face);
-		PreferenceManager.setInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.font_size);
-		@TIBETAN@PreferenceManager.setInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.tibetan_font_size);
- 		Editor editor;
- 		if (qd!=null) editor = qd.getEditor();
- 		else editor = null;		
-		fieldling.quilldriver.xml.Renderer.setTagColor(tagColor);
-		PreferenceManager.tag_color_red = tagColor.getRed();
-		PreferenceManager.tag_color_green = tagColor.getGreen();
-		PreferenceManager.tag_color_blue = tagColor.getBlue();
-		PreferenceManager.setInt(PreferenceManager.TAG_RED_KEY, PreferenceManager.tag_color_red);
-		PreferenceManager.setInt(PreferenceManager.TAG_GREEN_KEY, PreferenceManager.tag_color_green);
-		PreferenceManager.setInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.tag_color_blue);		
- 		PreferenceManager.highlight_color_red = highlightColor.getRed();
- 		PreferenceManager.highlight_color_green = highlightColor.getGreen();
- 		PreferenceManager.highlight_color_blue = highlightColor.getBlue();
- 		PreferenceManager.setInt(PreferenceManager.HIGHLIGHT_RED_KEY, PreferenceManager.highlight_color_red);
- 		PreferenceManager.setInt(PreferenceManager.HIGHLIGHT_GREEN_KEY, PreferenceManager.highlight_color_green);
- 		PreferenceManager.setInt(PreferenceManager.HIGHLIGHT_BLUE_KEY, PreferenceManager.highlight_color_blue);			
-		String highlightPosVal = (String)highlightPosition.getSelectedItem();
-		
-		if (getQD().hasContent())
-		{
-			@UNICODE@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face))){
-				@TIBETAN@if (!(old_font_size == PreferenceManager.font_size && old_font_face.equals(PreferenceManager.font_face) && old_tibetan_font_size == PreferenceManager.tibetan_font_size)) {
-					@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)editor.getTextPane();
-					@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-					@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
-					@UNICODE@editor.getTextPane().setFont(new Font(PreferenceManager.font_face, Font.PLAIN, PreferenceManager.font_size));
-				}
-				qd.hp.setHighlightPosition(highlightPosVal);
-				if (qd.hp != null) {
-					qd.hp.setHighlightColor(highlightColor);
-				}
-				editor.render();			
-			}
-			int multipleHighlightPolicyVal = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
-			
-			PreferenceManager.multiple_highlight_policy = multipleHighlightPolicyVal;
-			PreferenceManager.highlight_position = highlightPosVal;
-			
-			PreferenceManager.setValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, highlightPosVal);
-			PreferenceManager.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.multiple_highlight_policy);
-			
-			qd.player.setMultipleAnnotationPolicy(multipleHighlightPolicyVal==0);
-			
-			int scrollingHighlightPolicyVal = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
-			
-			PreferenceManager.scrolling_highlight_policy = scrollingHighlightPolicyVal;
-			PreferenceManager.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.scrolling_highlight_policy);
-			
-			if (scrollingHighlightPolicyVal==0) {
-				if (qd != null) {
-					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_ON;
-					qd.player.setAutoScrolling(true);
-				}
-			} else {
-				if (qd != null) {
-					qd.mode = QD.SCROLLING_HIGHLIGHT_IS_OFF;
-					qd.player.setAutoScrolling(false);
-				}
-			}
-			
-			PreferenceManager.show_file_name_as_title = showFileNameAsTitle.getSelectedObjects()!=null ? 1:0;
-			PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
- 			i = showTimeCoding.getSelectedIndex();
- 			if (i==-1) PreferenceManager.show_time_coding =  - 1;
- 			else PreferenceManager.show_time_coding = i - 1;
- 			PreferenceManager.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
-			/*Iterator iterator = qdList.iterator();
-			QD currentQD;
-			while (iterator.hasNext())
-			{
-				currentQD = (QD) iterator.next();
-				currentQD.updateTitles();
-                                currentQD.updateTimeCodeBarVisibility();
-			}*/
-			
-			if (needsToRestart)
-			{
-				JOptionPane.showMessageDialog(this, messages.getString("ChangesToInterface"));
-				PreferenceManager.default_interface_font = (String) supportedFonts.getSelectedItem();
-				PreferenceManager.default_language = defaultLanguage.getSelectedIndex();
-				PreferenceManager.setValue(PreferenceManager.DEFAULT_INTERFACE_FONT_KEY, PreferenceManager.default_interface_font);
-				PreferenceManager.setInt(PreferenceManager.DEFAULT_LANGUAGE_KEY, PreferenceManager.default_language);
-			}
-		}
-	}
-
-                
+}
 /*
 
 			java.util.List recentFileList = new ArrayList();

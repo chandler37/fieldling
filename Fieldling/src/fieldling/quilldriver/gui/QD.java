@@ -52,9 +52,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         //CLASS CONSTANTS
 	protected static TagInfo currentTagInfo = null;
 	protected static Color hColor = Color.cyan;
-	public static final int SCROLLING_HIGHLIGHT_IS_ON = 0;
-	public static final int SCROLLING_HIGHLIGHT_IS_OFF = 1;
-	protected int mode = SCROLLING_HIGHLIGHT_IS_ON;
 	@UNICODE@public static final String PRODUCT_NAME = "QuillDriver";
 	@TIBETAN@public static final String PRODUCT_NAME = "QuillDriver-TIBETAN";
 	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
@@ -64,7 +61,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public static AutoSave autoSaver;
         static {
             transcriptToggler = new TranscriptToggler();
-            autoSaver = new AutoSave(transcriptToggler, PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, 0) * 60000);
+            autoSaver = new AutoSave(transcriptToggler, PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, PreferenceManager.AUTO_SAVE_MINUTES_DEFAULT) * 60000);
             autoSaver.start();
         }
         
@@ -85,7 +82,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	protected Hashtable actions;
 	protected View view;
 	protected org.w3c.dom.Document xmlDoc = null;
-	protected String language=null;
 	protected TimeCodeView tcv;
         protected JPanel buttonPanel = null;
         protected JComboBox togglerComboBox;
@@ -99,12 +95,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
                 setConfiguration(configuration);
                 setMediaPlayer(player);
 		setupGUI();
-		String lang=I18n.getDefaultDisplayLanguage();
-		if (lang==messages.getString("English")) language="English";
-		else                
-			if(lang==messages.getString("Chinese")) language="Chinese";
-			else 
-				if (lang==messages.getString("Tibetan")) language="Tibetan";
 	}
         
 	private void setupGUI() {
@@ -156,10 +146,11 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	
 	public String getWindowTitle(String lang)
 	{       
-		String titleName=null;
+                titleName="qd.title";
+                /*String titleName=null;
 		if(lang=="English") titleName="qd.title";
 		else if(lang=="Chinese")titleName="qd.title_zh";
-		else if(lang=="Tibetan"||lang=="Wylie") titleName="qd.title_tib";
+		else if(lang=="Tibetan"||lang=="Wylie") titleName="qd.title_tib";*/
 		XPathExpression title = (XPathExpression) configuration.getParameters().get(titleName);
 		
 		if (title !=null)
@@ -178,8 +169,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		//return transcriptFile.getName() + " - " + QD.PRODUCT_NAME;
 		return transcriptFile.getName();
 	}
-	
-	public String getCurrentLang(){return language;}
 
 	public void setQDShell(QDShell shell) {
                 qdShell=shell;
@@ -215,18 +204,16 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		if (smp == null)
 			player = null;
 		else if (player == null || !player.equals(smp)) {
-			player = smp;
+                        player = smp;
 			player.setParentContainer(QD.this);
+                        player.setMultipleAnnotationPolicy(PreferenceManager.getInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_DEFAULT)==0);
+                        player.setAutoScrolling(PreferenceManager.getInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_DEFAULT) == 0);
 		}
 	}
 	
 	public PanelPlayer getMediaPlayer() {
 		return player;
 	}
-        
-        public PanelPlayer getPlayer() {
-            return player;
-        }
 
         public boolean hasContent() {
             return editor != null;
@@ -351,17 +338,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						{
 							if (mediaFile.exists()) { //open the actual file
 								player.loadMovie(mediaFile.toURL());
-								//videoFrame.setTitle(mediaFile.toString());
 								nomedia = false;
-							} else if (PreferenceManager.media_directory != null) { //otherwise try default media directory
+							} else {
+                                                            String mediaDirectory = PreferenceManager.getValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT);
+                                                            if (mediaDirectory != null) { //otherwise try default media directory
 								String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
-								mediaFile = new File(PreferenceManager.media_directory, mediaName);
+								mediaFile = new File(mediaDirectory, mediaName);
 								if (mediaFile.exists()) {
 									player.loadMovie(mediaFile.toURL());
-									//videoFrame.setTitle(mediaFile.toString());
 									nomedia = false;
-									//INSERT VIDEO NAME INTO DATA FILE
 								}
+                                                            }
 							}
 						}
 						catch (Exception ex)
@@ -375,20 +362,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				if (videoUrl != null) {
 					try {
 						player.loadMovie(new URL(videoUrl));
-						//videoFrame.setTitle(videoUrl);
 						nomedia = false;
 					} catch (MalformedURLException murle) {murle.printStackTrace();}
 				} else {
-					JFileChooser fc = new JFileChooser(PreferenceManager.media_directory);
+					JFileChooser fc = new JFileChooser(PreferenceManager.getValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT));
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
 						try {
 							player.loadMovie(mediaFile.toURL());
-							//videoFrame.setTitle(mediaFile.toString());
 							String mediaString = mediaFile.getAbsolutePath();
-							PreferenceManager.media_directory = mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
+                                                        PreferenceManager.setValue(PreferenceManager.MEDIA_DIRECTORY_KEY, mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1));
 							nomedia = false;
-							//INSERT VIDEO NAME INTO DATA FILE
 						} catch (MalformedURLException murle) {} //do nothing
 					}
 				}
@@ -419,11 +403,11 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         public void layoutTranscript() {
 			@TIBETAN@final JTextPane t = new org.thdl.tib.input.DuffPane();
 			@TIBETAN@org.thdl.tib.input.DuffPane dp = (org.thdl.tib.input.DuffPane)t;
-			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.tibetan_font_size);
-			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.font_face, PreferenceManager.font_size);
+			@TIBETAN@dp.setByUserTibetanFontSize(PreferenceManager.getInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.TIBETAN_FONT_SIZE_DEFAULT));
+			@TIBETAN@dp.setByUserRomanAttributeSet(PreferenceManager.getValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.FONT_FACE_DEFAULT), PreferenceManager.getInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.FONT_SIZE_DEFAULT));
 			
 			@UNICODE@final JTextPane t = new JTextPane();
-			@UNICODE@t.setFont(new Font(PreferenceManager.font_face, java.awt.Font.PLAIN, PreferenceManager.font_size));
+			@UNICODE@t.setFont(new Font(PreferenceManager.getValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.FONT_FACE_DEFAULT), java.awt.Font.PLAIN, PreferenceManager.getInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.FONT_SIZE_DEFAULT)));
 			
 			editor = new Editor(xmlDoc, t, currentTagInfo);
 			
@@ -439,12 +423,15 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			editor.getTextPane().setKeymap(keymap);
 			view = new View(editor, editor.getXMLDocument(), (XPathExpression)configuration.getParameters().get("qd.timealignednodes"), (XPathExpression)configuration.getParameters().get("qd.nodebegins"), (XPathExpression)configuration.getParameters().get("qd.nodeends"));          
 			try {
-				//hColor = Color.decode("0x"+PreferenceManager.highlight_color);
-				hColor=new Color(PreferenceManager.highlight_color_red, PreferenceManager.highlight_color_green, PreferenceManager.highlight_color_blue);
+				hColor=new Color(
+                                            PreferenceManager.getInt(PreferenceManager.HIGHLIGHT_RED_KEY, PreferenceManager.HIGHLIGHT_RED_DEFAULT),
+                                            PreferenceManager.getInt(PreferenceManager.HIGHLIGHT_GREEN_KEY, PreferenceManager.HIGHLIGHT_GREEN_DEFAULT),
+                                            PreferenceManager.getInt(PreferenceManager.HIGHLIGHT_BLUE_KEY, PreferenceManager.HIGHLIGHT_BLUE_DEFAULT)
+                                        );
 			} catch (NumberFormatException nfe) {
 				nfe.printStackTrace();
 			}
-			hp = new TextHighlightPlayer(view, hColor, PreferenceManager.highlight_position);
+			hp = new TextHighlightPlayer(view, hColor, PreferenceManager.getValue(PreferenceManager.HIGHLIGHT_POSITION_KEY, PreferenceManager.HIGHLIGHT_POSITION_DEFAULT));
 			
 			/*LOGGING
 			 for (int ok=0; ok<namespaces.length; ok++)
@@ -523,9 +510,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			});
 			if (!configuration.canEdit()) editor.setEditable(false);
 			else editor.setEditabilityTracker(true);
-			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
-				player.setAutoScrolling(true); //otherwise the first time you press Play you don't get highlights in the text window!!
-			
                         togglerComboBox = new JComboBox();
                         buttonPanel.add(togglerComboBox, BorderLayout.CENTER);
                         //transcriptToggler.add(this);
@@ -535,17 +519,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         
  	public void updateTimeCodeBarVisibility()
  	{
- 		int showTimeCoding = PreferenceManager.show_time_coding;
+ 		int showTimeCoding = PreferenceManager.getInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.SHOW_TIME_CODING_DEFAULT);
  		if (showTimeCoding == -1)
  		{
  			// if preferences have not been set, get the default from the configuration file.
  			Boolean showTimeCodingBoolean = (Boolean) configuration.getParameters().get("qd.showtimecodingbydefault");
  			if (showTimeCodingBoolean!=null)
  				showTimeCoding = showTimeCodingBoolean.booleanValue()?1:0;
- 			/*
- 			I am purposefully not saving!
- 			prefmngr.setInt(PreferenceManager.SHOW_TIME_CODING_KEY, PreferenceManager.show_time_coding);
- 			*/
  		}
  		if (showTimeCoding == 0) tcv.setVisible(false);
  		else tcv.setVisible(true);
@@ -554,25 +534,24 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	public void register()
 	{
 		XPathExpression showFileNameXPath;
-		if (PreferenceManager.show_file_name_as_title==-1)
+		if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==-1)
 		{
 			showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
 			if (showFileNameXPath==null)
 			{
-				PreferenceManager.show_file_name_as_title = 1;
+				PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, 1);
 			}
 			else
 			{
-				PreferenceManager.show_file_name_as_title = Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0;
+				PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0);
 			}
-			PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.show_file_name_as_title);
 		}
-		if (PreferenceManager.show_file_name_as_title==0 || PreferenceManager.show_file_name_as_title == 1)
+		if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==0 || PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT) == 1)
                 {
                     if (transcriptToggler.getNumberOfTranscripts() == 0)
                         title = new String(PRODUCT_NAME + " (" + messages.getString(configuration.getName()) + ")");
                     else { //qd has content
-                        title = new String(getWindowTitle(getCurrentLang()) + " (" + PRODUCT_NAME + ": " + messages.getString(configuration.getName()) + ")");
+                        title = new String(getWindowTitle(I18n.getLocale().getLanguage()) + " (" + PRODUCT_NAME + ": " + messages.getString(configuration.getName()) + ")");
                         buttonPanel.remove(togglerComboBox);
                         togglerComboBox = transcriptToggler.getToggler(this);
                         togglerComboBox.addActionListener(new ActionListener() {
@@ -608,7 +587,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			 FIXME here's a problem, though: if there is a scrollbar for the JTextPane, then
 			 focus transfers to this scrollbar. if not, then it transfers back to itself, in other
 			 words the desired effect is not achieved! */
-			if (mode == SCROLLING_HIGHLIGHT_IS_ON)
+			if (player.getAutoScrolling())
 				editor.getTextPane().transferFocus();
 			player.cmd_playS(nodeid);
 		}
@@ -654,10 +633,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
         
         public QDShell getParentQDShell() {
             return qdShell;
-        }
-        
-        public int getMode() {
-            return mode;
         }
         
         public ResourceBundle getMessages() {
@@ -778,8 +753,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		//LOGGINGSystem.out.println("Current = " + cS + "\nEnd = " + eT + "\n\n");
 		parameters.put("qd.currentmediatime", String.valueOf(currentSeconds));
 		parameters.put("qd.mediaduration", String.valueOf(endTime));
-		float slowInc = (float)PreferenceManager.slow_adjust;
-		float rapidInc = (float)PreferenceManager.rapid_adjust;
+		float slowInc = (float)PreferenceManager.getInt(PreferenceManager.SLOW_ADJUST_KEY, PreferenceManager.SLOW_ADJUST_DEFAULT);
+		float rapidInc = (float)PreferenceManager.getInt(PreferenceManager.SLOW_ADJUST_KEY, PreferenceManager.SLOW_ADJUST_DEFAULT);
 		parameters.put("qd.slowincrease", new Float(slowInc/1000));
 		parameters.put("qd.rapidincrease", new Float(rapidInc/1000));
 		//send the name of the current media URL
@@ -1008,7 +983,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	}*/
         
                 /* EDGE FIX ME! gotta get this out!! what if order in config file changes?? this doesn't belong here
-	public void setCurrentLang(int newTagInfo){  
+	public void setCurrentLang(int newTagInfo){
 		switch(newTagInfo){
 		case 0://"TranscriptionOnly"
 			language="Tibetan"; break;

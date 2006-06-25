@@ -7,11 +7,11 @@ import fieldling.mediaplayer.PanelPlayerException;
 public class PlayBack extends BasicTask {
     public void execute(QD qd, String parameters) {
         try {
-            long t = qd.getPlayer().getCurrentTime() - PreferenceManager.play_minus;
+            long t = qd.getMediaPlayer().getCurrentTime() - PreferenceManager.getInt(PreferenceManager.PLAY_MINUS_KEY, PreferenceManager.PLAY_MINUS_DEFAULT);
             if (t < 0) t = 0;
-            if (qd.getPlayer().isPlaying()) qd.getPlayer().cmd_stop();
-            qd.getPlayer().setCurrentTime(t);
-            qd.getPlayer().cmd_playOn();
+            if (qd.getMediaPlayer().isPlaying()) qd.getMediaPlayer().cmd_stop();
+            qd.getMediaPlayer().setCurrentTime(t);
+            qd.getMediaPlayer().cmd_playOn();
         } catch (PanelPlayerException ppe) {
             ppe.printStackTrace();
         }

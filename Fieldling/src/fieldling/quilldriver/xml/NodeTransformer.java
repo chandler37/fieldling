@@ -28,7 +28,7 @@ public class NodeTransformer {
         //transformer.transform(new DOMSource(sourceFrag), new DOMResult(replaceFrag));
         //transformer.reset();
         transformer.clearParameters();
-        /*LOGGING
+        //LOGGING
         try {
             System.out.println("\n------SOURCE\n");
             org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));

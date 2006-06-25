@@ -19,7 +19,7 @@
 	<menus>
 		<menu name="FileMenu" contains="OpenTranscript Close | FixMedia | Print PrintToPS PrintToRTF | Exit"/>
 		<menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | NextSentence PreviousSentence GotoStart GotoEnd"/>
-                <menu name="ToolsMenu" contains="FontAndStylePreferences"/>
+                <menu name="ToolsMenu" contains="Preferences"/>
                 <menu name="View" contains="TranscriptionOnly | TranscriptionPlusEnglish TranscriptionPlusChinese TranscriptionPlusEnglishPlusChinese | EnglishPlusChinese Translation_ENOnly Translation_ZHOnly | WylieOnly WylieAndEnglish | NotesOnly TranscriptionPlusNotes EnglishPlusNotes | ShowEverything | THDLTranscription"/>          
                 <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>   
                 <!--<menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript FullScreenVideoOnly NormalSizeVideoOnly TranscriptOnly DefaultSizeAndPlacement"/>-->                
@@ -81,10 +81,11 @@
                         <!-- tools menu -->
                         <action name="ChangeKeyboard" node="." qd-command="fieldling.quilldriver.task.thdl.ChangeKeyboard">
                         </action>
-                        <action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
+                        <action name="Preferences" node="." qd-command="fieldling.quilldriver.task.SetPreferences"/>
+                        <!--<action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
                         </action>
                         <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
-                        </action>
+                        </action>-->
                         <!-- view menu: NOTE also includes tag views -->
                         <action name="THDLTranscription" node="." qd-command="fieldling.quilldriver.task.thdl.THDLTranscription"/>
                         <!-- window menu -->

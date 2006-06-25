@@ -10,7 +10,7 @@ import java.awt.event.*;
 public class SetSavingPreferences extends BasicTask {
     public void execute(QD qd, String parameters) {
         //auto-save open transcripts every how many minutes?
-        JPanel autoSaveMinutesPanel = new JPanel(new BorderLayout());
+        /*JPanel autoSaveMinutesPanel = new JPanel(new BorderLayout());
         autoSaveMinutesPanel.setBorder(BorderFactory.createTitledBorder(qd.messages.getString("AutoSaveMinutesQuestion")));
         JSpinner minutesSpinner = new JSpinner();
         int originalMinutesValue = PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, 0);
@@ -75,5 +75,6 @@ public class SetSavingPreferences extends BasicTask {
             PreferenceManager.setInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, -1);
         else
             PreferenceManager.setInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, 1);
+        */
     }
 }

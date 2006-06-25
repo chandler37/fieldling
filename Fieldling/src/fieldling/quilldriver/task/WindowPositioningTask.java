@@ -7,8 +7,7 @@ import java.awt.event.*;
 import javax.swing.border.Border;
 import javax.swing.JInternalFrame;
 
-public abstract class WindowPositioningTask extends BasicTask {        
-    public static final String DEFAULT_WINDOW_POSITIONING_CLASS_NAME = "fieldling.quilldriver.gui.MediaToRight";
+public abstract class WindowPositioningTask extends BasicTask {
     private static Border internalFrameBorder;
     static {
         JInternalFrame jf = new JInternalFrame();
@@ -22,10 +21,10 @@ public abstract class WindowPositioningTask extends BasicTask {
     
     public void execute(QD qd, String parameters) {
         registerComponentListenerForQD(qd);
-        if (qd.videoFrame.getBorder() == null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, -1) == 1) {
+        if (qd.videoFrame.getBorder() == null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, PreferenceManager.VIDEO_HAS_BORDER_DEFAULT) == 1) {
             qd.videoFrame.setBorder(internalFrameBorder);
             qd.videoFrame.setResizable(true);
-        } else if (qd.videoFrame.getBorder() != null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, -1) == -1) {
+        } else if (qd.videoFrame.getBorder() != null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, PreferenceManager.VIDEO_HAS_BORDER_DEFAULT) == -1) {
             qd.videoFrame.setBorder(null);
             ((javax.swing.plaf.basic.BasicInternalFrameUI)qd.videoFrame.getUI()).setNorthPane(null);
         }
@@ -46,7 +45,7 @@ public abstract class WindowPositioningTask extends BasicTask {
     }
     
     public static void repositionWithActiveWindowPositioner(QD qd) {
-        String windowPositioningClassName = PreferenceManager.getValue(PreferenceManager.WINDOW_MODE_KEY, DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
+        String windowPositioningClassName = PreferenceManager.getValue(PreferenceManager.WINDOW_MODE_KEY, PreferenceManager.WINDOW_MODE_DEFAULT);
         try {
             Class c = Class.forName(windowPositioningClassName);
             if (BasicTask.tasksOnOffer.containsKey(c) && BasicTask.tasksOnOffer.get(c) instanceof WindowPositioningTask) {
@@ -55,7 +54,7 @@ public abstract class WindowPositioningTask extends BasicTask {
             }
         } catch (Exception e1) {
             try {
-                Class c = Class.forName(DEFAULT_WINDOW_POSITIONING_CLASS_NAME);
+                Class c = Class.forName(PreferenceManager.WINDOW_MODE_DEFAULT);
                 WindowPositioningTask wTask = (WindowPositioningTask)BasicTask.tasksOnOffer.get(c);
                 wTask.execute(qd, null);
             } catch (Exception e2) {

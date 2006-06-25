@@ -16,7 +16,7 @@
                         <menu name="EditMenu" contains="AddSpeaker DeleteSpeaker ChangeSpeaker | NewClause DeleteClause"/>
                         <menu name="BrowseMenu" contains="PlayPause PlayBack | PlayNextLine PlayCurrentLine PlayEndofCurrentLine PlayPreviousLine | GotoNextLine GotoPreviousLine"/>
                         <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart | IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop | ZapTimeCodes"/>
-                        <menu name="ToolsMenu" contains="FontAndStylePreferences | TimeCodingPreferences | SavingPreferences"/>
+                        <menu name="ToolsMenu" contains="Preferences"/>
                         <menu name="View" contains="QuechuaOnly QuechuaAndEnglish"/>
                         <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>   
                         <menu name="Help" contains="AboutQuillDriver Help"/>
@@ -68,11 +68,12 @@
                         <action name="Exit" node="." qd-command="fieldling.quilldriver.task.ExitQD">
                         </action>
                         <!-- tools menu -->
-                        <action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
+                        <action name="Preferences" node="." qd-command="fieldling.quilldriver.task.SetPreferences"/>
+                        <!--<action name="FontAndStylePreferences" node="." qd-command="fieldling.quilldriver.task.SetDisplayPreferences">
                         </action>
                         <action name="TimeCodingPreferences" node="." qd-command="fieldling.quilldriver.task.SetTimeCodingPreferences">
                         </action>
-                        <action name="SavingPreferences" node="." qd-command="fieldling.quilldriver.task.SetSavingPreferences"/>
+                        <action name="SavingPreferences" node="." qd-command="fieldling.quilldriver.task.SetSavingPreferences"/>-->
                         <!-- browse menu -->
                         <action name="PlayPause" keystroke="control SLASH" node="." move="false" qd-command="fieldling.quilldriver.task.PlayPause">
                                 <helptext ref="help1"/>

@@ -43,6 +43,7 @@ public class Configuration
         static Map tagNameToTag = new HashMap();
 	static String newTagInfo=null;
 	
+        private org.xhtmlrenderer.simple.XHTMLPanel helpPanel;
 	JMenuBar jBar = null;
 	String name = null;
 	org.jdom.Document configDoc = null;
@@ -105,9 +106,19 @@ public class Configuration
 	private void configure() throws IOException, TransformerException, ParserConfigurationException, SAXException
 	{
 		docDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(helpURL.openStream());
-                org.xhtmlrenderer.simple.XHTMLPanel helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
+                helpPanel = new org.xhtmlrenderer.simple.XHTMLPanel();
                 helpPanel.setDocument(getHelpDocument());
                 helpScrollPane = GuiUtil.getScrollPaneForJPanel(helpPanel);
+                helpScrollPane.setPreferredSize(new Dimension(500,400));
+                /*helpPanel.addDocumentListener(new org.xhtmlrenderer.event.DocumentListener() {
+                    private boolean run = false;
+                    public void documentLoaded() {
+                        if (!run) {
+                            run = true;
+                            helpPanel.relayout();
+                        }
+                    }
+                });*/
 		org.jdom.Element cRoot = configDoc.getRootElement();
 		tagInfo = TagInfo.getTagInfoFromXMLConfiguration(cRoot.getChild(RENDERING_ROOT_ELEMENT_NAME));
                 for (int i=0; i<tagInfo.length; i++) {
@@ -253,6 +264,9 @@ public class Configuration
 	}
         public JScrollPane getHelpScrollPane() {
                 return helpScrollPane;
+        }
+        public java.awt.print.Printable getHelpAsPrintable() {
+            return new org.xhtmlrenderer.simple.XHTMLPrintable(helpPanel);
         }
 	public Transformer getTranscriptTransformer() {
                 return transformer;

@@ -8,7 +8,7 @@ import java.awt.*;
 public class SetTimeCodingPreferences extends BasicTask {
     public void execute(QD qd, String parameters) {
 		//allows user to change slow adjust, rapid adjust, and play minus parameters
-		JPanel slowAdjustPanel = new JPanel(new BorderLayout());
+		/*JPanel slowAdjustPanel = new JPanel(new BorderLayout());
 		slowAdjustPanel.setBorder(BorderFactory.createTitledBorder(qd.messages.getString("SlowIncreaseDecreaseValue")));
 		JTextField slowAdjustField = new JTextField(String.valueOf(PreferenceManager.slow_adjust));
 		slowAdjustField.setPreferredSize(new Dimension(240, 30));
@@ -53,6 +53,6 @@ public class SetTimeCodingPreferences extends BasicTask {
 		if (old_rapid_adjust != PreferenceManager.rapid_adjust)
                         PreferenceManager.setInt(PreferenceManager.RAPID_ADJUST_KEY, PreferenceManager.rapid_adjust);
 		if (old_play_minus != PreferenceManager.play_minus)
-			PreferenceManager.setInt(PreferenceManager.PLAY_MINUS_KEY, PreferenceManager.play_minus);
+			PreferenceManager.setInt(PreferenceManager.PLAY_MINUS_KEY, PreferenceManager.play_minus);*/
     }
 }

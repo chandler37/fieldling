@@ -95,6 +95,9 @@ public class JMFPlayerApplet extends Applet implements AnnotationPlayer {
 	public void stopAnnotation(String id) {
 		sendMessage("endplay", id);
 	}
+        public void stopAllAnnotations() {
+            //FIXME do something
+        }
 	private void sendMessage(String method, String mess) {
 		Object args[] = { mess };
 		try {

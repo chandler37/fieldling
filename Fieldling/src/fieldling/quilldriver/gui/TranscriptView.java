@@ -27,5 +27,5 @@ public interface TranscriptView
 	public String getT2s();
 	public String getStartOffsets();
 	public String getEndOffsets();
-    public org.w3c.dom.Document getDocument();
+        public org.w3c.dom.Document getDocument();
 }

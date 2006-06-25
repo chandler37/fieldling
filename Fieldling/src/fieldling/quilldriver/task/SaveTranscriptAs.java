@@ -12,7 +12,7 @@ public class SaveTranscriptAs extends SavingTask {
         boolean result = true;
         if (qd.hasContent()) {
             if (qd.getEditor().isEditable()) {
-                JFileChooser fd=new JFileChooser(new File(PreferenceManager.getValue(PreferenceManager.WORKING_DIRECTORY_KEY, System.getProperty("user.home"))));
+                JFileChooser fd=new JFileChooser(new File(PreferenceManager.getValue(PreferenceManager.WORKING_DIRECTORY_KEY, PreferenceManager.WORKING_DIRECTORY_DEFAULT)));
                 fd.setDialogTitle(qd.messages.getString("SaveAs"));
                 fd.addChoosableFileFilter(new QDFileFilter());
                 try {

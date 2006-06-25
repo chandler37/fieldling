@@ -95,7 +95,7 @@ public class TimeCodeView extends JPanel implements TimeCodeModelListener, Simpl
             isUserEditing = false;
             try {
                 player.setCurrentTime(Long.parseLong(currentTimeField.getText()));
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {}
         }
         
 	public void valueChanged(ChangeEvent e) {

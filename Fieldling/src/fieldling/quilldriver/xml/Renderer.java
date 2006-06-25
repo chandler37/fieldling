@@ -36,12 +36,20 @@ public class Renderer {
 	private static final float indentIncrement = 15.0F;
 	private static final Color attColor = Color.pink;
 	private static final Color textColor = Color.darkGray;
-
 	private static Color tagColor;
+        private static int font_size;
+        private static String font_family;
+        @TIBETAN@private static int tibetan_font_size;
 	
 	static
 	{
-		tagColor = new Color(PreferenceManager.tag_color_red, PreferenceManager.tag_color_green, PreferenceManager.tag_color_blue);
+		tagColor = new Color
+                        (PreferenceManager.getInt(PreferenceManager.TAG_RED_KEY, PreferenceManager.TAG_RED_DEFAULT),
+                        PreferenceManager.getInt(PreferenceManager.TAG_GREEN_KEY, PreferenceManager.TAG_GREEN_DEFAULT),
+                        PreferenceManager.getInt(PreferenceManager.TAG_BLUE_KEY, PreferenceManager.TAG_BLUE_DEFAULT));
+                font_size = PreferenceManager.getInt(PreferenceManager.FONT_SIZE_KEY, PreferenceManager.FONT_SIZE_DEFAULT);
+                font_family = PreferenceManager.getValue(PreferenceManager.FONT_FACE_KEY, PreferenceManager.FONT_FACE_DEFAULT);
+                @TIBETAN@tibetan_font_size = PreferenceManager.getInt(PreferenceManager.TIBETAN_FONT_SIZE_KEY, PreferenceManager.TIBETAN_FONT_SIZE_DEFAULT);                
 	}
 	
 	private Renderer() {} //don't instantiate
@@ -50,6 +58,14 @@ public class Renderer {
 	{
 		tagColor = c;
 	}
+        
+        public static void setFontSize(int size) {
+                font_size = size;
+        }
+        
+        public static void setFontFamily(String family) {
+                font_family = family;
+        }
 	
 	public static int render(Node node, JTextPane pane, int offset, float indent, TagInfo tagInfo, Map startOffsets, Map endOffsets) {
 		if (offset == -1) return -1;
@@ -76,11 +92,11 @@ public class Renderer {
 			StyleConstants.setLeftIndent(eAttributes, indent);
 			SimpleAttributeSet eColor = new SimpleAttributeSet();
 			StyleConstants.setForeground(eColor, tagColor);
-			StyleConstants.setFontSize(eColor, PreferenceManager.font_size);
-			StyleConstants.setFontFamily(eColor, PreferenceManager.font_face);
+			StyleConstants.setFontSize(eColor, font_size);
+			StyleConstants.setFontFamily(eColor, font_family);
 			eColor.addAttribute("xmlnode", e);
 			@TIBETAN@SimpleAttributeSet tibAtt = new SimpleAttributeSet();
-			@TIBETAN@StyleConstants.setFontSize(tibAtt, PreferenceManager.tibetan_font_size);
+			@TIBETAN@StyleConstants.setFontSize(tibAtt, tibetan_font_size);
 			@TIBETAN@StyleConstants.setForeground(tibAtt, tagColor);
 			@TIBETAN@tibAtt.addAttribute("xmlnode", e);
 			if (pos.getOffset()>0) {
@@ -168,13 +184,13 @@ public class Renderer {
 			SimpleAttributeSet aColor = new SimpleAttributeSet();
 			StyleConstants.setForeground(aColor, attColor);
 			//added for Tibetan version
-			StyleConstants.setFontSize(aColor, PreferenceManager.font_size);
-			StyleConstants.setFontFamily(aColor, PreferenceManager.font_face);
+			StyleConstants.setFontSize(aColor, font_size);
+			StyleConstants.setFontFamily(aColor, font_family);
 			SimpleAttributeSet tColor = new SimpleAttributeSet();
 			StyleConstants.setForeground(tColor, textColor);
 			//added for Tibetan version
-			StyleConstants.setFontSize(tColor, PreferenceManager.font_size);
-			StyleConstants.setFontFamily(tColor, PreferenceManager.font_face);
+			StyleConstants.setFontSize(tColor, font_size);
+			StyleConstants.setFontFamily(tColor, font_family);
 			tColor.addAttribute("xmlnode", att);
 			String name = att.getNodeName();
 			String value = att.getValue();
@@ -184,8 +200,8 @@ public class Renderer {
 					AttributeSet attSet = doc.getCharacterElement(pos.getOffset()-1).getAttributes();
 					//added for Tibetan version
 					SimpleAttributeSet sas = new SimpleAttributeSet(attSet);
-					StyleConstants.setFontSize(sas, PreferenceManager.font_size);
-					StyleConstants.setFontFamily(sas, PreferenceManager.font_face);
+					StyleConstants.setFontSize(sas, font_size);
+					StyleConstants.setFontFamily(sas, font_family);
 					doc.insertString(pos.getOffset(), " ", sas);
 				}
 			}
@@ -229,8 +245,8 @@ public class Renderer {
 			SimpleAttributeSet tAttributes = new SimpleAttributeSet();
 			//StyleConstants.setLeftIndent(tAttributes, indent);
 			StyleConstants.setForeground(tAttributes, textColor);
-			StyleConstants.setFontSize(tAttributes, PreferenceManager.font_size);
-			StyleConstants.setFontFamily(tAttributes, PreferenceManager.font_face);
+			StyleConstants.setFontSize(tAttributes, font_size);
+			StyleConstants.setFontFamily(tAttributes, font_family);
 			tAttributes.addAttribute("xmlnode", t);
 			SimpleAttributeSet minimalTAttributes = new SimpleAttributeSet();
 			minimalTAttributes.addAttribute("xmlnode", t);

@@ -35,9 +35,9 @@ public abstract class SavingTask extends BasicTask {
         if (qd.transcriptFile == null)
             return true;
         try {
-            String backupDirectory = PreferenceManager.getValue(PreferenceManager.BACKUP_DIRECTORY_KEY, new String(""));
+            String backupDirectory = PreferenceManager.getValue(PreferenceManager.BACKUP_DIRECTORY_KEY, PreferenceManager.BACKUP_DIRECTORY_DEFAULT);
             if (!backupDirectory.equals("")) {
-                int nextId = PreferenceManager.getInt(PreferenceManager.NEXT_BACKUP_ID_KEY, 0) + 1;
+                int nextId = PreferenceManager.getInt(PreferenceManager.NEXT_BACKUP_ID_KEY, PreferenceManager.NEXT_BACKUP_ID_DEFAULT) + 1;
                 File backupFile = new File(backupDirectory + QDShell.FILE_SEPARATOR + BACKUP_PREFIX + String.valueOf(nextId) + BACKUP_SUFFIX);
                 try {
                     copyFile(qd.transcriptFile, backupFile);
@@ -46,7 +46,7 @@ public abstract class SavingTask extends BasicTask {
                 }
                 PreferenceManager.setInt(PreferenceManager.NEXT_BACKUP_ID_KEY, nextId);
             }
-            if (PreferenceManager.getInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, -1) == 1) { //normalize namespaces
+            if (PreferenceManager.getInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, PreferenceManager.NORMALIZE_NAMESPACES_DEFAULT) == 1) { //normalize namespaces
                 namespaceNormalizer.transform(new DOMSource(qd.getEditor().getXMLDocument()), new StreamResult(qd.transcriptFile));
             } else { //save as usual
                 //serialize XML to file, prettified with indents, and encoded as Unicode (UTF-8)

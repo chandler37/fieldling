@@ -35,39 +35,42 @@ import javax.swing.event.EventListenerList;
 /*-----------------------------------------------------------------------*/
 
 public abstract class PanelPlayer extends Panel {
-
 	private EventListenerList listenerList = new EventListenerList();
 	private Vector orderStartID = null, orderEndID = null;
 	private Stack pileStart = null, pileEnd = null;
 	private Hashtable	hashStart = null, hashEnd = null;
 	private Timer annTimer = null;
 	private boolean isAutoScrolling = false;
-    private boolean areMultipleSimultaneousAnnotationsAllowed = true;
+        private boolean areMultipleSimultaneousAnnotationsAllowed = true;
 	private Set startedAnnotations;
 	protected URL mediaURL = null;
-
 	
 /*-----------------------------------------------------------------------*/
 	public PanelPlayer(LayoutManager layout) {
 		super(layout);
 	}
 /*-----------------------------------------------------------------------*/
-    public void setMultipleAnnotationPolicy(boolean policy) {
-        areMultipleSimultaneousAnnotationsAllowed = policy;
-    }
+        public void setMultipleAnnotationPolicy(boolean policy) {
+                areMultipleSimultaneousAnnotationsAllowed = policy;
+        }
+        
+        public boolean getMultipleAnnotationPolicy() {
+                return areMultipleSimultaneousAnnotationsAllowed;
+        }
+        
 	public void addAnnotationPlayer(AnnotationPlayer ap) {
 		listenerList.add(AnnotationPlayer.class, ap);
 	}
+        
 	public void removeAnnotationPlayer(AnnotationPlayer ap) {
 		listenerList.remove(AnnotationPlayer.class, ap);
 	}
+        
 	public void removeAllAnnotationPlayers() {
 		listenerList = new EventListenerList();
 	}
-	//FIXME both fireStartAnnotation and fireStopAnnotation should really not be public
-	//this is only a workaround in lieu of better communication between PanelPlayer
-	//TextHighlightPlayer
-	public void fireStartAnnotation(String id) {
+        
+	private void fireStartAnnotation(String id) {
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 
@@ -78,22 +81,28 @@ public abstract class PanelPlayer extends Panel {
 		}
 		startedAnnotations.add(id);
 	}
-	public void fireStopAnnotation(String id) {
-        if (startedAnnotations.contains(id)) {
-            //see javadocs on EventListenerList for how following array is structured
-            Object[] listeners = listenerList.getListenerList();
-    
-            for (int i = listeners.length-2; i>=0; i-=2) {
-                if (listeners[i]==AnnotationPlayer.class)
-                    ((AnnotationPlayer)listeners[i+1]).stopAnnotation(id);
+        
+	private void fireStopAnnotation(String id) {
+            if (startedAnnotations.contains(id)) {
+                //see javadocs on EventListenerList for how following array is structured
+                Object[] listeners = listenerList.getListenerList();
+        
+                for (int i = listeners.length-2; i>=0; i-=2) {
+                    if (listeners[i]==AnnotationPlayer.class)
+                        ((AnnotationPlayer)listeners[i+1]).stopAnnotation(id);
+                }
+                startedAnnotations.remove(id);
             }
-            startedAnnotations.remove(id);
-        }
 	}
 /*-----------------------------------------------------------------------*/
 	public void setAutoScrolling(boolean bool) {
 		isAutoScrolling = bool;
 	}
+        
+        public boolean getAutoScrolling() {
+                return isAutoScrolling;
+        }
+        
 	public void initForSavant(String starts, String ends, String ids) {
 		String TAB_STARTS  = starts;
 		String TAB_ENDS  	= ends;
@@ -129,7 +138,6 @@ public abstract class PanelPlayer extends Panel {
 				//hashEnd.put(sID, new Integer(0));
 			}
 		}
-
 		Vector saveOrder = new Vector();
 		for (Enumeration e = hashStart.keys() ; e.hasMoreElements() ;) {
 			Object o = e.nextElement();
@@ -153,9 +161,11 @@ public abstract class PanelPlayer extends Panel {
 			saveOrder.removeElementAt(num);
 		}
 	}
+        
 	public String cmd_firstS() {
 		return (String)orderStartID.elementAt(0);
 	}
+        
 	private int getMinusStart(Vector v) {
 		int index = 0;
 		String first = (String)v.elementAt(index);
@@ -173,6 +183,7 @@ public abstract class PanelPlayer extends Panel {
 		}
 		return index;
 	}
+        
 	private int getMinusEnd(Vector v) {
 		int index = 0;
 		String first = (String)v.elementAt(index);
@@ -190,10 +201,12 @@ public abstract class PanelPlayer extends Panel {
 		}
 		return index;
 	}
+        
 	public boolean cmd_isID(String theID) {
 		//LOGGINGSystem.out.println(hashStart.containsKey(theID));
 		return hashStart.containsKey(theID);
 	}
+        
 	public void cmd_playFrom(String fromID) {
 		Long from = (Long)hashStart.get(fromID);
 		//Integer from  = (Integer)hashStart.get(fromID);
@@ -203,6 +216,7 @@ public abstract class PanelPlayer extends Panel {
 			smpe.printStackTrace();
 		}
 	}
+        
 	public void cmd_playS(String fromID) {
 		Long from = (Long)hashStart.get(fromID);
 		Long to = (Long)hashEnd.get(fromID);
@@ -214,6 +228,7 @@ public abstract class PanelPlayer extends Panel {
 			smpe.printStackTrace();
 		}
 	}
+        
 	protected void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
 		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
 		cancelAnnotationTimer();
@@ -230,6 +245,7 @@ public abstract class PanelPlayer extends Panel {
 				cmd_nextEvent();
 			}}, 0, 15);
 	}
+        
 	protected void cancelAnnotationTimer() {
 		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
 		if (annTimer != null) {
@@ -241,37 +257,38 @@ public abstract class PanelPlayer extends Panel {
 		Iterator iter = startedAnnotationsCopy.iterator();
 		while (iter.hasNext()) fireStopAnnotation((String)iter.next());
 	}
+        
 	private void cmd_nextEvent() {
 		Long when = new Long(getCurrentTime());
 		//Integer when = new Integer(getCurrentTime());
-        if (areMultipleSimultaneousAnnotationsAllowed || startedAnnotations.size()==0) {
-            if (!pileStart.empty()) {
-                String id = (String)pileStart.peek();
-                Long f   = (Long)hashStart.get(id);
-                if (when.longValue() >= f.longValue()) {
-                    id = (String)pileStart.pop();
-                    if (areMultipleSimultaneousAnnotationsAllowed) {
-                        //play this annotation, no questions asked
-                        if (isAutoScrolling) fireStartAnnotation(id);
-                    } else {
-                        //find the last annotation that should be started by now
-                        boolean keepGoing;
-                        do {
-                            keepGoing = false;
-                            if (!pileStart.empty()) {
-                                String temp = (String)pileStart.peek();
-                                f = (Long)hashStart.get(temp);
-                                if (when.longValue() >= f.longValue()) {
-                                    id = (String)pileStart.pop();
-                                    keepGoing = true;
-                                }
+                if (areMultipleSimultaneousAnnotationsAllowed || startedAnnotations.size()==0) {
+                    if (!pileStart.empty()) {
+                        String id = (String)pileStart.peek();
+                        Long f   = (Long)hashStart.get(id);
+                        if (when.longValue() >= f.longValue()) {
+                            id = (String)pileStart.pop();
+                            if (areMultipleSimultaneousAnnotationsAllowed) {
+                                //play this annotation, no questions asked
+                                if (isAutoScrolling) fireStartAnnotation(id);
+                            } else {
+                                //find the last annotation that should be started by now
+                                boolean keepGoing;
+                                do {
+                                    keepGoing = false;
+                                    if (!pileStart.empty()) {
+                                        String temp = (String)pileStart.peek();
+                                        f = (Long)hashStart.get(temp);
+                                        if (when.longValue() >= f.longValue()) {
+                                            id = (String)pileStart.pop();
+                                            keepGoing = true;
+                                        }
+                                    }
+                                } while (keepGoing);
+                                if (isAutoScrolling) fireStartAnnotation(id);
                             }
-                        } while (keepGoing);
-                        if (isAutoScrolling) fireStartAnnotation(id);
+                        }
                     }
                 }
-            }
-        }
 		if (!pileEnd.empty()) {
 			String id = (String)pileEnd.peek();
 			Long f   = (Long)hashEnd.get(id);
@@ -283,6 +300,7 @@ public abstract class PanelPlayer extends Panel {
 			}
 		}
 	}
+        
 	private void vide_Pile() {
 		while (!pileEnd.empty()) {				//vider la pile des items qui ne sont pas
 			String id = (String)pileEnd.pop();	//encore fini
@@ -291,10 +309,9 @@ public abstract class PanelPlayer extends Panel {
 			}
 		}
 	}
+        
 /* empties the pile, and then reconstructs it to consist of all ids
    whose start time or end time is included between start and end. */
-
-	//private void remplisPileStart(Integer start, Integer end) {
 	private void remplisPileStart(Long start, Long end) {
 		vide_Pile();
 		pileStart.removeAllElements();
@@ -335,7 +352,6 @@ public abstract class PanelPlayer extends Panel {
 /*-----------------------------------------------------------------------*/
 //abstract methods
 	public abstract String getIdentifyingName();
-	//public abstract URL getMediaURL();
 	public abstract void setParentContainer(Container c);
 
 //helper methods - initialize

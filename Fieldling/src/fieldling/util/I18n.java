@@ -43,8 +43,10 @@ public class I18n {
 		 * Load the correct font in order to display properly
 		 * the resourceBundle just loaded.
 		 */
-		if (PreferenceManager.default_interface_font!=null)
-			setSystemFont(PreferenceManager.default_interface_font);
+                
+                String default_interface_font = PreferenceManager.getValue(PreferenceManager.DEFAULT_INTERFACE_FONT_KEY, null);
+		if (default_interface_font !=null)
+			setSystemFont(default_interface_font);
 			
 		return resources;
 	}
@@ -66,18 +68,13 @@ public class I18n {
 	public static Locale getLocale() {
 		if (locale == null)
 		{
-			int language = PreferenceManager.default_language;
+			int language = PreferenceManager.getInt(PreferenceManager.DEFAULT_LANGUAGE_KEY, PreferenceManager.DEFAULT_LANGUAGE_DEFAULT);
 			if (language == -1)
 				locale = Locale.getDefault();
 			else
 				locale = new Locale(languageCodes[language]);
 		}
 		return locale;
-	}
-
-	public static String getDefaultDisplayLanguage()
-	{
-		return resources.getString(locale.getDisplayLanguage());
 	}
 	
 	public static String[] getSupportedLanguages()
