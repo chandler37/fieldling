@@ -12,9 +12,14 @@ public class ShowHelp extends BasicTask {
         final Configuration conf = qd.getConfiguration();
         JMenuItem saveAsPDF = new JMenuItem(qd.messages.getString("SaveAsPDF"));
         saveAsPDF.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                
-            }
+        public void actionPerformed(ActionEvent e) {
+/* commented out at present: requires itext-paulo-155 jar file of over 1 megabyte
+                try {
+                    org.xhtmlrenderer.simple.PDFRenderer.renderToPDF(conf.getHelpURL().toString(), "out.pdf");
+                } catch (Exception excep) {
+                    excep.printStackTrace();
+                }
+            }*/
         });
         JMenuItem printItem = new JMenuItem(qd.messages.getString("Print"));
         printItem.addActionListener(new ActionListener() {
@@ -34,10 +39,11 @@ public class ShowHelp extends BasicTask {
         });
         JMenu fmenu = new JMenu(qd.messages.getString("FileMenu"));
         fmenu.add(printItem);
+        fmenu.add(saveAsPDF);
         JMenuBar jbar = new JMenuBar();
         jbar.add(fmenu);
         JFrame f = new JFrame();
-        f.setJMenuBar(jbar);
+//        f.setJMenuBar(jbar);
         f.getContentPane().add(conf.getHelpScrollPane());
         f.pack();
         //f.setSize(500, 400);

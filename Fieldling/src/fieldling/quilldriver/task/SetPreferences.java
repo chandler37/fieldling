@@ -397,8 +397,8 @@ public class SetPreferences extends BasicTask {
 		}
             });	
             JPanel tagColorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            tagColorDisplayPanel.add(new JLabel(QD.messages.getString("TagColor")));
             tagColorDisplayPanel.setPreferredSize(tagColorButton.getPreferredSize());
+            tagColorPanel.add(new JLabel(QD.messages.getString("TagColor")));
             tagColorPanel.add(tagColorDisplayPanel);
             tagColorPanel.add(tagColorButton);
             

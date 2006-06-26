@@ -265,6 +265,9 @@ public class Configuration
         public JScrollPane getHelpScrollPane() {
                 return helpScrollPane;
         }
+        public URL getHelpURL() {
+                return helpURL;
+        }
         public java.awt.print.Printable getHelpAsPrintable() {
             return new org.xhtmlrenderer.simple.XHTMLPrintable(helpPanel);
         }
