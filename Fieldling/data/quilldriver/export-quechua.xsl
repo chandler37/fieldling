@@ -22,11 +22,19 @@
     
     <xsl:template match="qq:C">
         <xsl:variable name="sp" select="@spid"/>
-        <xsl:value-of select="$speakers/qq:SPEAKER[@id=$sp]"/><xsl:value-of select="$delimiter"/>
+        <xsl:choose>
+                <xsl:when test="$sp = preceding-sibling::qq:C[1]/@spid">
+                        <xsl:value-of select="$delimiter"/>
+                </xsl:when>
+                <xsl:otherwise>
+                        <xsl:value-of select="$speakers/qq:SPEAKER[@id=$sp]"/><xsl:value-of select="$delimiter"/>
+                </xsl:otherwise>
+        </xsl:choose>
         <xsl:value-of select="qq:F"/><xsl:value-of select="$delimiter"/>
         <xsl:value-of select="qq:TRANSL"/><xsl:value-of select="$delimiter"/>
         <xsl:value-of select="@qd:t1"/><xsl:value-of select="$delimiter"/>
-        <xsl:value-of select="@qd:t2"/><xsl:text>
+        <xsl:value-of select="@qd:t2"/><xsl:value-of select="$delimiter"/>
+        <xsl:value-of select="$speakers/qq:SPEAKER[@id=$sp]"/><xsl:text>
 </xsl:text>
     </xsl:template>
     
