@@ -18,8 +18,8 @@ public class ShowHelp extends BasicTask {
                     org.xhtmlrenderer.simple.PDFRenderer.renderToPDF(conf.getHelpURL().toString(), "out.pdf");
                 } catch (Exception excep) {
                     excep.printStackTrace();
-                }
-            }*/
+                }*/
+            }
         });
         JMenuItem printItem = new JMenuItem(qd.messages.getString("Print"));
         printItem.addActionListener(new ActionListener() {
