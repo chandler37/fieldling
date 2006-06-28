@@ -184,7 +184,6 @@ public class QDShell extends JFrame
 		PreferenceManager.setInt(PreferenceManager.WINDOW_Y_KEY, getY());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_WIDTH_KEY, getWidth());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_HEIGHT_KEY, getHeight());
-		PreferenceManager.setValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT);
 	}
 	
 	public QD getQD() {

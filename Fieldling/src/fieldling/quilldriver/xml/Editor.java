@@ -47,11 +47,7 @@ public class Editor {
 	private FocusListener focusListener;
 	private CaretListener editabilityTracker;
 	
-	private Map startOffsets, endOffsets;
-	//private final float indentIncrement = 15.0F;
-	//private final Color tagColor = Color.magenta;
-	//private final Color attColor = Color.pink;
-	//private final Color textColor = Color.darkGray;
+	private Map startOffsets, endOffsets, indentTracker;
 	private Cursor textCursor;
 	private Cursor defaultCursor;
 	private boolean isEditing = false;
@@ -67,6 +63,7 @@ public class Editor {
 		this.tagInfo = tagInfo;
 		startOffsets = new HashMap();
 		endOffsets = new HashMap();
+                indentTracker = new HashMap();
 		//For some reason uppercase color names, e.g. Color.CYAN and Color.RED,
 		//are not recognized on Mac OS X, for Java 1.3.1 at least!!
 		pane.setSelectionColor(Color.cyan);
@@ -441,12 +438,19 @@ public class Editor {
 						fireEndEditEvent();
 						fireStartEditEvent(getNodeForOffset(p));
 					}
-					AttributeSet currAtt = pane.getCharacterAttributes(); 
+                                        //original version 12-21-05
+                                        Object xmlNode = pane.getCharacterAttributes().getAttribute("xmlnode");
+  					SimpleAttributeSet sas = new SimpleAttributeSet();
+  					sas.addAttribute("xmlnode", xmlNode);
+   					parentDefault.actionPerformed(e);
+  					pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);
+					/* modified version May 23 2006
+                                        AttributeSet currAtt = pane.getCharacterAttributes(); 
 					Object xmlNode = currAtt.getAttribute("xmlnode");
 					SimpleAttributeSet sas = new SimpleAttributeSet(currAtt);
 					// sas.addAttribute("xmlnode", xmlNode);
 					parentDefault.actionPerformed(e);
-					//pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);
+					//pane.getStyledDocument().setCharacterAttributes(pane.getCaretPosition()-1, 1, sas, false);*/
 				}
 			}
 		};
@@ -769,15 +773,18 @@ public class Editor {
 				deactivateListeners();
 				doc.remove(0, len);
 			}
-			doc.insertString(0, "\n", null);
+			SimpleAttributeSet invisibleCR = new SimpleAttributeSet();
+			StyleConstants.setFontSize(invisibleCR, 0);
+			doc.insertString(0, "\n", invisibleCR);
 		} catch (BadLocationException ble) {
 			ble.printStackTrace();
 		}
+                indentTracker.clear();
 		startOffsets.clear();
 		endOffsets.clear();
 		
 		Element root = xml.getDocumentElement();
-		Renderer.renderElement(root, pane, doc.getLength(), 0.0F, tagInfo, startOffsets, endOffsets);
+		Renderer.renderElement(root, pane, doc.getLength(), 0.0F, tagInfo, startOffsets, endOffsets, indentTracker);
 		
 		SimpleAttributeSet eColor = new SimpleAttributeSet();
 		eColor.addAttribute("xmlnode", root);
@@ -833,8 +840,8 @@ public class Editor {
 		int end = getEndOffsetForNode(removedNode);
 		removeNode(removedNode);
 		StyledDocument tDoc = getTextPane().getStyledDocument();
-		AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
-		float indent = StyleConstants.getLeftIndent(attSet);
+		//AttributeSet attSet = tDoc.getCharacterElement(start).getAttributes();
+		//float indent = StyleConstants.getLeftIndent(attSet);
 		try {
 			tDoc.insertString(end, "\n", null);
 			tDoc.remove(start, end-start);
@@ -844,9 +851,11 @@ public class Editor {
 			return;
 		}
 		int insertPos = start;
+                float indent = ((Float)indentTracker.get(removedNode)).floatValue();
+                indentTracker.remove(removedNode);
 		Node next = firstNodeInReplacement;
 		while ( !(next == null || next.isSameNode(firstNodeAfterReplacement)) ) {
-			insertPos = Renderer.render(next, getTextPane(), insertPos, indent, getTagInfo(), getStartOffsets(), getEndOffsets());
+			insertPos = Renderer.render(next, pane, insertPos, indent, tagInfo, startOffsets, endOffsets, indentTracker);
 			next = next.getNextSibling();
 		}
 		try {
@@ -863,7 +872,7 @@ public class Editor {
 				}
 				//LOGGINGSystem.out.println("carriage return detected");
 			}
-		} catch (BadLocationException ble) {	
+		} catch (BadLocationException ble) {
 			ble.printStackTrace();
 			return;
 		}

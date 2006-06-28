@@ -29,7 +29,7 @@ public class NodeTransformer {
         //transformer.reset();
         transformer.clearParameters();
         //LOGGING
-        try {
+        /*try {
             System.out.println("\n------SOURCE\n");
             org.apache.xml.serialize.XMLSerializer ser = new org.apache.xml.serialize.XMLSerializer(new org.apache.xml.serialize.OutputFormat("xml", "utf-8", true));
             ser.setOutputByteStream(System.out);
@@ -39,8 +39,8 @@ public class NodeTransformer {
             domser.serialize(replaceFrag);
         } catch (java.io.IOException ioe) {
             ioe.printStackTrace();
-        }
-        //ENDLOGGING*/
+        }*/
+        //ENDLOGGING
         return replaceFrag;
     }
     public static Node transformAndReplaceNode(Node sourceNode, Transformer transformer, Map parameters) throws TransformerException {

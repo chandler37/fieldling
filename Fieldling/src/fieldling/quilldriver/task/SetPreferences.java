@@ -433,11 +433,11 @@ public class SetPreferences extends BasicTask {
             fontAndSizePanel.add(romanFontFamilies);
             fontAndSizePanel.add(romanFontSizes);
             
-            @UNICODE@preferencesPanel = new JPanel(new GridLayout(2,1));
+            @UNICODE@preferencesPanel.setLayout(new GridLayout(2,1));
             @UNICODE@preferencesPanel.add(tagColorPanel);
             @UNICODE@preferencesPanel.add(fontAndSizePanel);
             
-            @TIBETAN@preferencesPanel.add(new JPanel(new GridLayout(3,1)));
+            @TIBETAN@preferencesPanel.setLayout(new GridLayout(3,1));
             @TIBETAN@preferencesPanel.add(tagColorPanel);
             @TIBETAN@preferencesPanel.add(tibetanFontSizePanel);
             @TIBETAN@preferencesPanel.add(fontAndSizePanel);

@@ -225,14 +225,12 @@
                         
 	</actions>
 	<rendering-instructions>
-		<tag name="TEXT">
+		<tag name="TEXT" visible="false" visiblecontents="true">
 			<attribute name="xml:lang" visible="false"/>
 		</tag>
-		<!--<tag name="TITLE">
-			<attribute name="xml:lang" visible="false"/>
-		</tag>
-		<tag name="SPEAKER" tibetancontents="true"/>-->
-		<tag name="AUDIO" visible="false" visiblecontents="false"/>
+                <tag name="HEADER" visible="false" visiblecontents="true"/>
+		<tag name="SOUNDFILE" visible="true" visiblecontents="true"/>
+                <tag name="AUDIO" visible="false" visiblecontents="false"/>
 		<tag name="NOTE" visible="false" visiblecontents="false"/>
 		<tagview name="ShowEverything">
 			<tag name="TITLE_TIB" tibetancontents="true">
@@ -240,7 +238,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -264,7 +264,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="who" visible="false"/>
 				<attribute name="id" visible="false"/>
@@ -281,7 +283,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -300,7 +304,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -319,7 +325,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -340,7 +348,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -359,7 +369,9 @@
 			</tag>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -376,7 +388,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -394,7 +408,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -411,7 +427,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -430,7 +448,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" visible="false" visiblecontents="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -448,7 +468,9 @@
 			</tag>
 			<tag name="TITLE" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -468,7 +490,9 @@
 			</tag>
 			<tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
 			<tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-			<tag name="SPEAKER" tibetancontents="true"/>
+			<tag name="SPEAKER" tibetancontents="true">
+                                <attribute name="personId" visible="false"/>
+                        </tag>
 			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
 				<attribute name="id" visible="false"/>
 				<attribute name="who" visible="false"/>
@@ -483,276 +507,4 @@
 			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
 		</tagview>
 	</rendering-instructions>
-<!--	<rendering-instructions>
-		<tag name="TEXT">
-			<attribute name="xml:lang" visible="false"/>
-		</tag>
-		<tag name="TITLE">
-			<attribute name="xml:lang" visible="false"/>
-		</tag>
-		<tag name="SPEAKER" tibetancontents="true"/>
-		<tag name="AUDIO" visible="false" visiblecontents="false"/>
-		<tag name="NOTE" visible="false" visiblecontents="false"/>
-                
-		<tagview name="TranscriptionOnly" keystroke="F1">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>                   		
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="false" visiblecontents="true">
-				<attribute name="who" visible="false"/>
-				<attribute name="id" visible="false"/>
-			</tag>
-			<tag name="FORM" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="TranscriptionPlusEnglish" keystroke="F2">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="TranscriptionPlusChinese" keystroke="F3">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-		</tagview>
-		
-		<tagview name="TranscriptionPlusEnglishPlusChinese" keystroke="F4">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))" tibetan="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-		</tagview>
-		
-		<tagview name="EnglishPlusChinese" keystroke="F5">
-                        <tag name="TITLE_ZH">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-		</tagview>
-		
-		<tagview name="Translation_ENOnly" keystroke="F6">
-                        <tag name="TITLE">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="false" visiblecontents="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="TRANSL" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-                        <tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-			<tag name="FORM" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="Translation_ZHOnly" keystroke="F7">
-                        <tag name="TITLE_ZH">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="false" visiblecontents="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="NOTE" visible="false" visiblecontents="false"/>
-		</tagview>
-
-		<tagview name="WylieOnly" keystroke="F8">
-                         <tag name="TITLE_TIB">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="false">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="WylieAndEnglish" keystroke="F9">
-                         <tag name="TITLE_TIB">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" displayas="if (./@who=./preceding-sibling::S[1]/@who) then '' else (id(./@who))">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="false">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="NotesOnly" keystroke="F10">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="false" visiblecontents="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="NOTE" visible="true" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" visiblecontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-
-		<tagview name="TranscriptionPlusNotes" keystroke="F11">
-                         <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="true" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="NOTE" visible="false" visiblecontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-
-		<tagview name="EnglishPlusNotes"  keystroke="F12">
-                         <tag name="TITLE">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE_TIB" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="true" displayas="if (@who=preceding-sibling::S[1]/@who) then '' else (id(@who))">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="false"/>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="NOTE" visible="false" visiblecontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="false"/>
-		</tagview>
-		
-		<tagview name="ShowEverything">
-                        <tag name="TITLE_TIB" tibetancontents="true">
-                            <attribute name="xml:lang" visible="false"/>
-                        </tag>
-                        <tag name="TITLE" visible="false" visiblecontents="false"/>
-                        <tag name="TITLE_ZH" visible="false" visiblecontents="false"/>
-                        <tag name="SPEAKER" tibetancontents="true"/>
-			<tag name="S" visible="true" displayas="if (../@who=../preceding-sibling::S[1]/@who) then '' else (id(../@who))" tibetan="true">
-				<attribute name="id" visible="false"/>
-				<attribute name="who" visible="false"/>
-			</tag>
-			<tag name="FORM" visible="false" visiblecontents="true" tibetancontents="true">
-				<attribute name="type" visible="false"/>
-			</tag>
-			<tag name="TRANSL" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="TRANSL_ZH" visible="false" visiblecontents="true">
-				<attribute name="xml:lang" visible="false"/>
-			</tag>
-			<tag name="NOTE" displayas="@type">
-				<attribute name="type" visible="false"/>
-			</tag>
-		</tagview>		
-	</rendering-instructions>-->
 </qd-configuration>
