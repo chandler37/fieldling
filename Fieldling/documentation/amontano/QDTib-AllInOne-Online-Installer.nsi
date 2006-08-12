@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 22-May-2006"
+!define PRODUCT_VERSION "Version 10-Aug-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -10,7 +10,7 @@
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
 !define QUICKTIME_INSTALLER "QuickTimeInstaller.exe"
-!define JRE_INSTALLER "jre-1_5_0_06-windows-i586-p.exe"
+!define JRE_INSTALLER "jre-1_5_0_07-windows-i586-p.exe"
 !define JNLP_URL "http://www.thdl.org/thdl/tools/quilldriver/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
@@ -55,7 +55,7 @@ var ICONS_GROUP
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "QDTib-AllInOne-Online-Setup.exe"
+OutFile "..\..\build\QDTib-AllInOne-Online-Setup.exe"
 InstallDir "$PROGRAMFILES\QuillDriver"
 ShowInstDetails show
 ShowUnInstDetails show
@@ -85,11 +85,11 @@ Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
-  StrCpy $R1 '-jar "$INSTDIR\netx.jar" -jnlp "${JNLP_URL}" -arg "-THDLReadonly"'
+  StrCpy $R1 '-jar "$INSTDIR\netx.jar" -jnlp "${JNLP_URL}"'
   push $R1
   push $R0
 
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" "$R1" "$INSTDIR\QuillDriver.ico"  
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" '$R1 -arg "-THDLReadonly"' "$INSTDIR\QuillDriver.ico"  
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\QuillDriver Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall QuillDriver.lnk" "$INSTDIR\uninst.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
