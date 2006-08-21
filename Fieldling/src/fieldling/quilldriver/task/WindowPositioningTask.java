@@ -3,9 +3,10 @@ package fieldling.quilldriver.task;
 import fieldling.quilldriver.gui.QD;
 import fieldling.quilldriver.PreferenceManager;
 import java.util.*;
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.border.Border;
-import javax.swing.JInternalFrame;
+import javax.swing.*;
 
 public abstract class WindowPositioningTask extends BasicTask {
     private static Border internalFrameBorder;
@@ -24,9 +25,17 @@ public abstract class WindowPositioningTask extends BasicTask {
         if (qd.videoFrame.getBorder() == null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, PreferenceManager.VIDEO_HAS_BORDER_DEFAULT) == 1) {
             qd.videoFrame.setBorder(internalFrameBorder);
             qd.videoFrame.setResizable(true);
+            JTextArea text = new JTextArea(qd.messages.getString("DragToResize"));
+            text.setOpaque(false);
+            text.setEnabled(false);
+            text.setLineWrap(true);
+            text.setWrapStyleWord(true);
+    		qd.videoFrame.getContentPane().add(text, BorderLayout.SOUTH, 1);
         } else if (qd.videoFrame.getBorder() != null && PreferenceManager.getInt(PreferenceManager.VIDEO_HAS_BORDER_KEY, PreferenceManager.VIDEO_HAS_BORDER_DEFAULT) == -1) {
             qd.videoFrame.setBorder(null);
             ((javax.swing.plaf.basic.BasicInternalFrameUI)qd.videoFrame.getUI()).setNorthPane(null);
+            // the index of 1 just makes reference to the above one.
+            qd.videoFrame.getContentPane().remove(1);
         }
         repositionWindows(qd);
         windowsMode = this;
