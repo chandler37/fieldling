@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 10-Aug-2006"
+!define PRODUCT_VERSION "Version 20-Aug-2006"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -10,7 +10,7 @@
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 !define PATH_TO_INSTALLERS "..\..\internal-stuff\programs"
 !define QUICKTIME_INSTALLER "QuickTimeInstaller.exe"
-!define JRE_INSTALLER "jre-1_5_0_07-windows-i586-p.exe"
+!define JRE_INSTALLER "jre-1_5_0_08-windows-i586-p.exe"
 !define JNLP_URL "http://www.thdl.org/thdl/tools/quilldriver/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
