@@ -1691,5 +1691,13 @@
      <text lang="en">Show time coding bar:</text>
      <text lang="zh">Show time coding bar：</text>
    </message>
+   <message id="DragToResize">
+     <text lang="en">Click and drag the lower left corner of this window to resize.</text>
+     <text lang="zh">Click and drag the lower left corner of this window to resize.</text>
+   </message>
+   <message id="EnableResizingOfVideoWindow">
+     <text lang="en">Enable resizing of video window</text>
+     <text lang="zh">Enable resizing of video window</text>
+   </message>
 </all-messages>
 
