@@ -43,13 +43,12 @@ public class QDShell extends JFrame
 	public static final int CLOSE_TRANSCRIPT = 2;
 	public static boolean hasLoadedTranscript = false;	
 	protected ResourceBundle messages = null;
-	private JComboBox defaultLanguage, supportedFonts;
 	private QD qd = null;
 	private Container contentPane;
 	
 	/* Declaring the following private instance variables was the only way I figured to share
 	 * information between the method itself and its inner classes. */ 
-	private boolean optionsChanged, needsToRestart;
+	private boolean optionsChanged;
 	private Color highlightColor, tagColor;
 	private JPanel highlightColorPanel, tagColorPanel;
 	
@@ -223,8 +222,6 @@ public class QDShell extends JFrame
 	 * or defaults in pref manager). Not meant to be called directly!!! */
 	private void loadGenericInitialState(QD qd)
 	{
-		defaultLanguage = null;
-		supportedFonts = null;
 		contentPane = getContentPane();
 		messages = I18n.getResourceBundle();
 		setLocation(PreferenceManager.getInt(PreferenceManager.WINDOW_X_KEY, PreferenceManager.WINDOW_X_DEFAULT), PreferenceManager.getInt(PreferenceManager.WINDOW_Y_KEY, PreferenceManager.WINDOW_Y_DEFAULT));
