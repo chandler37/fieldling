@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE all-messages [
-<!ELEMENT all-messages (message*)>
+<!DOCTYPE all-messages  [
 <!ELEMENT message (text*)>
-<!ATTLIST message id ID #REQUIRED>
+<!ATTLIST message
+  id ID #REQUIRED
+>
+<!ELEMENT all-messages (message*)>
 <!ELEMENT text (#PCDATA)>
-<!ATTLIST text lang CDATA #REQUIRED>
+<!ATTLIST text
+  lang CDATA #REQUIRED
+>
 ]>
 <all-messages>
   <message id="About">
@@ -94,10 +98,6 @@
   <message id="ChangeSpeaker">
     <text lang="en">Change Speaker</text>
     <text lang="zh">切换发言者</text>
-  </message>
-  <message id="ChangeKeyboard">
-    <text lang="en">Change Keyboard</text>
-    <text lang="zh">Change Keyboard</text>
   </message>
   <message id="CheckIn">
     <text lang="en">Check In</text>
@@ -191,10 +191,6 @@
     <text lang="en">Email Address</text>
     <text lang="zh">电子邮件地址</text>
   </message>
-  <message id="ToggleVideoBorder">
-    <text lang="en">Toggle Video Border</text>
-    <text lang="zh">Toggle Video Border</text>
-  </message>
   <message id="English">
     <text lang="en">English</text>
     <text lang="zh">英文</text>
@@ -283,14 +279,6 @@
     <text lang="en">Fix Media</text>
     <text lang="zh">连接媒体</text>
   </message>
-  <message id="LinkMedia">
-    <text lang="en">Link Media</text>
-    <text lang="zh">Link Media</text>
-  </message>
-  <message id="Font">
-    <text lang="en">Font:</text>
-    <text lang="zh">字体：</text>
-  </message>
   <message id="InterfacePreferences">
     <text lang="en">Interface</text>
     <text lang="zh">字体和样式选项</text>
@@ -307,7 +295,7 @@
     <text lang="en">Go to Previous Line</text>
     <text lang="zh">到前一行</text>
   </message>
-  <message id="GotoStart ">
+  <message id="GotoStart">
     <text lang="en">Go to Start</text>
     <text lang="zh">到开始处</text>
   </message>
@@ -451,10 +439,6 @@
     <text lang="en">Mode</text>
     <text lang="zh">模式</text>
   </message>
-  <message id="AllowMultipleHighlighting">
-    <text lang="en">Allow multiple highlighting</text>
-    <text lang="zh">Allow multiple highlighting</text>
-  </message>
   <message id="Name">
     <text lang="en">Name</text>
     <text lang="zh">姓名</text>
@@ -494,10 +478,6 @@
   <message id="NoMedia">
     <text lang="en">No media</text>
     <text lang="zh">没有媒体</text>
-  </message>
-  <message id="NonTibetanFontAndSize">
-    <text lang="en">Non-Tibetan Font and Size:</text>
-    <text lang="zh">非藏文的字体及其大小：</text>
   </message>
   <message id="NoReplace">
     <text lang="en">Don't replace</text>
@@ -579,7 +559,7 @@
     <text lang="en">Play End of Current Line</text>
     <text lang="zh">播放当前行的末尾</text>
   </message>
-  <message id="PlayNext ">
+  <message id="PlayNext">
     <text lang="en">Play Next</text>
     <text lang="zh">播放下一个</text>
   </message>
@@ -707,26 +687,6 @@
     <text lang="en">Replace with</text>
     <text lang="zh">一起替换</text>
   </message>
-  <message id="SavingPreferences">
-    <text lang="en">Saving</text>
-    <text lang="zh">Saving</text>
-  </message>
-  <message id="AutoSaveMinutesQuestion">
-    <text lang="en">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
-    <text lang="zh">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
-  </message>
-  <message id="BackupDirectoryQuestion">
-    <text lang="en">Back transcripts up to the following directory (leave blank to ignore):</text>
-    <text lang="zh">Back transcripts up to the following directory (leave blank to ignore):</text>
-  </message>
-  <message id="SelectDirectoryMessage">
-    <text lang="en">Select a directory</text>
-    <text lang="zh">Select a directory</text>
-  </message>
-  <message id="NamespaceNormalizerQuestion">
-    <text lang="en">Use namespace normalizer to remove inconsistent or redundant namespace declarations?</text>
-    <text lang="zh">Use namespace normalizer to remove inconsistent or redundant namespace declarations?</text>
-  </message>
   <message id="Save">
     <text lang="en">Save</text>
     <text lang="zh">保存</text>
@@ -735,23 +695,10 @@
     <text lang="en">Save As...</text>
     <text lang="zh">保存到…</text>
   </message>
-  <message id="SaveAsPDF">
-    <text lang="en">Save as PDF</text>
-    <text lang="zh">Save as PDF</text>
-  </message>
-  <message id="SaveAll">
-    <text lang="en">Save All</text>
-    <text lang="zh">Save All</text>
-  </message>
-  <message id="ExportToText">
-    <text lang="en">Export to Text</text>
-    <text lang="zh">Export to Text</text>
-  </message>
-    <message id="SaveError">
+  <message id="SaveError">
     <text lang="en">Errors while saving!</text>
     <text lang="zh">保存时遇到错误!</text>
   </message>
-  
   <message id="SaveCurrent">
     <text lang="en">Save the current transcript</text>
     <text lang="zh">保存当前转录文本</text>
@@ -840,10 +787,6 @@
     <text lang="en">Surround with Page-Line Breaks</text>
     <text lang="zh">周围超出页面界线</text>
   </message>
-  <message id="SwitchWindow">
-    <text lang="en">Switch active window</text>
-    <text lang="zh">Switch active window</text>
-  </message>
   <message id="TextFound">
     <text lang="en">Text found.</text>
     <text lang="zh">找到文本</text>
@@ -906,27 +849,27 @@
   </message>
   <message id="TranscriptionOnly">
     <text lang="en">Tibetan Only</text>
-    <text lang="zh">仅藏文</text>  
+    <text lang="zh">仅藏文</text>
   </message>
   <message id="TranscriptionPlusEnglish">
-        <text lang="en">Tibetan + English</text>
-        <text lang="zh">藏文 + 英语</text>
+    <text lang="en">Tibetan + English</text>
+    <text lang="zh">藏文 + 英语</text>
   </message>
   <message id="TranscriptionPlusChinese">
-        <text lang="en">Tibetan + Chinese</text>
-        <text lang="zh">藏文 + 中文</text>
+    <text lang="en">Tibetan + Chinese</text>
+    <text lang="zh">藏文 + 中文</text>
   </message>
   <message id="TranscriptionPlusNotes">
-        <text lang="en">Tibetan + Notes</text>
-        <text lang="zh">藏文 + 注释</text>
-  </message>  
+    <text lang="en">Tibetan + Notes</text>
+    <text lang="zh">藏文 + 注释</text>
+  </message>
   <message id="TranscriptionPlusEnglishPlusChinese">
-        <text lang="en">Tib + Eng + Ch</text>
-        <text lang="zh">藏文 + 英文 +中文</text>
+    <text lang="en">Tib + Eng + Ch</text>
+    <text lang="zh">藏文 + 英文 +中文</text>
   </message>
   <message id="EnglishPlusChinese">
-        <text lang="en">English + Chinese</text>
-        <text lang="zh">英文 + 中文</text>
+    <text lang="en">English + Chinese</text>
+    <text lang="zh">英文 + 中文</text>
   </message>
   <message id="Translation_ENOnly">
     <text lang="en">English Translation Only</text>
@@ -1008,15 +951,15 @@
     <text lang="en">TibetanKeyboard</text>
     <text lang="zh">藏文键盘</text>
   </message>
-   <message id="Window">
+  <message id="Window">
     <text lang="en">Window</text>
     <text lang="zh">窗口</text>
   </message>
-    <message id="BothResizeSetting">
+  <message id="BothResizeSetting">
     <text lang="en">Resize windows together</text>
     <text lang="zh">同时改变窗口大小</text>
   </message>
-    <message id="MediaToRight">
+  <message id="MediaToRight">
     <text lang="en">Media to right</text>
     <text lang="zh">媒体在右边</text>
   </message>
@@ -1028,27 +971,23 @@
     <text lang="en">Media on top</text>
     <text lang="zh">媒体在顶部</text>
   </message>
-  <message id="MediaOverTranscript">
-    <text lang="en">Media over transcript</text>
-    <text lang="zh">Media over transcript</text>
-  </message>
   <message id="FullScreenVideoOnly">
     <text lang="en">Fullscreen video only</text>
     <text lang="zh">仅全屏幕视频</text>
   </message>
-   <message id="NormalSizeVideoOnly">
+  <message id="NormalSizeVideoOnly">
     <text lang="en">Normal size video only</text>
     <text lang="zh">仅正常大小的视频</text>
   </message>
-   <message id="SubtitleBelow">
+  <message id="SubtitleBelow">
     <text lang="en">Subtitle below</text>
     <text lang="zh">子标题在下面</text>
   </message>
-   <message id="TranscriptOnly">
+  <message id="TranscriptOnly">
     <text lang="en">Transcript only</text>
     <text lang="zh">仅转录文本</text>
   </message>
-   <message id="DefaultSizeAndPlacement">
+  <message id="DefaultSizeAndPlacement">
     <text lang="en">Default size/placement</text>
     <text lang="zh">缺省的大小和位置</text>
   </message>
@@ -1056,7 +995,7 @@
     <text lang="en">The number of open transcripts was exceed, please close one of them, and retry!</text>
     <text lang="zh">目前打开的文件数目超过,请关闭其中一个,再试!</text>
   </message>
-   <message id="FileAlreadyBeLoaded">
+  <message id="FileAlreadyBeLoaded">
     <text lang="en">You cannot open a transcript twice!</text>
     <text lang="zh">对不起,你不能打开一个转录文本两次!</text>
   </message>
@@ -1088,11 +1027,11 @@
     <text lang="en">Printing complete!</text>
     <text lang="zh">打印完成!</text>
   </message>
-    <message id="DocumentTransferedToPrinter">
+  <message id="DocumentTransferedToPrinter">
     <text lang="en">Document transfered to printer.</text>
     <text lang="zh">文档已传输到打印机.</text>
   </message>
-    <message id="OutOfPaper">
+  <message id="OutOfPaper">
     <text lang="en">Check printer: out of paper?</text>
     <text lang="zh">检查打印机:缺纸?</text>
   </message>
@@ -1100,11 +1039,10 @@
     <text lang="en">Print job failed!</text>
     <text lang="zh">打印作业失败!</text>
   </message>
-   <message id="OnlyTranscriptionMode">
+  <message id="OnlyTranscriptionMode">
     <text lang="en">Only transcription mode could use this function!</text>
     <text lang="zh">只有转录THDL文本模式才能使用此功能!</text>
   </message>
-
   <message id="AutomaticallyOpenDialogBox">
     <text lang="en">Automatically open this dialog box when QuillDriver starts up?</text>
     <text lang="zh">当启动QuillDriver时,是否自动打开此对话框?</text>
@@ -1112,7 +1050,7 @@
   <message id="WantToSaveChanges">
     <text lang="en">Do you want to save the changes?</text>
     <text lang="zh">你想保存这些改变吗?</text>
-  </message>  
+  </message>
   <message id="help1">
     <text lang="en">
         Plays the video if it is stopped; pauses it otherwise.
@@ -1543,18 +1481,6 @@
     </text>
     <text lang="zh">为当前转录文本行删除中文翻译.</text>
   </message>
-  <message id="help45">
-        <text lang="en">
-                Deletes current clause.
-        </text>
-        <text lang="zh">
-                Deletes current clause.
-        </text>
-  </message>
-  <message id="Browse">
-    <text lang="en">Browse</text>
-    <text lang="zh">Browse</text>
-  </message>
   <message id="BrowseMenu">
     <text lang="en">Navigate</text>
     <text lang="zh">导航</text>
@@ -1580,124 +1506,196 @@
     <text lang="zh">这个文件/转录文本不能被保存!详细请参阅日志文件.</text>
   </message>
   <message id="BasicTranscriptViewMode">
-        <text lang="en">Basic View</text>
-        <text lang="zh">基本视图</text>
-  </message>
-  <message id="AllowScrollHighlighting">
-        <text lang="en">Allow scroll highlighting</text>
-        <text lang="zh">Allow scroll highlighting</text>
+    <text lang="en">Basic View</text>
+    <text lang="zh">基本视图</text>
   </message>
   <message id="Options">
-  	<text lang="en">Options</text>
-  	<text lang="zh">选项</text>
+    <text lang="en">Options</text>
+    <text lang="zh">选项</text>
   </message>
   <message id="ToolsMenu">
-  	<text lang="en">Tools</text>
-  	<text lang="zh">工具</text>
+    <text lang="en">Tools</text>
+    <text lang="zh">工具</text>
   </message>
   <message id="Change">
-  	<text lang="en">Change...</text>
-  	<text lang="zh">改变…</text>
+    <text lang="en">Change...</text>
+    <text lang="zh">改变…</text>
   </message>
   <message id="TagColor">
-  	<text lang="en">Tag Color:</text>
-  	<text lang="zh">标签颜色：</text>
+    <text lang="en">Tag Color:</text>
+    <text lang="zh">标签颜色：</text>
   </message>
   <message id="HighlightColor">
-  	<text lang="en">Highlight Color:</text>
-  	<text lang="zh">加亮颜色：</text>
+    <text lang="en">Highlight Color:</text>
+    <text lang="zh">加亮颜色：</text>
   </message>
   <message id="EnglishPlusNotes">
-  	<text lang="en">English + Notes</text>
-  	<text lang="zh">英语 + 注释</text>
+    <text lang="en">English + Notes</text>
+    <text lang="zh">英语 + 注释</text>
   </message>
-    <message id="InsertEnglishName">
-  	<text lang="en">Insert English Name</text>
-  	<text lang="zh">插入英文名字</text>
+  <message id="InsertEnglishName">
+    <text lang="en">Insert English Name</text>
+    <text lang="zh">插入英文名字</text>
   </message>
-    <message id="InsertChineseName">
-  	<text lang="en">Insert Chinese Name</text>
-  	<text lang="zh">插入中文名字</text>
+  <message id="InsertChineseName">
+    <text lang="en">Insert Chinese Name</text>
+    <text lang="zh">插入中文名字</text>
   </message>
   <message id="InsertEnglishTitle">
-  	<text lang="en">Insert English Title</text>
-  	<text lang="zh">插入英语标题</text>
+    <text lang="en">Insert English Title</text>
+    <text lang="zh">插入英语标题</text>
   </message>
-   <message id="InsertTibetanTitle">
-  	<text lang="en">Insert Tibetan Title</text>
-  	<text lang="zh">插入藏文标题</text>
+  <message id="InsertTibetanTitle">
+    <text lang="en">Insert Tibetan Title</text>
+    <text lang="zh">插入藏文标题</text>
   </message>
-    <message id="InsertChineseTitle">
-  	<text lang="en">Insert Chinese Title</text>
-  	<text lang="zh">插入中文标题</text>
+  <message id="InsertChineseTitle">
+    <text lang="en">Insert Chinese Title</text>
+    <text lang="zh">插入中文标题</text>
   </message>
   <message id="DeleteTibetanTitle">
-  	<text lang="en">Delete Tibetan Title</text>
-  	<text lang="zh">删除藏文标题</text>
-  </message> 
-   <message id="DeleteChineseTitle">
-  	<text lang="en">Delete Chinese Title</text>
-  	<text lang="zh">删除中文标题</text>
+    <text lang="en">Delete Tibetan Title</text>
+    <text lang="zh">删除藏文标题</text>
   </message>
-   <message id="DeleteEnglishTitle">
-  	<text lang="en">Delete English Title</text>
-  	<text lang="zh">删除英文标题</text>
+  <message id="DeleteChineseTitle">
+    <text lang="en">Delete Chinese Title</text>
+    <text lang="zh">删除中文标题</text>
   </message>
-   <message id="DeleteChineseName">
-  	<text lang="en">Delete Chinese Name</text>
-  	<text lang="zh">删除中文名字</text>
+  <message id="DeleteEnglishTitle">
+    <text lang="en">Delete English Title</text>
+    <text lang="zh">删除英文标题</text>
   </message>
-   <message id="DeleteEnglishName">
-  	<text lang="en">Delete English Name</text>
-  	<text lang="zh">删除英文名字</text>
+  <message id="DeleteChineseName">
+    <text lang="en">Delete Chinese Name</text>
+    <text lang="zh">删除中文名字</text>
+  </message>
+  <message id="DeleteEnglishName">
+    <text lang="en">Delete English Name</text>
+    <text lang="zh">删除英文名字</text>
   </message>
   <message id="NewTranscript">
-  	<text lang="en">New Transcript</text>
-  	<text lang="zh">新转录文本</text>
+    <text lang="en">New Transcript</text>
+    <text lang="zh">新转录文本</text>
   </message>
   <message id="UpdateTitle">
-  	<text lang="en">Update title</text>
-  	<text lang="zh">更新标题</text>
+    <text lang="en">Update title</text>
+    <text lang="zh">更新标题</text>
   </message>
-   <message id="UpdateWindowTitle">
-  	<text lang="en">Update window title</text>
-  	<text lang="zh">更新窗口标题</text>
+  <message id="UpdateWindowTitle">
+    <text lang="en">Update window title</text>
+    <text lang="zh">更新窗口标题</text>
   </message>
-   <message id="TranscriptionFonts">
-  	<text lang="en">Update window title</text>
-  	<text lang="zh">更新窗口标题</text>
-  </message>  
+  <message id="ChangeKeyboard">
+    <text lang="en">Change Keyboard
+</text>
+    <text lang="zh">转换键盘</text>
+  </message>
+  <message id="ToggleVideoBorder">
+    <text lang="en">Toggle Video Border</text>
+    <text lang="zh">调整视频边框</text>
+  </message>
+  <message id="LinkMedia">
+    <text lang="en">Link Media</text>
+    <text lang="zh">媒体链接</text>
+  </message>
+  <message id="AllowMultipleHighlighting">
+    <text lang="en">Allow multiple highlighting</text>
+    <text lang="zh">允许多项加亮</text>
+  </message>
+  <message id="SavingPreferences">
+    <text lang="en">Saving</text>
+    <text lang="zh">保存</text>
+  </message>
+  <message id="AutoSaveMinutesQuestion">
+    <text lang="en">Auto-save your transcript every how many minutes (enter '0' to ignore)?</text>
+    <text lang="zh">每隔多少分钟自动保存你的文本（键入“0”以忽略）?</text>
+  </message>
+  <message id="BackupDirectoryQuestion">
+    <text lang="en">Back transcripts up to the following directory (leave blank to ignore):</text>
+    <text lang="zh">备份文本到以下目录（空白以忽略）:</text>
+  </message>
+  <message id="SelectDirectoryMessage">
+    <text lang="en">Select a directory</text>
+    <text lang="zh">选择一个目录</text>
+  </message>
+  <message id="NamespaceNormalizerQuestion">
+    <text lang="en">Use namespace normalizer to remove inconsistent or redundant namespace declarations?</text>
+    <text lang="zh">使用命名空间规度器来去掉前后不一致或多余的命名空间声明?</text>
+  </message>
+  <message id="SaveAsPDF">
+    <text lang="en">Save as PDF</text>
+    <text lang="zh">保存为PDF文件</text>
+  </message>
+  <message id="SaveAll">
+    <text lang="en">Save All</text>
+    <text lang="zh">全部保存</text>
+  </message>
+  <message id="ExportToText">
+    <text lang="en">Export to Text</text>
+    <text lang="zh">输出到文本</text>
+  </message>
+  <message id="SwitchWindow">
+    <text lang="en">Switch active window</text>
+    <text lang="zh">转换运行窗口</text>
+  </message>
+  <message id="MediaOverTranscript">
+    <text lang="en">Media over transcript</text>
+    <text lang="zh">媒体位于文本之上</text>
+  </message>
+  <message id="help45">
+ <text lang="en">Deletes current clause.</text>
+ <text lang="zh">删除当前子句</text>
+  </message>
+  <message id="Browse">
+    <text lang="en">Browse</text>
+    <text lang="zh">浏览</text>
+  </message>
+  <message id="AllowScrollHighlighting">
+    <text lang="en">Allow scroll highlighting</text>
+    <text lang="zh">允许滚动条加亮</text>
+  </message>
   <message id="FontAndSize">
     <text lang="en">Font and Size:</text>
-    <text lang="zh">Font and Size：</text>
+    <text lang="zh">字体及其大小</text>
   </message>
   <message id="ShowFileNameAsTitle">
     <text lang="en">Show filename as title of inner windows</text>
-    <text lang="zh">Show filename as title of inner windows</text>
+    <text lang="zh">显示作为内部窗口标题的文件名字</text>
   </message>
-   <message id="ConfigurationDefault">
-     <text lang="en">Configuration's default</text>
-     <text lang="zh">Configuration's default</text>
-   </message>  
-   <message id="Never">
-     <text lang="en">Never</text>
-     <text lang="zh">Never</text>
-   </message>
-   <message id="Always">
-     <text lang="en">Always</text>
-     <text lang="zh">Always</text>
-   </message>
-   <message id="ShowTimeCodingBar">
-     <text lang="en">Show time coding bar:</text>
-     <text lang="zh">Show time coding bar：</text>
-   </message>
-   <message id="DragToResize">
-     <text lang="en">Click and drag the lower left corner of this window to resize.</text>
-     <text lang="zh">Click and drag the lower left corner of this window to resize.</text>
-   </message>
-   <message id="EnableResizingOfVideoWindow">
-     <text lang="en">Enable resizing of video window</text>
-     <text lang="zh">Enable resizing of video window</text>
-   </message>
+  <message id="ConfigurationDefault">
+    <text lang="en">Configuration's default</text>
+    <text lang="zh">配置默认值</text>
+  </message>
+  <message id="Never">
+    <text lang="en">Never</text>
+    <text lang="zh">从不</text>
+  </message>
+  <message id="Always">
+    <text lang="en">Always</text>
+    <text lang="zh">总是</text>
+  </message>
+  <message id="ShowTimeCodingBar">
+    <text lang="en">Show time coding bar:</text>
+    <text lang="zh">显示时间参数条</text>
+  </message>
+  <message id="DragToResize">
+    <text lang="en">Click and drag the lower left corner of this window to resize.</text>
+    <text lang="zh">点击并拖动窗口左下角以调整大小</text>
+  </message>
+  <message id="EnableResizingOfVideoWindow">
+    <text lang="en">Enable resizing of video window</text>
+    <text lang="zh">使可以调整视频窗口大小</text>
+  </message>
+  <message id="TranscriptFontAndSize">
+    <text lang="en">Transcript Font And Size:</text>
+    <text lang="zh">转录字体和大小：</text>
+  </message>
+    <message id="NonTibetanTranscriptFontAndSize">
+    <text lang="en">Non-Tibetan Transcript Font and Size:</text>
+    <text lang="zh">非藏文转录字体和大小：</text>
+  </message>
+    <message id="InterfaceFont">
+    <text lang="en">Interface Font:</text>
+    <text lang="zh">界面字体：</text>
+  </message>
 </all-messages>
-
