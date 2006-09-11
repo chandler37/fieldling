@@ -337,7 +337,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 						try
 						{
 							if (mediaFile.exists()) { //open the actual file
-								player.loadMovie(mediaFile.toURL());
+								player.loadMovie(mediaFile);
+								//player.loadMovie(mediaFile.toURL());
 								nomedia = false;
 							} else {
 								String mediaDirectory = PreferenceManager.getValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT);
@@ -345,7 +346,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 									String mediaName = value.substring(value.lastIndexOf(QDShell.FILE_SEPARATOR)+1);
 									mediaFile = new File(mediaDirectory, mediaName);
 									if (mediaFile.exists()) {
-										player.loadMovie(mediaFile.toURL());
+										player.loadMovie(mediaFile);
+										//player.loadMovie(mediaFile.toURL());
 										nomedia = false;
 									}
 								}
@@ -368,12 +370,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 					JFileChooser fc = new JFileChooser(PreferenceManager.getValue(PreferenceManager.MEDIA_DIRECTORY_KEY, PreferenceManager.MEDIA_DIRECTORY_DEFAULT));
 					if (fc.showDialog(QD.this, messages.getString("SelectMedia")) == JFileChooser.APPROVE_OPTION) {
 						File mediaFile = fc.getSelectedFile();
-						try {
-							player.loadMovie(mediaFile.toURL());
+						//try {
+							player.loadMovie(mediaFile);
+							//player.loadMovie(mediaFile.toURL());
 							String mediaString = mediaFile.getAbsolutePath();
 							PreferenceManager.setValue(PreferenceManager.MEDIA_DIRECTORY_KEY, mediaString.substring(0, mediaString.lastIndexOf(QDShell.FILE_SEPARATOR)+1));
 							nomedia = false;
-						} catch (MalformedURLException murle) {} //do nothing
+						//} catch (MalformedURLException murle) {} //do nothing
 					}
 				}
 			}
@@ -534,9 +537,14 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	public void register()
 	{
 		XPathExpression showFileNameXPath;
-		if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==-1)
+		Object obj = configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
+		if (obj != null) {
+			Boolean bool = (Boolean) obj;
+			PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, bool.booleanValue()?1:-1);
+		}
+		/*if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==-1)
 		{
-			showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
+			//showFileNameXPath = (XPathExpression) configuration.getParameters().get(SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME);
 			if (showFileNameXPath==null)
 			{
 				PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, 1);
@@ -545,7 +553,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 			{
 				PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0);
 			}
-		}
+		}*/
 		if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==0 || PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT) == 1)
 		{
 			if (transcriptToggler.getNumberOfTranscripts() == 0)

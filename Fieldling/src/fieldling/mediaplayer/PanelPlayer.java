@@ -21,6 +21,7 @@ package fieldling.mediaplayer;
 /*-----------------------------------------------------------------------*/
 import java.awt.*;
 import java.net.*;
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Hashtable;
 import java.util.Set;
@@ -358,6 +359,7 @@ public abstract class PanelPlayer extends Panel {
 	public abstract void displayBorders(boolean borders) throws PanelPlayerException;
 	public abstract void displayController(boolean controller) throws PanelPlayerException;
 	public abstract void loadMovie(URL mediaUrl) throws PanelPlayerException;
+	public abstract void loadMovie(File mediaFile) throws PanelPlayerException;
 
 //helper methods - control media
 	public abstract void cmd_playOn() throws PanelPlayerException;

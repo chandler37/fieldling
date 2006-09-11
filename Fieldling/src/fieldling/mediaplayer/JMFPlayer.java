@@ -21,6 +21,7 @@ package fieldling.mediaplayer;
 /*-----------------------------------------------------------------------*/
 import java.util.*;
 import java.net.*;
+import java.io.*;
 import javax.media.*;
 import java.awt.*;
 import javax.swing.*;
@@ -61,6 +62,13 @@ public class JMFPlayer extends PanelPlayer implements ControllerListener {
 		super( new GridLayout() );
 		parent = p;
 		loadMovie(sound);
+	}
+	public void loadMovie(File sound) throws PanelPlayerException {
+		try {
+			loadMovie(sound.toURL()); //what if sound is null?
+		} catch (MalformedURLException murle) {
+			murle.printStackTrace();
+		}
 	}
 	public void loadMovie(URL sound) throws PanelPlayerException {
 		if (mediaURL != null) {
