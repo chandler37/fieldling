@@ -42,6 +42,7 @@ public class QT4JPlayer extends PanelPlayer {
 	private QTComponent qtComp;
 	private Component c;
 	private Movie			movie;
+	private MovieController		controller;
 	private Container		parent = null;
 	private static int	numberOfPlayersOpen = 0;
 	
@@ -133,8 +134,8 @@ public class QT4JPlayer extends PanelPlayer {
 			QTFile qtFile = new QTFile(mediaFile);
 			OpenMovieFile omFile = OpenMovieFile.asRead(qtFile);
 			movie = Movie.fromFile(omFile);
-			MovieController mc = new MovieController(movie);
-			qtComp = QTFactory.makeQTComponent(mc);
+			controller = new MovieController(movie);
+			qtComp = QTFactory.makeQTComponent(controller);
 			c = qtComp.asComponent();
 			this.add(c);
 			try {
@@ -156,8 +157,8 @@ public class QT4JPlayer extends PanelPlayer {
 			String url = mediaURL.toString();
 			DataRef dr = new DataRef(url);
 			movie = Movie.fromDataRef(dr, StdQTConstants.newMovieActive);
-			MovieController mc = new MovieController(movie);
-			qtComp = QTFactory.makeQTComponent(mc);
+			controller = new MovieController(movie);
+			qtComp = QTFactory.makeQTComponent(controller);
 			c = qtComp.asComponent();
 			this.add(c);
 			this.mediaURL = mediaURL;
@@ -174,7 +175,8 @@ public class QT4JPlayer extends PanelPlayer {
 	//contract methods - control media
 	public void cmd_playOn() throws PanelPlayerException {
 		try {
-			movie.setRate(1.0F);
+			controller.play(1);
+			//movie.setRate(1);
 		} catch(QTException qte) {
 			qte.printStackTrace();
 		}
@@ -200,7 +202,8 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public void cmd_stop() throws PanelPlayerException {
 		try {
-			movie.setRate(0.0F);
+			controller.play(0);
+			//movie.setRate(0);
 			//it seems that if theRater is not cancelled and recalled then a threading problem arises
 			/*theRater.cancel();
 			theJumper.cancel();
@@ -208,7 +211,7 @@ public class QT4JPlayer extends PanelPlayer {
 				theStopper.cancel();
 			//theRater.cancelAndCleanup();
 			//theJumper.cancelAndCleanup();
-			movie.setRate(0.0F);
+			movie.setRate(0);
 			theRater.callMeWhen();
 			theJumper.callMeWhen();*/
 		} catch(QTException qte) {
