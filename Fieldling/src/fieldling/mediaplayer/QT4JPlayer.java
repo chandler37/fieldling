@@ -22,6 +22,7 @@ import java.awt.*;
 import java.net.*;
 import java.io.*;
 import quicktime.*;
+import quicktime.qd.QDRect;
 import quicktime.app.view.*;
 import quicktime.app.display.*;
 import quicktime.app.players.*;
@@ -39,15 +40,14 @@ public class QT4JPlayer extends PanelPlayer {
 	private StopAtTimeCallBack 			theStopper = null;
 	private ScrubberMovedCallBack               theJumper = null;
 	private PlayingNotPlayingCallBack               theRater = null;
-	private QTComponent qtComp;
-	private Component c;
 	private Movie			movie;
-	private MovieController		controller;
+    private Component       movieViewComp;
+	private MovieController		controller = null;
 	private Container		parent = null;
 	private static int	numberOfPlayersOpen = 0;
 	
 	//constructor
-	private static void checkQTSession() throws QTException {
+	public static void checkQTSession() throws QTException {
 		if (!hasQTSessionBeenOpened) {
 			QTSession.open();
 			shutdownHook = new Thread() {
@@ -59,9 +59,55 @@ public class QT4JPlayer extends PanelPlayer {
 			hasQTSessionBeenOpened = true;
 		}
 	}
-	
+    //cribbed from Adamson 2005, p. 45
+    /*public Dimension getPreferredSize() {
+        if (controller == null)
+            return new Dimension(0,0);
+        try {
+            QDRect contRect = controller.getBounds();
+            Dimension compDim = movieViewComp.getPreferredSize();
+            if (contRect.getHeight() > compDim.height) {
+                return new Dimension(contRect.getWidth() + getInsets().left + getInsets().right, contRect.getHeight() + getInsets().top + getInsets().bottom);
+            } else {
+                return new Dimension(compDim.width + getInsets().left + getInsets().right, compDim.height + getInsets().top + getInsets().bottom);
+            }
+        } catch (QTException qte) {
+            return new Dimension(0,0);
+        }
+        
+    }*/
+	public QT4JPlayer(Container cont, MovieController mc) {
+        //super(new FlowLayout());
+        super(new BorderLayout());
+		try {
+			checkQTSession();
+		} catch (QTException qte) {
+			qte.printStackTrace();
+		}
+		parent = cont;
+		try {
+            controller = mc;
+            movie = controller.getMovie();
+			QTComponent qtComp = QTFactory.makeQTComponent(controller);
+            movieViewComp = qtComp.asComponent(); 
+			this.add(movieViewComp);
+			/*try {
+				this.mediaURL = mediaFile.toURL();
+			} catch (MalformedURLException murle) {
+				murle.printStackTrace();
+			}*/
+			//LOGGINGSystem.out.println("loadMovie:"+mediaURL.toString());
+			numberOfPlayersOpen++;
+			theJumper = new ScrubberMovedCallBack(movie.getTimeBase());
+			theRater = new PlayingNotPlayingCallBack(movie.getTimeBase(), 0, StdQTConstants.triggerRateChange);
+		} catch(QTException qte) {
+			//LOGGINGSystem.out.println("loadMovie failed");
+			qte.printStackTrace();
+		}        
+    }
 	public QT4JPlayer(Container cont, URL mediaURL) {
-		super(new BorderLayout());
+		//super(new FlowLayout());
+        super(new BorderLayout());
 		try {
 			checkQTSession();
 		} catch (QTException qte) {
@@ -75,7 +121,8 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 	}
 	public QT4JPlayer(Container cont, File mediaFile) {
-		super(new BorderLayout());
+		//super(new FlowLayout());
+        super(new BorderLayout());
 		try {
 			checkQTSession();
 		} catch (QTException qte) {
@@ -89,7 +136,8 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 	}
 	public QT4JPlayer() {
-		super(new BorderLayout());
+		//super(new FlowLayout());
+        super(new BorderLayout());
 		try {
 			checkQTSession();
 		} catch (QTException qte) {
@@ -135,9 +183,8 @@ public class QT4JPlayer extends PanelPlayer {
 			OpenMovieFile omFile = OpenMovieFile.asRead(qtFile);
 			movie = Movie.fromFile(omFile);
 			controller = new MovieController(movie);
-			qtComp = QTFactory.makeQTComponent(controller);
-			c = qtComp.asComponent();
-			this.add(c);
+			QTComponent qtComp = QTFactory.makeQTComponent(controller);
+			this.add(qtComp.asComponent());
 			try {
 				this.mediaURL = mediaFile.toURL();
 			} catch (MalformedURLException murle) {
@@ -158,9 +205,8 @@ public class QT4JPlayer extends PanelPlayer {
 			DataRef dr = new DataRef(url);
 			movie = Movie.fromDataRef(dr, StdQTConstants.newMovieActive);
 			controller = new MovieController(movie);
-			qtComp = QTFactory.makeQTComponent(controller);
-			c = qtComp.asComponent();
-			this.add(c);
+			QTComponent qtComp = QTFactory.makeQTComponent(controller);
+			this.add(qtComp.asComponent());
 			this.mediaURL = mediaURL;
 			//LOGGINGSystem.out.println("loadMovie:"+mediaURL.toString());
 			numberOfPlayersOpen++;
@@ -176,7 +222,6 @@ public class QT4JPlayer extends PanelPlayer {
 	public void cmd_playOn() throws PanelPlayerException {
 		try {
 			controller.play(1);
-			//movie.setRate(1);
 		} catch(QTException qte) {
 			qte.printStackTrace();
 		}
@@ -184,9 +229,11 @@ public class QT4JPlayer extends PanelPlayer {
 	public void cmd_playSegment(Long startTime, Long stopTime) throws PanelPlayerException {
 		try {
 			cmd_stop();
-			int myScale = movie.getTimeScale();
-			long t1 = startTime.longValue() * myScale / 1000;
-			movie.setTime(new TimeRecord(myScale, (int)t1));
+			//int myScale = movie.getTimeScale();
+			int myScale = controller.getTimeScale();
+            long t1 = startTime.longValue() * myScale / 1000;
+			controller.goToTime(new TimeRecord(myScale, t1));
+            //movie.setTime(new TimeRecord(myScale, (int)t1));
 			if (stopTime != null) {
 				long t2 = stopTime.longValue() * myScale / 1000;
 				theStopper = new StopAtTimeCallBack((int)t2);
@@ -203,17 +250,6 @@ public class QT4JPlayer extends PanelPlayer {
 	public void cmd_stop() throws PanelPlayerException {
 		try {
 			controller.play(0);
-			//movie.setRate(0);
-			//it seems that if theRater is not cancelled and recalled then a threading problem arises
-			/*theRater.cancel();
-			theJumper.cancel();
-			if (theStopper != null)
-				theStopper.cancel();
-			//theRater.cancelAndCleanup();
-			//theJumper.cancelAndCleanup();
-			movie.setRate(0);
-			theRater.callMeWhen();
-			theJumper.callMeWhen();*/
 		} catch(QTException qte) {
 			qte.printStackTrace();
 		}
@@ -225,7 +261,7 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public boolean isPlaying() {
 		try {
-			if (movie.getRate() > 0)
+			if (controller.getPlayRate() > 0)
 				return true;
 		} catch (StdQTException stdqte) {
 			stdqte.printStackTrace();
@@ -234,9 +270,10 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public long getCurrentTime() {
 		try {
-			long myScale = movie.getTimeScale();
-			long now = movie.getTime();
-			return (now*1000)/myScale;
+            return (controller.getCurrentTime() * 1000 / controller.getTimeScale());
+			//long myScale = movie.getTimeScale();
+            //long now = movie.getTime();
+			//return (now*1000)/myScale;
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
 			return 0;
@@ -260,9 +297,11 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public void setCurrentTime(long t) {
 		try {
-			int myScale = movie.getTimeScale();
-			long t1 = t * myScale / 1000;
-			movie.setTimeValue((int)t1);
+            controller.goToTime(new TimeRecord(1000, t));
+			//int myScale = controller.getTimeScale();
+            //long t1 = t * myScale / 1000;
+            //controller.goToTime(new TimeRecord(myScale, t1));
+			//movie.setTimeValue((int)t1);
 		} catch (StdQTException stqte) {
 			stqte.printStackTrace();
 		} catch (QTException qte) {
@@ -278,7 +317,7 @@ public class QT4JPlayer extends PanelPlayer {
 		}
 		public void execute() {
 			try {
-				cmd_stop();
+				cmd_stop();     
 			} catch (PanelPlayerException ppe) {
 				ppe.printStackTrace();
 			}
@@ -299,6 +338,7 @@ public class QT4JPlayer extends PanelPlayer {
 				if (rateWhenCalled > 0) {
 					launchAnnotationTimer();
 				} else {
+                    cueAnnotationTimer();
 					if (theStopper != null) {
 						theStopper.cancelAndCleanup();
 						theStopper = null;
@@ -320,12 +360,15 @@ public class QT4JPlayer extends PanelPlayer {
 			try {
 				//LOGGINGSystem.out.println("ScrubberMovedCallBack: " + String.valueOf(rateWhenCalled));
 				if (rateWhenCalled > 0) {
+                    cueAnnotationTimer();
 					launchAnnotationTimer();
 					if (theStopper != null) {
 						theStopper.cancelAndCleanup();
 						theStopper = null;
 					}
-				}
+				} else {             
+                    cueAnnotationTimer();
+                }
 				callMeWhen();
 			} catch (Exception e) {
 				//LOGGINGSystem.out.println("ScrubberMovedCallBack err: "+e.getMessage());

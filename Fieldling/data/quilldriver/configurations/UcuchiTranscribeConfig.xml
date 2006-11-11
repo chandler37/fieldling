@@ -18,7 +18,7 @@
                         <menu name="TimeCodeMenu" contains="MarkStartTime MarkStopTime | IncreaseStartTime RapidIncreaseStart DecreaseStartTime RapidDecreaseStart | IncreaseStopTime RapidIncreaseStop MaximizeStop DecreaseStopTime RapidDecreaseStop | ZapTimeCodes"/>
                         <menu name="ToolsMenu" contains="Preferences"/>
                         <menu name="View" contains="QuechuaOnly QuechuaAndEnglish"/>
-                        <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop SubtitleBelow MediaOverTranscript | FullScreenVideoOnly NormalSizeVideoOnly | TranscriptOnly | ToggleVideoBorder"/>   
+                        <menu name="Window" contains="MediaToRight MediaToLeft MediaOnTop MediaOverTranscript | HalfSize ActualSize DoubleSize FitToWindow"/>   
                         <menu name="Help" contains="AboutQuillDriver Help"/>
                 </menus>
                 <actions>
@@ -29,17 +29,20 @@
                         </action>
                         <action name="MediaOnTop" keystroke="shift F3" node="." qd-command="fieldling.quilldriver.task.MediaOnTop">
                         </action>
-                        <action name="SubtitleBelow" keystroke="shift F4" node="." qd-command="fieldling.quilldriver.task.SubtitleBelow">
-                        </action>
+                        <!--<action name="SubtitleBelow" keystroke="shift F4" node="." qd-command="fieldling.quilldriver.task.SubtitleBelow">
+                        </action>-->
                         <action name="MediaOverTranscript" keystroke="shift F5" node="." qd-command="fieldling.quilldriver.task.MediaOverTranscript">
                         </action>
-                        <action name="FullScreenVideoOnly" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.FullScreenVideoOnly">
-                        </action>
-                        <action name="NormalSizeVideoOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
-                        </action>
-                        <action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
+                        <action name="HalfSize" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.HalfSize"/>
+                        <action name="ActualSize" keystroke="shift F10" node="." qd-command="fieldling.quilldriver.task.ActualSize"/>
+                        <action name="DoubleSize" keystroke="shift F9" node="." qd-command="fieldling.quilldriver.task.DoubleSize"/>
+                        <action name="FitToWindow" keystroke="shift F6" node="." qd-command="fieldling.quilldriver.task.FitToWindow"/>
+                        <!--<action name="NormalSizeVideoOnly" keystroke="shift F7" node="." qd-command="fieldling.quilldriver.task.NormalSizeVideoOnly">
+                        </action>-->
+                        <!--<action name="TranscriptOnly" keystroke="shift F8" node="." qd-command="fieldling.quilldriver.task.TranscriptOnly">
                         </action>
                         <action name="ToggleVideoBorder" keystroke="shift F10" node="." qd-command="fieldling.quilldriver.task.ToggleVideoBorder"/>
+                        -->
                         <!-- about menu -->
                         <action name="AboutQuillDriver" node="." qd-command="fieldling.quilldriver.task.AboutQD">
                         </action>

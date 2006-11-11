@@ -968,11 +968,11 @@
     <text lang="zh">媒体在左边</text>
   </message>
   <message id="MediaOnTop">
-    <text lang="en">Media on top</text>
+    <text lang="en">Media above transcript</text>
     <text lang="zh">媒体在顶部</text>
   </message>
-  <message id="FullScreenVideoOnly">
-    <text lang="en">Fullscreen video only</text>
+  <message id="FullScreen">
+    <text lang="en">Full Screen</text>
     <text lang="zh">仅全屏幕视频</text>
   </message>
   <message id="NormalSizeVideoOnly">
@@ -986,6 +986,22 @@
   <message id="TranscriptOnly">
     <text lang="en">Transcript only</text>
     <text lang="zh">仅转录文本</text>
+  </message>
+  <message id="HalfSize">
+    <text lang="en">Half size</text>
+    <text lang="zh">Half size</text>
+  </message>
+  <message id="ActualSize">
+    <text lang="en">Actual size</text>
+    <text lang="zh">Actual size</text>
+  </message>
+  <message id="DoubleSize">
+    <text lang="en">Double size</text>
+    <text lang="zh">Double size</text>
+  </message>
+  <message id="FitToWindow">
+    <text lang="en">Fit to window</text>
+    <text lang="zh">Fit to window</text>
   </message>
   <message id="DefaultSizeAndPlacement">
     <text lang="en">Default size/placement</text>

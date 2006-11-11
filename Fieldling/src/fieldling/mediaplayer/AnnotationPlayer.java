@@ -21,5 +21,5 @@ package fieldling.mediaplayer;
 public interface AnnotationPlayer extends java.util.EventListener {
 	public void startAnnotation(String id);
 	public void stopAnnotation(String id);
-        public void stopAllAnnotations();
+    public void stopAllAnnotations();
 }

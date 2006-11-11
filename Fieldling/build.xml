@@ -59,8 +59,11 @@ a version optimized for use with Tibetan script.
 	<property name="webstart.lib" value="${webapp.dir}/lib_webstart"/>
 	<property name="distrib.source"	value="distribSrc"/>
 	<property name="jnlp.codebase"	value="http://altiplano.emich.edu/quilldriver"/>
-	<property name="target.jvm" value="1.2"/>
-	<property name="source.jvm" value="1.2"/>
+	<property name="target.jvm" value="1.5"/>
+    <property name="source.jvm" value="1.5"/>
+    <!--<property name="target.jvm" value="1.2"/>
+	<property name="source.jvm" value="1.2"/>-->
+    
 
 	<!-- Tell ant where to find the code of the DTDDoc task -->
 	<!--<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpath="${ext}/ant-extensions/DTDDoc.jar;${ext}/ant-extensions/dtdparser120.jar"/>
@@ -132,8 +135,7 @@ a version optimized for use with Tibetan script.
 			</fileset>
 		</copy>
 	</target>
-		
-
+    
     <!-- lines marked @UNICODE@ in the source are only for the Unicode version of QD -->
 	<target name="create-unicode-source" if="unicode.source.isUptodate">
 		<copy todir="${unicode.source}" overwrite="true">

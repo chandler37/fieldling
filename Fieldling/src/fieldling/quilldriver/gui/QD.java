@@ -49,6 +49,8 @@ import fieldling.quilldriver.xml.View;
 import fieldling.quilldriver.task.*;
 
 public class QD extends JDesktopPane implements DOMErrorHandler {
+    private boolean firstResize = true;
+    
 	//CLASS CONSTANTS
 	protected static TagInfo currentTagInfo = null;
 	protected static Color hColor = Color.cyan;
@@ -100,10 +102,11 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	private void setupGUI() {
 		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		videoFrame = new JInternalFrame();
-		videoFrame.setBorder(null);
-		((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
-		videoFrame.getContentPane().setLayout(new BorderLayout());
+		videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
+        //videoFrame = new JInternalFrame();
+		//videoFrame.setBorder(null);
+		//((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
+		//videoFrame.getContentPane().setLayout(new BorderLayout());
 		videoFrame.setVisible(true);
 		videoFrame.setLocation(0,0);
 		videoFrame.setSize(0,0);
@@ -115,8 +118,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		videoFrame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
 				if (hasVideoFrameBeenResizedByDragging) {
-					player.setPreferredSize(new Dimension(player.getComponent(0).getSize()));
-					videoFrame.pack();
+					//player.setPreferredSize(new Dimension(player.getComponent(0).getSize()));
+					//videoFrame.pack();
 					hasVideoFrameBeenResizedByDragging = false;
 					WindowPositioningTask.repositionWithActiveWindowPositioner(QD.this);
 				}
@@ -140,6 +143,10 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent ce) {
+                if (firstResize) {
+                    videoFrame.pack();
+                    firstResize = false;
+                }
 				WindowPositioningTask.repositionWithActiveWindowPositioner(QD.this);
 			}
 		});
@@ -183,8 +190,10 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				if (player.isInitialized())
 				{
 					timer.cancel();
+                    //Panel vidP = new Panel();
+                    //vidP.add(player);
+					//videoFrame.getContentPane().add(BorderLayout.CENTER, vidP);
 					videoFrame.getContentPane().add(BorderLayout.CENTER, player);
-					videoFrame.pack();
 				}
 			}}, 0, 50);
 	}

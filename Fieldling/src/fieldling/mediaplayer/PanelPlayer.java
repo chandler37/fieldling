@@ -41,6 +41,7 @@ public abstract class PanelPlayer extends Panel {
 	private Stack pileStart = null, pileEnd = null;
 	private Hashtable	hashStart = null, hashEnd = null;
 	private Timer annTimer = null;
+    private boolean isAnnTimerCued = false;
 	private boolean isAutoScrolling = false;
         private boolean areMultipleSimultaneousAnnotationsAllowed = true;
 	private Set startedAnnotations;
@@ -229,8 +230,8 @@ public abstract class PanelPlayer extends Panel {
 			smpe.printStackTrace();
 		}
 	}
-        
-	protected void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
+
+	protected void cueAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
 		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
 		cancelAnnotationTimer();
 		
@@ -240,6 +241,21 @@ public abstract class PanelPlayer extends Panel {
 		//int i = getCurrentTime();
 		//Integer from = new Integer(i);
 		//remplisPileStart(from, new Integer(getEndTime()));
+        cmd_nextEvent();
+        isAnnTimerCued = true;
+	}
+    
+	protected void launchAnnotationTimer() { //FIXME: should have upper limit - stop time else end time
+        if (!isAnnTimerCued) {
+            if (listenerList.getListenerCount() == 0) return; //no annotation listeners
+            cancelAnnotationTimer();
+            long l = getCurrentTime();
+            Long from = new Long(l);
+            remplisPileStart(from, new Long(getEndTime()));
+            //int i = getCurrentTime();
+            //Integer from = new Integer(i);
+            //remplisPileStart(from, new Integer(getEndTime()))
+        };
 		annTimer = new Timer(true);
 		annTimer.schedule(new TimerTask() {
 			public void run() {
@@ -249,6 +265,7 @@ public abstract class PanelPlayer extends Panel {
         
 	protected void cancelAnnotationTimer() {
 		if (listenerList.getListenerCount() == 0) return; //no annotation listeners
+        isAnnTimerCued = false;
 		if (annTimer != null) {
 			annTimer.cancel();
 			annTimer = null;
@@ -293,7 +310,8 @@ public abstract class PanelPlayer extends Panel {
 		if (!pileEnd.empty()) {
 			String id = (String)pileEnd.peek();
 			Long f   = (Long)hashEnd.get(id);
-			if (when.longValue() >= f.longValue()) {
+			if (when.longValue() > f.longValue()) {
+            //if (when.longValue() >= f.longValue()) {
 			//Integer f   = (Integer)hashEnd.get(id);
 			//if (when.intValue() >= f.intValue()) {
 				id = (String)pileEnd.pop();
@@ -320,7 +338,7 @@ public abstract class PanelPlayer extends Panel {
 		for (int i=orderEndID.size()-1; i!=-1; i--) {
 			String id = (String)orderEndID.elementAt(i);
 			Long f = (Long)hashEnd.get(id);
-			if ((f.longValue() > start.longValue()) && (f.longValue() <= end.longValue())) {
+			if ((f.longValue() >= start.longValue()) && (f.longValue() <= end.longValue())) {
 			//Integer f   = (Integer)hashEnd.get(id);
 			//if ((f.intValue() > start.intValue()) && (f.intValue() <= end.intValue())) {
 				pileEnd.push(id);
@@ -334,8 +352,8 @@ public abstract class PanelPlayer extends Panel {
 			String id = (String)orderStartID.elementAt(i);
 			Long f   = (Long)hashStart.get(id);
 			Long f2 = (Long)hashEnd.get(id);
-			if (  (f.longValue() >= start.longValue() && f.longValue() < end.longValue()) ||
-				(f.longValue() < start.longValue() && f2.longValue() > start.longValue())) {
+			if (  (f.longValue() >= start.longValue() && f.longValue() <= end.longValue()) ||
+				(f.longValue() < start.longValue() && f2.longValue() >= start.longValue())) {
 			//Integer f   = (Integer)hashStart.get(id);
 			//Integer f2 = (Integer)hashEnd.get(id);
 			//if (  (f.intValue() >= start.intValue() && f.intValue() < end.intValue()) ||
@@ -349,7 +367,19 @@ public abstract class PanelPlayer extends Panel {
 	{
 		return mediaURL;
 	}
-
+    
+    public long getStartTime(String id) {
+        if (!cmd_isID(id))
+            return -1;
+        return ((Long)hashStart.get(id)).longValue();
+    }
+    
+    public long getEndTime(String id) {
+        if (!cmd_isID(id))
+            return -1;
+        return ((Long)hashEnd.get(id)).longValue();
+    }
+    
 /*-----------------------------------------------------------------------*/
 //abstract methods
 	public abstract String getIdentifyingName();
