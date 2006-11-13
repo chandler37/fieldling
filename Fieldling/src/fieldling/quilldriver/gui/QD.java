@@ -102,7 +102,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	private void setupGUI() {
 		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		videoFrame = new JInternalFrame(null, true, false, true, true);//title, resizable, closable, maximizable, iconifiable
+		videoFrame = new JInternalFrame(null, true, false, false, false);//title, resizable, closable, maximizable, iconifiable
         //videoFrame = new JInternalFrame();
 		//videoFrame.setBorder(null);
 		//((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
@@ -190,8 +190,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				if (player.isInitialized())
 				{
 					timer.cancel();
-                    //Panel vidP = new Panel();
-                    //vidP.add(player);
+                    //JPanel vidP = new JPanel(new BorderLayout());
+                    //vidP.add(BorderLayout.CENTER, player);
 					//videoFrame.getContentPane().add(BorderLayout.CENTER, vidP);
 					videoFrame.getContentPane().add(BorderLayout.CENTER, player);
 				}
