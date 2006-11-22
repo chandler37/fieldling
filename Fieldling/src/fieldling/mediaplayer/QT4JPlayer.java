@@ -41,8 +41,10 @@ public class QT4JPlayer extends PanelPlayer {
 	private ScrubberMovedCallBack               theJumper = null;
 	private PlayingNotPlayingCallBack               theRater = null;
 	private Movie			movie;
-    private Component       movieViewComp;
-	private MovieController		controller = null;
+    
+    public Component       movieViewComp;
+	
+    private MovieController		controller = null;
 	private Container		parent = null;
 	private static int	numberOfPlayersOpen = 0;
 	

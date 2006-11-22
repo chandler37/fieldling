@@ -54,14 +54,17 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	//CLASS CONSTANTS
 	protected static TagInfo currentTagInfo = null;
 	protected static Color hColor = Color.cyan;
-	@UNICODE@public static final String PRODUCT_NAME = "QuillDriver";
-	@TIBETAN@public static final String PRODUCT_NAME = "QuillDriver-TIBETAN";
-	public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
+	
+    //@UNICODE@public static final String PRODUCT_NAME = "QuillDriver";
+	//@TIBETAN@public static final String PRODUCT_NAME = "QuillDriver-TIBETAN";
+	public static final String PRODUCT_NAME = "QuillDriver 1.0";
+    public static final String SHOW_FILENAME_AS_TITLE_BY_DEFAULT_NAME = "qd.showfilenameastitlebydefault";
 	
 	//CLASS ACTION
 	public static TranscriptToggler transcriptToggler;
 	public static AutoSave autoSaver;
 	static {
+        boolean showFileNameAsTitle = PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==-1?false:true;
 		transcriptToggler = new TranscriptToggler();
 		autoSaver = new AutoSave(transcriptToggler, PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, PreferenceManager.AUTO_SAVE_MINUTES_DEFAULT) * 60000);
 		autoSaver.start();
@@ -102,7 +105,7 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 	private void setupGUI() {
 		setBackground(new JFrame().getBackground());
 		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		videoFrame = new JInternalFrame(null, true, false, false, false);//title, resizable, closable, maximizable, iconifiable
+		videoFrame = new JInternalFrame(null, true, true, false, true);//title, resizable, closable, maximizable, iconifiable
         //videoFrame = new JInternalFrame();
 		//videoFrame.setBorder(null);
 		//((javax.swing.plaf.basic.BasicInternalFrameUI) videoFrame.getUI()).setNorthPane(null);
@@ -125,6 +128,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				}
 			}
 		});
+        videoFrame.addInternalFrameListener(new InternalFrameAdapter() {
+                public void internalFrameDeiconified(InternalFrameEvent ife) {
+                    player.setVisible(true);
+                    videoFrame.getContentPane().setVisible(true);
+                    ((QT4JPlayer)player).movieViewComp.setVisible(true);
+                }
+        });
 		add(videoFrame, JLayeredPane.PALETTE_LAYER);
 		invalidate();
 		validate();
@@ -563,12 +573,13 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				PreferenceManager.setInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, Boolean.getBoolean(XPathUtilities.saxonSelectSingleDOMNodeToString(editor.getXMLDocument(), showFileNameXPath))?1:0);
 			}
 		}*/
-		if (PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT)==0 || PreferenceManager.getInt(PreferenceManager.SHOW_FILE_NAME_AS_TITLE_KEY, PreferenceManager.SHOW_FILE_NAME_AS_TITLE_DEFAULT) == 1)
-		{
+
 			if (transcriptToggler.getNumberOfTranscripts() == 0)
-				title = new String(PRODUCT_NAME + " (" + messages.getString(configuration.getName()) + ")");
+				title = new String(PRODUCT_NAME);
+                //title = new String(PRODUCT_NAME + " (" + messages.getString(configuration.getName()) + ")");
 			else { //qd has content
-				title = new String(getWindowTitle(I18n.getLocale().getLanguage()) + " (" + PRODUCT_NAME + ": " + messages.getString(configuration.getName()) + ")");
+                title = new String(PRODUCT_NAME);
+				//title = new String(getWindowTitle(I18n.getLocale().getLanguage()) + " (" + PRODUCT_NAME + ": " + messages.getString(configuration.getName()) + ")");
 				buttonPanel.remove(togglerComboBox);
 				togglerComboBox = transcriptToggler.getToggler(this);
 				togglerComboBox.addActionListener(new ActionListener() {
@@ -590,7 +601,6 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 				buttonPanel.add(togglerComboBox, BorderLayout.CENTER);
 				buttonPanel.validate();
 			}
-		}
 	}
 	
 	public void playNode(Object node) {

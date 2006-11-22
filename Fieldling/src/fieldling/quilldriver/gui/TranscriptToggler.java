@@ -23,16 +23,25 @@ import javax.swing.JComboBox;
 import java.util.*;
 
 public class TranscriptToggler {
+    boolean showFileNameAsTitle;
     Vector toggleeVector;
     
     public TranscriptToggler() {
+        this(true);
+    }
+    public TranscriptToggler(boolean showFileNameAsTitle) {
+        this.showFileNameAsTitle = showFileNameAsTitle;
         toggleeVector = new Vector();
     }
     public int getNumberOfTranscripts() {
         return toggleeVector.size();
     }
     public void add(QD qd) {
-        toggleeVector.add(new Togglee(qd, qd.transcriptFile.getName()));
+        if (showFileNameAsTitle) {
+            toggleeVector.add(new Togglee(qd, qd.transcriptFile.getName()));
+        } else {
+            toggleeVector.add(new Togglee(qd, qd.transcriptFile.getName())); //ED FIXME!!
+        }
         Collections.sort(toggleeVector);
     }
     public void remove(QD qd) {
