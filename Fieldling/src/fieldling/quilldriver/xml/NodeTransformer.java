@@ -22,7 +22,8 @@ public class NodeTransformer {
         Iterator mapIterator = parameters.keySet().iterator();
         while (mapIterator.hasNext()) {
             String key = (String)mapIterator.next();
-            transformer.setParameter(key, parameters.get(key));
+            if (parameters.get(key) != null)
+                transformer.setParameter(key, parameters.get(key));
         }
         transformer.transform(new DOMSource(sourceNode), new DOMResult(replaceFrag));
         //transformer.transform(new DOMSource(sourceFrag), new DOMResult(replaceFrag));

@@ -40,10 +40,10 @@ public class Configuration
 	
 	static Map qdDefaultProperties;
 	static Map actionNameToActionDescription = new HashMap();
-        static Map tagNameToTag = new HashMap();
+    static Map tagNameToTag = new HashMap();
 	static String newTagInfo=null;
 	
-        private org.xhtmlrenderer.simple.XHTMLPanel helpPanel;
+    private org.xhtmlrenderer.simple.XHTMLPanel helpPanel;
 	JMenuBar jBar = null;
 	String name = null;
 	org.jdom.Document configDoc = null;
@@ -55,13 +55,13 @@ public class Configuration
 	TagInfo[] tagInfo;
 	Map parameters;
 	Map actionProfiles;
-        Map keyActions;
+    Map keyActions;
 	Transformer transformer;
 	org.jdom.Namespace[] namespaces;
 	org.w3c.dom.Document docDoc = null;
-        JScrollPane helpScrollPane = null;
+    JScrollPane helpScrollPane = null;
         
-        private static TransformerFactory transformerFactory = null;
+    private static TransformerFactory transformerFactory = null;
         
 	static {
 		org.jdom.Namespace[] qdNamespace = {org.jdom.Namespace.getNamespace("qd", "http://altiplano.emich.edu/quilldriver")};
@@ -75,7 +75,7 @@ public class Configuration
 		} catch (javax.xml.xpath.XPathExpressionException xpe) {
 			xpe.printStackTrace();
 		}
-                transformerFactory = TransformerFactory.newInstance();
+        transformerFactory = TransformerFactory.newInstance();
 	}
 
         public static TransformerFactory getTransformerFactory() {
@@ -169,7 +169,7 @@ public class Configuration
 					e.getAttributeValue("node"), e.getAttributeValue("move"), 
 					e.getAttributeValue("qd-command"), e.getAttributeValue("xsl-task")));
 		}
-                keyActions = new HashMap();
+        keyActions = new HashMap();
 		Iterator itty = actionProfiles.values().iterator();
 		while (itty.hasNext()) {
 			QdActionDescription qdActionDesc = (QdActionDescription)itty.next();

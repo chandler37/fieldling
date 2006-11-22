@@ -9,7 +9,7 @@
     
     <xsl:output method="text"/>
     
-    <xsl:variable name="delimiter" select="';'"/>
+    <xsl:variable name="delimiter" select="'^'"/>
     <xsl:variable name="speakers" select="/qq:TEXT/qq:META"/>
     
     <xsl:template match="/">
