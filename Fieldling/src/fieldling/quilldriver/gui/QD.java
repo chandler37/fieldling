@@ -225,8 +225,8 @@ public class QD extends JDesktopPane implements DOMErrorHandler {
 		else if (player == null || !player.equals(smp)) {
 			player = smp;
 			player.setParentContainer(QD.this);
-			player.setMultipleAnnotationPolicy(PreferenceManager.getInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_DEFAULT)==0);
-			player.setAutoScrolling(PreferenceManager.getInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_DEFAULT) == 0);
+			player.setMultipleAnnotationPolicy(PreferenceManager.getInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_DEFAULT)==1);
+			player.setAutoScrolling(PreferenceManager.getInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_DEFAULT)==1);
 		}
 	}
 	

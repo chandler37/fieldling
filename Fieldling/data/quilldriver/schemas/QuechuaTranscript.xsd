@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
      targetNamespace="http://altiplano.emich.edu/ucuchi"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:qq="http://altiplano.emich.edu/ucuchi"
      elementFormDefault="qualified"
      attributeFormDefault="unqualified">
      
      <xsd:import namespace="http://altiplano.emich.edu/quilldriver"
          schemaLocation="QuillDriver.xsd"/>
-	 
+
+     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
+         schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+
   <!-- definition of simple type elements -->
   <xsd:element name="MEDIAREF" type="xsd:string"/>
   <xsd:element name="COMMENT" type="xsd:string"/>
-  <xsd:element name="TRANSL" type="xsd:string"/>
   <xsd:element name="F" type="xsd:string"/>
   <xsd:element name="G" type="xsd:string"/>
   
@@ -43,11 +46,21 @@
       <xsd:simpleContent>
         <xsd:extension base="xsd:string">
           <xsd:attribute name="id" type="xsd:ID" use="required"/>
-	</xsd:extension>
+        </xsd:extension>
       </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
-
+  
+  <xsd:element name="TRANSL">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute ref="xml:lang" use="optional"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+  
   <xsd:element name="S">
     <xsd:complexType>
       <xsd:sequence>

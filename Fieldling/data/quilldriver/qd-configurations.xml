@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE qd-configurations SYSTEM "qd-configuration-set.dtd">
 <qd-configurations>
-                <configuration name="TranscribeQuechua" href="UcuchiTranscribeConfig.xml"/>
+        <configuration name="TranscribeQuechua" href="UcuchiTranscribeConfig.xml"/>
 		<configuration name="THDLTranscription" href="THDLTranscription.xml"/>
 		<configuration name="THDLReadonly" href="THDLReadonly.xml"/>
 </qd-configurations>

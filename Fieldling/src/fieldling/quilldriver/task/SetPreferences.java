@@ -302,11 +302,11 @@ public class SetPreferences extends BasicTask {
 			
 			//multiple highlight policy
 			old_multipleHighlightPolicy = PreferenceManager.getInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_DEFAULT);
-			multipleHighlightPolicy.setSelected(old_multipleHighlightPolicy == 0);
+			multipleHighlightPolicy.setSelected(old_multipleHighlightPolicy == 1);
 			
 			//scroll highlighting
 			old_scrollingHighlightPolicy = PreferenceManager.getInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_DEFAULT);
-			scrollingHighlightPolicy.setSelected(old_scrollingHighlightPolicy == 0);
+			scrollingHighlightPolicy.setSelected(old_scrollingHighlightPolicy == 1);
 			
 			//layout
 			JPanel policyPanel = new JPanel(new GridLayout(2,1));
@@ -347,20 +347,20 @@ public class SetPreferences extends BasicTask {
 			}
 			
 			//set multiple highlight policy
-			int new_multipleHighlightPolicy = multipleHighlightPolicy.getSelectedObjects()!=null?0:1;
+			int new_multipleHighlightPolicy = multipleHighlightPolicy.getSelectedObjects()==null?0:1;
 			if (old_multipleHighlightPolicy != new_multipleHighlightPolicy) {
 				PreferenceManager.setInt(PreferenceManager.MULTIPLE_HIGHLIGHT_POLICY_KEY, new_multipleHighlightPolicy);
 				if (qd.hasContent()) {
-					qd.getMediaPlayer().setMultipleAnnotationPolicy(new_multipleHighlightPolicy==0);
+					qd.getMediaPlayer().setMultipleAnnotationPolicy(new_multipleHighlightPolicy==1);
 				}
 			}
 			
 			//set scrolling highlight policy
-			int new_scrollingHighlightPolicy = scrollingHighlightPolicy.getSelectedObjects()!=null?0:1;
+			int new_scrollingHighlightPolicy = scrollingHighlightPolicy.getSelectedObjects()==null?0:1;
 			if (old_scrollingHighlightPolicy != new_scrollingHighlightPolicy) {
 				PreferenceManager.setInt(PreferenceManager.SCROLLING_HIGHLIGHT_POLICY_KEY, new_scrollingHighlightPolicy);
 				if (qd.hasContent())
-					qd.getMediaPlayer().setAutoScrolling(new_scrollingHighlightPolicy==0);
+					qd.getMediaPlayer().setAutoScrolling(new_scrollingHighlightPolicy==1);
 			}
 		}
 	}

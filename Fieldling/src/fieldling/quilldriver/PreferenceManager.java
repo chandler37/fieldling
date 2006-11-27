@@ -66,7 +66,8 @@ public class PreferenceManager {
 	public static final String MEDIA_PLAYER_DEFAULT = "fieldling.mediaplayer.QT4JPlayer";
 	
 	public static final String CONFIGURATION_KEY = "CONFIGURATION";
-	public static final String CONFIGURATION_DEFAULT = "THDLTranscription";
+	@TIBETAN@public static final String CONFIGURATION_DEFAULT = "THDLTranscription";
+	@UNICODE@public static final String CONFIGURATION_DEFAULT = "TranscribeQuechua";
 	
 	public static final String SHOW_FILE_NAME_AS_TITLE_KEY = "SHOW_FILE_NAME_AS_TITLE";
 	public static final int SHOW_FILE_NAME_AS_TITLE_DEFAULT = -1;              
@@ -126,7 +127,7 @@ public class PreferenceManager {
 	public static final String HIGHLIGHT_POSITION_DEFAULT = "Middle";
 	
 	public static final String SCROLLING_HIGHLIGHT_POLICY_KEY = "SCROLLING_HIGHLIGHT_POLICY";
-	public static final int SCROLLING_HIGHLIGHT_POLICY_DEFAULT = 0;
+	public static final int SCROLLING_HIGHLIGHT_POLICY_DEFAULT = 1;
 	
 	public static final String MULTIPLE_HIGHLIGHT_POLICY_KEY = "HIGHLIGHT_POLICY";
 	public static final int MULTIPLE_HIGHLIGHT_POLICY_DEFAULT = 0;        
