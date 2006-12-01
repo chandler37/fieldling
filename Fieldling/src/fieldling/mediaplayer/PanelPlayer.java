@@ -73,6 +73,9 @@ public abstract class PanelPlayer extends Panel {
 	}
         
 	private void fireStartAnnotation(String id) {
+        
+System.out.println("firing start annotation for id = " + id);
+        
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 
@@ -99,6 +102,7 @@ public abstract class PanelPlayer extends Panel {
 /*-----------------------------------------------------------------------*/
 	public void setAutoScrolling(boolean bool) {
 		isAutoScrolling = bool;
+System.out.println(isAutoScrolling);       
 	}
         
         public boolean getAutoScrolling() {
@@ -115,10 +119,11 @@ public abstract class PanelPlayer extends Panel {
 		hashEnd = new Hashtable();
 		pileStart = new Stack();
 		pileEnd   = new Stack();
-
+        
 		StringTokenizer	stIDS    = new StringTokenizer(TAB_IDS, ",");
 		StringTokenizer	stSTARTS = new StringTokenizer(TAB_STARTS, ",");
 		StringTokenizer	stENDS   = new StringTokenizer(TAB_ENDS, ",");
+        
 		while ((stIDS.hasMoreTokens()) && (stSTARTS.hasMoreTokens()) && (stENDS.hasMoreTokens())) {
 			String sID    = stIDS.nextToken();
 			String sStart = stSTARTS.nextToken();

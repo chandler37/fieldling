@@ -69,8 +69,10 @@ public class View implements TranscriptView {
 			String id = String.valueOf(node.hashCode());
 			String startVal = XPathUtilities.saxonSelectSingleDOMNodeToString(node, getStartXPath);
 			String endVal = XPathUtilities.saxonSelectSingleDOMNodeToString(node, getEndXPath);
+System.out.println(id + ": " + startVal + "----" + endVal);
 			int startOffset = editor.getStartOffsetForNode(node);
 			int endOffset = editor.getEndOffsetForNode(node);
+//System.out.println(startOffset + "----" + endOffset);
 			if (!(startVal == null || startOffset == -1 || endOffset == -1)) {
 				startTimeMap.put(id, startVal);
 				if (endVal == null) //for single time-point (no end time), treat as if end time = start time
