@@ -17,7 +17,7 @@ for QuillDriver:
 	extensions/jaxen-jdom.jar
 	extensions/saxpath.jar
 for Tibetan-only QuillDriver
-	extensions/Jskad.jar
+	extensions/tib.jar
 -->
 
 <project name="fieldlingtools" default="qd-create-webapp" basedir=".">
@@ -484,7 +484,7 @@ optimized for use with Tibetan script.
   <j2se version="1.5+"/>
   <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <property name="javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom" value="net.sf.saxon.xpath.XPathFactoryImpl"/>
-  <jar href="lib_webstart/Jskad.jar"/>
+  <jar href="lib_webstart/tib.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
   <jar href="lib_webstart/core-renderer.jar"/>
   <jar href="lib_webstart/cssparser-0-9-4-fs.jar"/>
@@ -499,7 +499,7 @@ optimized for use with Tibetan script.
   <j2se version="1.5+"/>
   <jar href="lib_webstart/]]>${jar.file}<![CDATA["/>
   <property name="javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom" value="net.sf.saxon.xpath.XPathFactoryImpl"/>
-  <jar href="lib_webstart/Jskad.jar"/>
+  <jar href="lib_webstart/tib.jar"/>
   <jar href="lib_webstart/xercesImpl.jar"/>
   <jar href="lib_webstart/core-renderer.jar"/>
   <jar href="lib_webstart/cssparser-0-9-4-fs.jar"/>
@@ -579,7 +579,7 @@ optimized for use with Tibetan script.
         <copy todir="TEMP/tib/QuillDriver/DONTMOVE">
             <fileset dir="${webstart.lib}"/>
         </copy>
-	<echo file="TEMP/tib/QuillDriver/Run-QD-TIB.bat" append="false">javaw -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/Jskad.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/core-renderer.jar;DONTMOVE/cssparser-0-9-4-fs.jar;DONTMOVE/saxon8-jdom.jar;DONTMOVE/saxon8-dom.jar;DONTMOVE/saxon8-xpath.jar;DONTMOVE/saxon8.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.gui.QDShell</echo>
+	<echo file="TEMP/tib/QuillDriver/Run-QD-TIB.bat" append="false">javaw -cp DONTMOVE/quilldriver-TIB.jar;DONTMOVE/tib.jar;DONTMOVE/xml-apis.jar;DONTMOVE/xercesImpl.jar;DONTMOVE/core-renderer.jar;DONTMOVE/cssparser-0-9-4-fs.jar;DONTMOVE/saxon8-jdom.jar;DONTMOVE/saxon8-dom.jar;DONTMOVE/saxon8-xpath.jar;DONTMOVE/saxon8.jar;DONTMOVE/xalan.jar;DONTMOVE/jdom.jar;DONTMOVE/jaxen-full.jar;DONTMOVE/jaxen-jdom.jar;DONTMOVE/;DONTMOVE/saxpath.jar;DONTMOVE/mail.jar;DONTMOVE/activation.jar fieldling.quilldriver.gui.QDShell</echo>
         <zip destfile="${webapp.dir}/QD-TIB.zip" basedir="TEMP/tib"/>
         
         <!-- Step 5.7 make OS X executable -->
@@ -652,7 +652,7 @@ optimized for use with Tibetan script.
                     aboutmenuname="QuillDriver-TIB"
                     jvmversion="1.3*"
                     infostring="QuillDriver-TIB, (c) 2004, licensed under GNU GPL"
-                    jars="${webstart.lib}/quilldriver-TIB.jar ${webstart.lib}/Jskad.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/core-renderer.jar ${webstart.lib}/cssparser-0-9-4-fs.jar ${webstart.lib}/saxon8-jdom.jar ${webstart.lib}/saxon8-dom.jar ${webstart.lib}/saxon8-xpath.jar ${webstart.lib}/saxon8.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
+                    jars="${webstart.lib}/quilldriver-TIB.jar ${webstart.lib}/tib.jar ${webstart.lib}/xml-apis.jar ${webstart.lib}/xercesImpl.jar ${webstart.lib}/core-renderer.jar ${webstart.lib}/cssparser-0-9-4-fs.jar ${webstart.lib}/saxon8-jdom.jar ${webstart.lib}/saxon8-dom.jar ${webstart.lib}/saxon8-xpath.jar ${webstart.lib}/saxon8.jar ${webstart.lib}/xalan.jar ${webstart.lib}/jdom.jar ${webstart.lib}/jaxen-full.jar ${webstart.lib}/jaxen-jdom.jar ${webstart.lib}/saxpath.jar ${webstart.lib}/mail.jar ${webstart.lib}/activation.jar"
                     />
     </target>
 	
