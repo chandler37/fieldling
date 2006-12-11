@@ -49,8 +49,6 @@ public class QDShell extends JFrame
 	/* Declaring the following private instance variables was the only way I figured to share
 	 * information between the method itself and its inner classes. */ 
 	private boolean optionsChanged;
-	private Color highlightColor, tagColor;
-	private JPanel highlightColorPanel, tagColorPanel;
 	
 	private static void printSyntax()
 	{
@@ -118,7 +116,7 @@ public class QDShell extends JFrame
 			String option = args[0].substring(1);
 			String configName;
 			// for now only these two options are available. More to come...
-			if (!option.equals("THDLTranscription") && !option.equals("THDLReadonly"))
+			if (!option.equals("THDLTranscription") && !option.equals("THDLReadonly") && !option.equals("TranscribeQuechua"))
 			{
 				System.out.println("Syntax error: invalid option \"" + option + "\"!");
 				printSyntax();
