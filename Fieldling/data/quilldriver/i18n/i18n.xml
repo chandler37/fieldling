@@ -1710,8 +1710,12 @@
     <text lang="en">Non-Tibetan Transcript Font and Size:</text>
     <text lang="zh">非藏文转录字体和大小：</text>
   </message>
-    <message id="InterfaceFont">
+  <message id="InterfaceFont">
     <text lang="en">Interface Font:</text>
     <text lang="zh">界面字体：</text>
+  </message>
+  <message id="SaveTibetanAsUnicode">
+    <text lang="en">Save Tibetan as unicode?</text>
+    <text lang="zh">Save Tibetan as unicode?</text>
   </message>
 </all-messages>
