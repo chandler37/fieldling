@@ -33,6 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.w3c.dom.Attr;
+import org.thdl.tib.text.ttt.EwtsToUnicodeForXslt;
+import fieldling.quilldriver.PreferenceManager;
 
 public class Editor {
 	private EventListenerList listenerList = new EventListenerList();
@@ -643,6 +645,7 @@ public class Editor {
 					@TIBETAN@org.thdl.tib.input.DuffPane duff = (org.thdl.tib.input.DuffPane)pane;
 					@TIBETAN@boolean[] noSuchWylie = new boolean[1];
 					@TIBETAN@val = duff.getTibDoc().getWylie(p1, p2, noSuchWylie);
+					@TIBETAN@if(PreferenceManager.getInt(PreferenceManager.SAVE_TIBETAN_AS_UNICODE_KEY, PreferenceManager.SAVE_TIBETAN_AS_UNICODE_DEFAULT) == 1) val = EwtsToUnicodeForXslt.convertEwtsTo(val);
 					@TIBETAN@} else val = pane.getDocument().getText(p1, p2-p1).trim();
 				@UNICODE@val = pane.getDocument().getText(p1, p2-p1).trim();
 				if (val.length()==0) val=new String(" ");

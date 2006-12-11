@@ -81,7 +81,7 @@ public class SetPreferences extends BasicTask {
 		JSpinner minutesSpinner = new JSpinner();
 		int originalMinutesValue = PreferenceManager.getInt(PreferenceManager.AUTO_SAVE_MINUTES_KEY, PreferenceManager.AUTO_SAVE_MINUTES_DEFAULT);
 		JTextField directoryField = new JTextField(PreferenceManager.getValue(PreferenceManager.BACKUP_DIRECTORY_KEY, PreferenceManager.BACKUP_DIRECTORY_DEFAULT));
-		JComboBox normalizerBox = new JComboBox(new String[] {"No", "Yes"});
+		JComboBox normalizerBox = new JComboBox(new String[] {"No", "Yes"}), tibetanAsUnicodeBox = new JComboBox(new String[] {"No", "Yes"});
 		
 		public SavingPreferenceSetter(QD qd) {
 			this.qd = qd;
@@ -116,11 +116,21 @@ public class SetPreferences extends BasicTask {
 				normalizerBox.setSelectedIndex(0);
 			normalizeNamespacePanel.add(normalizerBox, BorderLayout.CENTER);
 			
+			//save tibetan as unicode?
+			@TIBETAN@JPanel saveTibetanAsUnicodePanel = new JPanel(new BorderLayout());
+			@TIBETAN@saveTibetanAsUnicodePanel.setBorder(BorderFactory.createTitledBorder(QD.messages.getString("SaveTibetanAsUnicode")));
+			@TIBETAN@int saveTibetanAsUnicode = PreferenceManager.getInt(PreferenceManager.SAVE_TIBETAN_AS_UNICODE_KEY, PreferenceManager.SAVE_TIBETAN_AS_UNICODE_DEFAULT);
+			@TIBETAN@if (saveTibetanAsUnicode == 1) tibetanAsUnicodeBox.setSelectedIndex(1);
+			@TIBETAN@else tibetanAsUnicodeBox.setSelectedIndex(0);
+			@TIBETAN@saveTibetanAsUnicodePanel.add(tibetanAsUnicodeBox, BorderLayout.CENTER);
+			
 			//arrange preferences panel
-			preferencesPanel.setLayout(new GridLayout(3, 1));
+			@UNICODE@preferencesPanel.setLayout(new GridLayout(3, 1));
+			@TIBETAN@preferencesPanel.setLayout(new GridLayout(4, 1));
 			preferencesPanel.add(autoSaveMinutesPanel);
 			preferencesPanel.add(backupDirectoryPanel);
 			preferencesPanel.add(normalizeNamespacePanel);
+			@TIBETAN@preferencesPanel.add(saveTibetanAsUnicodePanel);
 		}
 		
 		public String getDisplayName() {
@@ -151,6 +161,9 @@ public class SetPreferences extends BasicTask {
 				PreferenceManager.setInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, -1);
 			else
 				PreferenceManager.setInt(PreferenceManager.NORMALIZE_NAMESPACES_KEY, 1);
+			
+			@TIBETAN@if (tibetanAsUnicodeBox.getSelectedIndex() == 0) PreferenceManager.setInt(PreferenceManager.SAVE_TIBETAN_AS_UNICODE_KEY, -1);
+			@TIBETAN@else PreferenceManager.setInt(PreferenceManager.SAVE_TIBETAN_AS_UNICODE_KEY, 1);
 		}
 	}
 	

@@ -148,8 +148,10 @@ public class PreferenceManager {
 	//Tibetan specific preferences	
 	@TIBETAN@public static final String TIBETAN_FONT_SIZE_KEY = "TIBETAN_FONT_SIZE";
 	@TIBETAN@public static final int TIBETAN_FONT_SIZE_DEFAULT = 36;
-	
 	@TIBETAN@public static final String TIBETAN_KEYBOARD_KEY = "TIBETAN_KEYBOARD";
+	@TIBETAN@public static final String SAVE_TIBETAN_AS_UNICODE_KEY = "SAVE_TIBETAN_AS_UNICODE";
+	@TIBETAN@public static final int SAVE_TIBETAN_AS_UNICODE_DEFAULT = -1;
+
 	
 	
 	private PreferenceManager() {} //do not call constructor, class should not be instantiated
