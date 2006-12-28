@@ -2,7 +2,7 @@
 <qd-configuration>
 	<parameters>
 		<xmlschema val="TibetanTranscript.xsd"/>
-		<!--<xsltransform val="TranscriptionRead.xsl"/>-->
+		<xsltransform val="TranscriptionRead.xsl"/>
 		<parameter name="qd.root.element" val="TEXT" type="XPathExpression"/>
 		<parameter name="qd.title" val="/TEXT/HEADER/TITLE" type="XPathExpression"/>
 		<parameter name="qd.title_tib" val="/TEXT/HEADER/TITLE_TIB" type="XPathExpression"/>

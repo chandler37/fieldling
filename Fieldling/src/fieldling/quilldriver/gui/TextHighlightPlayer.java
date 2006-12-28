@@ -140,7 +140,7 @@ public class TextHighlightPlayer extends JPanel implements AnnotationPlayer
 	}
 	public void startAnnotation(String id)
 	{
-         if (isPlayableAnnotation(id))
+         if (isPlayableAnnotation(id)) 
              highlight(id);
 	}
 	public void stopAnnotation(String id)

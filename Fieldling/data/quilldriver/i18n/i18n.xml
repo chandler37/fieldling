@@ -928,7 +928,7 @@
     <text lang="zh">藏文拉丁转写和英文</text>
   </message>
   <message id="ZapTimeCodes">
-    <text lang="en">Zap Time Codes</text>
+    <text lang="en">Reset Time Codes</text>
     <text lang="zh">删除时间参数</text>
   </message>
   <message id="ChangesToInterface">

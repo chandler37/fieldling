@@ -73,9 +73,6 @@ public abstract class PanelPlayer extends Panel {
 	}
         
 	private void fireStartAnnotation(String id) {
-        
-System.out.println("firing start annotation for id = " + id);
-        
 		//see javadocs on EventListenerList for how following array is structured
 		Object[] listeners = listenerList.getListenerList();
 
@@ -101,8 +98,7 @@ System.out.println("firing start annotation for id = " + id);
 	}
 /*-----------------------------------------------------------------------*/
 	public void setAutoScrolling(boolean bool) {
-		isAutoScrolling = bool;
-System.out.println(isAutoScrolling);       
+		isAutoScrolling = bool;  
 	}
         
         public boolean getAutoScrolling() {
@@ -315,7 +311,7 @@ System.out.println(isAutoScrolling);
 		if (!pileEnd.empty()) {
 			String id = (String)pileEnd.peek();
 			Long f   = (Long)hashEnd.get(id);
-			if (when.longValue() > f.longValue()) {
+			if (when.longValue() >= f.longValue()) {
             //if (when.longValue() >= f.longValue()) {
 			//Integer f   = (Integer)hashEnd.get(id);
 			//if (when.intValue() >= f.intValue()) {
@@ -343,7 +339,7 @@ System.out.println(isAutoScrolling);
 		for (int i=orderEndID.size()-1; i!=-1; i--) {
 			String id = (String)orderEndID.elementAt(i);
 			Long f = (Long)hashEnd.get(id);
-			if ((f.longValue() >= start.longValue()) && (f.longValue() <= end.longValue())) {
+			if ((f.longValue() > start.longValue()) && (f.longValue() <= end.longValue())) {
 			//Integer f   = (Integer)hashEnd.get(id);
 			//if ((f.intValue() > start.intValue()) && (f.intValue() <= end.intValue())) {
 				pileEnd.push(id);
@@ -357,8 +353,8 @@ System.out.println(isAutoScrolling);
 			String id = (String)orderStartID.elementAt(i);
 			Long f   = (Long)hashStart.get(id);
 			Long f2 = (Long)hashEnd.get(id);
-			if (  (f.longValue() >= start.longValue() && f.longValue() <= end.longValue()) ||
-				(f.longValue() < start.longValue() && f2.longValue() >= start.longValue())) {
+			if (  (f.longValue() >= start.longValue() && f.longValue() < end.longValue()) ||
+				(f.longValue() < start.longValue() && f2.longValue() > start.longValue())) {
 			//Integer f   = (Integer)hashStart.get(id);
 			//Integer f2 = (Integer)hashEnd.get(id);
 			//if (  (f.intValue() >= start.intValue() && f.intValue() < end.intValue()) ||

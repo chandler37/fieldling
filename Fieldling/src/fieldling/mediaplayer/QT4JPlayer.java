@@ -272,7 +272,10 @@ public class QT4JPlayer extends PanelPlayer {
 	}
 	public long getCurrentTime() {
 		try {
-            return (controller.getCurrentTime() * 1000 / controller.getTimeScale());
+//            long t = controller.getCurrentTime() * 1000 / controller.getTimeScale();
+//   System.out.println("curr = " + new Long(t));
+            long curr = (long)controller.getCurrentTime();
+            return (curr * 1000 / controller.getTimeScale());
 			//long myScale = movie.getTimeScale();
             //long now = movie.getTime();
 			//return (now*1000)/myScale;
