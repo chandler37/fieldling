@@ -14,14 +14,14 @@ public class XPathUtilities {
             if (xpathFactoryForDOM == null) {
                 //"javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom"
                             // Following is specific to Saxon: should be in a properties file
-            /*System.setProperty("javax.xml.xpath.XPathFactory:"+net.sf.saxon.om.NamespaceConstant.OBJECT_MODEL_SAXON,
+            System.setProperty("javax.xml.xpath.XPathFactory:"+net.sf.saxon.om.NamespaceConstant.OBJECT_MODEL_SAXON,
                     "net.sf.saxon.xpath.XPathFactoryImpl");
             System.setProperty("javax.xml.xpath.XPathFactory:"+javax.xml.xpath.XPathConstants.DOM_OBJECT_MODEL,
                     "net.sf.saxon.xpath.XPathFactoryImpl");
             System.setProperty("javax.xml.xpath.XPathFactory:"+net.sf.saxon.om.NamespaceConstant.OBJECT_MODEL_JDOM,
                     "net.sf.saxon.xpath.XPathFactoryImpl");
             System.setProperty("javax.xml.xpath.XPathFactory:"+net.sf.saxon.om.NamespaceConstant.OBJECT_MODEL_XOM,
-                    "net.sf.saxon.xpath.XPathFactoryImpl");*/
+                    "net.sf.saxon.xpath.XPathFactoryImpl");
                //System.setProperty("javax.xml.xpath.XPathFactory", "net.sf.saxon.xpath.XPathFactoryImpl");
                 /* The following more general code should work, but it doesn't.
                 See the code within the following post:
