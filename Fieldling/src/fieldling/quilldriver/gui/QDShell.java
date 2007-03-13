@@ -45,23 +45,23 @@ public class QDShell extends JFrame
 	protected ResourceBundle messages = null;
 	private QD qd = null;
 	private Container contentPane;
-	
+
 	/* Declaring the following private instance variables was the only way I figured to share
 	 * information between the method itself and its inner classes. */ 
 	private boolean optionsChanged;
-	
+
 	private static void printSyntax()
 	{
-		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly  transcript-file-list]");
+		System.out.println("Syntax: QDShell [-THDLTranscription | -THDLReadonly | -TranscribeQuechua] [-JMFPlayer | -QT4JPlayer]  transcript-file-list]");
 	}
-	
+
 	public static void main(String[] args)
 	{
 		/* i have chosen the Metal look and feel to get around one apparent bug with
 		 the Windows look and feel (see below). for us, the problem is that if you
 		 maximize the transcript, and then click on the video, then the video suddenly
 		 maximizes and you can't see the transcript any more--not what we want!
-		 
+
 		 http://forum.java.sun.com/thread.jspa?forumID=57&threadID=586119
 		 Problem with "Windows Look N Feel"
 		 Author: gulshan21  Posts: 63   Registered: 10/1/03
@@ -74,9 +74,11 @@ public class QDShell extends JFrame
 		 Windows, everything works fine. Can anyone please explain 
 		 me what's the cause of the problem and if possible send me 
 		 the solution.*/
-		try {
+		try
+		{
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception e) { }
+		} 
+		catch (Exception e) { }
 		PrintStream ps=null;
 		try 
 		{
@@ -91,83 +93,95 @@ public class QDShell extends JFrame
 			 original ancestors." For discussion, see the following saxon-help post:
 			 http://sourceforge.net/mailarchive/message.php?msg_id=2997255*/
 			System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
-			
+
 			try 
 			{
 				ps = new PrintStream(new FileOutputStream(System.getProperty("user.home") + "/qd.log"));
 				System.setOut(ps);
 				System.setErr(ps);
-			} catch (FileNotFoundException fnfe) {
-			}
-			
+			} 
+			catch (FileNotFoundException fnfe) { }
+
 			if (args.length==0) 
 			{
 				new QDShell();
 				return;
 			}
-			
-			if (args[0].charAt(0)!='-')
+
+			int i;
+			String option, configName=PreferenceManager.CONFIGURATION_DEFAULT, mediaPlayer=PreferenceManager.MEDIA_PLAYER_DEFAULT;
+
+			for(i=0; i<args.length; i++)
 			{
-				System.out.println("Syntax error: option expected!");
-				printSyntax();
+
+				if (args[i].charAt(0)!='-')
+				{
+					System.out.println("Syntax error: option expected!");
+					printSyntax();
+					return;
+				}
+
+				option = args[i].substring(1);
+				if (option.equals("THDLTranscription") || option.equals("THDLReadonly") || option.equals("TranscribeQuechua"))
+				{
+					configName = option;
+				}
+				else if (option.equals("JMFPlayer") || option.equals("QT4JPlayer"))
+				{
+					mediaPlayer = "fieldling.media.player." + option;
+				}
+				else
+				{
+					System.out.println("Syntax error: invalid option \"" + option + "\"!");
+					printSyntax();
+					return;
+				}
+			}
+			if (i==args.length)
+			{
+				new QDShell(configName, mediaPlayer);
 				return;
 			}
-			
-			String option = args[0].substring(1);
-			String configName;
-			// for now only these two options are available. More to come...
-			if (!option.equals("THDLTranscription") && !option.equals("THDLReadonly") && !option.equals("TranscribeQuechua"))
-			{
-				System.out.println("Syntax error: invalid option \"" + option + "\"!");
-				printSyntax();
-				return;
-			}
-			
-			if (args.length==1)
-			{
-				new QDShell(option, PreferenceManager.MEDIA_PLAYER_DEFAULT);
-				return;
-			}
-			
-			File[] transcriptFile = new File[args.length-1];
-			for (int i=1; i<args.length; i++) {
-				transcriptFile[i-1] = new File (args[i]);
-				if (!transcriptFile[i-1].exists())
+
+			File[] transcriptFile = new File[args.length-i];
+			for (int j=i; j<args.length; i++) {
+				transcriptFile[j-i] = new File (args[j]);
+				if (!transcriptFile[j-i].exists())
 				{
 					System.out.println("Error reading file!");
 					return;
 				}
 			}
 			// if arguments are passed through the command-line default to Quick-time for Java
-			new QDShell(transcriptFile[0], option, PreferenceManager.MEDIA_PLAYER_DEFAULT);
+			new QDShell(transcriptFile[0], configName, mediaPlayer);
 		} catch (NoClassDefFoundError err) {
 		}
 	}
-	
+
 	public QDShell()
 	{
 		this(PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, PreferenceManager.CONFIGURATION_DEFAULT), 
 				PreferenceManager.MEDIA_PLAYER_DEFAULT);
 	}
-	
+
 	public QDShell(String configName, String mediaPlayer)
 	{
 		loadGenericInitialState(new QD(ConfigurationFactory.getConfiguration(configName), getMediaPlayer(mediaPlayer)));
 		setVisible(true);
 	}
-	
+
 	public QDShell(File transcriptFile, String configName, String mediaPlayer)
 	{
 		loadGenericInitialState(new QD(ConfigurationFactory.getConfiguration(configName), getMediaPlayer(mediaPlayer)));
 		loadSpecificInitialState(transcriptFile);
 		setVisible(true);
 	}
-	
+
 	public QDShell(QD qd) {
 		loadGenericInitialState(qd);
 		setVisible(true);
 	}
-	
+
 	public PanelPlayer getMediaPlayer(String mediaPlayer) {
 		try {
 			return PlayerFactory.getPlayerForClass(mediaPlayer);
@@ -175,18 +189,18 @@ public class QDShell extends JFrame
 			return null;
 		}
 	}
-	
+
 	public void putPreferences() {
 		PreferenceManager.setInt(PreferenceManager.WINDOW_X_KEY, getX());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_Y_KEY, getY());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_WIDTH_KEY, getWidth());
 		PreferenceManager.setInt(PreferenceManager.WINDOW_HEIGHT_KEY, getHeight());
 	}
-	
+
 	public QD getQD() {
 		return qd;
 	}
-	
+
 	public void activateQD(QD qd, boolean hasLoadedTranscript) {
 		this.qd = qd;
 		qd.register();
@@ -206,7 +220,7 @@ public class QDShell extends JFrame
 		validate();
 		repaint();
 	}
-	
+
 	public void deActivateQD(QD qd) {
 		contentPane.remove(qd);
 		qd.setQDShell(null);
@@ -215,7 +229,7 @@ public class QDShell extends JFrame
 		QD.lastQD = qd;
 		//this.qd = null;
 	}
-	
+
 	/** Constructor for generic stuff loaded regardless of how to get initial state (wizard, command-line,
 	 * or defaults in pref manager). Not meant to be called directly!!! */
 	private void loadGenericInitialState(QD qd)
@@ -238,7 +252,7 @@ public class QDShell extends JFrame
 			}
 		});
 	}
-	
+
 	private void loadSpecificInitialStateFromDefaults() throws Exception
 	{
 		File transcriptFile;
@@ -257,12 +271,12 @@ public class QDShell extends JFrame
 		configName = PreferenceManager.getValue(PreferenceManager.CONFIGURATION_KEY, PreferenceManager.CONFIGURATION_DEFAULT);
 		loadSpecificInitialState(transcriptFile, mediaURL);
 	}
-	
+
 	private void loadSpecificInitialState(File transcriptFile)
 	{
 		loadSpecificInitialState(transcriptFile, null);
 	}
-	
+
 	private void loadSpecificInitialState(File transcriptFile, String mediaURL)
 	{
 		String transcriptString = transcriptFile.getAbsolutePath();
@@ -281,7 +295,7 @@ public class QDShell extends JFrame
 	}
 }
 /*
- 
+
  java.util.List recentFileList = new ArrayList();
  java.util.List recentVideoList = new ArrayList();
  String r = PreferenceManager.getValue(PreferenceManager.RECENT_FILES_KEY, null);
@@ -313,7 +327,7 @@ public class QDShell extends JFrame
  recentVideos[count - 2]);
  count++;
  }
- 
+
  /*protected void makeRecentlyOpened(String s, String t) {
   String r = PreferenceManager.getValue(PreferenceManager.RECENT_FILES_KEY, null);
   String q = PreferenceManager.getValue(PreferenceManager.RECENT_VIDEOS_KEY, null);
@@ -349,5 +363,5 @@ public class QDShell extends JFrame
   }
   PreferenceManager.setValue(PreferenceManager.RECENT_FILES_KEY, sb.toString());
   PreferenceManager.setValue(PreferenceManager.RECENT_VIDEOS_KEY, sb2.toString());
-  */
+ */
 
