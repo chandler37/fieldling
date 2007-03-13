@@ -128,7 +128,7 @@ public class QDShell extends JFrame
 				}
 				else if (option.equals("JMFPlayer") || option.equals("QT4JPlayer"))
 				{
-					mediaPlayer = "fieldling.media.player." + option;
+					mediaPlayer = "fieldling.mediaplayer." + option;
 				}
 				else
 				{
