@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 24-Aug-2006"
+!define PRODUCT_VERSION "Version 19-Apr-2007"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -71,7 +71,7 @@ Section "MainSection" SEC01
   File "..\..\build\webapp\lib_webstart\core-renderer.jar"
   File "..\..\build\webapp\lib_webstart\cssparser-0-9-4-fs.jar"
   File "..\..\build\webapp\lib_webstart\jdom.jar"
-  File "..\..\build\webapp\lib_webstart\Jskad.jar"
+  File "..\..\build\webapp\lib_webstart\tib.jar"
   File "..\..\build\webapp\lib_webstart\mail.jar"
   File "..\..\build\webapp\lib_webstart\quilldriver-TIB.jar"
   File "..\..\build\webapp\lib_webstart\saxon8.jar"
@@ -91,10 +91,10 @@ Section -AdditionalIcons
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   Pop $R0
   StrCpy $R0 '$R0\bin\javaw.exe'
-  StrCpy $R1 '-cp quilldriver-TIB.jar;activation.jar;core-renderer.jar;cssparser-0-9-4-fs.jar;jdom.jar;Jskad.jar;mail.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell'
+  StrCpy $R1 '-cp quilldriver-TIB.jar;activation.jar;core-renderer.jar;cssparser-0-9-4-fs.jar;jdom.jar;tib.jar;mail.jar;saxon8.jar;saxon8-dom.jar;saxon8-xpath.jar;xercesImpl.jar fieldling.quilldriver.gui.QDShell'
   push $R0
   
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" '$R1 -arg "-THDLReadonly"' "$INSTDIR\QuillDriver.ico"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk" "$R0" '$R1 "-THDLReadonly"' "$INSTDIR\QuillDriver.ico"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\QuillDriver Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall QuillDriver.lnk" "$INSTDIR\uninst.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -115,7 +115,7 @@ NoBackup:
   WriteRegStr HKCR "QuillDriverTibetan.qdt\DefaultIcon" "" "$INSTDIR\QuillDriver.ico"
 Skip:
   pop $R0
-  StrCpy $R1 '-cp "$INSTDIR\quilldriver-TIB.jar;$INSTDIR\activation.jar;$INSTDIR\core-renderer.jar;$INSTDIR\cssparser-0-9-4-fs.jar;$INSTDIR\jdom.jar;$INSTDIR\Jskad.jar;$INSTDIR\mail.jar;$INSTDIR\saxon8.jar;$INSTDIR\saxon8-dom.jar;$INSTDIR\saxon8-xpath.jar;$INSTDIR\xercesImpl.jar" fieldling.quilldriver.gui.QDShell'
+  StrCpy $R1 '-cp "$INSTDIR\quilldriver-TIB.jar;$INSTDIR\activation.jar;$INSTDIR\core-renderer.jar;$INSTDIR\cssparser-0-9-4-fs.jar;$INSTDIR\jdom.jar;$INSTDIR\tib.jar;$INSTDIR\mail.jar;$INSTDIR\saxon8.jar;$INSTDIR\saxon8-dom.jar;$INSTDIR\saxon8-xpath.jar;$INSTDIR\xercesImpl.jar" fieldling.quilldriver.gui.QDShell'
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open\command" "" '"$R0" $R1 "-THDLReadonly" "%1"'
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\open" "" "Open with QuillDriver Tibetan"
   WriteRegStr HKCR "QuillDriverTibetan.qdt\shell\edit" "" "Edit with QuillDriver Tibetan"
@@ -181,7 +181,7 @@ Function GetJRE
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
   IfErrors 0 +2
     Goto NoJre
-  StrCmp $R1 "1.5" JreFound
+  Goto JreFound
 
   NoJre:
   ; Was not found. Install.
@@ -263,11 +263,12 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME}.lnk"
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
+  
   Delete "$INSTDIR\activation.jar"
   Delete "$INSTDIR\core-renderer.jar"
   Delete "$INSTDIR\cssparser-0-9-4-fs.jar"
   Delete "$INSTDIR\jdom.jar"
-  Delete "$INSTDIR\Jskad.jar"
+  Delete "$INSTDIR\tib.jar"
   Delete "$INSTDIR\mail.jar"
   Delete "$INSTDIR\quilldriver-TIB.jar"
   Delete "$INSTDIR\saxon8.jar"

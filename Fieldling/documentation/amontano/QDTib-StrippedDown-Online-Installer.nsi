@@ -2,13 +2,13 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "QuillDriver Tibetan"
-!define PRODUCT_VERSION "Version 20-Aug-2006"
+!define PRODUCT_VERSION "Version 19-Apr-2007"
 !define PRODUCT_PUBLISHER "THDL, University of Virginia"
 !define PRODUCT_WEB_SITE "www.thdl.org"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
-!define JNLP_URL "http://www.thdl.org/thdl/tools/quilldriver/QuillDriver-TIB-simple.jnlp"
+!define JNLP_URL "http://www.thdl.org/tools/quilldriver/QuillDriver-TIB-simple.jnlp"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
