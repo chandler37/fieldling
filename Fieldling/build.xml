@@ -308,15 +308,10 @@ a version optimized for use with Tibetan script.
 <echo file="${unicode.classes}/about.txt" 
 append="false">QuillDriver
 
-(c) 2004, Roger Andersen, Edward Garrett and 
+(c) 2004-7, Roger Andersen, Edward Garrett and 
 David Germano
 
 Version ${TODAY_US}
-
-Send feedback, including bug reports (with the 
-version date), to
-
-   fieldling-feedback@lists.sourceforge.net
    
 This program is free software; you can redistribute 
 it and/or modify it under the terms of the GNU General 
@@ -327,27 +322,14 @@ later version.
 Visit our main website for detailed user and developer 
 resources:
 
-   http://altiplano.emich.edu/quilldriver
-
-For open discussion, read and contribute to our blog:
-
-   http://altiplano.emich.edu/blogs/quilldriver
-   
-If you like QuillDriver, we could use your support in various
-ways. Visit our website for details.</echo>
+   http://fieldling.sourceforge.net/</echo>
 
 <echo file="${tibetan.classes}/about.txt" 
 append="false">QuillDriver-TIB (optimized for Tibetan script)
 
-(c) 2004, Roger Andersen, Edward Garrett and David Germano
+(c) 2004-7, Roger Andersen, Edward Garrett and David Germano
 
 Version ${TODAY_US} (TIB)
-
-Send feedback, including bug reports (with the
-version date), to
-
-   fieldling-feedback@lists.sourceforge.net
-   
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -355,11 +337,12 @@ the Free Software Foundation; either version 2 of the License, or
 any later version.
     
 The code has been written by Edward Garrett, Michel Jacobson,
-Andres Montano, Rinchen Norbu, and Yutso. 
-Visit &lt;http://altiplano.emich.edu/quilldriver/index.html&gt;
-to access source code, sample content, instructions and other resources.
-If you would like to contribute, please consider becoming a
-developer.</echo>
+Andres Montano, Rinchen Norbu, and Yutso. If you would like to 
+contribute, please consider becoming a developer.
+
+Visit our main website for detailed user and developer resources:
+
+   http://fieldling.sourceforge.net/</echo>
    
 	</target>   
     
